@@ -21,8 +21,16 @@ private:
 	shared_ptr<int> m_npIndices;
 
 public:
+	Mesh();
 	Mesh(int nSizeOfVertices, int nSizeOfIndices, shared_ptr<float> npVertices, shared_ptr<float> npTexCoords, shared_ptr<float> npNormals, shared_ptr<int> npIndices);
-	
+
+	void setSizeOfVerticies(unsigned int sizeOfVerticies);
+	void setSizeOfIndicies(unsigned int sizeOfIndicies);
+	void setVerticies(shared_ptr<float> verticies);
+	void setTexCoords(shared_ptr<float> texCoords);
+	void setNormals(shared_ptr<float> normals);
+	void setIndicies(shared_ptr<int> indicies);
+
 	unsigned int getSizeOfVerticies();
 	unsigned int getSizeOfIndicies();
 	shared_ptr<float> getVerticies();

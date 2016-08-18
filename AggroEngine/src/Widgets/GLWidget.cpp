@@ -36,6 +36,11 @@ void GLWidget::initializeGL()
 	// create scene from temp object
 	m_scene = shared_ptr<Scene>(new Scene(rootObject, shared_ptr<Camera>(new Camera())));
 
+	// Build grid
+	shared_ptr<Mesh> grid = unique_ptr<Mesh>(new Grid(16));
+	shared_ptr<VertexBufferHandle> gridVBO = m_graphics->createVertexBuffer(grid);
+	m_gridRenderData = shared_ptr<RenderData>(new RenderData(gridVBO, objectRenderComponent->getTexture(), DrawMode::LINES));
+
 	setAutoBufferSwap(true);
 }
 
@@ -62,6 +67,9 @@ void GLWidget::paintGL()
 
 	// Stage root node for render
 	m_scene->getRoot()->getRenderComponent()->render(m_graphics, m_scene->getRoot()->getTransform());
+	
+	// Render grid
+	m_graphics->stageTriangleRender(m_gridRenderData);
 
 	// set scene options
 	RenderOptions renderOptions;

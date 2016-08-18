@@ -157,6 +157,9 @@
     <ClCompile Include="src\Resource\Mesh\Dev\CubeMesh.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\Resource\Mesh\Dev\Grid.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Graphics\Graphics.hpp">
@@ -280,6 +283,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\Resource\Mesh\Dev\CubeMesh.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Resource\Mesh\Dev\Grid.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

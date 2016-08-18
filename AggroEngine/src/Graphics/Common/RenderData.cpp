@@ -4,7 +4,7 @@ RenderData::RenderData(shared_ptr<VertexBufferHandle> pVertexBufferHandle, share
 	: m_pVertexBufferHandle(pVertexBufferHandle)
 	, m_pTextureHandle(pTextureHandle)
 	, m_m4ModelMatrix(1.0)
-	, m_drawMode(DrawMode::LINE_LOOP)
+	, m_drawMode(DrawMode::TRIANGLES)
 {
 }
 

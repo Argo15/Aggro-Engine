@@ -9,6 +9,7 @@
 #include "../Inputs/KeyboardState.hpp"
 #include "../Inputs/MouseState.hpp"
 #include "../Resource/Mesh/AssimpMeshImporter.hpp"
+#include "../Resource/Mesh/Dev/Grid.hpp"
 #include "../Resource/Image/FreeImageImporter.hpp"
 #include "../Core/Scene/Scene.hpp"
 
@@ -28,6 +29,7 @@ private:
 	shared_ptr<ImageImporter> m_imageImporter;
 
 	shared_ptr<Scene> m_scene;
+	shared_ptr<RenderData> m_gridRenderData;
 
 public:
 	GLWidget(QWidget *parent = 0);
