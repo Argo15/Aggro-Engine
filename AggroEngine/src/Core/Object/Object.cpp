@@ -21,6 +21,11 @@ glm::mat4 &Object::getTransform()
 	return this->m_m4Transform;
 }
 
+bool Object::hasRenderComponent()
+{
+	return m_renderComponent != nullptr;
+}
+
 void Object::setRenderComponent(shared_ptr<RenderComponent> renderComponent)
 {
 	m_renderComponent = renderComponent;

@@ -1,15 +1,15 @@
 #include "Scene.hpp"
 
-Scene::Scene(shared_ptr<Object> rootObjectTmp, shared_ptr<Camera> camera)
-	: m_rootObject(rootObjectTmp)
+Scene::Scene(shared_ptr<SceneNode> root, shared_ptr<Camera> camera)
+	: m_root(root)
 	, m_camera(camera)
 {
 
 }
 
-shared_ptr<Object> Scene::getRoot()
+shared_ptr<SceneNode> Scene::getRoot()
 {
-	return m_rootObject;
+	return m_root;
 }
 
 shared_ptr<Camera> Scene::getCamera()

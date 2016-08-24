@@ -160,6 +160,18 @@
     <ClCompile Include="src\Resource\Mesh\Dev\Grid.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\Core\Scene\SceneNode.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Graphics\Common\VertexBuffer\VertexBufferCache.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Graphics\Common\Texture\TextureCache.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Core\Renderer\Renderer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Graphics\Graphics.hpp">
@@ -286,6 +298,18 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\Resource\Mesh\Dev\Grid.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Core\Scene\SceneNode.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Graphics\Common\VertexBuffer\VertexBufferCache.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Graphics\Common\Texture\TextureCache.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Core\Renderer\Renderer.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

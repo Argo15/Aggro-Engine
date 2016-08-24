@@ -1,8 +1,8 @@
 #pragma once
 
 #include <memory>
-#include "../../Core/Object/Object.hpp"
 #include "../../Core/Object/Cameras/Camera.hpp"
+#include "SceneNode.hpp"
 using namespace std;
 
 /**
@@ -14,12 +14,12 @@ using namespace std;
 class Scene
 {
 private:
-	shared_ptr<Object> m_rootObject;
+	shared_ptr<SceneNode> m_root;
 	shared_ptr<Camera> m_camera;
 
 public:
-	Scene(shared_ptr<Object> rootObjectTmp, shared_ptr<Camera> camera);
+	Scene(shared_ptr<SceneNode> root, shared_ptr<Camera> camera);
 
-	shared_ptr<Object> getRoot();
+	shared_ptr<SceneNode> getRoot();
 	shared_ptr<Camera> getCamera();
 };

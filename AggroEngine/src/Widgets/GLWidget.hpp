@@ -8,10 +8,11 @@
 #include "../Core/Object/Cameras/FreeRoamCameraController.hpp"
 #include "../Inputs/KeyboardState.hpp"
 #include "../Inputs/MouseState.hpp"
-#include "../Resource/Mesh/AssimpMeshImporter.hpp"
 #include "../Resource/Mesh/Dev/Grid.hpp"
-#include "../Resource/Image/FreeImageImporter.hpp"
 #include "../Core/Scene/Scene.hpp"
+#include "VertexBufferCache.hpp"
+#include "TextureCache.hpp"
+#include "Renderer.hpp"
 
 class GLWidget : public QGLWidget
 {
@@ -19,17 +20,17 @@ class GLWidget : public QGLWidget
 
 private:
 	shared_ptr<Graphics> m_graphics;
+	shared_ptr<Renderer> m_renderer;
 
 	shared_ptr<KeyboardState> m_keyboard;
 	shared_ptr<MouseState> m_mouse;
 	shared_ptr<CameraController> m_cameraController;
 	int m_nFPS;
 
-	shared_ptr<MeshImporter> m_meshImporter;
-	shared_ptr<ImageImporter> m_imageImporter;
+	shared_ptr<VertexBufferCache> m_vboCache;
+	shared_ptr<TextureCache> m_textureCache;
 
 	shared_ptr<Scene> m_scene;
-	shared_ptr<RenderData> m_gridRenderData;
 
 public:
 	GLWidget(QWidget *parent = 0);

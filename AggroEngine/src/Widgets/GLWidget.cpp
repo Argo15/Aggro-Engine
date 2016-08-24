@@ -8,9 +8,10 @@ GLWidget::GLWidget(QWidget *parent)
 	, m_mouse(shared_ptr<MouseState>(new MouseState()))
 	, m_cameraController(shared_ptr<CameraController>(new FreeRoamCameraController()))
 	, m_nFPS(60)
-	, m_meshImporter(shared_ptr<MeshImporter>(new AssimpMeshImporter()))
-	, m_imageImporter(shared_ptr<ImageImporter>(new FreeImageImporter()))
+	, m_vboCache(shared_ptr<VertexBufferCache>(new VertexBufferCache(m_graphics)))
+	, m_textureCache(shared_ptr<TextureCache>(new TextureCache(m_graphics)))
 {
+	m_renderer = shared_ptr<Renderer>(new Renderer(m_graphics));
 	setFocusPolicy(Qt::StrongFocus);
 	this->setMouseTracking(true);
 }
@@ -20,26 +21,19 @@ void GLWidget::initializeGL()
 	glewInit();
 
 	m_graphics->init();
-
-	// Load temp resources
-	shared_ptr<Mesh> mesh(m_meshImporter->importMesh("Resources/Mesh/sphere.obj"));
-	shared_ptr<Image> image = m_imageImporter->importImage("Resources/Image/Banana2.png");
-	shared_ptr<TextureBuildOptions> texOptions(new TextureBuildOptions(image));
+	m_renderer->init(m_vboCache, m_textureCache);
 
 	// create a temp root object
 	shared_ptr<Object> rootObject(new Object());
 	shared_ptr<StaticObjectRenderComponent> objectRenderComponent(new StaticObjectRenderComponent());
-	objectRenderComponent->setVertexBuffer(m_graphics->createVertexBuffer(mesh));
-	objectRenderComponent->setTexture(m_graphics->createTexture(texOptions));
+	objectRenderComponent->setVertexBuffer(m_vboCache->getVertexBuffer("Resources/Mesh/sphere.obj"));
+	objectRenderComponent->setTexture(m_textureCache->getTexture("Resources/Image/Banana2.png"));
 	rootObject->setRenderComponent(objectRenderComponent);
 
-	// create scene from temp object
-	m_scene = shared_ptr<Scene>(new Scene(rootObject, shared_ptr<Camera>(new Camera())));
+	shared_ptr<SceneNode> rootNode = shared_ptr<SceneNode>(new SceneNode(rootObject));
 
-	// Build grid
-	shared_ptr<Mesh> grid = unique_ptr<Mesh>(new Grid(16));
-	shared_ptr<VertexBufferHandle> gridVBO = m_graphics->createVertexBuffer(grid);
-	m_gridRenderData = shared_ptr<RenderData>(new RenderData(gridVBO, objectRenderComponent->getTexture(), DrawMode::LINES));
+	// create scene from temp object
+	m_scene = shared_ptr<Scene>(new Scene(rootNode, shared_ptr<Camera>(new Camera())));
 
 	setAutoBufferSwap(true);
 }
@@ -52,32 +46,12 @@ void GLWidget::resizeGL(int width, int height)
 
 void GLWidget::paintGL()
 {
-	m_cameraController->handleKeyboardInput(*m_scene->getCamera().get(), *m_keyboard.get(), 1.f / m_nFPS);
-
-	static float rotate = 0.f;
 	if (m_nFPS <= 0)
 	{
 		return;
 	}
-	m_scene->getRoot()->setTransform(glm::toMat4(glm::angleAxis(rotate, glm::normalize(glm::vec3(0.5f, 1.f, 0.7f)))));
-	rotate += 120 / m_nFPS;
-
-	// clear
-	m_graphics->clearDepthAndColor();
-
-	// Stage root node for render
-	m_scene->getRoot()->getRenderComponent()->render(m_graphics, m_scene->getRoot()->getTransform());
-	
-	// Render grid
-	m_graphics->stageTriangleRender(m_gridRenderData);
-
-	// set scene options
-	RenderOptions renderOptions;
-	renderOptions.setProjectionMatrix(m_scene->getCamera()->getProjMatrix());
-	renderOptions.setViewMatrix(m_scene->getCamera()->getViewMatrix());
-
-	// execute
-	m_graphics->executeRender(renderOptions);
+	m_cameraController->handleKeyboardInput(*m_scene->getCamera().get(), *m_keyboard.get(), 1.f / m_nFPS);
+	m_renderer->renderScene(m_scene);
 }
 
 void GLWidget::keyPressEvent(QKeyEvent *event)
