@@ -16,6 +16,11 @@ void Object::applyTransform(glm::mat4 &m4Transform)
 	this->m_m4Transform = m4Transform * this->m_m4Transform;
 }
 
+void Object::translate(glm::vec3 &translate)
+{
+	applyTransform(glm::translate(glm::mat4(1.0), translate));
+}
+
 glm::mat4 &Object::getTransform()
 {
 	return this->m_m4Transform;

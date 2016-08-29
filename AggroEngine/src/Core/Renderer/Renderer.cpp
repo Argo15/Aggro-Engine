@@ -41,9 +41,20 @@ void Renderer::renderScene(shared_ptr<Scene> scene)
 
 void Renderer::_renderSceneNodeRecursive(shared_ptr<SceneNode> node, glm::mat4 transform)
 {
+	glm::mat4 curTransform = transform;
 	shared_ptr<Object> obj = node->getObject();
-	glm::mat4 curTransform = obj->getTransform() * transform;
-	obj->getRenderComponent()->render(m_graphics, obj->getTransform());
+	if (obj)
+	{
+		curTransform = obj->getTransform() * transform;
+		if (node->isSelected())
+		{
+			curTransform = glm::translate(glm::mat4(1.0), glm::vec3(0,1.0f,0)) * curTransform;
+		}
+		if (obj->hasRenderComponent())
+		{
+			obj->getRenderComponent()->render(m_graphics, curTransform);
+		}
+	}
 	shared_ptr<vector<shared_ptr<SceneNode>>> children = node->getChildren();
 	if (children->size() > 0)
 	{

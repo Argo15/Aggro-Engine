@@ -25,6 +25,8 @@ public:
 	virtual void applyTransform(glm::mat4 &m4Transform);
 	glm::mat4 &getTransform();
 
+	void translate(glm::vec3 &translate);
+
 	bool hasRenderComponent();
 	void setRenderComponent(shared_ptr<RenderComponent> renderComponent);
 	shared_ptr<RenderComponent> getRenderComponent();

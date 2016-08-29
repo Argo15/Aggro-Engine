@@ -4,38 +4,27 @@
 #include <GL/glew.h>
 #include <QtOpenGL/QGLWidget>
 #include <QKeyEvent>
-#include "../Graphics/OpenGL/OpenGL43Graphics.hpp"
 #include "../Core/Object/Cameras/FreeRoamCameraController.hpp"
 #include "../Inputs/KeyboardState.hpp"
 #include "../Inputs/MouseState.hpp"
-#include "../Resource/Mesh/Dev/Grid.hpp"
-#include "../Core/Scene/Scene.hpp"
-#include "VertexBufferCache.hpp"
-#include "TextureCache.hpp"
 #include "Renderer.hpp"
+#include "EngineContext.hpp"
 
 class GLWidget : public QGLWidget
 {
 	Q_OBJECT
 
 private:
-	shared_ptr<Graphics> m_graphics;
 	shared_ptr<Renderer> m_renderer;
 
 	shared_ptr<KeyboardState> m_keyboard;
 	shared_ptr<MouseState> m_mouse;
 	shared_ptr<CameraController> m_cameraController;
-	int m_nFPS;
 
-	shared_ptr<VertexBufferCache> m_vboCache;
-	shared_ptr<TextureCache> m_textureCache;
-
-	shared_ptr<Scene> m_scene;
+	shared_ptr<EngineContext> m_context;
 
 public:
-	GLWidget(QWidget *parent = 0);
-
-	void setFPS(int fps);
+	GLWidget(shared_ptr<EngineContext> context, QWidget *parent = 0);
 
 protected:
 	void initializeGL();

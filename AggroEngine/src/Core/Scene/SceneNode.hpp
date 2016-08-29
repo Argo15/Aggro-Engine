@@ -2,7 +2,7 @@
 
 #include <memory>
 #include <vector>
-#include "../../Core/Object/Object.hpp"
+#include "Object.hpp"
 using namespace std;
 
 /**
@@ -14,14 +14,22 @@ using namespace std;
 class SceneNode
 {
 private:
-	shared_ptr<Object> m_object; // Holds 
+	SceneNode *m_parent;
+	shared_ptr<Object> m_object;
 	shared_ptr<vector<shared_ptr<SceneNode>>> m_children;
+	bool m_isSelected;
+	string m_name;
 
 public:
-	SceneNode(shared_ptr<Object> object);
+	SceneNode(SceneNode *parent = nullptr, shared_ptr<Object> object = shared_ptr<Object>(new Object()));
 
 	shared_ptr<Object> getObject();
 	shared_ptr<vector<shared_ptr<SceneNode>>> getChildren();
+	void setSelected(bool selected);
+	bool isSelected();
+	string getName();
 
 	void addChild(shared_ptr<SceneNode> child);
+	void setName(string name);
+	void setParent(SceneNode *parent);
 };
