@@ -23,8 +23,10 @@ private:
 public:
 	Camera();
 
-	void setTransform(glm::mat4 &m4Transform);
-	void applyTransform(glm::mat4 &m4Transform);
+	void translate(glm::vec3 &translate);
+	void rotate(glm::mat4 &rotate);
+	void rotate(float angle, glm::vec3 &axis);
+	void scale(glm::vec3 &scale);
 	
 	void setProjection(glm::mat4 &m4Projection);
 

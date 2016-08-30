@@ -3,6 +3,7 @@
 #include "Scene.hpp"
 #include "SceneNodeTreeItem.hpp"
 #include "EngineContext.hpp"
+#include "StaticObjectRenderComponent.hpp"
 #include <QDockWidget>
 #include <memory>
 using namespace std;
@@ -18,10 +19,11 @@ class SceneGraphTree : public QDockWidget
 private:
 	shared_ptr<QTreeWidget> m_treeWidget;
 	shared_ptr<EngineContext> m_context;
-	QAction *m_addAction;
+	QAction *m_addCubeAction;
+	QAction *m_addSphereAction;
 
 	void _addSceneNodeRecursive(shared_ptr<SceneNode> node, QTreeWidgetItem *parent, bool isRoot);
-	void _addNewNode();
+	void _addNewNode(shared_ptr<StaticObjectRenderComponent> renderComponent, string name);
 	void _selectionChanged();
 
 public:

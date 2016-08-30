@@ -14,16 +14,11 @@ Camera::Camera()
 	, m_v3RightDir(baseRightDir)
 {
 	// Default position
-	applyTransform(glm::translate(glm::mat4(1.0f), glm::vec3(4.f, 4.f, 4.f)));
+	translate(glm::vec3(4.f, 4.f, 4.f));
 
 	// Default look
-	glm::vec3 eyePos = m_v3EyePos;
-	applyTransform(glm::translate(glm::mat4(1.f), -1.f*eyePos));
-	glm::quat qHorzRotate = glm::angleAxis(45.0f, m_v3UpDir);
-	applyTransform(glm::toMat4(qHorzRotate));
-	glm::quat qVertRotate = glm::angleAxis(-35.3f, m_v3RightDir);
-	applyTransform(glm::toMat4(qVertRotate));
-	applyTransform(glm::translate(glm::mat4(1.f), 1.f*eyePos));
+	rotate(45.0f, m_v3UpDir);
+	rotate(-35.3f, m_v3RightDir);
 }
 
 void Camera::updateViewMatrix()
@@ -36,15 +31,27 @@ void Camera::updateViewMatrix()
 	m_m4ViewMatrix = glm::lookAt(m_v3EyePos, m_v3EyePos+m_v3LookDir, m_v3UpDir);
 }
 
-void Camera::setTransform(glm::mat4 &m4Transform)
+void Camera::translate(glm::vec3 &translate)
 {
-	Object::setTransform(m4Transform);
+	Object::translate(translate);
 	updateViewMatrix();
 }
 
-void Camera::applyTransform(glm::mat4 &m4Transform)
+void Camera::rotate(glm::mat4 &rotate)
 {
-	Object::applyTransform(m4Transform);
+	Object::rotate(rotate);
+	updateViewMatrix();
+}
+
+void Camera::rotate(float angle, glm::vec3 &axis)
+{
+	Object::rotate(angle, axis);
+	updateViewMatrix();
+}
+
+void Camera::scale(glm::vec3 &scale)
+{
+	Object::scale(scale);
 	updateViewMatrix();
 }
 

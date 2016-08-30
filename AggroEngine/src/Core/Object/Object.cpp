@@ -2,28 +2,40 @@
 
 Object::Object()
 	: m_renderComponent(shared_ptr<RenderComponent>(nullptr))
+	, m_rotateMat(glm::mat4(1.0))
+	, m_translateMat(glm::mat4(1.0))
+	, m_scaleMat(glm::mat4(1.0))
+	, m_translate(glm::vec3(0))
+	, m_scale(glm::vec3(1))
 {
 
-}
-
-void Object::setTransform(glm::mat4 &m4Transform)
-{
-	this->m_m4Transform = m4Transform;
-}
-
-void Object::applyTransform(glm::mat4 &m4Transform)
-{
-	this->m_m4Transform = m4Transform * this->m_m4Transform;
 }
 
 void Object::translate(glm::vec3 &translate)
 {
-	applyTransform(glm::translate(glm::mat4(1.0), translate));
+	m_translate += translate;
+	m_translateMat = glm::translate(glm::mat4(1.0), m_translate);
 }
 
-glm::mat4 &Object::getTransform()
+void Object::rotate(glm::mat4 &rotate)
 {
-	return this->m_m4Transform;
+	m_rotateMat = rotate * m_rotateMat;
+}
+
+void Object::rotate(float angle, glm::vec3 &axis)
+{
+	rotate(glm::toMat4(glm::angleAxis(angle, glm::normalize(axis))));
+}
+
+void Object::scale(glm::vec3 &scale)
+{
+	m_scale += scale;
+	m_scaleMat = glm::scale(glm::mat4(1.0), m_scale);
+}
+
+glm::mat4 Object::getTransform()
+{
+	return m_scaleMat * m_translateMat * m_rotateMat;
 }
 
 bool Object::hasRenderComponent()

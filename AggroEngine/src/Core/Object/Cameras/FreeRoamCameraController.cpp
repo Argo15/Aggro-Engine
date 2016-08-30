@@ -42,7 +42,7 @@ void FreeRoamCameraController::handleKeyboardInput(Camera &camera, KeyboardState
 		v3Translate += glm::vec3(0,nSpeed*5.0f,0);
 	}
 
-	camera.applyTransform(glm::translate(glm::mat4(1.0f), v3Translate));
+	camera.translate(v3Translate);
 }
 
 void FreeRoamCameraController::handleMouseInput(Camera &camera, MouseState &mouse, float nSpeed)
@@ -51,13 +51,8 @@ void FreeRoamCameraController::handleMouseInput(Camera &camera, MouseState &mous
 	{
 		if (mouse.getDeltaY() != 0 || mouse.getDeltaX() != 0)
 		{
-			glm::vec3 v3EyePos(camera.getEyePos());
-			camera.applyTransform(glm::translate(glm::mat4(1.f), -1.f*v3EyePos)); // Move to center
-			glm::quat qVertRotate = glm::angleAxis(nSpeed*-15.0f*mouse.getDeltaY(), camera.getRightDir()); // Rotate about up / down
-			camera.applyTransform(glm::toMat4(qVertRotate));
-			glm::quat qHorzRotate = glm::angleAxis(nSpeed*-25.0f*mouse.getDeltaX(), glm::vec3(0.f, 1.f, 0.f)); // Rotate about Y axis
-			camera.applyTransform(glm::toMat4(qHorzRotate));
-			camera.applyTransform(glm::translate(glm::mat4(1.f), 1.f*v3EyePos)); // Move back to pos
+			camera.rotate(nSpeed*-15.0f*mouse.getDeltaY(), camera.getRightDir()); // Rotate up / down
+			camera.rotate(nSpeed*-25.0f*mouse.getDeltaX(), glm::vec3(0.f, 1.f, 0.f)); // Rotate left / right
 		}
 	}
 }
