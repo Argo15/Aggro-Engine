@@ -6,11 +6,13 @@
 #include <QMouseEvent>
 #include <QModelIndex>
 #include <iostream>
+#include <boost/unordered_map.hpp>
 
 SceneGraphTree::SceneGraphTree(shared_ptr<EngineContext> context, QWidget *parent)
 	: QDockWidget(parent)
 	, m_treeWidget(shared_ptr<QTreeWidget>(new SceneTreeWidget()))
 	, m_context(context)
+	, m_isRefreshing(false)
 {
 	m_addCubeAction = new QAction(tr("Add Cube"), this);
 	connect(m_addCubeAction, &QAction::triggered, this, [this]() {
@@ -28,13 +30,6 @@ SceneGraphTree::SceneGraphTree(shared_ptr<EngineContext> context, QWidget *paren
 		_addNewNode(renderComponent, "Sphere");
 	});
 
-	refresh(m_context->getScene().get());
-	m_context->getScene()->addUpdateListener([this](auto scene) {refresh(scene);});
-	setMouseTracking(true);
-}
-
-void SceneGraphTree::refresh(Scene* scene)
-{
 	// Create new tree widget
 	m_treeWidget = shared_ptr<QTreeWidget>(new SceneTreeWidget(this));
 	m_treeWidget->setHeaderHidden(true);
@@ -42,8 +37,17 @@ void SceneGraphTree::refresh(Scene* scene)
 	m_treeWidget->addAction(m_addCubeAction);
 	m_treeWidget->addAction(m_addSphereAction);
 	connect(m_treeWidget.get(), &QTreeWidget::itemSelectionChanged, this, &SceneGraphTree::_selectionChanged);
+	
+	m_context->getScene()->addUpdateListener([this](auto scene) {refresh(scene);});
+	setMouseTracking(true);
+	setWidget(m_treeWidget.get());
+}
 
+void SceneGraphTree::refresh(Scene* scene)
+{
+	m_isRefreshing = true;
 	_addSceneNodeRecursive(scene->getRoot(), nullptr, true);
+	m_isRefreshing = false;
 }
 
 void SceneGraphTree::_addSceneNodeRecursive(shared_ptr<SceneNode> node, QTreeWidgetItem *parent, bool isRoot)
@@ -52,22 +56,49 @@ void SceneGraphTree::_addSceneNodeRecursive(shared_ptr<SceneNode> node, QTreeWid
 	{
 		return;
 	}
-	// Create item for current
+
 	QTreeWidgetItem *treeItem = nullptr;
-	if (isRoot)
+	if (m_currentNodes[node.get()] != nullptr)
 	{
-		setWindowTitle("Scene");
-	}
-	else if (parent == nullptr)
-	{
-		treeItem = new SceneNodeTreeItem(node, m_treeWidget.get());
+		// already in graph, update it
+		treeItem = m_currentNodes[node.get()];
 		treeItem->setText(0, QString::fromStdString(node->getName()));
 	}
 	else
 	{
-		treeItem = new SceneNodeTreeItem(node);
-		treeItem->setText(0, QString::fromStdString(node->getName()));
-		parent->addChild(treeItem);
+		// Create item for current
+		if (isRoot)
+		{
+			setWindowTitle("Scene"); // TODO change to scene name
+		}
+		else if (parent == nullptr)
+		{
+			treeItem = new SceneNodeTreeItem(node, m_treeWidget.get());
+			treeItem->setText(0, QString::fromStdString(node->getName()));
+		}
+		else
+		{
+			treeItem = new SceneNodeTreeItem(node);
+			treeItem->setText(0, QString::fromStdString(node->getName()));
+			parent->addChild(treeItem);
+		}
+		m_currentNodes[node.get()] = treeItem;
+	}
+
+	if (treeItem != nullptr)
+	{
+		if (node->isSelected())
+		{
+			treeItem->setSelected(true);
+			if (treeItem->parent() != nullptr)
+			{
+				treeItem->parent()->setExpanded(true);
+			}
+		}
+		else
+		{
+			treeItem->setSelected(false);
+		}
 	}
 
 	// Recursive iterate all children
@@ -79,8 +110,6 @@ void SceneGraphTree::_addSceneNodeRecursive(shared_ptr<SceneNode> node, QTreeWid
 			_addSceneNodeRecursive(child, treeItem, false);
 		}
 	}
-
-	setWidget(m_treeWidget.get());
 }
 
 void SceneGraphTree::_addNewNode(shared_ptr<StaticObjectRenderComponent> renderComponent, string name)
@@ -103,32 +132,23 @@ void SceneGraphTree::_addNewNode(shared_ptr<StaticObjectRenderComponent> renderC
 	node->addChild(newNode);
 
 	// Update scene graph tree
-	QTreeWidgetItem *newItem;
-	if (*it)
-	{
-		newItem = new SceneNodeTreeItem(newNode);
-		SceneNodeTreeItem *item = (SceneNodeTreeItem *)(*it);
-		item->addChild(newItem);
-		item->setExpanded(true);
-		item->setSelected(false);
-	}
-	else
-	{
-		newItem = new SceneNodeTreeItem(newNode, m_treeWidget.get());
-	}
-	newItem->setSelected(true);
-	newItem->setText(0, QString::fromStdString(newNode->getName()));
+	m_context->getScene()->deselectAllNodes();
+	newNode->setSelected(true);
+	m_context->getScene()->update();
 }
 
 void SceneGraphTree::_selectionChanged()
 {
-	m_context->getScene()->deselectAllNodes();
-	QTreeWidgetItemIterator it(m_treeWidget.get(), QTreeWidgetItemIterator::Selected);
-	while (*it)
+	if (!m_isRefreshing)
 	{
-		SceneNodeTreeItem *item = (SceneNodeTreeItem *)(*it);
-		shared_ptr<SceneNode> node = item->getSceneNode();
-		node->setSelected(true);
-		it++;
+		m_context->getScene()->deselectAllNodes();
+		QTreeWidgetItemIterator it(m_treeWidget.get(), QTreeWidgetItemIterator::Selected);
+		while (*it)
+		{
+			SceneNodeTreeItem *item = (SceneNodeTreeItem *)(*it);
+			shared_ptr<SceneNode> node = item->getSceneNode();
+			node->setSelected(true);
+			it++;
+		}
 	}
 }

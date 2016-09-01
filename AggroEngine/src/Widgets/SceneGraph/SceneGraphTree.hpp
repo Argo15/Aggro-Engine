@@ -22,6 +22,9 @@ private:
 	QAction *m_addCubeAction;
 	QAction *m_addSphereAction;
 
+	bool m_isRefreshing;
+	boost::unordered_map<SceneNode *, QTreeWidgetItem *> m_currentNodes;
+
 	void _addSceneNodeRecursive(shared_ptr<SceneNode> node, QTreeWidgetItem *parent, bool isRoot);
 	void _addNewNode(shared_ptr<StaticObjectRenderComponent> renderComponent, string name);
 	void _selectionChanged();

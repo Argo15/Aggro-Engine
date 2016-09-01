@@ -4,6 +4,7 @@
 #include <vector>
 #include "../../Core/Object/Cameras/Camera.hpp"
 #include "SceneNode.hpp"
+#include "Listener.hpp"
 using namespace std;
 
 /**
@@ -17,7 +18,7 @@ class Scene
 private:
 	shared_ptr<SceneNode> m_root;
 	shared_ptr<Camera> m_camera;
-	vector<std::function<void(Scene*)>> m_updateListeners;
+	Listener<Scene*> m_updateListeners;
 
 	void _applyToNodeRecursive(shared_ptr<SceneNode> node, std::function<void(SceneNode*)> func);
 

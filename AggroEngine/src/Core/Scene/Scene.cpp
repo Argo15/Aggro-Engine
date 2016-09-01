@@ -1,4 +1,5 @@
 #include "Scene.hpp"
+#include "FunctionUtil.hpp"
 
 Scene::Scene()
 {
@@ -32,18 +33,12 @@ void Scene::setCamera(shared_ptr<Camera> camera)
 
 void Scene::addUpdateListener(std::function<void(Scene*)> listener)
 {
-	m_updateListeners.push_back(listener);
+	m_updateListeners.add(listener);
 }
 
 void Scene::update()
 {
-	if (m_updateListeners.size() > 0)
-	{
-		for (auto &listener : m_updateListeners)
-		{
-			listener(this);
-		}
-	}
+	m_updateListeners.notify(this);
 }
 
 void Scene::applyToAllNodes(std::function<void(SceneNode*)> func)
