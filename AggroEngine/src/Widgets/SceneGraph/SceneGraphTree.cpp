@@ -133,7 +133,7 @@ void SceneGraphTree::_addNewNode(shared_ptr<StaticObjectRenderComponent> renderC
 
 	// Update scene graph tree
 	m_context->getScene()->deselectAllNodes();
-	newNode->setSelected(true);
+	m_context->getScene()->selectNode(newNode);
 	m_context->getScene()->update();
 }
 
@@ -147,7 +147,7 @@ void SceneGraphTree::_selectionChanged()
 		{
 			SceneNodeTreeItem *item = (SceneNodeTreeItem *)(*it);
 			shared_ptr<SceneNode> node = item->getSceneNode();
-			node->setSelected(true);
+			m_context->getScene()->selectNode(node);
 			it++;
 		}
 	}

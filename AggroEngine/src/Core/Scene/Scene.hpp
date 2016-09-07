@@ -19,6 +19,9 @@ private:
 	shared_ptr<SceneNode> m_root;
 	shared_ptr<Camera> m_camera;
 	Listener<Scene*> m_updateListeners;
+	Listener<shared_ptr<SceneNode>> m_selectionChangeListeners;
+
+	shared_ptr<SceneNode> m_selectedNode;
 
 	void _applyToNodeRecursive(shared_ptr<SceneNode> node, std::function<void(SceneNode*)> func);
 
@@ -36,5 +39,12 @@ public:
 	void update();
 
 	void applyToAllNodes(std::function<void(SceneNode*)> func);
+
+	void selectNode(shared_ptr<SceneNode> node);
+	void deselectNode(shared_ptr<SceneNode> node);
 	void deselectAllNodes();
+
+	shared_ptr<SceneNode> getSelectedNode();
+
+	void addSelectionChangeListener(std::function<void(shared_ptr<SceneNode>)> listener);
 };

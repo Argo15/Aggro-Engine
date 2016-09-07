@@ -5,18 +5,8 @@
 #include <QAction>
 #include <QMenuBar>
 #include "SceneGraphTree.hpp"
-
-class DockedActorEditor : public QDockWidget
-{
-public:
-	DockedActorEditor(string name, QWidget *parent)
-	{
-		setWindowTitle(name.c_str());
-		setWidget(new QPushButton("Test", parent));
-		setAutoFillBackground(true);
-		setBackgroundRole(QPalette::Dark);
-	}
-};
+#include "InspectorWidget.hpp"
+#include "StringUtil.hpp"
 
 MainWindow::MainWindow()
 	: m_context(shared_ptr<EngineContext>(new EngineContext()))
@@ -29,23 +19,28 @@ MainWindow::MainWindow()
 	startTimer(0);
 	timer.Init();
 
-	// Test
 	QDockWidget *leftWidget = new SceneGraphTree(m_context, this);
+	leftWidget->setMinimumWidth(250);
 	addDockWidget(Qt::LeftDockWidgetArea, leftWidget);
 
-	/*QDockWidget *topWidget = new DockedActorEditor("Test Top", this);
-	QDockWidget *rightWidget = new DockedActorEditor("Test Right", this);
-	QDockWidget *rightWidget2 = new DockedActorEditor("Test Right 2", this);
-	addDockWidget(Qt::BottomDockWidgetArea, topWidget);
+	QDockWidget *rightWidget = new QDockWidget();
+	rightWidget->setMinimumWidth(350);
+	InspectorWidget *inspectorWidget = new InspectorWidget(m_context, rightWidget);
+	rightWidget->setWidget(inspectorWidget);
+	rightWidget->setWindowTitle(QString::fromStdString("Inspector"));
 	addDockWidget(Qt::RightDockWidgetArea, rightWidget);
-	addDockWidget(Qt::RightDockWidgetArea, rightWidget2);*/
 }
 
 void MainWindow::timerEvent(QTimerEvent *event)
 {
-	//m_glWidget->setFPS(timer.GetFPS());
-	m_context->setFPS(60); // seems to be more accurate
-	m_glWidget->repaint();
+	static float time = 0;
+	time += 1.0 / timer.GetFPS();
+	if (time >= (1.0 / 60))
+	{
+		m_context->setFPS(60);
+		m_glWidget->repaint();
+		time = 0;
+	}
 }
 
 /* createMenus() */

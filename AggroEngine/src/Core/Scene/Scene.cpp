@@ -59,7 +59,36 @@ void Scene::_applyToNodeRecursive(shared_ptr<SceneNode> node, std::function<void
 	}
 }
 
+void Scene::selectNode(shared_ptr<SceneNode> node)
+{
+	node->setSelected(true);
+	m_selectedNode = node;
+	m_selectionChangeListeners.notify(m_selectedNode);
+}
+
+void Scene::deselectNode(shared_ptr<SceneNode> node)
+{
+	node->setSelected(false);
+	if (m_selectedNode == node)
+	{
+		m_selectedNode = shared_ptr<SceneNode>();
+		m_selectionChangeListeners.notify(m_selectedNode);
+	}
+}
+
 void Scene::deselectAllNodes()
 {
 	applyToAllNodes([](auto node) {node->setSelected(false);});
+	m_selectedNode = shared_ptr<SceneNode>();
+	m_selectionChangeListeners.notify(m_selectedNode);
+}
+
+shared_ptr<SceneNode> Scene::getSelectedNode()
+{
+	return m_selectedNode;
+}
+
+void Scene::addSelectionChangeListener(std::function<void(shared_ptr<SceneNode>)> listener)
+{
+	m_selectionChangeListeners.add(listener);
 }
