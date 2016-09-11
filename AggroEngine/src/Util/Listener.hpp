@@ -2,27 +2,58 @@
 
 #include <vector>
 #include <functional>
+#include <boost/unordered_map.hpp>
+#include <boost/range/adaptor/map.hpp> 
 using namespace std;
 
 template <class T>
 class Listener
 {
 private:
-	vector<function<void(T)>> m_listeners;
+	boost::unordered_map<void *, vector<function<void(T)>>> m_hmListeners;
 
 public:
+
 	template <class T> void add(function<void(T)> listener)
 	{
-		m_listeners.push_back(listener);
+		add((void *)this, listener);
+	}
+
+	template <class T> void add(void *ns, function<void(T)> listener)
+	{
+		if (m_hmListeners.find(ns) == m_hmListeners.end())
+		{
+			// add new list
+			vector<function<void(T)>> listeners;
+			listeners.push_back(listener);
+			m_hmListeners[ns] = listeners;
+		}
+		else
+		{
+			// append to old list
+			vector<function<void(T)>> &listeners = m_hmListeners[ns];
+			listeners.push_back(listener);
+		}
+	}
+
+	void remove(void *ns)
+	{
+		if (ns != nullptr && m_hmListeners.find(ns) != m_hmListeners.end())
+		{
+			m_hmListeners[ns].clear();
+		}
 	}
 
 	template <class T> void notify(T arg)
 	{
-		if (m_listeners.size() > 0)
+		for (auto listeners : (m_hmListeners | boost::adaptors::map_values))
 		{
-			for (auto &listener : m_listeners)
+			if (listeners.size() > 0)
 			{
-				listener(arg);
+				for (auto &listener : listeners)
+				{
+					listener(arg);
+				}
 			}
 		}
 	}

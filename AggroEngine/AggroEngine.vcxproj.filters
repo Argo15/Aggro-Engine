@@ -187,10 +187,10 @@
     <ClCompile Include="src\Widgets\Inspector\InspectorWidget.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\Widgets\Inspector\HeaaderWidget.cpp">
+    <ClCompile Include="src\Widgets\Inspector\InspectorSubWidget.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\Widgets\Inspector\InspectorSubWidget.cpp">
+    <ClCompile Include="src\Widgets\Inspector\HeaderWidget.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

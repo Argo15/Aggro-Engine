@@ -95,7 +95,7 @@
     <ClCompile Include="src\Util\Config\PropertyTreeParser.cpp" />
     <ClCompile Include="src\Util\StringUtil.cpp" />
     <ClCompile Include="src\Widgets\GLWidget.cpp" />
-    <ClCompile Include="src\Widgets\Inspector\HeaaderWidget.cpp" />
+    <ClCompile Include="src\Widgets\Inspector\HeaderWidget.cpp" />
     <ClCompile Include="src\Widgets\Inspector\InspectorSubWidget.cpp" />
     <ClCompile Include="src\Widgets\Inspector\InspectorWidget.cpp" />
     <ClCompile Include="src\Widgets\MainWindow.cpp" />

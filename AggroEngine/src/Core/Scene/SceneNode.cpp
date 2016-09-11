@@ -8,6 +8,7 @@ SceneNode::SceneNode(SceneNode *parent, shared_ptr<Object> object)
 	, m_children(shared_ptr<vector<shared_ptr<SceneNode>>>(new vector<shared_ptr<SceneNode>>()))
 	, m_isSelected(false)
 	, m_name("")
+	, m_changeListeners()
 {
 	setName("Object");
 }
@@ -36,6 +37,7 @@ void SceneNode::addChild(shared_ptr<SceneNode> child)
 {
 	m_children->push_back(child);
 	child->setParent(this);
+	m_changeListeners.notify(this);
 }
 
 void SceneNode::setName(string name)
@@ -61,6 +63,7 @@ void SceneNode::setName(string name)
 			m_name = name + " (" + StringUtil::intToString(count++) + ")";
 		}
 	}
+	m_changeListeners.notify(this);
 }
 
 string SceneNode::getName()
@@ -71,4 +74,14 @@ string SceneNode::getName()
 void SceneNode::setParent(SceneNode *parent)
 {
 	m_parent = parent;
+}
+
+void SceneNode::addChangeListener(void *ns, std::function<void(SceneNode *)> listener)
+{
+	m_changeListeners.add(ns, listener);
+}
+
+void SceneNode::removeChangeListener(void *ns)
+{
+	m_changeListeners.remove(ns);
 }

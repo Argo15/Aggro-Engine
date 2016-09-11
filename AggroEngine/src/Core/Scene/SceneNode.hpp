@@ -3,6 +3,7 @@
 #include <memory>
 #include <vector>
 #include "Object.hpp"
+#include "Listener.hpp"
 using namespace std;
 
 /**
@@ -20,6 +21,8 @@ private:
 	bool m_isSelected;
 	string m_name;
 
+	Listener<SceneNode *> m_changeListeners;
+
 public:
 	SceneNode(SceneNode *parent = nullptr, shared_ptr<Object> object = shared_ptr<Object>(new Object()));
 
@@ -32,4 +35,7 @@ public:
 	void addChild(shared_ptr<SceneNode> child);
 	void setName(string name);
 	void setParent(SceneNode *parent);
+
+	void addChangeListener(void *ns, std::function<void(SceneNode *)> listener);
+	void removeChangeListener(void *ns);
 };

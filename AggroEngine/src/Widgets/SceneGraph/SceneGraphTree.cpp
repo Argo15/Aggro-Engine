@@ -83,6 +83,7 @@ void SceneGraphTree::_addSceneNodeRecursive(shared_ptr<SceneNode> node, QTreeWid
 			parent->addChild(treeItem);
 		}
 		m_currentNodes[node.get()] = treeItem;
+		node->addChangeListener(this, [this](auto updateNode) {this->_refreshNode(updateNode);});
 	}
 
 	if (treeItem != nullptr)
@@ -150,5 +151,13 @@ void SceneGraphTree::_selectionChanged()
 			m_context->getScene()->selectNode(node);
 			it++;
 		}
+	}
+}
+
+void SceneGraphTree::_refreshNode(SceneNode *node)
+{
+	if (node != nullptr && m_currentNodes[node] != nullptr)
+	{
+		m_currentNodes[node]->setText(0, QString::fromStdString(node->getName()));
 	}
 }

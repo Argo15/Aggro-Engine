@@ -11,12 +11,14 @@ InspectorSubWidget::InspectorSubWidget(QWidget *parent)
 	setLayout(m_layout.get());
 }
 
-void InspectorSubWidget::refresh(shared_ptr<SceneNode> node)
+void InspectorSubWidget::refresh(shared_ptr<SceneNode> newNode)
 {
-	if (node)
+	m_currentNode = newNode;
+	if (newNode)
 	{
 		show();
-		_refresh(node);
+		_refresh(newNode.get());
+		m_lastActiveNode = newNode;
 	}
 	else
 	{

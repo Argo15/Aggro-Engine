@@ -9,7 +9,8 @@ private:
 	shared_ptr<QLineEdit> m_nameEdit;
 
 protected:
-	virtual void _refresh(shared_ptr<SceneNode> node);
+	virtual void _refresh(SceneNode *newNode);
+	void _onNameChange(QString newName);
 
 public:
 	HeaderWidget(QWidget *parent = nullptr);
