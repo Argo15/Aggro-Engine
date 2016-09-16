@@ -1,7 +1,8 @@
 #pragma once
 
-#include "Components\Render\RenderComponent.hpp"
-#include "../../Util/Math/Matrix.hpp"
+#include "RenderComponent.hpp"
+#include "TransformComponent.hpp"
+#include "Matrix.hpp"
 #include <memory>
 using namespace std;
 
@@ -15,12 +16,7 @@ using namespace std;
 class Object
 {
 private:
-	glm::mat4 m_rotateMat;
-	glm::mat4 m_translateMat;
-	glm::mat4 m_scaleMat;
-	glm::vec3 m_translate;
-	glm::vec3 m_scale;
-
+	shared_ptr<TransformComponent> m_transformComponent;
 	shared_ptr<RenderComponent> m_renderComponent;
 	
 public:
@@ -32,6 +28,10 @@ public:
 	void rotate(glm::mat4 &rotate);
 	void rotate(float angle, glm::vec3 &axis);
 	void scale(glm::vec3 &scale);
+
+	bool hasTransformComponent();
+	void setTransformComponent(shared_ptr<TransformComponent> transformComponent);
+	shared_ptr<TransformComponent> getTransformComponent();
 
 	bool hasRenderComponent();
 	void setRenderComponent(shared_ptr<RenderComponent> renderComponent);

@@ -30,12 +30,16 @@ SceneGraphTree::SceneGraphTree(shared_ptr<EngineContext> context, QWidget *paren
 		_addNewNode(renderComponent, "Sphere");
 	});
 
+	m_deleteAction = new QAction(tr("Delete"), this);
+	m_deleteAction->setEnabled(false);
+
 	// Create new tree widget
 	m_treeWidget = shared_ptr<QTreeWidget>(new SceneTreeWidget(this));
 	m_treeWidget->setHeaderHidden(true);
 	m_treeWidget->setContextMenuPolicy(Qt::ActionsContextMenu);
 	m_treeWidget->addAction(m_addCubeAction);
 	m_treeWidget->addAction(m_addSphereAction);
+	m_treeWidget->addAction(m_deleteAction);
 	connect(m_treeWidget.get(), &QTreeWidget::itemSelectionChanged, this, &SceneGraphTree::_selectionChanged);
 	
 	m_context->getScene()->addUpdateListener([this](auto scene) {refresh(scene);});
@@ -144,13 +148,17 @@ void SceneGraphTree::_selectionChanged()
 	{
 		m_context->getScene()->deselectAllNodes();
 		QTreeWidgetItemIterator it(m_treeWidget.get(), QTreeWidgetItemIterator::Selected);
+		bool hasSelected = false;
 		while (*it)
 		{
 			SceneNodeTreeItem *item = (SceneNodeTreeItem *)(*it);
 			shared_ptr<SceneNode> node = item->getSceneNode();
 			m_context->getScene()->selectNode(node);
+			hasSelected = true;
 			it++;
 		}
+
+		m_deleteAction->setEnabled(hasSelected);
 	}
 }
 

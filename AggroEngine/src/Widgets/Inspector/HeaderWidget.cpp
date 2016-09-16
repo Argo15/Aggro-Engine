@@ -6,7 +6,7 @@ HeaderWidget::HeaderWidget(QWidget *parent)
 	, m_nameEdit(shared_ptr<QLineEdit>(new QLineEdit("", this)))
 {
 	m_layout->addWidget(m_nameEdit.get());
-	connect(m_nameEdit.get(), &QLineEdit::textChanged, this, &HeaderWidget::_onNameChange);
+	connect(m_nameEdit.get(), &QLineEdit::textEdited, this, &HeaderWidget::_onNameChange);
 }
 
 void HeaderWidget::_refresh(SceneNode *newNode)

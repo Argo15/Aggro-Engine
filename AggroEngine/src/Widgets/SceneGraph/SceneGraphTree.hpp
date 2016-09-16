@@ -21,6 +21,7 @@ private:
 	shared_ptr<EngineContext> m_context;
 	QAction *m_addCubeAction;
 	QAction *m_addSphereAction;
+	QAction *m_deleteAction;
 
 	bool m_isRefreshing;
 	boost::unordered_map<SceneNode *, QTreeWidgetItem *> m_currentNodes;

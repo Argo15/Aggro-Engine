@@ -1,5 +1,5 @@
 #include "GLWidget.hpp"
-#include "../Core/Object/Components/Render/StaticObjectRenderComponent.hpp"
+#include "StaticObjectRenderComponent.hpp"
 
 GLWidget::GLWidget(shared_ptr<EngineContext> context, QWidget *parent)
 	: QGLWidget(parent)
