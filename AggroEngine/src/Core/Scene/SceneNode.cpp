@@ -9,6 +9,7 @@ SceneNode::SceneNode(SceneNode *parent, shared_ptr<Object> object)
 	, m_isSelected(false)
 	, m_name("")
 	, m_changeListeners()
+	, m_deletedListeners()
 {
 	setName("Object");
 }
@@ -76,6 +77,11 @@ void SceneNode::setParent(SceneNode *parent)
 	m_parent = parent;
 }
 
+SceneNode *SceneNode::getParent()
+{
+	return m_parent;
+}
+
 void SceneNode::addChangeListener(void *ns, std::function<void(SceneNode *)> listener)
 {
 	m_changeListeners.add(ns, listener);
@@ -84,4 +90,19 @@ void SceneNode::addChangeListener(void *ns, std::function<void(SceneNode *)> lis
 void SceneNode::removeChangeListener(void *ns)
 {
 	m_changeListeners.remove(ns);
+}
+
+void SceneNode::addDeletedListener(void *ns, std::function<void(SceneNode *)> listener)
+{
+	m_deletedListeners.add(ns, listener);
+}
+
+void SceneNode::notifyDeleted()
+{
+	m_deletedListeners.notify(this);
+}
+
+void SceneNode::removeChild(shared_ptr<SceneNode> child)
+{
+	m_children->erase(remove(m_children->begin(), m_children->end(), child), m_children->end());
 }

@@ -32,6 +32,7 @@ SceneGraphTree::SceneGraphTree(shared_ptr<EngineContext> context, QWidget *paren
 
 	m_deleteAction = new QAction(tr("Delete"), this);
 	m_deleteAction->setEnabled(false);
+	connect(m_deleteAction, &QAction::triggered, this, &SceneGraphTree::_deleteSelected);
 
 	// Create new tree widget
 	m_treeWidget = shared_ptr<QTreeWidget>(new SceneTreeWidget(this));
@@ -88,6 +89,7 @@ void SceneGraphTree::_addSceneNodeRecursive(shared_ptr<SceneNode> node, QTreeWid
 		}
 		m_currentNodes[node.get()] = treeItem;
 		node->addChangeListener(this, [this](auto updateNode) {this->_refreshNode(updateNode);});
+		node->addDeletedListener(this, [this](auto deleteNode) {this->_deleteNode(deleteNode);});
 	}
 
 	if (treeItem != nullptr)
@@ -162,10 +164,31 @@ void SceneGraphTree::_selectionChanged()
 	}
 }
 
+void SceneGraphTree::_deleteSelected()
+{
+	QTreeWidgetItemIterator it(m_treeWidget.get(), QTreeWidgetItemIterator::Selected);
+	while (*it)
+	{
+		SceneNodeTreeItem *item = (SceneNodeTreeItem *)(*it);
+		shared_ptr<SceneNode> node = item->getSceneNode();
+		m_context->getScene()->deleteNode(node);
+		it++;
+	}
+}
+
 void SceneGraphTree::_refreshNode(SceneNode *node)
 {
 	if (node != nullptr && m_currentNodes[node] != nullptr)
 	{
 		m_currentNodes[node]->setText(0, QString::fromStdString(node->getName()));
+	}
+}
+
+void SceneGraphTree::_deleteNode(SceneNode *node)
+{
+	if (node != nullptr && m_currentNodes[node] != nullptr)
+	{
+		delete m_currentNodes[node];
+		m_currentNodes[node] = nullptr;
 	}
 }

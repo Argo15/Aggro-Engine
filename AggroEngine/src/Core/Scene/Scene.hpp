@@ -47,4 +47,6 @@ public:
 	shared_ptr<SceneNode> getSelectedNode();
 
 	void addSelectionChangeListener(std::function<void(shared_ptr<SceneNode>)> listener);
+
+	void deleteNode(shared_ptr<SceneNode> node);
 };

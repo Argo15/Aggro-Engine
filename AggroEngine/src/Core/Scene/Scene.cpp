@@ -92,3 +92,9 @@ void Scene::addSelectionChangeListener(std::function<void(shared_ptr<SceneNode>)
 {
 	m_selectionChangeListeners.add(listener);
 }
+
+void Scene::deleteNode(shared_ptr<SceneNode> node)
+{
+	node->getParent()->removeChild(node);
+	node->notifyDeleted();
+}

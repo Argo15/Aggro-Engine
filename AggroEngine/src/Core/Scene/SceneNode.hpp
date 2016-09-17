@@ -22,6 +22,7 @@ private:
 	string m_name;
 
 	Listener<SceneNode *> m_changeListeners;
+	Listener<SceneNode *> m_deletedListeners;
 
 public:
 	SceneNode(SceneNode *parent = nullptr, shared_ptr<Object> object = shared_ptr<Object>(new Object()));
@@ -36,6 +37,13 @@ public:
 	void setName(string name);
 	void setParent(SceneNode *parent);
 
+	SceneNode *getParent();
+
 	void addChangeListener(void *ns, std::function<void(SceneNode *)> listener);
 	void removeChangeListener(void *ns);
+
+	void addDeletedListener(void *ns, std::function<void(SceneNode *)> listener);
+	void notifyDeleted();
+
+	void removeChild(shared_ptr<SceneNode> child);
 };

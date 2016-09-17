@@ -30,7 +30,10 @@ private:
 	void _addNewNode(shared_ptr<StaticObjectRenderComponent> renderComponent, string name);
 	void _selectionChanged();
 
+	void _deleteSelected();
+
 	void _refreshNode(SceneNode *node);
+	void _deleteNode(SceneNode *node);
 
 public:
 	SceneGraphTree(shared_ptr<EngineContext> context, QWidget *parent);
