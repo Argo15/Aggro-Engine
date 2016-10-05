@@ -15,8 +15,8 @@ DevTexture::DevTexture(unsigned int nWidth, unsigned int nHeight)
 		if ((i+ypos%2) % 2 == 0)
 		{
 			pTexture[i+0]=(unsigned char)0;
-			pTexture[i+1]=(unsigned char)80;
-			pTexture[i+2]=(unsigned char)200;
+			pTexture[i+1]=(unsigned char)(80+((float)i/(float)nTextureSize*150));
+			pTexture[i+2]=(unsigned char)(150 + ((float)i / (float)nTextureSize * 80));
 		}
 		else
 		{

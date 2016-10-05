@@ -3,13 +3,13 @@
 #define GLEW_STATIC
 #include <GL/glew.h>
 #include <memory>
-#include "Common\VertexBuffer\VertexBufferHandle.hpp"
-#include "Common\RenderData.hpp"
-#include "../Resource/Mesh/Mesh.hpp"
-#include "../Resource/Image/Image.hpp"
-#include "Common\RenderOptions.hpp"
-#include "Common\Texture\TextureHandle.hpp"
-#include "Common\Texture\TextureBuildOptions.hpp"
+#include "VertexBufferHandle.hpp"
+#include "RenderData.hpp"
+#include "Mesh.hpp"
+#include "Image.hpp"
+#include "RenderOptions.hpp"
+#include "TextureHandle.hpp"
+#include "TextureBuildOptions.hpp"
 using namespace std;
 
 /**
@@ -37,7 +37,7 @@ public:
 
 	// Rendering
 	virtual void stageTriangleRender(shared_ptr<RenderData> pRenderData) = 0;
-	virtual void executeRender(RenderOptions renderOptions) = 0;
+	virtual void executeRender(RenderOptions &renderOptions) = 0;
 
 	// Window
 	virtual void setViewport(int nX, int nY, int nWidth, int nHeight) = 0;

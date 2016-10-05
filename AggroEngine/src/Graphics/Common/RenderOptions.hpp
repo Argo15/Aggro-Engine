@@ -10,9 +10,20 @@
 **/
 class RenderOptions
 {
+public:
+	enum RenderMode
+	{
+		SHADED, ALBEDO, NORMAL, SELECTION
+	};
+
 private:
 	glm::mat4 m_m4ProjectionMatrix; // Ortho or perspective
 	glm::mat4 m_m4ViewMatrix;  // Camera position/orientation
+
+	int resWidth;
+	int resHeight;
+
+	RenderMode m_renderMode;
 
 public:
 	RenderOptions();
@@ -22,4 +33,10 @@ public:
 
 	glm::mat4 &getProjectionMatrix();
 	glm::mat4 &getViewMatrix();
+
+	void setRenderMode(RenderMode mode);
+	RenderMode getRenderMode();
+
+	int getResolutionWidth();
+	int getResolutionHeight();
 };

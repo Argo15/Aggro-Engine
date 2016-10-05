@@ -3,9 +3,9 @@
 
 GLWidget::GLWidget(shared_ptr<EngineContext> context, QWidget *parent)
 	: QGLWidget(parent)
-	, m_keyboard(shared_ptr<KeyboardState>(new KeyboardState()))
-	, m_mouse(shared_ptr<MouseState>(new MouseState()))
-	, m_cameraController(shared_ptr<CameraController>(new FreeRoamCameraController()))
+	, m_keyboard(new KeyboardState())
+	, m_mouse(new MouseState())
+	, m_cameraController(new FreeRoamCameraController())
 	, m_context(context)
 {
 	m_renderer = shared_ptr<Renderer>(new Renderer(m_context->getGraphics()));
@@ -58,7 +58,7 @@ void GLWidget::paintGL()
 		return;
 	}
 	m_cameraController->handleKeyboardInput(*m_context->getScene()->getCamera().get(), *m_keyboard.get(), 1.f / m_context->getFPS());
-	m_renderer->renderScene(m_context->getScene());
+	m_renderer->renderScene(m_context->getScene(), m_context->getRenderOptions());
 }
 
 void GLWidget::keyPressEvent(QKeyEvent *event)

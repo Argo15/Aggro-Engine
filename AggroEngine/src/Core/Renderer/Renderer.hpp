@@ -22,5 +22,5 @@ public:
 	Renderer(shared_ptr<Graphics> graphics);
 
 	void init(shared_ptr<VertexBufferCache> vboCache, shared_ptr<TextureCache> textureCache);
-	void renderScene(shared_ptr<Scene> scene);
+	void renderScene(shared_ptr<Scene> scene, shared_ptr<RenderOptions> renderOptions);
 };

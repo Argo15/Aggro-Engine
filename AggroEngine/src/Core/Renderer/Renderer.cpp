@@ -18,7 +18,7 @@ void Renderer::init(shared_ptr<VertexBufferCache> vboCache, shared_ptr<TextureCa
 	m_gridRenderData = shared_ptr<RenderData>(new RenderData(gridVBO, objectRenderComponent->getTexture(), DrawMode::LINES));
 }
 
-void Renderer::renderScene(shared_ptr<Scene> scene)
+void Renderer::renderScene(shared_ptr<Scene> scene, shared_ptr<RenderOptions> renderOptions)
 {
 	// clear
 	m_graphics->clearDepthAndColor();
@@ -30,12 +30,11 @@ void Renderer::renderScene(shared_ptr<Scene> scene)
 	_renderSceneNodeRecursive(scene->getRoot(), glm::mat4(1.0));
 
 	// set scene options
-	RenderOptions renderOptions;
-	renderOptions.setProjectionMatrix(scene->getCamera()->getProjMatrix());
-	renderOptions.setViewMatrix(scene->getCamera()->getViewMatrix());
+	renderOptions->setProjectionMatrix(scene->getCamera()->getProjMatrix());
+	renderOptions->setViewMatrix(scene->getCamera()->getViewMatrix());
 
 	// execute
-	m_graphics->executeRender(renderOptions);
+	m_graphics->executeRender(*(renderOptions.get()));
 }
 
 

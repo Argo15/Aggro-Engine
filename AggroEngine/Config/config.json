@@ -1,10 +1,13 @@
 {
   "window_options": {
     "title": "Aggro Engine",
-	  "dimensions": [1900, 1030],
-	  "fullscreen": false,
-	  "bordered": true,
-	  "resizable": true,
-	  "vsync_enabled": true
+    "dimensions": [ 1900, 1030 ],
+    "fullscreen": false,
+    "bordered": true,
+    "resizable": true,
+    "vsync_enabled": true
+  },
+  "graphics": {
+    "resolution": [ 1920, 1080 ]
   }
 }

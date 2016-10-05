@@ -1,7 +1,7 @@
 #pragma once
 
-#include "GLWidget.hpp"
-#include "../Util/timer.hpp"
+#include "MainWidget.hpp"
+#include "timer.hpp"
 #include "EngineContext.hpp"
 #include <QtWidgets/QMainWindow>
 #include <memory>
@@ -13,7 +13,7 @@ class MainWindow : public QMainWindow
 
 private:
 	shared_ptr<EngineContext> m_context;
-	shared_ptr<GLWidget> m_glWidget;
+	shared_ptr<MainWidget> m_mainWidget;
 	Timer timer;
 
 	// action functions

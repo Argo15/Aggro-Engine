@@ -10,9 +10,9 @@
 
 MainWindow::MainWindow()
 	: m_context(shared_ptr<EngineContext>(new EngineContext()))
-	, m_glWidget(shared_ptr<GLWidget>(new GLWidget(m_context, this)))
+	, m_mainWidget(shared_ptr<MainWidget>(new MainWidget(m_context, this)))
 {
-	setCentralWidget(m_glWidget.get());
+	setCentralWidget(m_mainWidget.get());
 
 	createMenus();
 
@@ -38,7 +38,7 @@ void MainWindow::timerEvent(QTimerEvent *event)
 	if (time >= (1.0 / 60))
 	{
 		m_context->setFPS(60);
-		m_glWidget->repaint();
+		m_mainWidget->getGlWidget()->repaint();
 		time = 0;
 	}
 }

@@ -35,7 +35,10 @@
     <CustomBuild Include="src\Widgets\MainWindow.hpp">
       <Filter>Header Files</Filter>
     </CustomBuild>
-    <CustomBuild Include="src\Widgets\GLWidget.hpp">
+    <CustomBuild Include="src\Widgets\GLWidget\GLWidget.hpp">
+      <Filter>Header Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="src\Widgets\GLWidget\MainWidget.hpp">
       <Filter>Header Files</Filter>
     </CustomBuild>
   </ItemGroup>
@@ -51,9 +54,6 @@
     </ClCompile>
     <ClCompile Include="GeneratedFiles\Release\moc_MainWindow.cpp">
       <Filter>Generated Files\Release</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Widgets\GLWidget.cpp">
-      <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="GeneratedFiles\Debug\moc_GLWidget.cpp">
       <Filter>Generated Files\Debug</Filter>
@@ -198,6 +198,24 @@
     </ClCompile>
     <ClCompile Include="src\Core\Object\Components\Transform\TransformComponent.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Widgets\GLWidget\GLWidget.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Widgets\GLWidget\MainWidget.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Graphics\OpenGL\Framebuffer\FrameBufferObject.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Graphics\OpenGL\Framebuffer\GBuffer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_MainWidget.cpp">
+      <Filter>Generated Files\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_MainWidget.cpp">
+      <Filter>Generated Files\Release</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -372,8 +390,14 @@
     <ClInclude Include="src\Core\Object\Components\Transform\TransformComponent.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="src\Graphics\OpenGL\Framebuffer\FrameBufferObject.hpp" />
+    <ClInclude Include="src\Graphics\OpenGL\Framebuffer\GBuffer.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="ClassDiagram.cd" />
+    <None Include="Resources\Shaders\v_GBuffer.glsl" />
+    <None Include="Resources\Shaders\f_GBuffer.glsl" />
   </ItemGroup>
 </Project>

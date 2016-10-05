@@ -2,7 +2,7 @@
 
 #include <memory>
 #include <vector>
-#include "../../Core/Object/Cameras/Camera.hpp"
+#include "Camera.hpp"
 #include "SceneNode.hpp"
 #include "Listener.hpp"
 using namespace std;

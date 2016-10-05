@@ -1,11 +1,10 @@
 #include "OpenGL43Graphics.hpp"
-#include "../../Graphics/OpenGL/Textures/DevTexture.hpp"
-#include "../Resource/Mesh/Dev/Grid.hpp"
+#include "DevTexture.hpp"
+#include "Grid.hpp"
+#include "Config.hpp"
 #include <iostream>
 
 #define BUFFER_OFFSET(i) ((char *)NULL + (i))
-
-unique_ptr<DevTexture> devTexture;
 
 OpenGL43Graphics::OpenGL43Graphics()
 {
@@ -27,7 +26,9 @@ void OpenGL43Graphics::init()
 	glEnable(GL_CULL_FACE);
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-	devTexture = unique_ptr<DevTexture>(new DevTexture(32, 32));
+	const Properties& props = gConfig->getProperties();
+	vector<int> nDimensions = props.getIntArrayProperty("graphics.resolution");
+	m_gBuffer = shared_ptr<GBuffer>(new GBuffer(this, nDimensions[0], nDimensions[1]));
 }
 
 shared_ptr<VertexBufferHandle> OpenGL43Graphics::createVertexBuffer(shared_ptr<Mesh> mesh)
@@ -64,12 +65,20 @@ shared_ptr<TextureHandle> OpenGL43Graphics::createTexture(shared_ptr<TextureBuil
 	shared_ptr<Image> pImage = pTexOptions->getImage();
 	GLuint m_nHandle;
 	glGenTextures(1, &m_nHandle);
-	glBindTexture(GL_TEXTURE_2D, m_nHandle);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-	gluBuild2DMipmaps(GL_TEXTURE_2D, pImage->getComponents(), pImage->getWidth(), pImage->getHeight(), pImage->getFormat(), GL_UNSIGNED_BYTE, pImage->getData().get());
+	GLenum target = pTexOptions->getTarget();
+	glBindTexture(target, m_nHandle);
+	glTexParameteri(target, GL_TEXTURE_MAG_FILTER, pTexOptions->getMagFilter());
+	glTexParameteri(target, GL_TEXTURE_MIN_FILTER, pTexOptions->getMinFilter());
+	glTexParameteri(target, GL_TEXTURE_WRAP_S, pTexOptions->getWrapS());
+	glTexParameteri(target, GL_TEXTURE_WRAP_T, pTexOptions->getWrapT());
+	if (pTexOptions->isGenMipmaps())
+	{
+		gluBuild2DMipmaps(target, pImage->getComponents(), pImage->getWidth(), pImage->getHeight(), pImage->getFormat(), pImage->getImageType(), pImage->getData().get());
+	}
+	else
+	{
+		glTexImage2D(target, 0, pImage->getInternalFormat(), pImage->getWidth(), pImage->getHeight(), 0, pImage->getFormat(), pImage->getImageType(), 0);
+	}
  	return shared_ptr<TextureHandle>(new TextureHandle(m_nHandle));
 }
 	
@@ -84,67 +93,10 @@ void OpenGL43Graphics::stageTriangleRender(shared_ptr<RenderData> pRenderData)
 	renderQueue.push(pRenderData);
 }
 
-void OpenGL43Graphics::executeRender(RenderOptions renderOptions)
+void OpenGL43Graphics::executeRender(RenderOptions &renderOptions)
 {
-	glMatrixMode(GL_PROJECTION);
-	glLoadIdentity();
-	glMultMatrixf(glm::value_ptr(renderOptions.getProjectionMatrix()));
-
-	glMatrixMode(GL_MODELVIEW);
-	glLoadIdentity();
-	glMultMatrixf(glm::value_ptr(renderOptions.getViewMatrix()));
-
-	shared_ptr<GLSLProgram> glslProgram = m_shaderStore.getShader("Resources/Shaders/v_devtest.glsl", "Resources/Shaders/f_devtest.glsl");
-
-	glslProgram->use();
-
-	while (!renderQueue.empty())
-	{
-		shared_ptr<RenderData> renderData = renderQueue.front();
-		renderQueue.pop();
-
-		if (renderData->getVertexBufferHandle() != nullptr)
-		{
-			glm::mat4 mvpMatrix = renderOptions.getProjectionMatrix()*renderOptions.getViewMatrix()*renderData->getModelMatrix();
-			glslProgram->sendUniform("modelViewProjectionMatrix", glm::value_ptr(mvpMatrix), false, 4);
-			glm::mat3 normalMatrix = glm::mat3(renderData->getModelMatrix());
-			glslProgram->sendUniform("normalMatrix", glm::value_ptr(normalMatrix), false, 3);
-
-			glActiveTexture(GL_TEXTURE0);
-			if (renderData->getTextureHandle().get() != nullptr)
-			{
-				glBindTexture(GL_TEXTURE_2D, renderData->getTextureHandle()->get());
-			}
-			else
-			{
-				glBindTexture(GL_TEXTURE_2D, devTexture->getHandle()->get());
-			}
-			glslProgram->sendUniform("tex", 0);
-
-			shared_ptr<VertexBufferHandle> vboHandle = renderData->getVertexBufferHandle();
-			glBindBuffer(GL_ARRAY_BUFFER, vboHandle->getVertexHandle());
-			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, vboHandle->getIndexHandle());
-
-			glEnableVertexAttribArray(0);
-			glEnableVertexAttribArray(1);
-			glEnableVertexAttribArray(2);
-
-			glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, 0);
-			glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(vboHandle->getSizeOfVerticies()));
-			glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(vboHandle->getSizeOfVerticies() * 5 / 3));
-			glDrawElements((GLenum)(renderData->getDrawMode()), vboHandle->getSizeOfIndicies(), GL_UNSIGNED_INT, 0);
-
-			glDisableVertexAttribArray(0);
-			glDisableVertexAttribArray(1);
-			glDisableVertexAttribArray(2);
-			glBindBuffer(GL_ARRAY_BUFFER, 0);
-			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-
-			Texture::unbind();
-		}
-	}
-
-	glslProgram->disable();
+	m_gBuffer->drawToBuffer(renderOptions, renderQueue);
+	_drawScreen(renderOptions, 0.0, 0.0, 1.0, 1.0);
 }
 
 void OpenGL43Graphics::setViewport(int nX, int nY, int nWidth, int nHeight)
@@ -165,4 +117,57 @@ void OpenGL43Graphics::clearDepth()
 void OpenGL43Graphics::clearDepthAndColor()
 {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+}
+
+ShaderStore OpenGL43Graphics::getShaderStore()
+{
+	return m_shaderStore;
+}
+
+void OpenGL43Graphics::_drawScreen(RenderOptions &renderOptions, float nX1, float nY1, float nX2, float nY2)
+{
+	clearDepth();
+	glDisable(GL_LIGHTING);
+	for (int i = 31; i >= 0; i--)
+	{
+		glActiveTexture(GL_TEXTURE0 + i);
+		glDisable(GL_TEXTURE_2D);
+	}
+	glEnable(GL_TEXTURE_2D);
+
+	glMatrixMode(GL_PROJECTION);
+	glLoadIdentity();
+	gluOrtho2D(0, 1.0, 0, 1.0);
+	glMatrixMode(GL_MODELVIEW);
+	glLoadIdentity();
+
+	glActiveTexture(0);
+	if (renderOptions.getRenderMode() == RenderOptions::SHADED)
+	{
+		m_gBuffer->bindAlbedoTex();
+	}
+	else if (renderOptions.getRenderMode() == RenderOptions::ALBEDO)
+	{
+		m_gBuffer->bindAlbedoTex();
+	}
+	else if(renderOptions.getRenderMode() == RenderOptions::NORMAL)
+	{
+		m_gBuffer->bindNormalTex();
+	}
+	else if(renderOptions.getRenderMode() == RenderOptions::SELECTION)
+	{
+		m_gBuffer->bindNormalTex();
+	}
+	else
+	{
+		m_gBuffer->bindAlbedoTex();
+	}
+	glColor3f(1.0f, 1.0f, 1.0f);
+
+	glBegin(GL_QUADS);
+		glTexCoord2f(0, 0);		 glVertex2f(nX1, nY1);
+		glTexCoord2f(1.0f, 0);	 glVertex2f(nX2, nY1);
+		glTexCoord2f(1.0f, 1.0f); glVertex2f(nX2, nY2);
+		glTexCoord2f(0, 1.0f);	 glVertex2f(nX1, nY2);
+	glEnd();
 }
