@@ -44,7 +44,7 @@ SceneGraphTree::SceneGraphTree(shared_ptr<EngineContext> context, QWidget *paren
 	connect(m_treeWidget.get(), &QTreeWidget::itemSelectionChanged, this, &SceneGraphTree::_selectionChanged);
 	
 	m_context->getScene()->addUpdateListener([this](auto scene) {refresh(scene);});
-	//m_context->getScene()->addSelectionChangeListener([this](auto node) {_selectNode(node.get());});
+	m_context->getScene()->addSelectionChangeListener([this](auto node) {_selectNode(node.get());});
 	setMouseTracking(true);
 	setWidget(m_treeWidget.get());
 }
@@ -196,6 +196,7 @@ void SceneGraphTree::_selectNode(SceneNode *node)
 {
 	if (node != nullptr && m_currentNodes[node] != nullptr)
 	{
+		m_isRefreshing = true;
 		QTreeWidgetItemIterator it(m_treeWidget.get(), QTreeWidgetItemIterator::Selected);
 		while (*it)
 		{
@@ -203,6 +204,13 @@ void SceneGraphTree::_selectNode(SceneNode *node)
 			item->setSelected(false);
 			it++;
 		}
+		QTreeWidgetItem *parent = m_currentNodes[node]->parent();
+		while (parent != nullptr)
+		{
+			parent->setExpanded(true);
+			parent = parent->parent();
+		}
 		m_currentNodes[node]->setSelected(true);
+		m_isRefreshing = false;
 	}
 }
