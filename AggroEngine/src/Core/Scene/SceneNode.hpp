@@ -20,18 +20,20 @@ private:
 	shared_ptr<vector<shared_ptr<SceneNode>>> m_children;
 	bool m_isSelected;
 	string m_name;
+	unsigned int m_id;
 
 	Listener<SceneNode *> m_changeListeners;
 	Listener<SceneNode *> m_deletedListeners;
 
 public:
-	SceneNode(SceneNode *parent = nullptr, shared_ptr<Object> object = shared_ptr<Object>(new Object()));
+	SceneNode(unsigned int m_id, SceneNode *parent = nullptr, shared_ptr<Object> object = shared_ptr<Object>(new Object()));
 
 	shared_ptr<Object> getObject();
 	shared_ptr<vector<shared_ptr<SceneNode>>> getChildren();
 	void setSelected(bool selected);
 	bool isSelected();
 	string getName();
+	unsigned int getId();
 
 	void addChild(shared_ptr<SceneNode> child);
 	void setName(string name);

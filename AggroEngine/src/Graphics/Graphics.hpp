@@ -10,6 +10,7 @@
 #include "RenderOptions.hpp"
 #include "TextureHandle.hpp"
 #include "TextureBuildOptions.hpp"
+#include "Viewport.hpp"
 using namespace std;
 
 /**
@@ -41,7 +42,16 @@ public:
 
 	// Window
 	virtual void setViewport(int nX, int nY, int nWidth, int nHeight) = 0;
+	virtual shared_ptr<Viewport> getViewport() = 0;
 	virtual void clearColor() = 0;
 	virtual void clearDepth() = 0;
 	virtual void clearDepthAndColor() = 0;
+
+	// Downloaders
+	virtual shared_ptr<Image> getRenderImage(RenderOptions::RenderTarget target) = 0;
+	virtual shared_ptr<Image> getRenderImage(int x, int y, int width, int height, RenderOptions::RenderTarget target) = 0;
+	virtual boost::shared_array<unsigned short> getRenderImagePixel(int x, int y, RenderOptions::RenderTarget target) = 0;
+
+	virtual int getFrameBufferWidth() = 0;
+	virtual int getFrameBufferHeight() = 0;
 };

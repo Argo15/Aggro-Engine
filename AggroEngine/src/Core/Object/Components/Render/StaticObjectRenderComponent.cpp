@@ -7,10 +7,11 @@ StaticObjectRenderComponent::StaticObjectRenderComponent()
 {
 }
 
-void StaticObjectRenderComponent::render(shared_ptr<Graphics> graphics, glm::mat4 m4Transform)
+void StaticObjectRenderComponent::render(shared_ptr<Graphics> graphics, glm::mat4 m4Transform, int objId)
 {
 	shared_ptr<RenderData> renderData = shared_ptr<RenderData>(new RenderData(this->getVertexBuffer(), this->getTexture()));
 	renderData->setModelMatrix(m4Transform);
+	renderData->setId(objId);
 	graphics->stageTriangleRender(renderData);
 }
 

@@ -100,7 +100,7 @@ boost::shared_array<float> Image::getPixelF(int x, int y)
 }
 
 /**
-* Get array of pixel values, assuming each color component is 2 bytes each.
+* Get array of pixel values, assuming each color component is 4 bytes each.
 */
 boost::shared_array<unsigned short> Image::getPixelUS(int x, int y)
 {

@@ -11,6 +11,7 @@ private:
 	shared_ptr<TextureHandle> m_depthTex;
 	shared_ptr<TextureHandle> m_normalTex;
 	shared_ptr<TextureHandle> m_albedoTex;
+	shared_ptr<TextureHandle> m_selectionTex;
 	GLuint m_buffer;
 
 	int m_width;
@@ -27,6 +28,12 @@ public:
 	void bindDepthTex();
 	void bindNormalTex();
 	void bindAlbedoTex();
+	void bindSelectionTex();
+
+	shared_ptr<TextureHandle> getDepthTex();
+	shared_ptr<TextureHandle> getNormalTex();
+	shared_ptr<TextureHandle> getAlbedoTex();
+	shared_ptr<TextureHandle> getSelectionTex();
 
 	shared_ptr<GLSLProgram> getProgram();
 

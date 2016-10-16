@@ -15,5 +15,5 @@ class RenderComponent : public Component
 public:
 	RenderComponent();
 
-	virtual void render(shared_ptr<Graphics> graphics, glm::mat4 m4Transform) = 0;
+	virtual void render(shared_ptr<Graphics> graphics, glm::mat4 m4Transform, int objId) = 0;
 };

@@ -2,7 +2,7 @@
 #include "StringUtil.hpp"
 #include <set>
 
-SceneNode::SceneNode(SceneNode *parent, shared_ptr<Object> object)
+SceneNode::SceneNode(unsigned int id, SceneNode *parent, shared_ptr<Object> object)
 	: m_parent(parent)
 	, m_object(object)
 	, m_children(shared_ptr<vector<shared_ptr<SceneNode>>>(new vector<shared_ptr<SceneNode>>()))
@@ -10,6 +10,7 @@ SceneNode::SceneNode(SceneNode *parent, shared_ptr<Object> object)
 	, m_name("")
 	, m_changeListeners()
 	, m_deletedListeners()
+	, m_id(id)
 {
 	setName("Object");
 }
@@ -70,6 +71,11 @@ void SceneNode::setName(string name)
 string SceneNode::getName()
 {
 	return m_name;
+}
+
+unsigned int SceneNode::getId()
+{
+	return m_id;
 }
 
 void SceneNode::setParent(SceneNode *parent)

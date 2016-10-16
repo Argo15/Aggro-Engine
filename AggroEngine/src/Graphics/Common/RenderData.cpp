@@ -43,3 +43,13 @@ DrawMode RenderData::getDrawMode()
 {
 	return m_drawMode;
 }
+
+void RenderData::setId(unsigned int id)
+{
+	m_id = id;
+}
+
+unsigned int RenderData::getId()
+{
+	return m_id;
+}

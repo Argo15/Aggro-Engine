@@ -20,6 +20,7 @@ private:
 	shared_ptr<TextureHandle> m_pTextureHandle;
 	glm::mat4 m_m4ModelMatrix;
 	DrawMode m_drawMode;
+	unsigned int m_id;
 
 public:
 	RenderData(shared_ptr<VertexBufferHandle> pVertexBufferHandle, shared_ptr<TextureHandle> pTextureHandle);
@@ -31,4 +32,7 @@ public:
 	shared_ptr<TextureHandle> getTextureHandle();
 	glm::mat4 &getModelMatrix();
 	DrawMode getDrawMode();
+
+	void setId(unsigned int id);
+	unsigned int getId();
 };

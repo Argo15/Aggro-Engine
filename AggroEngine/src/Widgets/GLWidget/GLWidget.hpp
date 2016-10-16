@@ -4,9 +4,10 @@
 #include <GL/glew.h>
 #include <QtOpenGL/QGLWidget>
 #include <QKeyEvent>
-#include "../Core/Object/Cameras/FreeRoamCameraController.hpp"
-#include "../Inputs/KeyboardState.hpp"
-#include "../Inputs/MouseState.hpp"
+#include "FreeRoamCameraController.hpp"
+#include "KeyboardState.hpp"
+#include "MouseState.hpp"
+#include "MouseController.hpp"
 #include "Renderer.hpp"
 #include "EngineContext.hpp"
 
@@ -19,6 +20,7 @@ private:
 
 	shared_ptr<KeyboardState> m_keyboard;
 	shared_ptr<MouseState> m_mouse;
+	shared_ptr<MouseController> m_mouseController;
 	shared_ptr<CameraController> m_cameraController;
 
 	shared_ptr<EngineContext> m_context;

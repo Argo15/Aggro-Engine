@@ -7,7 +7,7 @@ class OpenGL43Graphics;
 #include "ShaderStore.hpp"
 #include "GBuffer.hpp"
 #include "Graphics.hpp"
-
+#include "PixelBufferCache.hpp"
 
 /**
  * OpenGL graphics that only guarentees support for OpenGL 4.3 or above.
@@ -21,8 +21,11 @@ private:
 	std::queue<shared_ptr<RenderData>> renderQueue;
 	ShaderStore m_shaderStore;
 	shared_ptr<GBuffer> m_gBuffer;
+	shared_ptr<PixelBufferCache> m_pboCache;
+	shared_ptr<Viewport> m_viewport;
 
 	void _drawScreen(RenderOptions &renderOptions, float nX1, float nY1, float nX2, float nY2);
+	shared_ptr<TextureHandle> _getRenderTargetTexture(RenderOptions::RenderTarget target);
 
 public:
 	OpenGL43Graphics();
@@ -41,9 +44,17 @@ public:
 	void executeRender(RenderOptions &renderOptions);
 
 	void setViewport(int nX, int nY, int nWidth, int nHeight);
+	shared_ptr<Viewport> getViewport();
 	void clearColor();
 	void clearDepth();
 	void clearDepthAndColor();
 
 	ShaderStore getShaderStore();
+
+	shared_ptr<Image> getRenderImage(RenderOptions::RenderTarget target);
+	shared_ptr<Image> getRenderImage(int x, int y, int width, int height, RenderOptions::RenderTarget target);
+	boost::shared_array<unsigned short> getRenderImagePixel(int x, int y, RenderOptions::RenderTarget target);
+
+	int getFrameBufferWidth();
+	int getFrameBufferHeight();
 };

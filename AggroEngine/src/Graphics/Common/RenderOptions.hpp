@@ -11,7 +11,7 @@
 class RenderOptions
 {
 public:
-	enum RenderMode
+	enum RenderTarget
 	{
 		SHADED, ALBEDO, NORMAL, SELECTION
 	};
@@ -23,7 +23,7 @@ private:
 	int resWidth;
 	int resHeight;
 
-	RenderMode m_renderMode;
+	RenderTarget m_renderTarget;
 
 public:
 	RenderOptions();
@@ -34,8 +34,8 @@ public:
 	glm::mat4 &getProjectionMatrix();
 	glm::mat4 &getViewMatrix();
 
-	void setRenderMode(RenderMode mode);
-	RenderMode getRenderMode();
+	void setRenderTarget(RenderTarget target);
+	RenderTarget getRenderTarget();
 
 	int getResolutionWidth();
 	int getResolutionHeight();

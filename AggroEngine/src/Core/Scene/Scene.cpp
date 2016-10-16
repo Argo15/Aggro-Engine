@@ -2,12 +2,14 @@
 #include "FunctionUtil.hpp"
 
 Scene::Scene()
+	: m_nextId(1)
 {
 }
 
 Scene::Scene(shared_ptr<SceneNode> root, shared_ptr<Camera> camera)
 	: m_root(root)
 	, m_camera(camera)
+	, m_nextId(1)
 {
 }
 
@@ -66,6 +68,16 @@ void Scene::selectNode(shared_ptr<SceneNode> node)
 	m_selectionChangeListeners.notify(m_selectedNode);
 }
 
+void Scene::selectNodeById(unsigned int id)
+{
+	deselectAllNodes();
+	shared_ptr<SceneNode> node = getNodeById(id);
+	if (node && node->getId() == id)
+	{
+		selectNode(node);
+	}
+}
+
 void Scene::deselectNode(shared_ptr<SceneNode> node)
 {
 	node->setSelected(false);
@@ -88,6 +100,32 @@ shared_ptr<SceneNode> Scene::getSelectedNode()
 	return m_selectedNode;
 }
 
+shared_ptr<SceneNode> Scene::_getNodeByIdRecursive(shared_ptr<SceneNode> node, unsigned int id)
+{
+	if (node->getId() == id)
+	{
+		return node;
+	}
+	shared_ptr<vector<shared_ptr<SceneNode>>> children = node->getChildren();
+	if (children->size() > 0)
+	{
+		for (auto &child : *children.get())
+		{
+			shared_ptr<SceneNode> maybeNode = _getNodeByIdRecursive(child, id);
+			if (maybeNode && maybeNode->getId() == id)
+			{
+				return maybeNode;
+			}
+		}
+	}
+	return shared_ptr<SceneNode>();
+}
+
+shared_ptr<SceneNode> Scene::getNodeById(unsigned int id)
+{
+	return _getNodeByIdRecursive(m_root, id);
+}
+
 void Scene::addSelectionChangeListener(std::function<void(shared_ptr<SceneNode>)> listener)
 {
 	m_selectionChangeListeners.add(listener);
@@ -97,4 +135,9 @@ void Scene::deleteNode(shared_ptr<SceneNode> node)
 {
 	node->getParent()->removeChild(node);
 	node->notifyDeleted();
+}
+
+unsigned int Scene::getNextId()
+{
+	return m_nextId++;
 }

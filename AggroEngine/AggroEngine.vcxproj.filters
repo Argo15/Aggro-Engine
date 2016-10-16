@@ -217,6 +217,15 @@
     <ClCompile Include="GeneratedFiles\Release\moc_MainWidget.cpp">
       <Filter>Generated Files\Release</Filter>
     </ClCompile>
+    <ClCompile Include="src\Graphics\OpenGL\PixelBuffer\PixelBufferCache.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Core\MouseController.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Graphics\Common\Viewport.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Graphics\Graphics.hpp">
@@ -392,6 +401,15 @@
     </ClInclude>
     <ClInclude Include="src\Graphics\OpenGL\Framebuffer\FrameBufferObject.hpp" />
     <ClInclude Include="src\Graphics\OpenGL\Framebuffer\GBuffer.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Graphics\OpenGL\PixelBuffer\PixelBufferCache.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Core\MouseController.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Graphics\Common\Viewport.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

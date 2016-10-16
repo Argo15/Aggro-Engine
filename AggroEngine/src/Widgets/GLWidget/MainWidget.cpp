@@ -34,5 +34,5 @@ shared_ptr<GLWidget> MainWidget::getGlWidget()
 
 void MainWidget::_modeChanged(int index)
 {
-	m_context->getRenderOptions()->setRenderMode((RenderOptions::RenderMode)index);
+	m_context->getRenderOptions()->setRenderTarget((RenderOptions::RenderTarget)index);
 }

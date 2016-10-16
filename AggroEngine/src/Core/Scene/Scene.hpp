@@ -23,7 +23,10 @@ private:
 
 	shared_ptr<SceneNode> m_selectedNode;
 
+	unsigned int m_nextId;
+
 	void _applyToNodeRecursive(shared_ptr<SceneNode> node, std::function<void(SceneNode*)> func);
+	shared_ptr<SceneNode> _getNodeByIdRecursive(shared_ptr<SceneNode> node, unsigned int id);
 
 public:
 	Scene();
@@ -41,12 +44,16 @@ public:
 	void applyToAllNodes(std::function<void(SceneNode*)> func);
 
 	void selectNode(shared_ptr<SceneNode> node);
+	void selectNodeById(unsigned int id);
 	void deselectNode(shared_ptr<SceneNode> node);
 	void deselectAllNodes();
 
 	shared_ptr<SceneNode> getSelectedNode();
+	shared_ptr<SceneNode> getNodeById(unsigned int id);
 
 	void addSelectionChangeListener(std::function<void(shared_ptr<SceneNode>)> listener);
 
 	void deleteNode(shared_ptr<SceneNode> node);
+
+	unsigned int getNextId();
 };

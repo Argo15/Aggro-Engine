@@ -11,7 +11,7 @@ private:
 public:
 	StaticObjectRenderComponent();
 
-	void render(shared_ptr<Graphics> graphics, glm::mat4 m4Transform);
+	void render(shared_ptr<Graphics> graphics, glm::mat4 m4Transform, int objId);
 
 	void setVertexBuffer(shared_ptr<VertexBufferHandle> vertexBuffer);
 	shared_ptr<VertexBufferHandle> getVertexBuffer();

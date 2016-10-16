@@ -60,8 +60,8 @@ void GLWidget::paintGL()
 		return;
 	}
 	m_cameraController->handleKeyboardInput(*m_context->getScene()->getCamera().get(), *m_keyboard.get(), 1.f / m_context->getFPS());
-	m_mouseController->handleMouseInput(m_mouse, m_context);
 	m_renderer->renderScene(m_context->getScene(), m_context->getRenderOptions());
+	m_mouseController->handleMouseInput(m_mouse, m_context);
 }
 
 void GLWidget::keyPressEvent(QKeyEvent *event)

@@ -40,6 +40,7 @@ GBuffer::GBuffer(OpenGL43Graphics *graphics, int width, int height)
 	m_depthTex = graphics->createTexture(texOptions);
 	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, m_depthTex->get(), 0);
 
+
 	glDrawBuffer(GL_NONE);
 	glReadBuffer(GL_NONE);
 

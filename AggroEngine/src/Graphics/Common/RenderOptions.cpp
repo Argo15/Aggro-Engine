@@ -5,7 +5,7 @@ static glm::mat4 defaultProjMat = glm::ortho(0.f,1.f,1.f,0.f,-1.f,1.f);
 static glm::mat4 defaultViewMat = glm::lookAt(glm::vec3(0.f,0.f,2.f), glm::vec3(0.f,0.f,0.f), glm::vec3(0.f,1.f,0.f));
 
 RenderOptions::RenderOptions()
-	: m_renderMode(SHADED)
+	: m_renderTarget(SHADED)
 	, m_m4ProjectionMatrix(defaultProjMat)
 	, m_m4ViewMatrix(defaultViewMat)
 {
@@ -37,14 +37,14 @@ glm::mat4 &RenderOptions::getViewMatrix()
 	return m_m4ViewMatrix;
 }
 
-void RenderOptions::setRenderMode(RenderMode mode)
+void RenderOptions::setRenderTarget(RenderTarget target)
 {
-	m_renderMode = mode;
+	m_renderTarget = target;
 }
 
-RenderOptions::RenderMode RenderOptions::getRenderMode()
+RenderOptions::RenderTarget RenderOptions::getRenderTarget()
 {
-	return m_renderMode;
+	return m_renderTarget;
 }
 
 int RenderOptions::getResolutionWidth()

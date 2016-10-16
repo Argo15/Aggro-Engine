@@ -45,13 +45,9 @@ void Renderer::_renderSceneNodeRecursive(shared_ptr<SceneNode> node, glm::mat4 t
 	if (obj)
 	{
 		curTransform = transform * obj->getTransform();
-		if (node->isSelected())
-		{
-			curTransform = glm::translate(glm::mat4(1.0), glm::vec3(0,1.0f,0)) * curTransform;
-		}
 		if (obj->hasRenderComponent())
 		{
-			obj->getRenderComponent()->render(m_graphics, curTransform);
+			obj->getRenderComponent()->render(m_graphics, curTransform, node->getId());
 		}
 	}
 	shared_ptr<vector<shared_ptr<SceneNode>>> children = node->getChildren();

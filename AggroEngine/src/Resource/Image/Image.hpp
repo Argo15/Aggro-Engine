@@ -10,18 +10,22 @@ enum ImageFormat
 	RGB = 0x1907,
 	RGBA = 0x1908,
 	BGRA = 0x80E1,
-	DEPTH_COMPONENT = 0x1902
+	DEPTH_COMPONENT = 0x1902,
+	RED = 0x1903
 };
 enum InternalFormat
 {
 	RGBA8 = 0x8058,
 	RGBA16 = 0x805B,
-	DEPTH_COMPONENT32 = 0x81A7
+	DEPTH_COMPONENT32 = 0x81A7,
+	R16UI = 0x822A
 };
 enum ImageType
 {
 	UNSIGNED_BYTE = 0x1401,
-	FLOAT_TYPE = 0x1406
+	FLOAT_TYPE = 0x1406, 
+	INT_TYPE = 0x1404,
+	UNSIGNED_INT_TYPE = 0x1405
 };
 
 /**
@@ -57,4 +61,6 @@ public:
 	ImageType getImageType();
 	unsigned int getComponents();
 	boost::shared_array<unsigned char> getData();
+	boost::shared_array<float> getPixelF(int x, int y);
+	boost::shared_array<unsigned short> Image::getPixelUS(int x, int y);
 };

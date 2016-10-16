@@ -34,6 +34,7 @@ private:
 
 	void _refreshNode(SceneNode *node);
 	void _deleteNode(SceneNode *node);
+	void _selectNode(SceneNode *node);
 
 public:
 	SceneGraphTree(shared_ptr<EngineContext> context, QWidget *parent);

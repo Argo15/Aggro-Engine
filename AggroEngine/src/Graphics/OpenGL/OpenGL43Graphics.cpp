@@ -29,6 +29,8 @@ void OpenGL43Graphics::init()
 	const Properties& props = gConfig->getProperties();
 	vector<int> nDimensions = props.getIntArrayProperty("graphics.resolution");
 	m_gBuffer = shared_ptr<GBuffer>(new GBuffer(this, nDimensions[0], nDimensions[1]));
+	m_pboCache = shared_ptr<PixelBufferCache>(new PixelBufferCache());
+	m_viewport = shared_ptr<Viewport>(new Viewport());
 }
 
 shared_ptr<VertexBufferHandle> OpenGL43Graphics::createVertexBuffer(shared_ptr<Mesh> mesh)
@@ -101,7 +103,13 @@ void OpenGL43Graphics::executeRender(RenderOptions &renderOptions)
 
 void OpenGL43Graphics::setViewport(int nX, int nY, int nWidth, int nHeight)
 {
+	m_viewport->setDimensions(nX, nY, nWidth, nHeight);
 	glViewport(nX, nY, nWidth, nHeight);
+}
+
+shared_ptr<Viewport> OpenGL43Graphics::getViewport()
+{
+	return m_viewport;
 }
 
 void OpenGL43Graphics::clearColor()
@@ -142,26 +150,7 @@ void OpenGL43Graphics::_drawScreen(RenderOptions &renderOptions, float nX1, floa
 	glLoadIdentity();
 
 	glActiveTexture(0);
-	if (renderOptions.getRenderMode() == RenderOptions::SHADED)
-	{
-		m_gBuffer->bindAlbedoTex();
-	}
-	else if (renderOptions.getRenderMode() == RenderOptions::ALBEDO)
-	{
-		m_gBuffer->bindAlbedoTex();
-	}
-	else if(renderOptions.getRenderMode() == RenderOptions::NORMAL)
-	{
-		m_gBuffer->bindNormalTex();
-	}
-	else if(renderOptions.getRenderMode() == RenderOptions::SELECTION)
-	{
-		m_gBuffer->bindNormalTex();
-	}
-	else
-	{
-		m_gBuffer->bindAlbedoTex();
-	}
+	glBindTexture(GL_TEXTURE_2D, _getRenderTargetTexture(renderOptions.getRenderTarget())->get());
 	glColor3f(1.0f, 1.0f, 1.0f);
 
 	glBegin(GL_QUADS);
@@ -170,4 +159,66 @@ void OpenGL43Graphics::_drawScreen(RenderOptions &renderOptions, float nX1, floa
 		glTexCoord2f(1.0f, 1.0f); glVertex2f(nX2, nY2);
 		glTexCoord2f(0, 1.0f);	 glVertex2f(nX1, nY2);
 	glEnd();
+}
+
+shared_ptr<TextureHandle> OpenGL43Graphics::_getRenderTargetTexture(RenderOptions::RenderTarget target)
+{
+	switch (target)
+	{
+		case RenderOptions::SHADED:
+			return m_gBuffer->getAlbedoTex();
+		case RenderOptions::ALBEDO:
+			return m_gBuffer->getAlbedoTex();
+		case RenderOptions::NORMAL:
+			return m_gBuffer->getNormalTex();
+		case RenderOptions::SELECTION:
+			return m_gBuffer->getSelectionTex();
+		default:
+			break;
+	}
+	return m_gBuffer->getAlbedoTex();
+}
+
+shared_ptr<Image> OpenGL43Graphics::getRenderImage(RenderOptions::RenderTarget target)
+{
+	int width = m_gBuffer->getWidth();
+	int height = m_gBuffer->getHeight();
+	return getRenderImage(0, 0, width, height, target);
+}
+
+shared_ptr<Image> OpenGL43Graphics::getRenderImage(int x, int y, int width, int height, RenderOptions::RenderTarget target)
+{
+	int pixelSize = sizeof(unsigned short) * 4;
+	int size = width * height * pixelSize;
+	unsigned char *pixels = new unsigned char[size];
+
+	int idxStart = (y * m_gBuffer->getWidth() * pixelSize) + (x * pixelSize);
+	GLuint pbo = m_pboCache->getPixelBuffer(m_gBuffer->getWidth() * m_gBuffer->getHeight() * pixelSize, "RT");
+
+	glBindBuffer(GL_PIXEL_PACK_BUFFER, pbo);
+	glBindTexture(GL_TEXTURE_2D, _getRenderTargetTexture(target)->get());
+	glGetTexImage(GL_TEXTURE_2D, 0, GL_RGBA, GL_UNSIGNED_SHORT, 0);
+
+	unsigned char* ptr = (unsigned char*)glMapBuffer(GL_PIXEL_PACK_BUFFER, GL_READ_ONLY);
+	memcpy(pixels, ptr + idxStart, size);
+	glUnmapBuffer(GL_PIXEL_PACK_BUFFER);
+
+	return shared_ptr<Image>(new Image(width, height, ImageFormat::RGBA,
+		InternalFormat::RGBA16, 0, boost::shared_array<unsigned char>(pixels)));
+}
+
+boost::shared_array<unsigned short> OpenGL43Graphics::getRenderImagePixel(int x, int y, RenderOptions::RenderTarget target)
+{
+	shared_ptr<Image> image = getRenderImage(x, y, 1, 1, target);
+	return image->getPixelUS(0, 0);
+}
+
+int OpenGL43Graphics::getFrameBufferWidth()
+{
+	return m_gBuffer->getWidth();
+}
+
+int OpenGL43Graphics::getFrameBufferHeight()
+{
+	return m_gBuffer->getHeight();
 }

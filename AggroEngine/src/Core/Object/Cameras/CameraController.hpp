@@ -1,8 +1,8 @@
 #pragma once
 
 #include "Camera.hpp"
-#include "../../../Inputs/KeyboardState.hpp"
-#include "../../../Inputs/MouseState.hpp"
+#include "KeyboardState.hpp"
+#include "MouseState.hpp"
 
 class CameraController
 {
