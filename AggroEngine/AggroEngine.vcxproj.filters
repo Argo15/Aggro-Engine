@@ -412,6 +412,9 @@
     <ClInclude Include="src\Graphics\Common\Viewport.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="src\Core\Jobs\Locks.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="ClassDiagram.cd" />

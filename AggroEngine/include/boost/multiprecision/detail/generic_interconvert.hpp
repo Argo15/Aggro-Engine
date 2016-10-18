@@ -10,7 +10,7 @@
 
 #ifdef BOOST_MSVC
 #pragma warning(push)
-#pragma warning(disable:4127)
+#pragma warning(disable:4127 6326)
 #endif
 
 namespace boost{ namespace multiprecision{ namespace detail{
@@ -35,36 +35,37 @@ void generic_interconvert(To& to, const From& from, const mpl::int_<number_kind_
    using default_ops::eval_right_shift;
    using default_ops::eval_ldexp;
    using default_ops::eval_add;
+   using default_ops::eval_is_zero;
    // smallest unsigned type handled natively by "From" is likely to be it's limb_type:
-   typedef typename canonical<unsigned char, From>::type   limb_type;
+   typedef typename canonical<unsigned char, From>::type   l_limb_type;
    // get the corresponding type that we can assign to "To":
-   typedef typename canonical<limb_type, To>::type         to_type;
+   typedef typename canonical<l_limb_type, To>::type         to_type;
    From t(from);
    bool is_neg = eval_get_sign(t) < 0;
    if(is_neg)
       t.negate();
    // Pick off the first limb:
-   limb_type limb;
-   limb_type mask = ~static_cast<limb_type>(0);
+   l_limb_type limb;
+   l_limb_type mask = static_cast<l_limb_type>(~static_cast<l_limb_type>(0));
    From fl;
    eval_bitwise_and(fl, t, mask);
    eval_convert_to(&limb, fl);
    to = static_cast<to_type>(limb);
-   eval_right_shift(t, std::numeric_limits<limb_type>::digits);
+   eval_right_shift(t, std::numeric_limits<l_limb_type>::digits);
    //
    // Then keep picking off more limbs until "t" is zero:
    //
    To l;
-   unsigned shift = std::numeric_limits<limb_type>::digits;
+   unsigned shift = std::numeric_limits<l_limb_type>::digits;
    while(!eval_is_zero(t))
    {
       eval_bitwise_and(fl, t, mask);
       eval_convert_to(&limb, fl);
       l = static_cast<to_type>(limb);
-      eval_right_shift(t, std::numeric_limits<limb_type>::digits);
+      eval_right_shift(t, std::numeric_limits<l_limb_type>::digits);
       eval_ldexp(l, l, shift);
       eval_add(to, l);
-      shift += std::numeric_limits<limb_type>::digits;
+      shift += std::numeric_limits<l_limb_type>::digits;
    }
    //
    // Finish off by setting the sign:
@@ -310,15 +311,15 @@ typename enable_if_c<is_number<To>::value || is_floating_point<To>::value>::type
       num = -num;
    }
    int denom_bits = msb(denom);
-   int shift = std::numeric_limits<To>::digits + denom_bits - msb(num) + 1;
+   int shift = std::numeric_limits<To>::digits + denom_bits - msb(num);
    if(shift > 0)
       num <<= shift;
    else if(shift < 0)
-      denom <<= std::abs(shift);
+      denom <<= boost::multiprecision::detail::unsigned_abs(shift);
    Integer q, r;
    divide_qr(num, denom, q, r);
    int q_bits = msb(q);
-   if(q_bits == std::numeric_limits<To>::digits)
+   if(q_bits == std::numeric_limits<To>::digits - 1)
    {
       //
       // Round up if 2 * r > denom:
@@ -334,7 +335,7 @@ typename enable_if_c<is_number<To>::value || is_floating_point<To>::value>::type
    }
    else
    {
-      BOOST_ASSERT(q_bits == 1 + std::numeric_limits<To>::digits);
+      BOOST_ASSERT(q_bits == std::numeric_limits<To>::digits);
       //
       // We basically already have the rounding info:
       //
@@ -392,7 +393,7 @@ template <class To, class From>
 void generic_interconvert_float2rational(To& to, const From& from, const mpl::int_<2>& /*radix*/)
 {
    typedef typename mpl::front<typename To::unsigned_types>::type ui_type;
-   static const int shift = std::numeric_limits<long long>::digits;
+   static const int shift = std::numeric_limits<boost::long_long_type>::digits;
    typename From::exponent_type e;
    typename component_type<number<To> >::type num, denom;
    number<From> val(from);
@@ -401,7 +402,7 @@ void generic_interconvert_float2rational(To& to, const From& from, const mpl::in
    {
       val = ldexp(val, shift);
       e -= shift;
-      long long ll = boost::math::lltrunc(val);
+      boost::long_long_type ll = boost::math::lltrunc(val);
       val -= ll;
       num <<= shift;
       num += ll;
@@ -430,7 +431,7 @@ void generic_interconvert_float2rational(To& to, const From& from, const mpl::in
    val = scalbn(val, -e);
    while(val)
    {
-      long long ll = boost::math::lltrunc(val);
+      boost::long_long_type ll = boost::math::lltrunc(val);
       val -= ll;
       val = scalbn(val, 1);
       num *= Radix;

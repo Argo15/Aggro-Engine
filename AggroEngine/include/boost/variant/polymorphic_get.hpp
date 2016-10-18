@@ -14,17 +14,17 @@
 
 #include <exception>
 
-#include "boost/config.hpp"
-#include "boost/detail/workaround.hpp"
-#include "boost/static_assert.hpp"
-#include "boost/throw_exception.hpp"
-#include "boost/utility/addressof.hpp"
-#include "boost/variant/variant_fwd.hpp"
-#include "boost/variant/get.hpp"
+#include <boost/config.hpp>
+#include <boost/detail/workaround.hpp>
+#include <boost/static_assert.hpp>
+#include <boost/throw_exception.hpp>
+#include <boost/utility/addressof.hpp>
+#include <boost/variant/variant_fwd.hpp>
+#include <boost/variant/get.hpp>
 
-#include "boost/type_traits/add_reference.hpp"
-#include "boost/type_traits/add_pointer.hpp"
-#include "boost/type_traits/is_base_of.hpp"
+#include <boost/type_traits/add_reference.hpp>
+#include <boost/type_traits/add_pointer.hpp>
+#include <boost/type_traits/is_base_of.hpp>
 
 namespace boost {
 
@@ -77,7 +77,7 @@ struct holds_element_polymorphic :
     boost::mpl::not_<
         boost::is_same<
             typename boost::mpl::end<typename Variant::types>::type,
-            typename element_polymorphic_iterator_impl<typename Variant::types, T>::type
+            typename element_polymorphic_iterator_impl<typename Variant::types, typename boost::remove_reference<T>::type >::type
         >
     >
 {};

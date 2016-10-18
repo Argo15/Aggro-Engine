@@ -73,7 +73,7 @@ struct disjoint
 {
     static inline bool apply(Geometry1 const& geometry1, Geometry2 const& geometry2)
     {
-        concept::check_concepts_and_equal_dimensions
+        concepts::check_concepts_and_equal_dimensions
             <
                 Geometry1 const,
                 Geometry2 const
@@ -175,7 +175,7 @@ struct disjoint<
 */
 template <typename Geometry1, typename Geometry2>
 inline bool disjoint(Geometry1 const& geometry1,
-            Geometry2 const& geometry2)
+                     Geometry2 const& geometry2)
 {
     return resolve_variant::disjoint<Geometry1, Geometry2>::apply(geometry1, geometry2);
 }

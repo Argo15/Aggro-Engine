@@ -162,7 +162,7 @@ struct clear<variant<BOOST_VARIANT_ENUM_PARAMS(T)> >
 
     static inline void apply(variant<BOOST_VARIANT_ENUM_PARAMS(T)>& geometry)
     {
-        apply_visitor(visitor(), geometry);
+        boost::apply_visitor(visitor(), geometry);
     }
 };
 
@@ -185,7 +185,7 @@ struct clear<variant<BOOST_VARIANT_ENUM_PARAMS(T)> >
 template <typename Geometry>
 inline void clear(Geometry& geometry)
 {
-    concept::check<Geometry>();
+    concepts::check<Geometry>();
 
     resolve_variant::clear<Geometry>::apply(geometry);
 }

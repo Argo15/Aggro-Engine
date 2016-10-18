@@ -37,7 +37,7 @@ struct is_valid
     template <typename VisitPolicy>
     static inline bool apply(Geometry const& geometry, VisitPolicy& visitor)
     {
-        concept::check<Geometry const>();
+        concepts::check<Geometry const>();
         return dispatch::is_valid<Geometry>::apply(geometry, visitor);
     }
 };
@@ -97,7 +97,7 @@ template <typename Geometry>
 inline bool is_valid(Geometry const& geometry)
 {
     is_valid_default_policy<> policy_visitor;
-    return is_valid(geometry, policy_visitor);
+    return geometry::is_valid(geometry, policy_visitor);
 }
 
 
@@ -121,7 +121,7 @@ template <typename Geometry>
 inline bool is_valid(Geometry const& geometry, validity_failure_type& failure)
 {
     failure_type_policy<> policy_visitor;
-    bool result = is_valid(geometry, policy_visitor);
+    bool result = geometry::is_valid(geometry, policy_visitor);
     failure = policy_visitor.failure();
     return result;
 }
@@ -148,7 +148,7 @@ inline bool is_valid(Geometry const& geometry, std::string& message)
 {
     std::ostringstream stream;
     failing_reason_policy<> policy_visitor(stream);
-    bool result = is_valid(geometry, policy_visitor);
+    bool result = geometry::is_valid(geometry, policy_visitor);
     message = stream.str();
     return result;
 }

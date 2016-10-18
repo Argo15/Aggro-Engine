@@ -1,5 +1,6 @@
 #include "GBuffer.hpp"
 #include "DevTexture.hpp"
+#include "Locks.hpp"
 
 #define BUFFER_OFFSET(i) ((char *)NULL + (i))
 unique_ptr<DevTexture> devTexture;
@@ -58,6 +59,7 @@ GBuffer::GBuffer(OpenGL43Graphics *graphics, int width, int height)
 
 void GBuffer::drawToBuffer(RenderOptions renderOptions, std::queue<shared_ptr<RenderData>> &renderQueue)
 {
+	boost::lock_guard<boost::mutex> guard(gLocks->graphics);
 	m_gBufferProg->use();
 
 	bind();

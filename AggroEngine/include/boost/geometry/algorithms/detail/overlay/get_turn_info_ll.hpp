@@ -14,6 +14,8 @@
 #ifndef BOOST_GEOMETRY_ALGORITHMS_DETAIL_OVERLAY_GET_TURN_INFO_LL_HPP
 #define BOOST_GEOMETRY_ALGORITHMS_DETAIL_OVERLAY_GET_TURN_INFO_LL_HPP
 
+#include <boost/geometry/core/assert.hpp>
+
 #include <boost/geometry/algorithms/detail/overlay/get_turn_info.hpp>
 #include <boost/geometry/algorithms/detail/overlay/get_turn_info_for_endpoint.hpp>
 
@@ -99,6 +101,7 @@ struct get_turn_info_linear_linear
                         // Swap p/q
                         side_calculator
                             <
+                                typename inters_info::cs_tag,
                                 typename inters_info::robust_point2_type,
                                 typename inters_info::robust_point1_type
                             > swapped_side_calc(inters.rqi(), inters.rqj(), inters.rqk(),
@@ -579,7 +582,7 @@ struct get_turn_info_linear_linear
                 tp.operations[0].is_collinear = true;
                 tp.operations[1].is_collinear = false;
                 
-                BOOST_ASSERT(inters.i_info().count > 1);
+                BOOST_GEOMETRY_ASSERT(inters.i_info().count > 1);
                 
                 base_turn_handler::assign_point(tp, method_touch_interior,
                                                 inters.i_info(), 1);
@@ -612,7 +615,7 @@ struct get_turn_info_linear_linear
                 tp.operations[0].is_collinear = false;
                 tp.operations[1].is_collinear = true;
                 
-                BOOST_ASSERT(inters.i_info().count > 0);
+                BOOST_GEOMETRY_ASSERT(inters.i_info().count > 0);
 
                 base_turn_handler::assign_point(tp, method_touch_interior, inters.i_info(), 0);
 
@@ -686,7 +689,7 @@ struct get_turn_info_linear_linear
             operation_type & op0 = turn.operations[0].operation;
             operation_type & op1 = turn.operations[1].operation;
 
-            BOOST_ASSERT(op0 != operation_blocked || op1 != operation_blocked );
+            BOOST_GEOMETRY_ASSERT(op0 != operation_blocked || op1 != operation_blocked );
 
             if ( op0 == operation_blocked )
             {

@@ -494,7 +494,7 @@ struct convert
 {
     static inline void apply(Geometry1 const& geometry1, Geometry2& geometry2)
     {
-        concept::check_concepts_and_equal_dimensions<Geometry1 const, Geometry2>();
+        concepts::check_concepts_and_equal_dimensions<Geometry1 const, Geometry2>();
         dispatch::convert<Geometry1, Geometry2>::apply(geometry1, geometry2);
     }
 };
@@ -522,7 +522,7 @@ struct convert<boost::variant<BOOST_VARIANT_ENUM_PARAMS(T)>, Geometry2>
         Geometry2& geometry2
     )
     {
-        apply_visitor(visitor(geometry2), geometry1);
+        boost::apply_visitor(visitor(geometry2), geometry1);
     }
 };
 

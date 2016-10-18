@@ -12,7 +12,9 @@
 
 #include <boost/array.hpp>
 
+#include <boost/geometry/core/coordinate_type.hpp>
 #include <boost/geometry/algorithms/detail/overlay/segment_identifier.hpp>
+#include <boost/geometry/algorithms/detail/overlay/overlay_type.hpp>
 
 namespace boost { namespace geometry
 {
@@ -20,18 +22,6 @@ namespace boost { namespace geometry
 #ifndef DOXYGEN_NO_DETAIL
 namespace detail { namespace overlay
 {
-
-
-enum operation_type
-{
-    operation_none,
-    operation_union,
-    operation_intersection,
-    operation_blocked,
-    operation_continue,
-    operation_opposite
-};
-
 
 enum method_type
 {
@@ -54,15 +44,21 @@ enum method_type
         The class is to be included in the turn_info class, either direct
         or a derived or similar class with more (e.g. enrichment) information.
  */
-template <typename SegmentRatio>
+template <typename Point, typename SegmentRatio>
 struct turn_operation
 {
+    typedef SegmentRatio segment_ratio_type;
+
     operation_type operation;
     segment_identifier seg_id;
     SegmentRatio fraction;
 
+    typedef typename coordinate_type<Point>::type comparable_distance_type;
+    comparable_distance_type remaining_distance;
+
     inline turn_operation()
         : operation(operation_none)
+        , remaining_distance(0)
     {}
 };
 
@@ -80,27 +76,31 @@ template
 <
     typename Point,
     typename SegmentRatio,
-    typename Operation = turn_operation<SegmentRatio>,
+    typename Operation = turn_operation<Point, SegmentRatio>,
     typename Container = boost::array<Operation, 2>
 >
 struct turn_info
 {
     typedef Point point_type;
+    typedef SegmentRatio segment_ratio_type;
     typedef Operation turn_operation_type;
     typedef Container container_type;
 
     Point point;
     method_type method;
+    int cluster_id;
     bool discarded;
-    bool selectable_start; // Can be used as starting-turn in traverse
-
+    bool colocated;
+    bool switch_source; // For u/u turns which can either switch or not
 
     Container operations;
 
     inline turn_info()
         : method(method_none)
+        , cluster_id(-1)
         , discarded(false)
-        , selectable_start(true)
+        , colocated(false)
+        , switch_source(false)
     {}
 
     inline bool both(operation_type type) const

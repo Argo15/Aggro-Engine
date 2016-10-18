@@ -523,8 +523,8 @@ inline bool mapped_region::flush(std::size_t mapping_offset, std::size_t numbyte
 
 inline bool mapped_region::shrink_by(std::size_t bytes, bool from_back)
 {
-   void *shrink_page_start;
-   std::size_t shrink_page_bytes;
+   void *shrink_page_start = 0;
+   std::size_t shrink_page_bytes = 0;
    if(!this->priv_shrink_param_check(bytes, from_back, shrink_page_start, shrink_page_bytes)){
       return false;
    }
@@ -876,7 +876,7 @@ struct null_mapped_region_function
    bool operator()(void *, std::size_t , bool) const
       {   return true;   }
 
-   std::size_t get_min_size() const
+   static std::size_t get_min_size()
    {  return 0;  }
 };
 

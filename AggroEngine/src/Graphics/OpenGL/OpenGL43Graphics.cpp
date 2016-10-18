@@ -2,6 +2,7 @@
 #include "DevTexture.hpp"
 #include "Grid.hpp"
 #include "Config.hpp"
+#include "Locks.hpp"
 #include <iostream>
 
 #define BUFFER_OFFSET(i) ((char *)NULL + (i))
@@ -16,6 +17,7 @@ OpenGL43Graphics::~OpenGL43Graphics()
 
 void OpenGL43Graphics::init()
 {
+	gLocks->graphics.lock();
 	glShadeModel(GL_SMOOTH);
 	glClearDepth(1.0f);
 	glClearColor(0.3f, 0.3f, 0.3f, 1.0f);
@@ -26,6 +28,7 @@ void OpenGL43Graphics::init()
 	glEnable(GL_CULL_FACE);
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	gLocks->graphics.unlock();
 	const Properties& props = gConfig->getProperties();
 	vector<int> nDimensions = props.getIntArrayProperty("graphics.resolution");
 	m_gBuffer = shared_ptr<GBuffer>(new GBuffer(this, nDimensions[0], nDimensions[1]));
@@ -35,6 +38,7 @@ void OpenGL43Graphics::init()
 
 shared_ptr<VertexBufferHandle> OpenGL43Graphics::createVertexBuffer(shared_ptr<Mesh> mesh)
 {
+	boost::lock_guard<boost::mutex> guard(gLocks->graphics);
 	GLuint nVertexHandle;
 	glGenBuffers(1, &nVertexHandle);
 	glBindBuffer(GL_ARRAY_BUFFER_ARB, nVertexHandle);
@@ -53,17 +57,20 @@ shared_ptr<VertexBufferHandle> OpenGL43Graphics::createVertexBuffer(shared_ptr<M
 void OpenGL43Graphics::deleteVertexBuffer(shared_ptr<VertexBufferHandle> nVertexBufferHandle)
 {
 	GLuint nVBOHandle = nVertexBufferHandle->getVertexHandle();
+	boost::lock_guard<boost::mutex> guard(gLocks->graphics);
 	glDeleteBuffers(1, &nVBOHandle);
 }
 
 shared_ptr<TextureHandle> OpenGL43Graphics::createTexture()
 {
+	boost::lock_guard<boost::mutex> guard(gLocks->graphics);
 	DevTexture texture(16,16);
 	return texture.getHandle();
 }
 
 shared_ptr<TextureHandle> OpenGL43Graphics::createTexture(shared_ptr<TextureBuildOptions> pTexOptions)
 {
+	boost::lock_guard<boost::mutex> guard(gLocks->graphics);
 	shared_ptr<Image> pImage = pTexOptions->getImage();
 	GLuint m_nHandle;
 	glGenTextures(1, &m_nHandle);
@@ -87,11 +94,13 @@ shared_ptr<TextureHandle> OpenGL43Graphics::createTexture(shared_ptr<TextureBuil
 void OpenGL43Graphics::deleteTexture(shared_ptr<TextureHandle> textureHandle)
 {
 	GLuint nHandle = textureHandle->get();
+	boost::lock_guard<boost::mutex> guard(gLocks->graphics);
 	glDeleteTextures(1,&nHandle);
 }
 
 void OpenGL43Graphics::stageTriangleRender(shared_ptr<RenderData> pRenderData)
-{ 
+{
+	boost::lock_guard<boost::mutex> guard(gLocks->graphics);
 	renderQueue.push(pRenderData);
 }
 
@@ -103,6 +112,7 @@ void OpenGL43Graphics::executeRender(RenderOptions &renderOptions)
 
 void OpenGL43Graphics::setViewport(int nX, int nY, int nWidth, int nHeight)
 {
+	boost::lock_guard<boost::mutex> guard(gLocks->graphics);
 	m_viewport->setDimensions(nX, nY, nWidth, nHeight);
 	glViewport(nX, nY, nWidth, nHeight);
 }
@@ -114,16 +124,19 @@ shared_ptr<Viewport> OpenGL43Graphics::getViewport()
 
 void OpenGL43Graphics::clearColor()
 {
+	boost::lock_guard<boost::mutex> guard(gLocks->graphics);
 	glClear(GL_COLOR_BUFFER_BIT);
 }
 
 void OpenGL43Graphics::clearDepth()
 {
+	boost::lock_guard<boost::mutex> guard(gLocks->graphics);
 	glClear(GL_DEPTH_BUFFER_BIT);
 }
 
 void OpenGL43Graphics::clearDepthAndColor()
 {
+	boost::lock_guard<boost::mutex> guard(gLocks->graphics);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 }
 
@@ -135,6 +148,7 @@ ShaderStore OpenGL43Graphics::getShaderStore()
 void OpenGL43Graphics::_drawScreen(RenderOptions &renderOptions, float nX1, float nY1, float nX2, float nY2)
 {
 	clearDepth();
+	boost::lock_guard<boost::mutex> guard(gLocks->graphics);
 	glDisable(GL_LIGHTING);
 	for (int i = 31; i >= 0; i--)
 	{
@@ -193,6 +207,7 @@ shared_ptr<Image> OpenGL43Graphics::getRenderImage(int x, int y, int width, int 
 	unsigned char *pixels = new unsigned char[size];
 
 	int idxStart = (y * m_gBuffer->getWidth() * pixelSize) + (x * pixelSize);
+	boost::lock_guard<boost::mutex> guard(gLocks->graphics);
 	GLuint pbo = m_pboCache->getPixelBuffer(m_gBuffer->getWidth() * m_gBuffer->getHeight() * pixelSize, "RT");
 
 	glBindBuffer(GL_PIXEL_PACK_BUFFER, pbo);

@@ -12,6 +12,7 @@
 
 #include <cstddef>
 
+#include <boost/mpl/vector_c.hpp>
 #include <boost/range.hpp>
 
 #include <boost/geometry/core/access.hpp>
@@ -275,7 +276,7 @@ inline void self_turns(Geometry const& geometry,
             RobustPolicy const& robust_policy,
             Turns& turns, InterruptPolicy& interrupt_policy)
 {
-    concept::check<Geometry const>();
+    concepts::check<Geometry const>();
 
     typedef detail::overlay::get_turn_info<detail::overlay::assign_null_policy> turn_policy;
 

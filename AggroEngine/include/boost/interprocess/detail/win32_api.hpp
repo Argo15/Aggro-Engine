@@ -1,6 +1,6 @@
 //////////////////////////////////////////////////////////////////////////////
 //
-// (C) Copyright Ion Gaztanaga 2005-2012. Distributed under the Boost
+// (C) Copyright Ion Gaztanaga 2005-2015. Distributed under the Boost
 // Software License, Version 1.0. (See accompanying file
 // LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 //
@@ -33,9 +33,13 @@
 
 #ifdef BOOST_USE_WINDOWS_H
 #include <windows.h>
-#include <Wbemidl.h>
-#include <Objbase.h>
-#include <Shlobj.h>
+
+#  if defined(BOOST_INTERPROCESS_BOOTSTAMP_IS_LASTBOOTUPTIME)
+#  include <wbemidl.h>
+#  include <objbase.h>
+#  endif
+
+#include <shlobj.h>
 #endif
 
 #if defined(_MSC_VER)
@@ -43,8 +47,7 @@
 #  pragma comment( lib, "Advapi32.lib" )
 #  pragma comment( lib, "oleaut32.lib" )
 #  pragma comment( lib, "Ole32.lib" )
-#  pragma comment( lib, "Psapi.lib" )
-#  pragma comment( lib, "Shell32.lib" )   //SHGetSpecialFolderPathA
+#  pragma comment( lib, "Shell32.lib" )   //SHGetFolderPath
 #endif
 
 #if defined (BOOST_INTERPROCESS_WINDOWS)
@@ -61,9 +64,17 @@
 //////////////////////////////////////////////////////////////////////////////
 
 //Ignore -pedantic errors here (anonymous structs, etc.)
-#if defined(BOOST_GCC) && (BOOST_GCC >= 40600)
-#  pragma GCC diagnostic push
-#  pragma GCC diagnostic ignored "-pedantic"
+#if defined(BOOST_GCC)
+#  if (BOOST_GCC >= 40600)
+#     pragma GCC diagnostic push
+#     if (BOOST_GCC >= 60000)
+#        pragma GCC diagnostic ignored "-Wpedantic"
+#     else
+#        pragma GCC diagnostic ignored "-pedantic"
+#     endif
+#  else
+#     pragma GCC system_header
+#  endif
 #endif
 
 namespace boost  {
@@ -138,22 +149,6 @@ struct wchar_variant
 #if defined(_MSC_VER)
 #pragma warning (pop)
 #endif
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 struct IUnknown_BIPC
 {
@@ -648,6 +643,8 @@ typedef int     (__stdcall *farproc_t)();
 typedef GUID GUID_BIPC;
 typedef VARIANT wchar_variant;
 
+#if defined(BOOST_INTERPROCESS_BOOTSTAMP_IS_LASTBOOTUPTIME)
+
 typedef IUnknown IUnknown_BIPC;
 
 typedef IWbemClassObject IWbemClassObject_BIPC;
@@ -659,6 +656,8 @@ typedef IEnumWbemClassObject IEnumWbemClassObject_BIPC;
 typedef IWbemServices IWbemServices_BIPC;
 
 typedef IWbemLocator IWbemLocator_BIPC;
+
+#endif
 
 typedef OVERLAPPED interprocess_overlapped;
 
@@ -1412,13 +1411,13 @@ inline bool get_file_information_by_handle(void *hnd, interprocess_by_handle_fil
 {  return 0 != GetFileInformationByHandle(hnd, info);  }
 
 inline long interlocked_increment(long volatile *addr)
-{  return BOOST_INTERLOCKED_INCREMENT(addr);  }
+{  return BOOST_INTERLOCKED_INCREMENT(const_cast<long*>(addr));  }
 
 inline long interlocked_decrement(long volatile *addr)
-{  return BOOST_INTERLOCKED_DECREMENT(addr);  }
+{  return BOOST_INTERLOCKED_DECREMENT(const_cast<long*>(addr));  }
 
 inline long interlocked_compare_exchange(long volatile *addr, long val1, long val2)
-{  return BOOST_INTERLOCKED_COMPARE_EXCHANGE(addr, val1, val2);  }
+{  return BOOST_INTERLOCKED_COMPARE_EXCHANGE(const_cast<long*>(addr), val1, val2);  }
 
 inline long interlocked_exchange_add(long volatile* addend, long value)
 {  return BOOST_INTERLOCKED_EXCHANGE_ADD(const_cast<long*>(addend), value);  }
@@ -1964,7 +1963,7 @@ inline void get_shared_documents_folder(std::string &s)
          (void)err;
       }
    }
-   #else //registry alternative: SHGetSpecialFolderPathA
+   #else //registry alternative: SHGetFolderPath
    const int BIPC_CSIDL_COMMON_APPDATA = 0x0023;  // All Users\Application Data
    const int BIPC_CSIDL_FLAG_CREATE = 0x8000;     // new for Win2K, or this in to force creation of folder
    const int BIPC_SHGFP_TYPE_CURRENT  = 0;        // current value for user, verify it exists
@@ -2006,6 +2005,8 @@ inline void get_registry_value(const char *folder, const char *value_key, std::v
       }
    }
 }
+
+#if defined(BOOST_INTERPROCESS_BOOTSTAMP_IS_LASTBOOTUPTIME)
 
 struct co_uninitializer
 {
@@ -2146,8 +2147,6 @@ inline bool get_wmi_class_attribute( std::wstring& strValue, const wchar_t *wmi_
    }
    return bRet;
 }
-
-#ifdef BOOST_INTERPROCESS_BOOTSTAMP_IS_LASTBOOTUPTIME
 
 //Obtains the bootup time from WMI LastBootUpTime.
 //This time seems to change with hibernation and clock synchronization so avoid it.
