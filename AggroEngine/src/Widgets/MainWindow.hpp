@@ -15,6 +15,7 @@ private:
 	shared_ptr<EngineContext> m_context;
 	shared_ptr<MainWidget> m_mainWidget;
 	Timer timer;
+	int m_maxFps;
 
 	// action functions
 	void newFile();

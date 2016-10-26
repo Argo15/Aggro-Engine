@@ -4,6 +4,9 @@
 #include "Scene.hpp"
 #include "VertexBufferCache.hpp"
 #include "TextureCache.hpp"
+#include "JobManager.hpp"
+
+class JobManager;
 
 class EngineContext
 {
@@ -13,6 +16,7 @@ private:
 	shared_ptr<TextureCache> m_textureCache;
 	shared_ptr<Scene> m_scene;
 	shared_ptr<RenderOptions> m_renderOptions;
+	shared_ptr<JobManager> m_jobManager;
 	int m_fps;
 
 public:
@@ -23,7 +27,9 @@ public:
 	shared_ptr<TextureCache> getTextureCache();
 	shared_ptr<Scene> getScene();
 	shared_ptr<RenderOptions> getRenderOptions();
+	shared_ptr<JobManager> getJobManager();
 	int getFPS();
 
+	void setJobManager(shared_ptr<JobManager> jobManager);
 	void setFPS(int fps);
 };

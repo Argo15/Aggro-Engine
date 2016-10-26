@@ -17,12 +17,9 @@ class GLWidget : public QGLWidget
 
 private:
 	shared_ptr<Renderer> m_renderer;
-
 	shared_ptr<KeyboardState> m_keyboard;
 	shared_ptr<MouseState> m_mouse;
 	shared_ptr<MouseController> m_mouseController;
-	shared_ptr<CameraController> m_cameraController;
-
 	shared_ptr<EngineContext> m_context;
 
 public:

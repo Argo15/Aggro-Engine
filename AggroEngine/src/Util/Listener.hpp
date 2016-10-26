@@ -46,12 +46,13 @@ public:
 
 	template <class T> void notify(T arg)
 	{
-		for (auto listeners : (m_hmListeners | boost::adaptors::map_values))
+		for (vector<function<void(T)>> listeners : (m_hmListeners | boost::adaptors::map_values))
 		{
 			if (listeners.size() > 0)
 			{
-				for (auto &listener : listeners)
+				for (function<void(T)> &listener : listeners)
 				{
+					// Somewhat slow since functions are dynamically resolving lambdas
 					listener(arg);
 				}
 			}

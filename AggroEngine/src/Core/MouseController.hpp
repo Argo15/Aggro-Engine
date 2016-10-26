@@ -5,6 +5,8 @@
 #include <memory>
 using namespace std;
 
+class EngineContext;
+
 class MouseController
 {
 public:

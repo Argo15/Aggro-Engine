@@ -4,10 +4,14 @@
     "dimensions": [ 1900, 1030 ],
     "fullscreen": false,
     "bordered": true,
-    "resizable": true,
-    "vsync_enabled": true
+    "resizable": true
   },
   "graphics": {
-    "resolution": [ 1920, 1080 ]
+    "resolution": [ 1920, 1080 ],
+    "vsync_enabled": false,
+    "max_fps": 120
+  },
+  "engine": {
+    "camera_fps": 300
   }
 }

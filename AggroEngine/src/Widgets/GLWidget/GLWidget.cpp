@@ -1,17 +1,25 @@
 #include "GLWidget.hpp"
 #include "StaticObjectRenderComponent.hpp"
+#include "Config.hpp"
+#include "CameraUpdateJob.hpp"
 
 GLWidget::GLWidget(shared_ptr<EngineContext> context, QWidget *parent)
 	: QGLWidget(parent)
 	, m_keyboard(new KeyboardState())
 	, m_mouse(new MouseState())
-	, m_cameraController(new FreeRoamCameraController())
-	, m_context(context)
 	, m_mouseController(new MouseController())
+	, m_context(context)
 {
 	m_renderer = shared_ptr<Renderer>(new Renderer(m_context->getGraphics()));
 	setFocusPolicy(Qt::StrongFocus);
 	this->setMouseTracking(true);
+	const Properties& props = gConfig->getProperties();
+	QGLFormat format;
+	if (!props.getBooleanProperty("graphics.vsync_enabled"))
+	{
+		format.setSwapInterval(0);
+	}
+	this->setFormat(format);
 }
 
 void GLWidget::initializeGL()
@@ -20,6 +28,13 @@ void GLWidget::initializeGL()
 
 	m_context->getGraphics()->init();
 	m_renderer->init(m_context->getVboCache(), m_context->getTextureCache());
+
+	m_context->getJobManager()->runJob(new CameraUpdateJob(
+		m_context,
+		shared_ptr<CameraController>(new FreeRoamCameraController()),
+		m_keyboard,
+		m_mouse
+	));
 
 	// create a root object
 	shared_ptr<Object> child1Object(new Object());
@@ -59,7 +74,6 @@ void GLWidget::paintGL()
 	{
 		return;
 	}
-	m_cameraController->handleKeyboardInput(*m_context->getScene()->getCamera().get(), *m_keyboard.get(), 1.f / m_context->getFPS());
 	m_mouseController->handleMouseInput(m_mouse, m_context);
 	m_renderer->renderScene(m_context->getScene(), m_context->getRenderOptions());
 }
@@ -87,7 +101,6 @@ void GLWidget::mouseReleaseEvent(QMouseEvent *event)
 void GLWidget::mouseMoveEvent(QMouseEvent *event)
 {
 	m_mouse->setPosition(event->x(), event->y());
-	m_cameraController->handleMouseInput(*m_context->getScene()->getCamera(), *m_mouse.get(), 1.f / m_context->getFPS());
 }
 
 void GLWidget::wheelEvent(QWheelEvent *event)

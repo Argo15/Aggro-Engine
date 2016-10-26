@@ -13,6 +13,7 @@ private:
 	shared_ptr<TextureHandle> m_albedoTex;
 	shared_ptr<TextureHandle> m_selectionTex;
 	GLuint m_buffer;
+	OpenGL43Graphics *m_graphics;
 
 	int m_width;
 	int m_height;

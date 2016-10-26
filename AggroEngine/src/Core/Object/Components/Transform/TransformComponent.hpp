@@ -1,10 +1,13 @@
 #pragma once
 
+#include <mutex>
+#include <boost/thread/lockable_adapter.hpp>
 #include "Matrix.hpp"
 #include "Component.hpp"
 #include "Listener.hpp"
 
-class TransformComponent : public Component
+class TransformComponent : public Component,
+	public boost::basic_lockable_adapter<recursive_mutex>
 {
 private:
 	glm::mat4 m_rotateMat;

@@ -2,6 +2,7 @@
 #define MOUSESTATE_HPP
 
 #include <boost/unordered_set.hpp>
+#include "Locks.hpp"
 
 /**
  * Belief state of the mouse device.
@@ -9,7 +10,7 @@
  * author: wcrane
  * since: 2013-12-21
 **/
-class MouseState
+class MouseState : public boost::basic_lockable_adapter<recursive_mutex>
 {
 private:
 	boost::unordered_set<int> m_sButtonPressed; // set of buttons pressed
@@ -35,6 +36,8 @@ public:
 	int getDeltaX();
 	int getDeltaY();
 	int getScroll(); // sets scroll to 0 after
+
+	void clear();
 };
 
 #endif

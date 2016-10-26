@@ -9,9 +9,13 @@ GBuffer::GBuffer(OpenGL43Graphics *graphics, int width, int height)
 {
 	m_width = width;
 	m_height = height;
+	m_graphics = graphics;
+
+	boost::lock_guard<OpenGL43Graphics> guard(*m_graphics);
 
 	std::string log;
 	m_gBufferProg = graphics->getShaderStore().getShader("Resources/Shaders/v_GBuffer.glsl", "Resources/Shaders/f_GBuffer.glsl");
+
 
 	glEnable(GL_TEXTURE_2D);
 
@@ -59,7 +63,7 @@ GBuffer::GBuffer(OpenGL43Graphics *graphics, int width, int height)
 
 void GBuffer::drawToBuffer(RenderOptions renderOptions, std::queue<shared_ptr<RenderData>> &renderQueue)
 {
-	boost::lock_guard<boost::mutex> guard(gLocks->graphics);
+	boost::lock_guard<OpenGL43Graphics> guard(*m_graphics);
 	m_gBufferProg->use();
 
 	bind();

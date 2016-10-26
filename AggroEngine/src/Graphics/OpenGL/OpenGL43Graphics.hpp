@@ -8,6 +8,7 @@ class OpenGL43Graphics;
 #include "GBuffer.hpp"
 #include "Graphics.hpp"
 #include "PixelBufferCache.hpp"
+#include "Locks.hpp"
 
 /**
  * OpenGL graphics that only guarentees support for OpenGL 4.3 or above.
@@ -15,7 +16,8 @@ class OpenGL43Graphics;
  * author: wcrane
  * since: 2013-11-03
 **/
-class OpenGL43Graphics : public Graphics
+class OpenGL43Graphics : public Graphics, 
+	public boost::basic_lockable_adapter<recursive_mutex>
 {
 private:
 	std::queue<shared_ptr<RenderData>> renderQueue;

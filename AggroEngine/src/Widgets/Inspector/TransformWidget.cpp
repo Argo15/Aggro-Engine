@@ -2,13 +2,15 @@
 
 TransformWidget::TransformWidget(QWidget *parent)
 	: InspectorSubWidget(parent)
-	, m_transXEdit(shared_ptr<QLineEdit>(new QLineEdit("")))
-	, m_transYEdit(shared_ptr<QLineEdit>(new QLineEdit("")))
-	, m_transZEdit(shared_ptr<QLineEdit>(new QLineEdit("")))
+	, m_transXEdit(shared_ptr<QLineEdit>(new QLineEdit("0")))
+	, m_transYEdit(shared_ptr<QLineEdit>(new QLineEdit("0")))
+	, m_transZEdit(shared_ptr<QLineEdit>(new QLineEdit("0")))
 	, m_resetRotate(shared_ptr<QPushButton>(new QPushButton("Reset")))
-	, m_scaleXEdit(shared_ptr<QLineEdit>(new QLineEdit("")))
-	, m_scaleYEdit(shared_ptr<QLineEdit>(new QLineEdit("")))
-	, m_scaleZEdit(shared_ptr<QLineEdit>(new QLineEdit("")))
+	, m_scaleXEdit(shared_ptr<QLineEdit>(new QLineEdit("1")))
+	, m_scaleYEdit(shared_ptr<QLineEdit>(new QLineEdit("1")))
+	, m_scaleZEdit(shared_ptr<QLineEdit>(new QLineEdit("1")))
+	, m_lastTranslate(new glm::vec3(0))
+	, m_lastScale(new glm::vec3(1.0f))
 {
 	QHBoxLayout *mainLayout = new QHBoxLayout;
 		QVBoxLayout *leftLayout = new QVBoxLayout;
@@ -87,6 +89,7 @@ TransformWidget::TransformWidget(QWidget *parent)
 
 void TransformWidget::_onTransformChange(QString newValue)
 {
+	boost::lock_guard<TransformWidget> guard(*this);
 	if (m_currentNode && m_currentNode->getObject() && m_currentNode->getObject()->getTransformComponent())
 	{
 		shared_ptr<TransformComponent> transform = m_currentNode->getObject()->getTransformComponent();
@@ -107,6 +110,7 @@ void TransformWidget::_onTransformChange(QString newValue)
 
 void TransformWidget::_onRotateReset()
 {
+	boost::lock_guard<TransformWidget> guard(*this);
 	if (m_currentNode && m_currentNode->getObject() && m_currentNode->getObject()->getTransformComponent())
 	{
 		shared_ptr<TransformComponent> transform = m_currentNode->getObject()->getTransformComponent();
@@ -116,6 +120,7 @@ void TransformWidget::_onRotateReset()
 
 void TransformWidget::_refresh(SceneNode *newNode)
 {
+	boost::lock_guard<TransformWidget> guard(*this);
 	if (!newNode->getObject() || !newNode->getObject()->getTransformComponent())
 	{
 		this->hide();
@@ -142,10 +147,21 @@ void TransformWidget::_refresh(SceneNode *newNode)
 
 void TransformWidget::_refresh(TransformComponent *transform)
 {
-	m_transXEdit->setText(QString::number(transform->getTranslate()->x));
-	m_transYEdit->setText(QString::number(transform->getTranslate()->y));
-	m_transZEdit->setText(QString::number(transform->getTranslate()->z));
-	m_scaleXEdit->setText(QString::number(transform->getScale()->x));
-	m_scaleYEdit->setText(QString::number(transform->getScale()->y));
-	m_scaleZEdit->setText(QString::number(transform->getScale()->z));
+	if (m_currentNode)
+	{
+		glm::vec3 *translate = m_currentNode->getObject()->getTransformComponent()->getTranslate();
+		glm::vec3 *scale = m_currentNode->getObject()->getTransformComponent()->getScale();
+		if (translate != m_lastTranslate || scale != m_lastScale)
+		{
+			boost::lock_guard<boost::mutex> guard(m_textLock);
+			m_transXEdit->setText(QString::number(translate->x));
+			m_transYEdit->setText(QString::number(translate->y));
+			m_transZEdit->setText(QString::number(translate->z));
+			m_scaleXEdit->setText(QString::number(scale->x));
+			m_scaleYEdit->setText(QString::number(scale->y));
+			m_scaleZEdit->setText(QString::number(scale->z));
+			m_lastTranslate = translate;
+			m_lastScale = scale;
+		}
+	}
 }

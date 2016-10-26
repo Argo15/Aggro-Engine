@@ -102,6 +102,10 @@ shared_ptr<SceneNode> Scene::getSelectedNode()
 
 shared_ptr<SceneNode> Scene::_getNodeByIdRecursive(shared_ptr<SceneNode> node, unsigned int id)
 {
+	if (!node)
+	{
+		return shared_ptr<SceneNode>();
+	}
 	if (node->getId() == id)
 	{
 		return node;

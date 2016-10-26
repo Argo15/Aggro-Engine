@@ -64,6 +64,9 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
     </ClCompile>
     <ClCompile Include="src\Core\EngineContext.cpp" />
+    <ClCompile Include="src\Core\Jobs\Job.cpp" />
+    <ClCompile Include="src\Core\Jobs\JobManager.cpp" />
+    <ClCompile Include="src\Core\Jobs\CameraUpdateJob.cpp" />
     <ClCompile Include="src\Core\MouseController.cpp" />
     <ClCompile Include="src\Core\Object\Cameras\Camera.cpp" />
     <ClCompile Include="src\Core\Object\Cameras\CameraController.cpp" />
@@ -142,7 +145,10 @@
   <ItemGroup>
     <ClInclude Include="..\..\Argo Engine\v1.1\ArgoEngine\timer.h" />
     <ClInclude Include="src\Core\EngineContext.hpp" />
+    <ClInclude Include="src\Core\Jobs\Job.hpp" />
+    <ClInclude Include="src\Core\Jobs\JobManager.hpp" />
     <ClInclude Include="src\Core\Jobs\Locks.hpp" />
+    <ClInclude Include="src\Core\Jobs\CameraUpdateJob.hpp" />
     <ClInclude Include="src\Core\MouseController.hpp" />
     <ClInclude Include="src\Core\Object\Cameras\Camera.hpp" />
     <ClInclude Include="src\Core\Object\Cameras\CameraController.hpp" />

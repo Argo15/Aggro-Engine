@@ -40,6 +40,16 @@ int EngineContext::getFPS()
 	return m_fps;
 }
 
+shared_ptr<JobManager> EngineContext::getJobManager()
+{
+	return m_jobManager;
+}
+
+void EngineContext::setJobManager(shared_ptr<JobManager> jobManager)
+{
+	m_jobManager = jobManager;
+}
+
 void EngineContext::setFPS(int fps)
 {
 	m_fps = fps;

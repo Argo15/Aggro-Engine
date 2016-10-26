@@ -20,6 +20,7 @@ void MouseState::tick()
 
 void MouseState::setButtonPressed(int button, bool bIsPressed)
 {
+	boost::lock_guard<MouseState> guard(*this);
 	if (bIsPressed)
 	{
 		m_sButtonPressed.insert(button);
@@ -34,6 +35,7 @@ void MouseState::setButtonPressed(int button, bool bIsPressed)
 
 void MouseState::setPosition(int nPosX, int nPosY)
 {
+	boost::lock_guard<MouseState> guard(*this);
 	int nOldX = m_nPosX;
 	int nOldY = m_nPosY;
 	m_nPosX = nPosX;
@@ -53,16 +55,19 @@ void MouseState::setPosition(int nPosX, int nPosY)
 
 void MouseState::setScroll(int nScroll)
 {
+	boost::lock_guard<MouseState> guard(*this);
 	m_nScroll = nScroll;
 }
 
 bool MouseState::getButtonPressed(int button)
 {
+	boost::lock_guard<MouseState> guard(*this);
 	return m_sButtonPressed.find(button) != m_sButtonPressed.end();
 }
 
 bool MouseState::getButtonPressedOnce(int button)
 {
+	boost::lock_guard<MouseState> guard(*this);
 	bool bIsPressed = m_sButtonClicked.find(button) != m_sButtonClicked.end();
 	m_sButtonClicked.erase(button);
 	return bIsPressed;
@@ -90,7 +95,15 @@ int MouseState::getDeltaY()
 
 int MouseState::getScroll()
 {
+	boost::lock_guard<MouseState> guard(*this);
 	int nScroll = m_nScroll;
 	m_nScroll = 0;
 	return nScroll;
+}
+
+void MouseState::clear()
+{
+	boost::lock_guard<MouseState> guard(*this);
+	m_nDeltaX = 0;
+	m_nDeltaY = 0;
 }
