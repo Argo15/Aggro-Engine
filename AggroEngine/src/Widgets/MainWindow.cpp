@@ -13,7 +13,6 @@ MainWindow::MainWindow()
 	: m_context(shared_ptr<EngineContext>(new EngineContext()))
 	, m_mainWidget(shared_ptr<MainWidget>(new MainWidget(m_context, this)))
 {
-	m_context->setJobManager(shared_ptr<JobManager>(new JobManager()));
 	setCentralWidget(m_mainWidget.get());
 
 	createMenus();
@@ -21,7 +20,6 @@ MainWindow::MainWindow()
 	const Properties& props = gConfig->getProperties();
 	m_maxFps = props.getIntProperty("graphics.max_fps");
 	startTimer(1, Qt::PreciseTimer);
-	timer.Init();
 
 	QDockWidget *leftWidget = new SceneGraphTree(m_context, this);
 	leftWidget->setMinimumWidth(250);
@@ -38,18 +36,7 @@ MainWindow::MainWindow()
 
 void MainWindow::timerEvent(QTimerEvent *event)
 {
-	static float time = 0;
-	int fps = timer.GetFPS();
-	if (fps > 0)
-	{
-		time += 1.0 / fps;
-		if (time >= (1.0 / m_maxFps))
-		{
-			m_context->setFPS(1.0 / time);
-			m_mainWidget->getGlWidget()->update();
-			time = 0;
-		}
-	}
+	m_mainWidget->getGlWidget()->update();
 }
 
 /* createMenus() */

@@ -9,10 +9,13 @@ StaticObjectRenderComponent::StaticObjectRenderComponent()
 
 void StaticObjectRenderComponent::render(shared_ptr<Graphics> graphics, glm::mat4 m4Transform, int objId)
 {
-	shared_ptr<RenderData> renderData = shared_ptr<RenderData>(new RenderData(this->getVertexBuffer(), this->getTexture()));
-	renderData->setModelMatrix(m4Transform);
-	renderData->setId(objId);
-	graphics->stageTriangleRender(renderData);
+	if (m_vertexBuffer && m_texture && this->getVertexBuffer()->isLoaded())
+	{
+		shared_ptr<RenderData> renderData = shared_ptr<RenderData>(new RenderData(this->getVertexBuffer(), this->getTexture()));
+		renderData->setModelMatrix(m4Transform);
+		renderData->setId(objId);
+		graphics->stageTriangleRender(renderData);
+	}
 }
 
 void StaticObjectRenderComponent::setVertexBuffer(shared_ptr<VertexBufferHandle> vertexBuffer)

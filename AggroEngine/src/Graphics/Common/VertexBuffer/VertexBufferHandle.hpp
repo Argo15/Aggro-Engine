@@ -1,8 +1,6 @@
 #pragma once
 
 /**
- * @Deprecated - Use Mesh Instead
- *
  * Provides a handle to a vertex data stored on the GPU
  *
  * author: wcrane
@@ -10,17 +8,10 @@
 **/
 class VertexBufferHandle
 {
-private:
-	unsigned int m_nVertexHandle;
-	unsigned int m_nSizeOfVerticies;
-	unsigned int m_nIndexHandle;
-	unsigned int m_nSizeOfIndicies;
-
 public:
-	VertexBufferHandle(unsigned int nVertexHandle, unsigned int nSizeOfVerticies, unsigned int nIndexHandle, unsigned int nSizeOfIndicies);
-	
-	unsigned int getVertexHandle() const;
-	unsigned int getSizeOfVerticies() const;
-	unsigned int getIndexHandle() const;
-	unsigned int getSizeOfIndicies() const;
+	virtual unsigned int getVertexHandle() const = 0;
+	virtual unsigned int getSizeOfVerticies() const = 0;
+	virtual unsigned int getIndexHandle() const = 0;
+	virtual unsigned int getSizeOfIndicies() const = 0;
+	virtual bool isLoaded() = 0;
 };

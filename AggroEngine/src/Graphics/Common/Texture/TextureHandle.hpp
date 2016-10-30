@@ -2,11 +2,6 @@
 
 class TextureHandle
 {
-private:
-	unsigned int m_nTextureId;
-
 public:
-	TextureHandle(int nTextureId);
-
-	unsigned int get();
+	virtual unsigned int get() = 0;
 };

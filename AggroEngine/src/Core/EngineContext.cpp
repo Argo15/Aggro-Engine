@@ -2,12 +2,12 @@
 
 EngineContext::EngineContext()
 	: m_graphics(new OpenGL43Graphics())
-	, m_fps(60)
-	, m_vboCache(new VertexBufferCache(m_graphics))
-	, m_textureCache(new TextureCache(m_graphics))
+	, m_jobManager(new JobManager())
 	, m_scene(new Scene())
 	, m_renderOptions(new RenderOptions())
 {
+	m_textureCache = shared_ptr<TextureCache>(new TextureCache(m_graphics, m_jobManager));
+	m_vboCache = shared_ptr<VertexBufferCache>(new VertexBufferCache(m_graphics, m_jobManager));
 }
 
 shared_ptr<Graphics> EngineContext::getGraphics()
@@ -35,22 +35,7 @@ shared_ptr<RenderOptions> EngineContext::getRenderOptions()
 	return m_renderOptions;
 }
 
-int EngineContext::getFPS()
-{
-	return m_fps;
-}
-
 shared_ptr<JobManager> EngineContext::getJobManager()
 {
 	return m_jobManager;
-}
-
-void EngineContext::setJobManager(shared_ptr<JobManager> jobManager)
-{
-	m_jobManager = jobManager;
-}
-
-void EngineContext::setFPS(int fps)
-{
-	m_fps = fps;
 }

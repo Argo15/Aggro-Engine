@@ -9,6 +9,7 @@ GLWidget::GLWidget(shared_ptr<EngineContext> context, QWidget *parent)
 	, m_mouse(new MouseState())
 	, m_mouseController(new MouseController())
 	, m_context(context)
+	, m_graphicsClock(new Clock())
 {
 	m_renderer = shared_ptr<Renderer>(new Renderer(m_context->getGraphics()));
 	setFocusPolicy(Qt::StrongFocus);
@@ -19,6 +20,7 @@ GLWidget::GLWidget(shared_ptr<EngineContext> context, QWidget *parent)
 	{
 		format.setSwapInterval(0);
 	}
+	m_maxFps = props.getIntProperty("graphics.max_fps");
 	this->setFormat(format);
 }
 
@@ -29,7 +31,7 @@ void GLWidget::initializeGL()
 	m_context->getGraphics()->init();
 	m_renderer->init(m_context->getVboCache(), m_context->getTextureCache());
 
-	m_context->getJobManager()->runJob(new CameraUpdateJob(
+	m_context->getJobManager()->run(new CameraUpdateJob(
 		m_context,
 		shared_ptr<CameraController>(new FreeRoamCameraController()),
 		m_keyboard,
@@ -59,7 +61,7 @@ void GLWidget::initializeGL()
 	scene->setCamera(shared_ptr<Camera>(new Camera()));
 	scene->update(); // Alert all listeners
 
-	setAutoBufferSwap(true);
+	setAutoBufferSwap(false);
 }
 
 void GLWidget::resizeGL(int width, int height)
@@ -70,12 +72,27 @@ void GLWidget::resizeGL(int width, int height)
 
 void GLWidget::paintGL()
 {
-	if (m_context->getFPS() <= 0)
+	// First process any jobs that require opengl (uploading images, VBOs, etc)
+	m_context->getJobManager()->tick();
+	shared_ptr<Job> graphicsJob = m_context->getJobManager()->nextGraphicsJob();
+	while (graphicsJob)
 	{
-		return;
+		graphicsJob->runInThread();
+		if (m_graphicsClock->getTimerMillis() + 3 > 1000 / m_maxFps)
+		{
+			break; // Give 3 milliseconds to execute render
+		}
+		graphicsJob = m_context->getJobManager()->nextGraphicsJob();
 	}
-	m_mouseController->handleMouseInput(m_mouse, m_context);
-	m_renderer->renderScene(m_context->getScene(), m_context->getRenderOptions());
+
+	// If enough time has passed, render a new frame
+	if (m_graphicsClock->getTimerMillis() > 1000 / m_maxFps)
+	{
+		m_graphicsClock->resetTimer();
+		m_renderer->renderScene(m_context->getScene(), m_context->getRenderOptions());
+		swapBuffers();
+		m_mouseController->handleMouseInput(m_mouse, m_context);
+	}
 }
 
 void GLWidget::keyPressEvent(QKeyEvent *event)

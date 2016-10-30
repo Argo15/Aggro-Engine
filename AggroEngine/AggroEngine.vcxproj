@@ -81,12 +81,14 @@
     <ClCompile Include="src\Core\Scene\SceneNode.cpp" />
     <ClCompile Include="src\Graphics\Common\RenderData.cpp" />
     <ClCompile Include="src\Graphics\Common\RenderOptions.cpp" />
+    <ClCompile Include="src\Graphics\Common\Texture\DefaultTextureHandle.cpp" />
+    <ClCompile Include="src\Graphics\Common\Texture\LoadableTextureHandle.cpp" />
     <ClCompile Include="src\Graphics\Common\Texture\TextureBuildOptions.cpp" />
     <ClCompile Include="src\Graphics\Common\Texture\TextureCache.cpp" />
-    <ClCompile Include="src\Graphics\Common\Texture\TextureHandle.cpp" />
+    <ClCompile Include="src\Graphics\Common\VertexBuffer\DefaultVertexBufferHandle.cpp" />
+    <ClCompile Include="src\Graphics\Common\VertexBuffer\LoadableVertexBufferHandle.cpp" />
     <ClCompile Include="src\Graphics\Common\VertexBuffer\VertexBufferCache.cpp" />
     <ClCompile Include="src\Graphics\Common\VertexBuffer\VertexBufferData.cpp" />
-    <ClCompile Include="src\Graphics\Common\VertexBuffer\VertexBufferHandle.cpp" />
     <ClCompile Include="src\Graphics\Common\Viewport.cpp" />
     <ClCompile Include="src\Graphics\OpenGL\Framebuffer\FrameBufferObject.cpp" />
     <ClCompile Include="src\Graphics\OpenGL\Framebuffer\GBuffer.cpp" />
@@ -97,6 +99,7 @@
     <ClCompile Include="src\Graphics\OpenGL\Shaders\ShaderStore.cpp" />
     <ClCompile Include="src\Graphics\OpenGL\Textures\DevTexture.cpp" />
     <ClCompile Include="src\Graphics\OpenGL\Textures\Texture.cpp" />
+    <ClCompile Include="src\Graphics\OpenGL\Textures\WhiteTexture.cpp" />
     <ClCompile Include="src\Inputs\KeyboardState.cpp" />
     <ClCompile Include="src\Inputs\MouseState.cpp" />
     <ClCompile Include="src\main.cpp" />
@@ -107,6 +110,7 @@
     <ClCompile Include="src\Resource\Mesh\Dev\CubeMesh.cpp" />
     <ClCompile Include="src\Resource\Mesh\Dev\Grid.cpp" />
     <ClCompile Include="src\Resource\Mesh\Mesh.cpp" />
+    <ClCompile Include="src\Util\Clock.cpp" />
     <ClCompile Include="src\Util\Config\Config.cpp" />
     <ClCompile Include="src\Util\Config\JSONFileParser.cpp" />
     <ClCompile Include="src\Util\Config\PropertyTreeParser.cpp" />
@@ -164,9 +168,13 @@
     <ClInclude Include="src\Graphics\Common\DrawMode.hpp" />
     <ClInclude Include="src\Graphics\Common\RenderData.hpp" />
     <ClInclude Include="src\Graphics\Common\RenderOptions.hpp" />
+    <ClInclude Include="src\Graphics\Common\Texture\DefaultTextureHandle.hpp" />
+    <ClInclude Include="src\Graphics\Common\Texture\LoadableTextureHandle.hpp" />
     <ClInclude Include="src\Graphics\Common\Texture\TextureBuildOptions.hpp" />
     <ClInclude Include="src\Graphics\Common\Texture\TextureCache.hpp" />
     <ClInclude Include="src\Graphics\Common\Texture\TextureHandle.hpp" />
+    <ClInclude Include="src\Graphics\Common\VertexBuffer\DefaultVertexBufferHandle.hpp" />
+    <ClInclude Include="src\Graphics\Common\VertexBuffer\LoadableVertexBufferHandle.hpp" />
     <ClInclude Include="src\Graphics\Common\VertexBuffer\VertexBufferCache.hpp" />
     <ClInclude Include="src\Graphics\Common\VertexBuffer\VertexBufferData.hpp" />
     <ClInclude Include="src\Graphics\Common\VertexBuffer\VertexBufferHandle.hpp" />
@@ -181,6 +189,7 @@
     <ClInclude Include="src\Graphics\OpenGL\Shaders\ShaderStore.hpp" />
     <ClInclude Include="src\Graphics\OpenGL\Textures\DevTexture.hpp" />
     <ClInclude Include="src\Graphics\OpenGL\Textures\Texture.hpp" />
+    <ClInclude Include="src\Graphics\OpenGL\Textures\WhiteTexture.hpp" />
     <ClInclude Include="src\Inputs\KeyboardState.hpp" />
     <ClInclude Include="src\Inputs\MouseState.hpp" />
     <ClInclude Include="src\Resource\Image\CheckersImage.hpp" />
@@ -193,6 +202,7 @@
     <ClInclude Include="src\Resource\Mesh\Dev\Grid.hpp" />
     <ClInclude Include="src\Resource\Mesh\Mesh.hpp" />
     <ClInclude Include="src\Resource\Mesh\MeshImporter.hpp" />
+    <ClInclude Include="src\Util\Clock.hpp" />
     <ClInclude Include="src\Util\Config\Config.hpp" />
     <ClInclude Include="src\Util\Config\JSONFileParser.hpp" />
     <ClInclude Include="src\Util\Config\PropertyTreeParser.hpp" />

@@ -1,5 +1,7 @@
 #include "OpenGL43Graphics.hpp"
-#include "DevTexture.hpp"
+#include "WhiteTexture.hpp"
+#include "DefaultTextureHandle.hpp"
+#include "DefaultVertexBufferHandle.hpp"
 #include "Grid.hpp"
 #include "Config.hpp"
 #include "Locks.hpp"
@@ -51,7 +53,7 @@ shared_ptr<VertexBufferHandle> OpenGL43Graphics::createVertexBuffer(shared_ptr<M
 	glGenBuffers(1, &nIndexHandle);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, nIndexHandle);
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, mesh->getSizeOfIndicies(), mesh->getIndicies().get(), GL_STATIC_DRAW);
-	return shared_ptr<VertexBufferHandle>(new VertexBufferHandle(nVertexHandle, mesh->getSizeOfVerticies(), nIndexHandle, mesh->getSizeOfIndicies()));
+	return shared_ptr<VertexBufferHandle>(new DefaultVertexBufferHandle(nVertexHandle, mesh->getSizeOfVerticies(), nIndexHandle, mesh->getSizeOfIndicies()));
 }
 
 void OpenGL43Graphics::deleteVertexBuffer(shared_ptr<VertexBufferHandle> nVertexBufferHandle)
@@ -64,7 +66,7 @@ void OpenGL43Graphics::deleteVertexBuffer(shared_ptr<VertexBufferHandle> nVertex
 shared_ptr<TextureHandle> OpenGL43Graphics::createTexture()
 {
 	boost::lock_guard<OpenGL43Graphics> guard(*this);
-	DevTexture texture(16,16);
+	WhiteTexture texture(1,1);
 	return texture.getHandle();
 }
 
@@ -88,7 +90,7 @@ shared_ptr<TextureHandle> OpenGL43Graphics::createTexture(shared_ptr<TextureBuil
 	{
 		glTexImage2D(target, 0, pImage->getInternalFormat(), pImage->getWidth(), pImage->getHeight(), 0, pImage->getFormat(), pImage->getImageType(), 0);
 	}
- 	return shared_ptr<TextureHandle>(new TextureHandle(m_nHandle));
+ 	return shared_ptr<TextureHandle>(new DefaultTextureHandle(m_nHandle));
 }
 	
 void OpenGL43Graphics::deleteTexture(shared_ptr<TextureHandle> textureHandle)

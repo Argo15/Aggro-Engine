@@ -17,7 +17,6 @@ private:
 	shared_ptr<Scene> m_scene;
 	shared_ptr<RenderOptions> m_renderOptions;
 	shared_ptr<JobManager> m_jobManager;
-	int m_fps;
 
 public:
 	EngineContext();
@@ -28,8 +27,4 @@ public:
 	shared_ptr<Scene> getScene();
 	shared_ptr<RenderOptions> getRenderOptions();
 	shared_ptr<JobManager> getJobManager();
-	int getFPS();
-
-	void setJobManager(shared_ptr<JobManager> jobManager);
-	void setFPS(int fps);
 };

@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Texture.hpp"
-#include "../../../Util/Math/MathUtil.hpp"
+#include "MathUtil.hpp"
 
 /**
  * Procedural texture generated for dev purposes

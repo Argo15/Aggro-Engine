@@ -10,6 +10,7 @@
 #include "MouseController.hpp"
 #include "Renderer.hpp"
 #include "EngineContext.hpp"
+#include "Clock.hpp"
 
 class GLWidget : public QGLWidget
 {
@@ -21,6 +22,8 @@ private:
 	shared_ptr<MouseState> m_mouse;
 	shared_ptr<MouseController> m_mouseController;
 	shared_ptr<EngineContext> m_context;
+	shared_ptr<Clock> m_graphicsClock;
+	int m_maxFps;
 
 public:
 	GLWidget(shared_ptr<EngineContext> context, QWidget *parent = 0);

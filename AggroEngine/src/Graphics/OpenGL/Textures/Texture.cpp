@@ -1,4 +1,5 @@
 #include "Texture.hpp"
+#include "DefaultTextureHandle.hpp"
 
 Texture::Texture()
 	: m_nHandle(0)
@@ -23,5 +24,5 @@ void Texture::unbind()
 
 shared_ptr<TextureHandle> Texture::getHandle()
 {
-	return shared_ptr<TextureHandle>(new TextureHandle(m_nHandle));
+	return shared_ptr<TextureHandle>(new DefaultTextureHandle(m_nHandle));
 }
