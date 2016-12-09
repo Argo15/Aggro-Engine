@@ -34,7 +34,7 @@ void TransformComponent::rotate(float angle, glm::vec3 &axis)
 void TransformComponent::scale(glm::vec3 &scale)
 {
 	boost::lock_guard<TransformComponent> guard(*this);
-	m_scale += scale;
+	m_scale *= scale;
 	m_scaleMat = glm::scale(glm::mat4(1.0), m_scale);
 	m_changeListeners.notify(this);
 }

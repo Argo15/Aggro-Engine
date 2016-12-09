@@ -6,6 +6,7 @@
 #include "TextureCache.hpp"
 #include "JobManager.hpp"
 
+class Scene;
 class JobManager;
 
 class EngineContext

@@ -3,6 +3,7 @@
 
 Scene::Scene()
 	: m_nextId(1)
+	, m_transformHook(new TranslateHook())
 {
 }
 
@@ -10,6 +11,7 @@ Scene::Scene(shared_ptr<SceneNode> root, shared_ptr<Camera> camera)
 	: m_root(root)
 	, m_camera(camera)
 	, m_nextId(1)
+	, m_transformHook(new TranslateHook())
 {
 }
 
@@ -21,6 +23,11 @@ shared_ptr<SceneNode> Scene::getRoot()
 shared_ptr<Camera> Scene::getCamera()
 {
 	return m_camera;
+}
+
+shared_ptr<TransformHook> Scene::getTransformHook()
+{
+	return m_transformHook;
 }
 
 void Scene::setRoot(shared_ptr<SceneNode> root)

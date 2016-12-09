@@ -1,6 +1,6 @@
 #include "WhiteTexture.hpp"
 
-WhiteTexture::WhiteTexture(unsigned int nWidth, unsigned int nHeight)
+WhiteTexture::WhiteTexture(unsigned int nWidth, unsigned int nHeight, unsigned int shade)
 {
 	nWidth = roundUpToNextPowerOfTwo(nWidth); // we want a pow2 texture
 	nHeight = roundUpToNextPowerOfTwo(nHeight);
@@ -9,9 +9,9 @@ WhiteTexture::WhiteTexture(unsigned int nWidth, unsigned int nHeight)
 
 	for (int i = 0; i<nTextureSize; i += 3)       //Set color value to temporary array
 	{
-		pTexture[i + 0] = (unsigned char)128;
-		pTexture[i + 1] = (unsigned char)128;
-		pTexture[i + 2] = (unsigned char)128;
+		pTexture[i + 0] = (unsigned char)shade;
+		pTexture[i + 1] = (unsigned char)shade;
+		pTexture[i + 2] = (unsigned char)shade;
 	}
 
 	glGenTextures(1, &m_nHandle);

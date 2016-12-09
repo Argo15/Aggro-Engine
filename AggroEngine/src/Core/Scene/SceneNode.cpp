@@ -112,3 +112,19 @@ void SceneNode::removeChild(shared_ptr<SceneNode> child)
 {
 	m_children->erase(remove(m_children->begin(), m_children->end(), child), m_children->end());
 }
+
+glm::mat4 SceneNode::getWorldTransform()
+{
+	glm::mat4 tansform = getObject()->getTransform();
+	if (m_parent)
+	{
+		return m_parent->getWorldTransform() * tansform;
+	}
+	return tansform;
+}
+
+glm::vec3 SceneNode::getWorldTranslate()
+{
+	glm::mat4 tansform = getWorldTransform();
+	return glm::vec3(tansform[3][0], tansform[3][1], tansform[3][2]);
+}

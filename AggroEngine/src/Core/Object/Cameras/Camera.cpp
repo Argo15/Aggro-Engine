@@ -17,8 +17,8 @@ Camera::Camera()
 	translate(glm::vec3(4.f, 4.f, 4.f));
 
 	// Default look
-	rotate(45.0f, m_v3UpDir);
-	rotate(-35.3f, m_v3RightDir);
+	rotate(0.79f, m_v3UpDir);
+	rotate(-0.61f, m_v3RightDir);
 }
 
 void Camera::updateViewMatrix()
@@ -60,7 +60,7 @@ void Camera::setProjection(glm::mat4 &m4Projection)
 	m_m4ProjMatrix = m4Projection;
 }
 
-void setLookAt(glm::vec3 &eye, glm::vec3 &center, glm::vec3 &up)
+void Camera::setLookAt(glm::vec3 &eye, glm::vec3 &center, glm::vec3 &up)
 {
 	// TODO, math this one out.
 }

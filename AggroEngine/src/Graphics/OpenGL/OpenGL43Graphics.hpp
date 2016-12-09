@@ -39,6 +39,7 @@ public:
 	void deleteVertexBuffer(shared_ptr<VertexBufferHandle> nHandle);
 	
 	shared_ptr<TextureHandle> createTexture();
+	shared_ptr<TextureHandle> createTexture(shared_ptr<Image> image);
 	shared_ptr<TextureHandle> createTexture(shared_ptr<TextureBuildOptions> pTexOptions);
 	void deleteTexture(shared_ptr<TextureHandle> textureHandle);
 

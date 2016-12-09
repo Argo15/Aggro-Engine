@@ -5,7 +5,10 @@
 #include "Camera.hpp"
 #include "SceneNode.hpp"
 #include "Listener.hpp"
+#include "TranslateHook.hpp"
 using namespace std;
+
+class TransformHook;
 
 /**
  * Hierarchical structure of a scene (aka scene graph)
@@ -18,6 +21,7 @@ class Scene
 private:
 	shared_ptr<SceneNode> m_root;
 	shared_ptr<Camera> m_camera;
+	shared_ptr<TransformHook> m_transformHook;
 	Listener<Scene*> m_updateListeners;
 	Listener<shared_ptr<SceneNode>> m_selectionChangeListeners;
 
@@ -34,6 +38,7 @@ public:
 
 	shared_ptr<SceneNode> getRoot();
 	shared_ptr<Camera> getCamera();
+	shared_ptr<TransformHook> getTransformHook();
 
 	void setRoot(shared_ptr<SceneNode> root);
 	void setCamera(shared_ptr<Camera> camera);

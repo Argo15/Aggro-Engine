@@ -12,5 +12,5 @@
 class WhiteTexture : public Texture
 {
 public:
-	WhiteTexture(unsigned int nWidth, unsigned int nHeight);
+	WhiteTexture(unsigned int nWidth, unsigned int nHeight, unsigned int shade = 128);
 };

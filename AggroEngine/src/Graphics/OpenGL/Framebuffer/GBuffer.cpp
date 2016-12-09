@@ -1,9 +1,9 @@
 #include "GBuffer.hpp"
-#include "DevTexture.hpp"
+#include "WhiteTexture.hpp"
 #include "Locks.hpp"
 
 #define BUFFER_OFFSET(i) ((char *)NULL + (i))
-unique_ptr<DevTexture> devTexture;
+unique_ptr<WhiteTexture> devTexture;
 
 GBuffer::GBuffer(OpenGL43Graphics *graphics, int width, int height)
 {
@@ -33,7 +33,7 @@ GBuffer::GBuffer(OpenGL43Graphics *graphics, int width, int height)
 
 	// Generate selection
 	m_selectionTex = graphics->createTexture(texOptions);
-	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT2, GL_TEXTURE_2D, m_selectionTex->get(), 0);
+	glFramebufferTexture2D(GL_FRAMEBUFFER, getSelectionColorAttachment(), GL_TEXTURE_2D, m_selectionTex->get(), 0);
 
 	// Generate albedo
 	fboImage->setInternalFormat(InternalFormat::RGBA8);
@@ -58,20 +58,25 @@ GBuffer::GBuffer(OpenGL43Graphics *graphics, int width, int height)
 	glBindTexture(GL_TEXTURE_2D, 0);
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
-	devTexture = unique_ptr<DevTexture>(new DevTexture(32, 32));
+	devTexture = unique_ptr<WhiteTexture>(new WhiteTexture(1, 1, 255));
 }
 
 void GBuffer::drawToBuffer(RenderOptions renderOptions, std::queue<shared_ptr<RenderData>> &renderQueue)
 {
 	boost::lock_guard<OpenGL43Graphics> guard(*m_graphics);
-	m_gBufferProg->use();
 
 	bind();
+	m_gBufferProg->use();
 	GLenum mrt[] = { GL_COLOR_ATTACHMENT0_EXT, GL_COLOR_ATTACHMENT1_EXT, GL_COLOR_ATTACHMENT2_EXT };
 	glDrawBuffers(3, mrt);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glPushAttrib(GL_VIEWPORT_BIT);
 	glViewport(0, 0, getWidth(), getHeight());
+	glLineWidth(1);
+	glEnable(GL_DEPTH_TEST);
+	int currentLineWidth = 1;
+	bool isDepthDisabled = false;
+	shared_ptr<RenderData> disabledDepthObject; // needs to be rendered at the end
 
 	glBindFragDataLocation(m_gBufferProg->getHandle(), 0, "normalBuffer");
 	glBindFragDataLocation(m_gBufferProg->getHandle(), 1, "albedoBuffer");
@@ -79,13 +84,27 @@ void GBuffer::drawToBuffer(RenderOptions renderOptions, std::queue<shared_ptr<Re
 	glBindAttribLocation(m_gBufferProg->getHandle(), 0, "v_a_vertex");
 	glBindAttribLocation(m_gBufferProg->getHandle(), 1, "v_b_texcoord");
 	glBindAttribLocation(m_gBufferProg->getHandle(), 2, "v_c_normal");
-
 	while (!renderQueue.empty())
 	{
 		shared_ptr<RenderData> renderData = renderQueue.front();
 		renderQueue.pop();
 
-		if (renderData->getVertexBufferHandle() != nullptr)
+		if (renderData == disabledDepthObject)
+		{
+			glDisable(GL_DEPTH_TEST);
+			isDepthDisabled = true;
+		}
+		else if (!isDepthDisabled && !renderData->isDepthTestEnabled())
+		{
+			renderQueue.push(renderData);
+			if (!disabledDepthObject)
+			{
+				disabledDepthObject = renderData;
+			}
+			continue;
+		}
+
+		if (renderData->getVertexBufferHandle())
 		{
 			glm::mat4 mvpMatrix = renderOptions.getProjectionMatrix()*renderOptions.getViewMatrix()*renderData->getModelMatrix();
 			m_gBufferProg->sendUniform("modelViewProjectionMatrix", glm::value_ptr(mvpMatrix), false, 4);
@@ -93,7 +112,7 @@ void GBuffer::drawToBuffer(RenderOptions renderOptions, std::queue<shared_ptr<Re
 			m_gBufferProg->sendUniform("normalMatrix", glm::value_ptr(normalMatrix), false, 3);
 
 			glActiveTexture(GL_TEXTURE0);
-			if (renderData->getTextureHandle().get() != nullptr)
+			if (renderData->getTextureHandle())
 			{
 				glBindTexture(GL_TEXTURE_2D, renderData->getTextureHandle()->get());
 			}
@@ -107,6 +126,12 @@ void GBuffer::drawToBuffer(RenderOptions renderOptions, std::queue<shared_ptr<Re
 			float g = ((id / 255) % 255) / 255.0f;
 			float b = ((id / 65025) % 255) / 255.0f;
 			m_gBufferProg->sendUniform("objId", r, g, b);
+
+			if (currentLineWidth != renderData->getLineWidth())
+			{
+				currentLineWidth = renderData->getLineWidth();
+				glLineWidth(currentLineWidth);
+			}
 
 			shared_ptr<VertexBufferHandle> vboHandle = renderData->getVertexBufferHandle();
 			glBindBuffer(GL_ARRAY_BUFFER, vboHandle->getVertexHandle());
@@ -130,18 +155,18 @@ void GBuffer::drawToBuffer(RenderOptions renderOptions, std::queue<shared_ptr<Re
 			Texture::unbind();
 		}
 	}
+	m_gBufferProg->disable();
 	unbind();
 	glPopAttrib();
 }
 
 void GBuffer::bind() 
 { 
-	glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, m_buffer); m_gBufferProg->use(); 
+	glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, m_buffer); 
 }
 
 void GBuffer::unbind() 
-{ 
-	m_gBufferProg->disable(); 
+{
 	glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, 0); 
 }
 
@@ -198,4 +223,9 @@ int GBuffer::getWidth()
 int GBuffer::getHeight() 
 { 
 	return m_height; 
+}
+
+GLenum GBuffer::getSelectionColorAttachment()
+{
+	return GL_COLOR_ATTACHMENT2;
 }

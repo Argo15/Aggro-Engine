@@ -10,6 +10,7 @@ GLWidget::GLWidget(shared_ptr<EngineContext> context, QWidget *parent)
 	, m_mouseController(new MouseController())
 	, m_context(context)
 	, m_graphicsClock(new Clock())
+	, m_selection(new Selection())
 {
 	m_renderer = shared_ptr<Renderer>(new Renderer(m_context->getGraphics()));
 	setFocusPolicy(Qt::StrongFocus);
@@ -31,12 +32,7 @@ void GLWidget::initializeGL()
 	m_context->getGraphics()->init();
 	m_renderer->init(m_context->getVboCache(), m_context->getTextureCache());
 
-	m_context->getJobManager()->run(new CameraUpdateJob(
-		m_context,
-		shared_ptr<CameraController>(new FreeRoamCameraController()),
-		m_keyboard,
-		m_mouse
-	));
+	(new CameraUpdateJob(m_context, shared_ptr<CameraController>(new FreeRoamCameraController()), m_keyboard, m_mouse))->run();
 
 	// create a root object
 	shared_ptr<Object> child1Object(new Object());
@@ -46,6 +42,9 @@ void GLWidget::initializeGL()
 	objectRenderComponent->setTexture(m_context->getTextureCache()->getTexture("Resources/Textures/Walls/wall01/wall01_Diffuse.tga"));
 	child1Object->setRenderComponent(objectRenderComponent);
 	child1Object->translate(glm::vec3(3.0, 0, 0));
+	child1Object->rotate(0.79f, glm::vec3(1.0, 0, 0));
+	child1Object->rotate(0.79f, glm::vec3(0, 1.0, 0));
+	child1Object->scale(glm::vec3(2.0, 2.0, 2.0));
 	child2Object->setRenderComponent(objectRenderComponent);
 	child2Object->translate(glm::vec3(0, 0, -3.0));
 
@@ -91,7 +90,8 @@ void GLWidget::paintGL()
 		m_graphicsClock->resetTimer();
 		m_renderer->renderScene(m_context->getScene(), m_context->getRenderOptions());
 		swapBuffers();
-		m_mouseController->handleMouseInput(m_mouse, m_context);
+		m_selection->updateSelection(m_mouse, m_context);
+		m_mouseController->handleMouseInput(m_mouse, m_context, m_selection);
 	}
 }
 

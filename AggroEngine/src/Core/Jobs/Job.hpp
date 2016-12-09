@@ -13,7 +13,8 @@ protected:
 	function<void()> m_function;
 
 public:
-	Job(function<void()> function = 0);
+	Job();
+	Job(function<void()> function);
 
 	void run();
 	void runInThread();

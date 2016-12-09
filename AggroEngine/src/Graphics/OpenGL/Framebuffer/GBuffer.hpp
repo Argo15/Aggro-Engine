@@ -40,4 +40,6 @@ public:
 
 	int getWidth();
 	int getHeight();
+
+	GLenum getSelectionColorAttachment();
 };

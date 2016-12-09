@@ -20,14 +20,10 @@ void Renderer::init(shared_ptr<VertexBufferCache> vboCache, shared_ptr<TextureCa
 
 void Renderer::renderScene(shared_ptr<Scene> scene, shared_ptr<RenderOptions> renderOptions)
 {
-	// clear
-	m_graphics->clearDepthAndColor();
-
-	// Render grid
-	m_graphics->stageTriangleRender(m_gridRenderData);
-
-	// Render scene
-	_renderSceneNodeRecursive(scene->getRoot(), glm::mat4(1.0));
+	m_graphics->clearDepthAndColor(); // clear
+	m_graphics->stageTriangleRender(m_gridRenderData); // Render grid
+	scene->getTransformHook()->render(m_graphics, scene); // Render transformer
+	_renderSceneNodeRecursive(scene->getRoot(), glm::mat4(1.0)); // Render scene
 
 	// set scene options
 	renderOptions->setProjectionMatrix(scene->getCamera()->getProjMatrix());

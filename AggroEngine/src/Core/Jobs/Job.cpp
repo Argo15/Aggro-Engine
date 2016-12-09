@@ -1,5 +1,9 @@
 #include "Job.hpp"
 
+Job::Job()
+{
+}
+
 Job::Job(function<void()> function)
 	: m_function(function)
 {

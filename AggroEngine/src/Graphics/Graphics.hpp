@@ -33,6 +33,7 @@ public:
 
 	// Textures
 	virtual shared_ptr<TextureHandle> createTexture() = 0;
+	virtual shared_ptr<TextureHandle> createTexture(shared_ptr<Image> image) = 0;
 	virtual shared_ptr<TextureHandle> createTexture(shared_ptr<TextureBuildOptions> pTexOptions) = 0;
 	virtual void deleteTexture(shared_ptr<TextureHandle> textureHandle) = 0;
 

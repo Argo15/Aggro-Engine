@@ -66,8 +66,8 @@ void FreeRoamCameraController::handleMouseInput(shared_ptr<Camera> camera, Mouse
 	{
 		if (mouse.getDeltaY() != 0 || mouse.getDeltaX() != 0)
 		{
-			camera->rotate(nSpeed*-120.0f*mouse.getDeltaY(), camera->getRightDir()); // Rotate up / down
-			camera->rotate(nSpeed*-220.0f*mouse.getDeltaX(), glm::vec3(0.f, 1.f, 0.f)); // Rotate left / right
+			camera->rotate(nSpeed*-1.2f*mouse.getDeltaY(), camera->getRightDir()); // Rotate up / down
+			camera->rotate(nSpeed*-2.0f*mouse.getDeltaX(), glm::vec3(0.f, 1.f, 0.f)); // Rotate left / right
 		}
 	}
 }

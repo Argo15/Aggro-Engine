@@ -18,9 +18,11 @@ private:
 public:
 	Clock();
 
+	long getTimeSinceStartMicro();
 	long getTimeSinceStartMillis();
 	long getTimeSinceStartSeconds();
 
+	long getTimerMicro();
 	long getTimerMillis();
 	long getTimerSeconds();
 	void resetTimer();

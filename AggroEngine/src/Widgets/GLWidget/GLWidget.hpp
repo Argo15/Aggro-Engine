@@ -11,6 +11,7 @@
 #include "Renderer.hpp"
 #include "EngineContext.hpp"
 #include "Clock.hpp"
+#include "Selection.hpp"
 
 class GLWidget : public QGLWidget
 {
@@ -23,6 +24,7 @@ private:
 	shared_ptr<MouseController> m_mouseController;
 	shared_ptr<EngineContext> m_context;
 	shared_ptr<Clock> m_graphicsClock;
+	shared_ptr<Selection> m_selection;
 	int m_maxFps;
 
 public:

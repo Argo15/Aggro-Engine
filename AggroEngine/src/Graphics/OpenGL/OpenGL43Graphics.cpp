@@ -70,6 +70,11 @@ shared_ptr<TextureHandle> OpenGL43Graphics::createTexture()
 	return texture.getHandle();
 }
 
+shared_ptr<TextureHandle> OpenGL43Graphics::createTexture(shared_ptr<Image> image)
+{
+	return createTexture(shared_ptr<TextureBuildOptions>(new TextureBuildOptions(image)));
+}
+
 shared_ptr<TextureHandle> OpenGL43Graphics::createTexture(shared_ptr<TextureBuildOptions> pTexOptions)
 {
 	boost::lock_guard<OpenGL43Graphics> guard(*this);
@@ -204,24 +209,16 @@ shared_ptr<Image> OpenGL43Graphics::getRenderImage(RenderOptions::RenderTarget t
 
 shared_ptr<Image> OpenGL43Graphics::getRenderImage(int x, int y, int width, int height, RenderOptions::RenderTarget target)
 {
+	boost::lock_guard<OpenGL43Graphics> guard(*this);
+
 	int pixelSize = sizeof(unsigned short) * 4;
 	int size = width * height * pixelSize;
 	unsigned char *pixels = new unsigned char[size];
 
-	int idxStart = (y * m_gBuffer->getWidth() * pixelSize) + (x * pixelSize);
-	boost::lock_guard<OpenGL43Graphics> guard(*this);
-	GLuint pbo = m_pboCache->getPixelBuffer(m_gBuffer->getWidth() * m_gBuffer->getHeight() * pixelSize, "RT");
-
-	glBindBuffer(GL_PIXEL_PACK_BUFFER, pbo);
-	glBindTexture(GL_TEXTURE_2D, _getRenderTargetTexture(target)->get());
-	glGetTexImage(GL_TEXTURE_2D, 0, GL_RGBA, GL_UNSIGNED_SHORT, 0);
-
-	unsigned char* ptr = (unsigned char*)glMapBuffer(GL_PIXEL_PACK_BUFFER, GL_READ_ONLY);
-	if (ptr != nullptr)
-	{
-		memcpy(pixels, ptr + idxStart, size);
-	}
-	glUnmapBuffer(GL_PIXEL_PACK_BUFFER);
+	m_gBuffer->bind();
+	glReadBuffer(m_gBuffer->getSelectionColorAttachment());
+	glReadPixels(x, y, width, height, GL_RGBA, GL_UNSIGNED_SHORT, pixels);
+	m_gBuffer->unbind();
 
 	return shared_ptr<Image>(new Image(width, height, ImageFormat::RGBA,
 		InternalFormat::RGBA16, 0, boost::shared_array<unsigned char>(pixels)));
