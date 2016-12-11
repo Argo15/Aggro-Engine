@@ -43,6 +43,7 @@ public:
 
 	void addChangeListener(void *ns, std::function<void(SceneNode *)> listener);
 	void removeChangeListener(void *ns);
+	void notifyChanged();
 
 	void addDeletedListener(void *ns, std::function<void(SceneNode *)> listener);
 	void notifyDeleted();
@@ -51,4 +52,5 @@ public:
 
 	glm::mat4 getWorldTransform();
 	glm::vec3 getWorldTranslate();
+	glm::mat4 getParentTransform();
 };

@@ -18,8 +18,8 @@ private:
 	shared_ptr<QLineEdit> m_scaleYEdit;
 	shared_ptr<QLineEdit> m_scaleZEdit;
 	boost::mutex m_textLock;
-	glm::vec3 *m_lastTranslate;
-	glm::vec3 *m_lastScale;
+	glm::vec3 m_lastTranslate;
+	glm::vec3 m_lastScale;
 
 protected:
 	virtual void _refresh(SceneNode *newNode);

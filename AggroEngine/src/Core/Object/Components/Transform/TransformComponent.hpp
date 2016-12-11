@@ -26,10 +26,10 @@ public:
 	glm::vec3 *getTranslate();
 	glm::vec3 *getScale();
 
-	void translate(glm::vec3 &translate);
-	void rotate(glm::mat4 &rotate);
-	void rotate(float angle, glm::vec3 &axis);
-	void scale(glm::vec3 &scale);
+	void translate(const glm::vec3 &translate);
+	void rotate(const glm::mat4 &rotate);
+	void rotate(float angle, const glm::vec3 &axis);
+	void scale(const glm::vec3 &scale);
 
 	void setTranslate(glm::vec3 translate);
 	void setRotate(glm::mat4 rotate);

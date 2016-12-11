@@ -11,7 +11,7 @@ TransformComponent::TransformComponent()
 
 }
 
-void TransformComponent::translate(glm::vec3 &translate)
+void TransformComponent::translate(const glm::vec3 &translate)
 {
 	boost::lock_guard<TransformComponent> guard(*this);
 	m_translate += translate;
@@ -19,19 +19,20 @@ void TransformComponent::translate(glm::vec3 &translate)
 	m_changeListeners.notify(this);
 }
 
-void TransformComponent::rotate(glm::mat4 &rotate)
+void TransformComponent::rotate(const glm::mat4 &rotate)
 {
 	boost::lock_guard<TransformComponent> guard(*this);
 	m_rotateMat = rotate * m_rotateMat;
 	m_changeListeners.notify(this);
 }
 
-void TransformComponent::rotate(float angle, glm::vec3 &axis)
+void TransformComponent::rotate(float angle, const glm::vec3 &axis)
 {
 	rotate(glm::toMat4(glm::angleAxis(angle, glm::normalize(axis))));
+	m_changeListeners.notify(this);
 }
 
-void TransformComponent::scale(glm::vec3 &scale)
+void TransformComponent::scale(const glm::vec3 &scale)
 {
 	boost::lock_guard<TransformComponent> guard(*this);
 	m_scale *= scale;

@@ -24,10 +24,10 @@ public:
 
 	glm::mat4 getTransform();
 
-	void translate(glm::vec3 &translate);
-	void rotate(glm::mat4 &rotate);
-	void rotate(float angle, glm::vec3 &axis);
-	void scale(glm::vec3 &scale);
+	void translate(const glm::vec3 &translate);
+	void rotate(const glm::mat4 &rotate);
+	void rotate(float angle, const glm::vec3 &axis);
+	void scale(const glm::vec3 &scale);
 
 	bool hasTransformComponent();
 	void setTransformComponent(shared_ptr<TransformComponent> transformComponent);

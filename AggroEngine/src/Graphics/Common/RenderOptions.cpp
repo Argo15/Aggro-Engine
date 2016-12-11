@@ -27,12 +27,12 @@ RenderOptions &RenderOptions::setViewMatrix(glm::mat4 &m4View)
 	return *this;
 }
 
-glm::mat4 &RenderOptions::getProjectionMatrix()
+const glm::mat4 &RenderOptions::getProjectionMatrix()
 {
 	return m_m4ProjectionMatrix;
 }
 
-glm::mat4 &RenderOptions::getViewMatrix()
+const glm::mat4 &RenderOptions::getViewMatrix()
 {
 	return m_m4ViewMatrix;
 }

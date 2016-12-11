@@ -31,8 +31,8 @@ public:
 	RenderOptions &setProjectionMatrix(glm::mat4 &m4Projection);
 	RenderOptions &setViewMatrix(glm::mat4 &m4View);
 
-	glm::mat4 &getProjectionMatrix();
-	glm::mat4 &getViewMatrix();
+	const glm::mat4 &getProjectionMatrix();
+	const glm::mat4 &getViewMatrix();
 
 	void setRenderTarget(RenderTarget target);
 	RenderTarget getRenderTarget();

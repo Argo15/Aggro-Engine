@@ -32,3 +32,8 @@ void Viewport::setDimensions(int x, int y, int width, int height)
 	m_width = width;
 	m_height = height;
 }
+
+glm::vec4 Viewport::asVec4()
+{
+	return glm::vec4(m_x, m_y, m_width, m_height);
+}

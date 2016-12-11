@@ -31,25 +31,25 @@ void Camera::updateViewMatrix()
 	m_m4ViewMatrix = glm::lookAt(m_v3EyePos, m_v3EyePos+m_v3LookDir, m_v3UpDir);
 }
 
-void Camera::translate(glm::vec3 &translate)
+void Camera::translate(const glm::vec3 &translate)
 {
 	Object::translate(translate);
 	updateViewMatrix();
 }
 
-void Camera::rotate(glm::mat4 &rotate)
+void Camera::rotate(const glm::mat4 &rotate)
 {
 	Object::rotate(rotate);
 	updateViewMatrix();
 }
 
-void Camera::rotate(float angle, glm::vec3 &axis)
+void Camera::rotate(float angle, const glm::vec3 &axis)
 {
 	Object::rotate(angle, axis);
 	updateViewMatrix();
 }
 
-void Camera::scale(glm::vec3 &scale)
+void Camera::scale(const glm::vec3 &scale)
 {
 	Object::scale(scale);
 	updateViewMatrix();

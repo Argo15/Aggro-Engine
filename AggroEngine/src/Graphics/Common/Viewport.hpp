@@ -1,5 +1,7 @@
 #pragma once
 
+#include "Matrix.hpp"
+
 class Viewport
 {
 private:
@@ -17,4 +19,5 @@ public:
 	int getHeight();
 
 	void setDimensions(int x, int y, int width, int height);
+	glm::vec4 asVec4();
 };

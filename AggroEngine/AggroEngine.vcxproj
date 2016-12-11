@@ -119,6 +119,7 @@
     <ClCompile Include="src\Util\Config\Config.cpp" />
     <ClCompile Include="src\Util\Config\JSONFileParser.cpp" />
     <ClCompile Include="src\Util\Config\PropertyTreeParser.cpp" />
+    <ClCompile Include="src\Util\Math\Line.cpp" />
     <ClCompile Include="src\Util\Math\MatrixDecompose.cpp" />
     <ClCompile Include="src\Util\StringUtil.cpp" />
     <ClCompile Include="src\Widgets\GLWidget\GLWidget.cpp" />
@@ -220,6 +221,7 @@
     <ClInclude Include="src\Util\Config\PropertyTreeParser.hpp" />
     <ClInclude Include="src\Util\FunctionUtil.hpp" />
     <ClInclude Include="src\Util\Listener.hpp" />
+    <ClInclude Include="src\Util\Math\Line.hpp" />
     <ClInclude Include="src\Util\Math\MathUtil.hpp" />
     <ClInclude Include="src\Util\Math\Matrix.hpp" />
     <ClInclude Include="src\Util\Math\MatrixDecompose.hpp" />

@@ -7,22 +7,22 @@ Object::Object()
 
 }
 
-void Object::translate(glm::vec3 &translate)
+void Object::translate(const glm::vec3 &translate)
 {
 	m_transformComponent->translate(translate);
 }
 
-void Object::rotate(glm::mat4 &rotate)
+void Object::rotate(const glm::mat4 &rotate)
 {
 	m_transformComponent->rotate(rotate);
 }
 
-void Object::rotate(float angle, glm::vec3 &axis)
+void Object::rotate(float angle, const glm::vec3 &axis)
 {
 	m_transformComponent->rotate(angle, axis);
 }
 
-void Object::scale(glm::vec3 &scale)
+void Object::scale(const glm::vec3 &scale)
 {
 	m_transformComponent->scale(scale);
 }

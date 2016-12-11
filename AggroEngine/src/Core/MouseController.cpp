@@ -8,7 +8,7 @@ MouseController::MouseController()
 
 void MouseController::handleMouseInput(shared_ptr<MouseState> mouse, shared_ptr<EngineContext> context, shared_ptr<Selection> selection)
 {
-	bool transformSelected = context->getScene()->getTransformHook()->updateSelection(mouse, selection);
+	bool transformSelected = context->getScene()->getTransformHook()->updateSelection(mouse, context, selection);
 	if (mouse->getButtonPressedOnce(Qt::MouseButton::LeftButton))
 	{
 		if (!transformSelected)

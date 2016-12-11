@@ -98,6 +98,11 @@ void SceneNode::removeChangeListener(void *ns)
 	m_changeListeners.remove(ns);
 }
 
+void SceneNode::notifyChanged()
+{
+	m_changeListeners.notify(this);
+}
+
 void SceneNode::addDeletedListener(void *ns, std::function<void(SceneNode *)> listener)
 {
 	m_deletedListeners.add(ns, listener);
@@ -127,4 +132,14 @@ glm::vec3 SceneNode::getWorldTranslate()
 {
 	glm::mat4 tansform = getWorldTransform();
 	return glm::vec3(tansform[3][0], tansform[3][1], tansform[3][2]);
+}
+
+glm::mat4 SceneNode::getParentTransform()
+{
+	glm::mat4 tansform = glm::mat4(1.0);
+	if (m_parent)
+	{
+		return m_parent->getWorldTransform() * tansform;
+	}
+	return tansform;
 }

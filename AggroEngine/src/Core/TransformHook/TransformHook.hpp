@@ -8,6 +8,7 @@
 class Scene;
 class Selection;
 class MouseState;
+class EngineContext;
 
 /**
 * Base object used to allow users to click and transform an object
@@ -19,5 +20,5 @@ class TransformHook
 {
 public:
 	virtual void render(shared_ptr<Graphics> graphics, shared_ptr<Scene> scene) = 0;
-	virtual bool updateSelection(shared_ptr<MouseState> mouse, shared_ptr<Selection> selection) = 0; // Returns true if hook selected
+	virtual bool updateSelection(shared_ptr<MouseState> mouse, shared_ptr<EngineContext> context, shared_ptr<Selection> selection) = 0; // Returns true if hook selected
 };

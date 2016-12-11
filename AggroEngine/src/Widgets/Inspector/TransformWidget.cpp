@@ -9,8 +9,8 @@ TransformWidget::TransformWidget(QWidget *parent)
 	, m_scaleXEdit(shared_ptr<QLineEdit>(new QLineEdit("1")))
 	, m_scaleYEdit(shared_ptr<QLineEdit>(new QLineEdit("1")))
 	, m_scaleZEdit(shared_ptr<QLineEdit>(new QLineEdit("1")))
-	, m_lastTranslate(new glm::vec3(0))
-	, m_lastScale(new glm::vec3(1.0f))
+	, m_lastTranslate(glm::vec3(0))
+	, m_lastScale(glm::vec3(1.0f))
 {
 	QHBoxLayout *mainLayout = new QHBoxLayout;
 		QVBoxLayout *leftLayout = new QVBoxLayout;
@@ -149,17 +149,17 @@ void TransformWidget::_refresh(TransformComponent *transform)
 {
 	if (m_currentNode)
 	{
-		glm::vec3 *translate = m_currentNode->getObject()->getTransformComponent()->getTranslate();
-		glm::vec3 *scale = m_currentNode->getObject()->getTransformComponent()->getScale();
+		glm::vec3 translate = *m_currentNode->getObject()->getTransformComponent()->getTranslate();
+		glm::vec3 scale = *m_currentNode->getObject()->getTransformComponent()->getScale();
 		if (translate != m_lastTranslate || scale != m_lastScale)
 		{
 			boost::lock_guard<boost::mutex> guard(m_textLock);
-			m_transXEdit->setText(QString::number(translate->x));
-			m_transYEdit->setText(QString::number(translate->y));
-			m_transZEdit->setText(QString::number(translate->z));
-			m_scaleXEdit->setText(QString::number(scale->x));
-			m_scaleYEdit->setText(QString::number(scale->y));
-			m_scaleZEdit->setText(QString::number(scale->z));
+			m_transXEdit->setText(QString::number(translate.x).left(7));
+			m_transYEdit->setText(QString::number(translate.y).left(7));
+			m_transZEdit->setText(QString::number(translate.z).left(7));
+			m_scaleXEdit->setText(QString::number(scale.x).left(7));
+			m_scaleYEdit->setText(QString::number(scale.y).left(7));
+			m_scaleZEdit->setText(QString::number(scale.z).left(5));
 			m_lastTranslate = translate;
 			m_lastScale = scale;
 		}
