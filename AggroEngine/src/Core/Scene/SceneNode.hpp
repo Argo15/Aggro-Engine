@@ -2,7 +2,8 @@
 
 #include <memory>
 #include <vector>
-#include "Object.hpp"
+#include "TransformComponent.hpp"
+#include "RenderComponent.hpp"
 #include "Listener.hpp"
 using namespace std;
 
@@ -16,19 +17,21 @@ class SceneNode
 {
 private:
 	SceneNode *m_parent;
-	shared_ptr<Object> m_object;
 	shared_ptr<vector<shared_ptr<SceneNode>>> m_children;
 	bool m_isSelected;
 	string m_name;
 	unsigned int m_id;
 
+	// Components
+	shared_ptr<TransformComponent> m_transformComponent;
+	shared_ptr<RenderComponent> m_renderComponent;
+
 	Listener<SceneNode *> m_changeListeners;
 	Listener<SceneNode *> m_deletedListeners;
 
 public:
-	SceneNode(unsigned int m_id, SceneNode *parent = nullptr, shared_ptr<Object> object = shared_ptr<Object>(new Object()));
+	SceneNode(unsigned int m_id, SceneNode *parent = nullptr);
 
-	shared_ptr<Object> getObject();
 	shared_ptr<vector<shared_ptr<SceneNode>>> getChildren();
 	void setSelected(bool selected);
 	bool isSelected();
@@ -53,4 +56,13 @@ public:
 	glm::mat4 getWorldTransform();
 	glm::vec3 getWorldTranslate();
 	glm::mat4 getParentTransform();
+
+	//Components
+	bool hasTransformComponent();
+	void setTransformComponent(shared_ptr<TransformComponent> transformComponent);
+	shared_ptr<TransformComponent> getTransformComponent();
+
+	bool hasRenderComponent();
+	void setRenderComponent(shared_ptr<RenderComponent> renderComponent);
+	shared_ptr<RenderComponent> getRenderComponent();
 };

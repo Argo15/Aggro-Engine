@@ -1,6 +1,9 @@
 #pragma once
 
-#include "../Object.hpp"
+#include "TransformComponent.hpp"
+#include "Matrix.hpp"
+#include <memory>
+using namespace std;
 
 /**
  * An object to help camera view transformations
@@ -8,7 +11,7 @@
  * author: wcrane
  * since: 2013-12-14
 **/
-class Camera : Object
+class Camera
 {
 private:
 	glm::vec3 m_v3EyePos;
@@ -17,6 +20,8 @@ private:
 	glm::vec3 m_v3RightDir;
 	glm::mat4 m_m4ViewMatrix;
 	glm::mat4 m_m4ProjMatrix;
+
+	shared_ptr<TransformComponent> m_transformComponent;
 
 	void updateViewMatrix();
 

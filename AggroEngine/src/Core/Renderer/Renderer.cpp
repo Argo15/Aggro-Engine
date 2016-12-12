@@ -37,13 +37,12 @@ void Renderer::renderScene(shared_ptr<Scene> scene, shared_ptr<RenderOptions> re
 void Renderer::_renderSceneNodeRecursive(shared_ptr<SceneNode> node, glm::mat4 transform)
 {
 	glm::mat4 curTransform = transform;
-	shared_ptr<Object> obj = node->getObject();
-	if (obj)
+	if (node->hasTransformComponent())
 	{
-		curTransform = transform * obj->getTransform();
-		if (obj->hasRenderComponent())
+		curTransform = transform * node->getTransformComponent()->getTransform();
+		if (node->hasRenderComponent())
 		{
-			obj->getRenderComponent()->render(m_graphics, curTransform, node->getId());
+			node->getRenderComponent()->render(m_graphics, curTransform, node->getId());
 		}
 	}
 	shared_ptr<vector<shared_ptr<SceneNode>>> children = node->getChildren();

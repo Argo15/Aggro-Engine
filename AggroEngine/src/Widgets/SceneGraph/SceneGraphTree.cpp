@@ -133,7 +133,8 @@ void SceneGraphTree::_addNewNode(shared_ptr<StaticObjectRenderComponent> renderC
 
 	//Create new scene node
 	shared_ptr<SceneNode> newNode = shared_ptr<SceneNode>(new SceneNode(m_context->getScene()->getNextId(), node.get()));
-	newNode->getObject()->setRenderComponent(renderComponent);
+	newNode->setRenderComponent(renderComponent);
+	newNode->setTransformComponent(shared_ptr<TransformComponent>(new TransformComponent()));
 	newNode->setName(name);
 	node->addChild(newNode);
 

@@ -90,9 +90,9 @@ TransformWidget::TransformWidget(QWidget *parent)
 void TransformWidget::_onTransformChange(QString newValue)
 {
 	boost::lock_guard<TransformWidget> guard(*this);
-	if (m_currentNode && m_currentNode->getObject() && m_currentNode->getObject()->getTransformComponent())
+	if (m_currentNode && m_currentNode->hasTransformComponent())
 	{
-		shared_ptr<TransformComponent> transform = m_currentNode->getObject()->getTransformComponent();
+		shared_ptr<TransformComponent> transform = m_currentNode->getTransformComponent();
 		transform->removeChangeListener(this);
 		transform->setTranslate(glm::vec3(
 			m_transXEdit->text().toFloat(),
@@ -111,9 +111,9 @@ void TransformWidget::_onTransformChange(QString newValue)
 void TransformWidget::_onRotateReset()
 {
 	boost::lock_guard<TransformWidget> guard(*this);
-	if (m_currentNode && m_currentNode->getObject() && m_currentNode->getObject()->getTransformComponent())
+	if (m_currentNode && m_currentNode->hasTransformComponent())
 	{
-		shared_ptr<TransformComponent> transform = m_currentNode->getObject()->getTransformComponent();
+		shared_ptr<TransformComponent> transform = m_currentNode->getTransformComponent();
 		transform->setRotate(glm::mat4(1.0));
 	}
 }
@@ -121,20 +121,20 @@ void TransformWidget::_onRotateReset()
 void TransformWidget::_refresh(SceneNode *newNode)
 {
 	boost::lock_guard<TransformWidget> guard(*this);
-	if (!newNode->getObject() || !newNode->getObject()->getTransformComponent())
+	if (!newNode->hasTransformComponent())
 	{
 		this->hide();
 		return;
 	}
 
-	shared_ptr<TransformComponent> transform = newNode->getObject()->getTransformComponent();
+	shared_ptr<TransformComponent> transform = newNode->getTransformComponent();
 	_refresh(transform.get());
 
 	if (m_lastActiveNode && m_lastActiveNode.get() != newNode)
 	{
-		if (m_lastActiveNode->getObject() && m_lastActiveNode->getObject()->getTransformComponent())
+		if (m_lastActiveNode->hasTransformComponent())
 		{
-			shared_ptr<TransformComponent> lastTransform = m_lastActiveNode->getObject()->getTransformComponent();
+			shared_ptr<TransformComponent> lastTransform = m_lastActiveNode->getTransformComponent();
 			lastTransform->removeChangeListener(this);
 		}
 	}
@@ -149,8 +149,8 @@ void TransformWidget::_refresh(TransformComponent *transform)
 {
 	if (m_currentNode)
 	{
-		glm::vec3 translate = *m_currentNode->getObject()->getTransformComponent()->getTranslate();
-		glm::vec3 scale = *m_currentNode->getObject()->getTransformComponent()->getScale();
+		glm::vec3 translate = *m_currentNode->getTransformComponent()->getTranslate();
+		glm::vec3 scale = *m_currentNode->getTransformComponent()->getScale();
 		if (translate != m_lastTranslate || scale != m_lastScale)
 		{
 			boost::lock_guard<boost::mutex> guard(m_textLock);

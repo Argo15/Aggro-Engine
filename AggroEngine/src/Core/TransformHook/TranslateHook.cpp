@@ -110,7 +110,7 @@ bool TranslateHook::updateSelection(shared_ptr<MouseState> mouse, shared_ptr<Eng
 			glm::vec3 diff = newPosObjSpace - *m_lastPos;
 			if (glm::length(diff) > 0)
 			{
-				selectedNode->getObject()->translate(diff);
+				selectedNode->getTransformComponent()->translate(diff);
 			}
 		}
 		m_lastPos = shared_ptr<glm::vec3>(new glm::vec3(newPosObjSpace));

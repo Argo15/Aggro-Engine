@@ -7,7 +7,7 @@ static glm::vec4 baseUpDir(0.f,1.f,0.f,0.f);
 static glm::vec4 baseRightDir(1.f,0.f,0.f,0.f);
 
 Camera::Camera()
-	: Object()
+	: m_transformComponent(shared_ptr<TransformComponent>(new TransformComponent()))
 	, m_v3EyePos(baseEyePos)
 	, m_v3LookDir(baseLookDir)
 	, m_v3UpDir(baseUpDir)
@@ -23,7 +23,7 @@ Camera::Camera()
 
 void Camera::updateViewMatrix()
 {
-	glm::mat4 transform = this->getTransform();
+	glm::mat4 transform = m_transformComponent->getTransform();
 	m_v3EyePos = glm::vec3(transform * baseEyePos);
 	m_v3LookDir = glm::vec3(transform * baseLookDir);
 	m_v3UpDir = glm::vec3(transform * baseUpDir);
@@ -33,25 +33,25 @@ void Camera::updateViewMatrix()
 
 void Camera::translate(const glm::vec3 &translate)
 {
-	Object::translate(translate);
+	m_transformComponent->translate(translate);
 	updateViewMatrix();
 }
 
 void Camera::rotate(const glm::mat4 &rotate)
 {
-	Object::rotate(rotate);
+	m_transformComponent->rotate(rotate);
 	updateViewMatrix();
 }
 
 void Camera::rotate(float angle, const glm::vec3 &axis)
 {
-	Object::rotate(angle, axis);
+	m_transformComponent->rotate(angle, axis);
 	updateViewMatrix();
 }
 
 void Camera::scale(const glm::vec3 &scale)
 {
-	Object::scale(scale);
+	m_transformComponent->scale(scale);
 	updateViewMatrix();
 }
 

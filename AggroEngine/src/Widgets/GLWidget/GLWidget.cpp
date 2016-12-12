@@ -35,25 +35,32 @@ void GLWidget::initializeGL()
 	(new CameraUpdateJob(m_context, shared_ptr<CameraController>(new FreeRoamCameraController()), m_keyboard, m_mouse))->run();
 
 	// create a root object
-	shared_ptr<Object> child1Object(new Object());
-	shared_ptr<Object> child2Object(new Object());
+	shared_ptr<Scene> scene = m_context->getScene();
+	shared_ptr<SceneNode> rootNode = shared_ptr<SceneNode>(new SceneNode(scene->getNextId()));
+	shared_ptr<SceneNode> child1 = shared_ptr<SceneNode>(new SceneNode(scene->getNextId(), rootNode.get()));
+	rootNode->addChild(child1);
+	shared_ptr<SceneNode> child2 = shared_ptr<SceneNode>(new SceneNode(scene->getNextId(), rootNode.get()));
+	rootNode->addChild(child2);
+
+	// add render data
 	shared_ptr<StaticObjectRenderComponent> objectRenderComponent(new StaticObjectRenderComponent());
 	objectRenderComponent->setVertexBuffer(m_context->getVboCache()->getVertexBuffer("Resources/Mesh/sphere.obj"));
 	objectRenderComponent->setTexture(m_context->getTextureCache()->getTexture("Resources/Textures/Walls/wall01/wall01_Diffuse.tga"));
-	child1Object->setRenderComponent(objectRenderComponent);
-	child1Object->translate(glm::vec3(3.0, 0, 0));
-	child1Object->rotate(0.79f, glm::vec3(1.0, 0, 0));
-	child1Object->rotate(0.79f, glm::vec3(0, 1.0, 0));
-	child1Object->scale(glm::vec3(2.0, 2.0, 2.0));
-	child2Object->setRenderComponent(objectRenderComponent);
-	child2Object->translate(glm::vec3(0, 0, -3.0));
+	child1->setRenderComponent(objectRenderComponent);
+	child2->setRenderComponent(objectRenderComponent);
 
-	shared_ptr<Scene> scene = m_context->getScene();
-	shared_ptr<SceneNode> rootNode = shared_ptr<SceneNode>(new SceneNode(scene->getNextId()));
-	shared_ptr<SceneNode> child1 = shared_ptr<SceneNode>(new SceneNode(scene->getNextId(), rootNode.get(), child1Object));
-	rootNode->addChild(child1);
-	shared_ptr<SceneNode> child2 = shared_ptr<SceneNode>(new SceneNode(scene->getNextId(), rootNode.get(), child2Object));
-	rootNode->addChild(child2);
+	// add transform data
+	shared_ptr<TransformComponent> transform(new TransformComponent());
+	transform->translate(glm::vec3(3.0, 0, 0));
+	transform->rotate(0.79f, glm::vec3(1.0, 0, 0));
+	transform->rotate(0.79f, glm::vec3(0, 1.0, 0));
+	transform->scale(glm::vec3(2.0, 2.0, 2.0));
+	child1->setTransformComponent(transform);
+	child1->setTransformComponent(transform);
+	transform = shared_ptr<TransformComponent>(new TransformComponent());
+	transform->translate(glm::vec3(0, 0, -3.0));
+	child2->setTransformComponent(transform);
+	child2->setTransformComponent(transform);
 
 	// set initial scene
 	scene->setRoot(rootNode);

@@ -76,7 +76,6 @@
     <ClCompile Include="src\Core\Object\Components\Render\RenderComponent.cpp" />
     <ClCompile Include="src\Core\Object\Components\Render\StaticObjectRenderComponent.cpp" />
     <ClCompile Include="src\Core\Object\Components\Transform\TransformComponent.cpp" />
-    <ClCompile Include="src\Core\Object\Object.cpp" />
     <ClCompile Include="src\Core\Renderer\Renderer.cpp" />
     <ClCompile Include="src\Core\Scene\Scene.cpp" />
     <ClCompile Include="src\Core\Scene\SceneNode.cpp" />
@@ -169,7 +168,6 @@
     <ClInclude Include="src\Core\Object\Components\Render\RenderComponent.hpp" />
     <ClInclude Include="src\Core\Object\Components\Render\StaticObjectRenderComponent.hpp" />
     <ClInclude Include="src\Core\Object\Components\Transform\TransformComponent.hpp" />
-    <ClInclude Include="src\Core\Object\Object.hpp" />
     <ClInclude Include="src\Core\Renderer\Renderer.hpp" />
     <ClInclude Include="src\Core\Scene\Scene.hpp" />
     <ClInclude Include="src\Core\Scene\SceneNode.hpp" />
