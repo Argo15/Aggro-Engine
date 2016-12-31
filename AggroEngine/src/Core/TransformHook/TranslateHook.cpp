@@ -23,7 +23,7 @@ void TranslateHook::_initialize(shared_ptr<Graphics> graphics, shared_ptr<Scene>
 		m_renderData[i]->setVertexBufferHandle(graphics->createVertexBuffer(shared_ptr<Mesh>(new LineMesh(glm::vec3(0), 2.0f * transAxis[i]))));
 		m_texture[i] = graphics->createTexture(shared_ptr<Image>(new RGBImage(1, 1, transAxis[i])));
 		m_renderData[i]->setTextureHandle(m_texture[i]);
-		m_renderData[i]->setLineWidth(5);
+		m_renderData[i]->setLineWidth(2);
 		m_renderData[i]->setDepthTestEnabled(false);
 		m_renderData[i]->setId(scene->getNextId());
 		graphics->stageTriangleRender(m_renderData[i]);
@@ -66,9 +66,10 @@ bool TranslateHook::updateSelection(shared_ptr<MouseState> mouse, shared_ptr<Eng
 	if (!mouse->getButtonPressed(Qt::MouseButton::LeftButton))
 	{
 		m_hasSelection = false;
+		int selectedIndex = _getSelectedIndex(selection);
 		for (int i = 0; i < 3; i++)
 		{
-			if (id == m_renderData[i]->getId())
+			if (i == selectedIndex)
 			{
 				m_renderData[i]->setTextureHandle(m_texture[3]);
 				m_hasSelection = true;
@@ -116,4 +117,50 @@ bool TranslateHook::updateSelection(shared_ptr<MouseState> mouse, shared_ptr<Eng
 		m_lastPos = shared_ptr<glm::vec3>(new glm::vec3(newPosObjSpace));
 	}
 	return m_hasSelection;
+}
+
+/* 
+ * Either selects hook directly under mouse or selects hook with most pixels near mouse.
+ */
+unsigned int TranslateHook::_getSelectedIndex(shared_ptr<Selection> selection)
+{
+	unsigned int id = selection->getSelectionAsId();
+	for (int i = 0; i < 3; i++)
+	{
+		if (id == m_renderData[i]->getId())
+		{
+			return i;
+		}
+	}
+
+	int counts[3] = { 0, 0, 0 };
+	unsigned int size = selection->getSize();
+	for (int x = 0; x < size; x++)
+	{
+		for (int y = 0; y < size; y++)
+		{
+			id = selection->getSelectionAsId(x, y);
+			for (int i = 0; i < 3; i++)
+			{
+				if (id == m_renderData[i]->getId())
+				{
+					counts[i]++;
+				}
+			}
+		}
+	}
+
+	if (counts[0] > 0 && counts[0] > counts[1] && counts[0] > counts[2])
+	{
+		return 0;
+	}
+	else if (counts[1] > 0 && counts[1] > counts[2])
+	{
+		return 1;
+	}
+	else if (counts[2] > 0)
+	{
+		return 2;
+	}
+	return -1;
 }

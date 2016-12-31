@@ -1,7 +1,9 @@
 #include "Selection.hpp"
+#include <algorithm>
 
-Selection::Selection()
-	: m_selectedPixel()
+Selection::Selection(unsigned int size)
+	: m_selectedArea()
+	, m_size(size)
 {
 
 }
@@ -10,20 +12,36 @@ void Selection::updateSelection(shared_ptr<MouseState> mouse, shared_ptr<EngineC
 {
 	float percentX = (float)mouse->getPosX() / (float)context->getGraphics()->getViewport()->getWidth();
 	float percentY = (float)mouse->getPosY() / (float)context->getGraphics()->getViewport()->getHeight();
-	int imgX = percentX * context->getGraphics()->getFrameBufferWidth();
-	int imgY = context->getGraphics()->getFrameBufferHeight() - (percentY * context->getGraphics()->getFrameBufferHeight());
-	m_selectedPixel = context->getGraphics()->getRenderImagePixel(imgX, imgY, RenderOptions::SELECTION);
+	unsigned int imgX = std::max<unsigned int>(0, percentX * context->getGraphics()->getFrameBufferWidth() - (m_size / 2));
+	unsigned int imgY = std::max<unsigned int>(0, context->getGraphics()->getFrameBufferHeight() - (percentY * context->getGraphics()->getFrameBufferHeight()) - (m_size / 2));
+	m_selectedArea = context->getGraphics()->getRenderImage(imgX, imgY, m_size, m_size, RenderOptions::SELECTION);
 }
 
 unsigned int Selection::getSelectionAsId()
 {
-	unsigned short r = m_selectedPixel[0] / 256;
-	unsigned short g = m_selectedPixel[1] / 256;
-	unsigned short b = m_selectedPixel[2] / 256;
+	return getSelectionAsId(m_size / 2, m_size / 2);
+}
+
+unsigned int Selection::getSelectionAsId(unsigned int x, unsigned int y)
+{
+	boost::shared_array<unsigned short> selectedPixel = getSelectionAsColor(x, y);
+	unsigned short r = selectedPixel[0] / 256;
+	unsigned short g = selectedPixel[1] / 256;
+	unsigned short b = selectedPixel[2] / 256;
 	return r + (g * 255) + (b * 65025);
 }
 
 boost::shared_array<unsigned short> Selection::getSelectionAsColor()
 {
-	return m_selectedPixel;
+	return getSelectionAsColor(m_size / 2, m_size / 2);
+}
+
+boost::shared_array<unsigned short> Selection::getSelectionAsColor(unsigned int x, unsigned int y)
+{
+	return m_selectedArea->getPixelUS(std::min<unsigned int>(m_size - 1, x), std::min<unsigned int>(m_size - 1, y));
+}
+
+unsigned int Selection::getSize()
+{
+	return m_size;
 }

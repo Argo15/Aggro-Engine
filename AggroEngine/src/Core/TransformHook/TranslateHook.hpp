@@ -13,6 +13,7 @@ private:
 	int m_selectedIdx;
 
 	void _initialize(shared_ptr<Graphics> graphics, shared_ptr<Scene> scene);
+	unsigned int _getSelectedIndex(shared_ptr<Selection> selection);
 
 public:
 	TranslateHook();
