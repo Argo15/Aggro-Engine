@@ -1,7 +1,6 @@
 #pragma once
 
-#include <mutex>
-#include <boost/thread/lockable_adapter.hpp>
+#include "Locks.hpp"
 #include "Matrix.hpp"
 #include "Component.hpp"
 #include "Listener.hpp"
@@ -10,7 +9,7 @@ class TransformComponent : public Component,
 	public boost::basic_lockable_adapter<recursive_mutex>
 {
 private:
-	glm::mat4 m_rotateMat;
+	glm::quat m_rotateMat;
 	glm::mat4 m_translateMat;
 	glm::mat4 m_scaleMat;
 	glm::vec3 m_translate;
@@ -24,15 +23,16 @@ public:
 	glm::mat4 getTransform();
 
 	glm::vec3 *getTranslate();
+	glm::vec3 getRotateEuler();
 	glm::vec3 *getScale();
 
 	void translate(const glm::vec3 &translate);
-	void rotate(const glm::mat4 &rotate);
 	void rotate(float angle, const glm::vec3 &axis);
 	void scale(const glm::vec3 &scale);
 
 	void setTranslate(glm::vec3 translate);
-	void setRotate(glm::mat4 rotate);
+	void setRotate(glm::quat rotate);
+	void setRotate(glm::vec3 rotate);
 	void setScale(glm::vec3 scale);
 
 	void addChangeListener(void *ns, std::function<void(TransformComponent *)> listener);

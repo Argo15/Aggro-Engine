@@ -19,16 +19,10 @@ void TransformComponent::translate(const glm::vec3 &translate)
 	m_changeListeners.notify(this);
 }
 
-void TransformComponent::rotate(const glm::mat4 &rotate)
-{
-	boost::lock_guard<TransformComponent> guard(*this);
-	m_rotateMat = rotate * m_rotateMat;
-	m_changeListeners.notify(this);
-}
-
 void TransformComponent::rotate(float angle, const glm::vec3 &axis)
 {
-	rotate(glm::toMat4(glm::angleAxis(angle, glm::normalize(axis))));
+	boost::lock_guard<TransformComponent> guard(*this);
+	m_rotateMat = glm::angleAxis(angle, glm::normalize(axis)) * m_rotateMat;
 	m_changeListeners.notify(this);
 }
 
@@ -48,10 +42,17 @@ void TransformComponent::setTranslate(glm::vec3 translate)
 	m_changeListeners.notify(this);
 }
 
-void TransformComponent::setRotate(glm::mat4 rotate)
+void TransformComponent::setRotate(glm::quat rotate)
 {
 	boost::lock_guard<TransformComponent> guard(*this);
 	m_rotateMat = rotate;
+	m_changeListeners.notify(this);
+}
+
+void TransformComponent::setRotate(glm::vec3 angle)
+{
+	boost::lock_guard<TransformComponent> guard(*this);
+	m_rotateMat = glm::quat(angle);
 	m_changeListeners.notify(this);
 }
 
@@ -65,12 +66,17 @@ void TransformComponent::setScale(glm::vec3 scale)
 
 glm::mat4 TransformComponent::getTransform()
 {
-	return m_translateMat * m_scaleMat * m_rotateMat;
+	return m_translateMat * m_scaleMat * glm::toMat4(m_rotateMat);
 }
 
 glm::vec3 *TransformComponent::getTranslate()
 {
 	return &m_translate;
+}
+
+glm::vec3 TransformComponent::getRotateEuler()
+{
+	return glm::eulerAngles(m_rotateMat);
 }
 
 glm::vec3 *TransformComponent::getScale()

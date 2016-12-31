@@ -37,12 +37,6 @@ void Camera::translate(const glm::vec3 &translate)
 	updateViewMatrix();
 }
 
-void Camera::rotate(const glm::mat4 &rotate)
-{
-	m_transformComponent->rotate(rotate);
-	updateViewMatrix();
-}
-
 void Camera::rotate(float angle, const glm::vec3 &axis)
 {
 	m_transformComponent->rotate(angle, axis);

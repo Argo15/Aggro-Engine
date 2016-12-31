@@ -5,6 +5,9 @@ TransformWidget::TransformWidget(QWidget *parent)
 	, m_transXEdit(shared_ptr<QLineEdit>(new QLineEdit("0")))
 	, m_transYEdit(shared_ptr<QLineEdit>(new QLineEdit("0")))
 	, m_transZEdit(shared_ptr<QLineEdit>(new QLineEdit("0")))
+	, m_rotXEdit(shared_ptr<QLineEdit>(new QLineEdit("0")))
+	, m_rotYEdit(shared_ptr<QLineEdit>(new QLineEdit("0")))
+	, m_rotZEdit(shared_ptr<QLineEdit>(new QLineEdit("0")))
 	, m_resetRotate(shared_ptr<QPushButton>(new QPushButton("Reset")))
 	, m_scaleXEdit(shared_ptr<QLineEdit>(new QLineEdit("1")))
 	, m_scaleYEdit(shared_ptr<QLineEdit>(new QLineEdit("1")))
@@ -22,6 +25,9 @@ TransformWidget::TransformWidget(QWidget *parent)
 	m_transXEdit->setFixedWidth(70);
 	m_transYEdit->setFixedWidth(70);
 	m_transZEdit->setFixedWidth(70);
+	m_rotXEdit->setFixedWidth(70);
+	m_rotYEdit->setFixedWidth(70);
+	m_rotZEdit->setFixedWidth(70);
 	m_scaleXEdit->setFixedWidth(70);
 	m_scaleYEdit->setFixedWidth(70);
 	m_scaleZEdit->setFixedWidth(70);
@@ -54,10 +60,21 @@ TransformWidget::TransformWidget(QWidget *parent)
 	translateLayout->addWidget(m_transZEdit.get());
 
 	// Rotate
-	m_resetRotate->setFixedHeight(30);
-	m_resetRotate->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Minimum);
-	//rotateLayout->addStretch();
-	rotateLayout->addWidget(m_resetRotate.get());
+	//m_resetRotate->setFixedHeight(30);
+	//m_resetRotate->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Minimum);
+	//rotateLayout->addWidget(m_resetRotate.get());
+	lbl = new QLabel("X");
+	lbl->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
+	rotateLayout->addWidget(lbl);
+	rotateLayout->addWidget(m_rotXEdit.get());
+	lbl = new QLabel("Y");
+	lbl->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
+	rotateLayout->addWidget(lbl);
+	rotateLayout->addWidget(m_rotYEdit.get());
+	lbl = new QLabel("Z");
+	lbl->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
+	rotateLayout->addWidget(lbl);
+	rotateLayout->addWidget(m_rotZEdit.get());
 
 	// Scale
 	lbl = new QLabel("X");
@@ -81,10 +98,12 @@ TransformWidget::TransformWidget(QWidget *parent)
 	connect(m_transXEdit.get(), &QLineEdit::textEdited, this, &TransformWidget::_onTransformChange);
 	connect(m_transYEdit.get(), &QLineEdit::textEdited, this, &TransformWidget::_onTransformChange);
 	connect(m_transZEdit.get(), &QLineEdit::textEdited, this, &TransformWidget::_onTransformChange);
+	connect(m_rotXEdit.get(), &QLineEdit::textEdited, this, &TransformWidget::_onTransformChange);
+	connect(m_rotYEdit.get(), &QLineEdit::textEdited, this, &TransformWidget::_onTransformChange);
+	connect(m_rotZEdit.get(), &QLineEdit::textEdited, this, &TransformWidget::_onTransformChange);
 	connect(m_scaleXEdit.get(), &QLineEdit::textEdited, this, &TransformWidget::_onTransformChange);
 	connect(m_scaleYEdit.get(), &QLineEdit::textEdited, this, &TransformWidget::_onTransformChange);
 	connect(m_scaleZEdit.get(), &QLineEdit::textEdited, this, &TransformWidget::_onTransformChange);
-	connect(m_resetRotate.get(), &QPushButton::clicked, this, &TransformWidget::_onRotateReset);
 }
 
 void TransformWidget::_onTransformChange(QString newValue)
@@ -99,22 +118,17 @@ void TransformWidget::_onTransformChange(QString newValue)
 			m_transYEdit->text().toFloat(),
 			m_transZEdit->text().toFloat()
 		));
+		transform->setRotate(glm::vec3(
+			m_rotXEdit->text().toFloat() * 3.14159f / 180.f,
+			m_rotYEdit->text().toFloat() * 3.14159f / 180.f,
+			m_rotZEdit->text().toFloat() * 3.14159f / 180.f
+		));
 		transform->setScale(glm::vec3(
 			m_scaleXEdit->text().toFloat(),
 			m_scaleYEdit->text().toFloat(),
 			m_scaleZEdit->text().toFloat()
 		));
 		transform->addChangeListener(this, [this](auto transform) {this->_refresh(transform);});
-	}
-}
-
-void TransformWidget::_onRotateReset()
-{
-	boost::lock_guard<TransformWidget> guard(*this);
-	if (m_currentNode && m_currentNode->hasTransformComponent())
-	{
-		shared_ptr<TransformComponent> transform = m_currentNode->getTransformComponent();
-		transform->setRotate(glm::mat4(1.0));
 	}
 }
 
@@ -150,6 +164,7 @@ void TransformWidget::_refresh(TransformComponent *transform)
 	if (m_currentNode)
 	{
 		glm::vec3 translate = *m_currentNode->getTransformComponent()->getTranslate();
+		glm::vec3 rotate = m_currentNode->getTransformComponent()->getRotateEuler() * 180.f / 3.14159f;
 		glm::vec3 scale = *m_currentNode->getTransformComponent()->getScale();
 		if (translate != m_lastTranslate || scale != m_lastScale)
 		{
@@ -157,9 +172,12 @@ void TransformWidget::_refresh(TransformComponent *transform)
 			m_transXEdit->setText(QString::number(translate.x).left(7));
 			m_transYEdit->setText(QString::number(translate.y).left(7));
 			m_transZEdit->setText(QString::number(translate.z).left(7));
+			m_rotXEdit->setText(QString::number((int)rotate.x).left(3));
+			m_rotYEdit->setText(QString::number((int)rotate.y).left(3));
+			m_rotZEdit->setText(QString::number((int)rotate.z).left(3));
 			m_scaleXEdit->setText(QString::number(scale.x).left(7));
 			m_scaleYEdit->setText(QString::number(scale.y).left(7));
-			m_scaleZEdit->setText(QString::number(scale.z).left(5));
+			m_scaleZEdit->setText(QString::number(scale.z).left(7));
 			m_lastTranslate = translate;
 			m_lastScale = scale;
 		}

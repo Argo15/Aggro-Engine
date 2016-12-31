@@ -13,6 +13,9 @@ private:
 	shared_ptr<QLineEdit> m_transXEdit;
 	shared_ptr<QLineEdit> m_transYEdit;
 	shared_ptr<QLineEdit> m_transZEdit;
+	shared_ptr<QLineEdit> m_rotXEdit;
+	shared_ptr<QLineEdit> m_rotYEdit;
+	shared_ptr<QLineEdit> m_rotZEdit;
 	shared_ptr<QPushButton> m_resetRotate;
 	shared_ptr<QLineEdit> m_scaleXEdit;
 	shared_ptr<QLineEdit> m_scaleYEdit;
@@ -25,7 +28,6 @@ protected:
 	virtual void _refresh(SceneNode *newNode);
 	void _refresh(TransformComponent *transform);
 	void _onTransformChange(QString newValue);
-	void _onRotateReset();
 
 public:
 	TransformWidget(QWidget *parent = nullptr);

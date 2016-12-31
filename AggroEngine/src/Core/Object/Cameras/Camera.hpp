@@ -29,7 +29,6 @@ public:
 	Camera();
 
 	void translate(const glm::vec3 &translate);
-	void rotate(const glm::mat4 &rotate);
 	void rotate(float angle, const glm::vec3 &axis);
 	void scale(const glm::vec3 &scale);
 	
