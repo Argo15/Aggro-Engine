@@ -14,6 +14,12 @@ private:
 public:
 	MatrixDecompose(glm::mat4 transform);
 
+	void setScale(glm::vec3 scale);
+	void setRotate(glm::quat rotate);
+	void setTranslate(glm::vec3 translate);
+	void setSkew(glm::vec3 skew);
+	void setPerspective(glm::vec4 perspective);
+
 	glm::vec3 getScale();
 	glm::quat getRotate();
 	glm::vec3 getTranslate();

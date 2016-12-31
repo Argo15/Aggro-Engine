@@ -44,6 +44,9 @@ void TranslateHook::render(shared_ptr<Graphics> graphics, shared_ptr<Scene> scen
 	if (selectedNode)
 	{
 		MatrixDecompose transformMat(selectedNode->getWorldTransform());
+		shared_ptr<Camera> camera = scene->getCamera();
+		glm::vec3 lookDir = glm::normalize(transformMat.getTranslate() - camera->getEyePos());
+		transformMat.setTranslate(camera->getEyePos() + (8.f * lookDir));
 
 		// Draw
 		for (int i = 0; i < 3; i++)

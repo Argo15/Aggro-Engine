@@ -6,6 +6,31 @@ MatrixDecompose::MatrixDecompose(glm::mat4 transform)
 	m_rotate = glm::conjugate(m_rotate);
 }
 
+void MatrixDecompose::setScale(glm::vec3 scale)
+{
+	m_scale = scale;
+}
+
+void MatrixDecompose::setRotate(glm::quat rotate)
+{
+	m_rotate = rotate;
+}
+
+void MatrixDecompose::setTranslate(glm::vec3 translate)
+{
+	m_translate = translate;
+}
+
+void MatrixDecompose::setSkew(glm::vec3 skew)
+{
+	m_skew = skew;
+}
+
+void MatrixDecompose::setPerspective(glm::vec4 perspective)
+{
+	m_perspective = perspective;
+}
+
 glm::vec3 MatrixDecompose::getScale()
 {
 	return m_scale;
