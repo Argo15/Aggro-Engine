@@ -66,7 +66,7 @@ void TransformComponent::setScale(glm::vec3 scale)
 
 glm::mat4 TransformComponent::getTransform()
 {
-	return m_translateMat * m_scaleMat * glm::toMat4(m_rotateMat);
+	return m_translateMat * glm::toMat4(m_rotateMat) * m_scaleMat;
 }
 
 glm::vec3 *TransformComponent::getTranslate()

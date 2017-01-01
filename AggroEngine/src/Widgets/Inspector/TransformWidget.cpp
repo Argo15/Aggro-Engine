@@ -169,15 +169,17 @@ void TransformWidget::_refresh(TransformComponent *transform)
 		if (translate != m_lastTranslate || scale != m_lastScale)
 		{
 			boost::lock_guard<boost::mutex> guard(m_textLock);
-			m_transXEdit->setText(QString::number(translate.x).left(7));
-			m_transYEdit->setText(QString::number(translate.y).left(7));
-			m_transZEdit->setText(QString::number(translate.z).left(7));
+			static const QRegExp trailingZeros("0+$");
+			static const QRegExp trailingDot("\\.$");
+			m_transXEdit->setText(QString::number(translate.x, 'f', 3).remove(trailingZeros).remove(trailingDot));
+			m_transYEdit->setText(QString::number(translate.y, 'f', 3).remove(trailingZeros).remove(trailingDot));
+			m_transZEdit->setText(QString::number(translate.z, 'f', 3).remove(trailingZeros).remove(trailingDot));
 			m_rotXEdit->setText(QString::number((int)rotate.x).left(3));
 			m_rotYEdit->setText(QString::number((int)rotate.y).left(3));
 			m_rotZEdit->setText(QString::number((int)rotate.z).left(3));
-			m_scaleXEdit->setText(QString::number(scale.x).left(7));
-			m_scaleYEdit->setText(QString::number(scale.y).left(7));
-			m_scaleZEdit->setText(QString::number(scale.z).left(7));
+			m_scaleXEdit->setText(QString::number(scale.x, 'f', 3).remove(trailingZeros).remove(trailingDot));
+			m_scaleYEdit->setText(QString::number(scale.y, 'f', 3).remove(trailingZeros).remove(trailingDot));
+			m_scaleZEdit->setText(QString::number(scale.z, 'f', 3).remove(trailingZeros).remove(trailingDot));
 			m_lastTranslate = translate;
 			m_lastScale = scale;
 		}
