@@ -22,7 +22,10 @@ void Renderer::renderScene(shared_ptr<Scene> scene, shared_ptr<RenderOptions> re
 {
 	m_graphics->clearDepthAndColor(); // clear
 	m_graphics->stageTriangleRender(m_gridRenderData); // Render grid
-	scene->getTransformHook()->render(m_graphics, scene); // Render transformer
+	if (scene->getTransformHook())
+	{
+		scene->getTransformHook()->render(m_graphics, scene); // Render transformer
+	}
 	_renderSceneNodeRecursive(scene->getRoot(), glm::mat4(1.0)); // Render scene
 
 	// set scene options

@@ -1,12 +1,12 @@
 #pragma once
 
-#include "LineHook.hpp"
+#include "TranslateHook.hpp"
 
-class TranslateHook : public LineHook
+class ScaleHook : public LineHook
 {
 protected:
 	void updateTransform(shared_ptr<TransformComponent> transform, glm::vec3 &diff);
 
 public:
-	TranslateHook();
+	ScaleHook();
 };

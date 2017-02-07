@@ -5,7 +5,7 @@
 #include "Camera.hpp"
 #include "SceneNode.hpp"
 #include "Listener.hpp"
-#include "TranslateHook.hpp"
+#include "TransformHook.hpp"
 using namespace std;
 
 class TransformHook;
@@ -38,6 +38,8 @@ public:
 
 	shared_ptr<SceneNode> getRoot();
 	shared_ptr<Camera> getCamera();
+
+	void setTransformHook(shared_ptr<TransformHook> transformHook);
 	shared_ptr<TransformHook> getTransformHook();
 
 	void setRoot(shared_ptr<SceneNode> root);

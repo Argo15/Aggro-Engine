@@ -1,5 +1,6 @@
 #include "MainWidget.hpp"
-#include <QHBoxLayout>
+#include "Toolbar.hpp"
+#include <QBoxLayout>
 #include <QComboBox>
 
 MainWidget::MainWidget(shared_ptr<EngineContext> context, QWidget *parent)
@@ -8,19 +9,8 @@ MainWidget::MainWidget(shared_ptr<EngineContext> context, QWidget *parent)
 	, m_glWidget(shared_ptr<GLWidget>(new GLWidget(m_context, this)))
 {
 	QVBoxLayout *layout = new QVBoxLayout;
-		QHBoxLayout *toolbarLayout = new QHBoxLayout;
 
-	QComboBox *renderMode = new QComboBox();
-	renderMode->addItem("Shaded");
-	renderMode->addItem("Albedo");
-	renderMode->addItem("Normal");
-	renderMode->addItem("Selection");
-	renderMode->setFixedWidth(200);
-	connect(renderMode, SIGNAL(currentIndexChanged(int)), SLOT(_modeChanged(int)));
-	toolbarLayout->addWidget(renderMode);
-	toolbarLayout->addStretch();
-
-	layout->addLayout(toolbarLayout);
+	layout->addWidget(new Toolbar(m_context));
 	layout->addWidget(m_glWidget.get());
 	layout->setContentsMargins(0, 0, 0, 0);
 	layout->setSpacing(0);
