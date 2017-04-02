@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Image.hpp"
-#include "../../Util/Math/MathUtil.hpp"
+#include "MathUtil.hpp"
 
 class CheckersImage : public Image
 {

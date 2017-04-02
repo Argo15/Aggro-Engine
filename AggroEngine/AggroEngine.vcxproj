@@ -107,27 +107,27 @@
     <ClCompile Include="src\Core\TransformHook\LineHook.cpp" />
     <ClCompile Include="src\Core\TransformHook\ScaleHook.cpp" />
     <ClCompile Include="src\Core\TransformHook\TranslateHook.cpp" />
-    <ClCompile Include="src\Graphics\Common\RenderData.cpp" />
-    <ClCompile Include="src\Graphics\Common\RenderOptions.cpp" />
-    <ClCompile Include="src\Graphics\Common\Texture\DefaultTextureHandle.cpp" />
-    <ClCompile Include="src\Graphics\Common\Texture\LoadableTextureHandle.cpp" />
-    <ClCompile Include="src\Graphics\Common\Texture\TextureBuildOptions.cpp" />
-    <ClCompile Include="src\Graphics\Common\Texture\TextureCache.cpp" />
-    <ClCompile Include="src\Graphics\Common\VertexBuffer\DefaultVertexBufferHandle.cpp" />
-    <ClCompile Include="src\Graphics\Common\VertexBuffer\LoadableVertexBufferHandle.cpp" />
-    <ClCompile Include="src\Graphics\Common\VertexBuffer\VertexBufferCache.cpp" />
-    <ClCompile Include="src\Graphics\Common\VertexBuffer\VertexBufferData.cpp" />
-    <ClCompile Include="src\Graphics\Common\Viewport.cpp" />
-    <ClCompile Include="src\Graphics\OpenGL\Framebuffer\FrameBufferObject.cpp" />
-    <ClCompile Include="src\Graphics\OpenGL\Framebuffer\GBuffer.cpp" />
-    <ClCompile Include="src\Graphics\OpenGL\OpenGL43Graphics.cpp" />
-    <ClCompile Include="src\Graphics\OpenGL\PixelBuffer\PixelBufferCache.cpp" />
-    <ClCompile Include="src\Graphics\OpenGL\Shaders\GLSLProgram.cpp" />
-    <ClCompile Include="src\Graphics\OpenGL\Shaders\GLSLShader.cpp" />
-    <ClCompile Include="src\Graphics\OpenGL\Shaders\ShaderStore.cpp" />
-    <ClCompile Include="src\Graphics\OpenGL\Textures\DevTexture.cpp" />
-    <ClCompile Include="src\Graphics\OpenGL\Textures\Texture.cpp" />
-    <ClCompile Include="src\Graphics\OpenGL\Textures\WhiteTexture.cpp" />
+    <ClCompile Include="src\Subsystem\Graphics\Api\RenderData.cpp" />
+    <ClCompile Include="src\Subsystem\Graphics\Api\RenderOptions.cpp" />
+    <ClCompile Include="src\Subsystem\Graphics\Api\Texture\DefaultTextureHandle.cpp" />
+    <ClCompile Include="src\Core\Texture\LoadableTextureHandle.cpp" />
+    <ClCompile Include="src\Subsystem\Graphics\Api\Texture\TextureBuildOptions.cpp" />
+    <ClCompile Include="src\Core\Texture\TextureCache.cpp" />
+    <ClCompile Include="src\Subsystem\Graphics\Api\VertexBuffer\DefaultVertexBufferHandle.cpp" />
+    <ClCompile Include="src\Core\VertexBuffer\LoadableVertexBufferHandle.cpp" />
+    <ClCompile Include="src\Core\VertexBuffer\VertexBufferCache.cpp" />
+    <ClCompile Include="src\Subsystem\Graphics\Api\VertexBuffer\VertexBufferData.cpp" />
+    <ClCompile Include="src\Subsystem\Graphics\Api\Viewport.cpp" />
+    <ClCompile Include="src\Subsystem\Graphics\Impl\OpenGL\Framebuffer\FrameBufferObject.cpp" />
+    <ClCompile Include="src\Subsystem\Graphics\Impl\OpenGL\Framebuffer\GBuffer.cpp" />
+    <ClCompile Include="src\Subsystem\Graphics\Impl\OpenGL\OpenGL43Graphics.cpp" />
+    <ClCompile Include="src\Subsystem\Graphics\Impl\OpenGL\PixelBuffer\PixelBufferCache.cpp" />
+    <ClCompile Include="src\Subsystem\Graphics\Impl\OpenGL\Shaders\GLSLProgram.cpp" />
+    <ClCompile Include="src\Subsystem\Graphics\Impl\OpenGL\Shaders\GLSLShader.cpp" />
+    <ClCompile Include="src\Subsystem\Graphics\Impl\OpenGL\Shaders\ShaderStore.cpp" />
+    <ClCompile Include="src\Subsystem\Graphics\Impl\OpenGL\Textures\DevTexture.cpp" />
+    <ClCompile Include="src\Subsystem\Graphics\Impl\OpenGL\Textures\Texture.cpp" />
+    <ClCompile Include="src\Subsystem\Graphics\Impl\OpenGL\Textures\WhiteTexture.cpp" />
     <ClCompile Include="src\Inputs\KeyboardState.cpp" />
     <ClCompile Include="src\Inputs\MouseState.cpp" />
     <ClCompile Include="src\main.cpp" />
@@ -207,31 +207,31 @@
     <ClInclude Include="src\Core\TransformHook\TranslateHook.hpp" />
     <ClInclude Include="src\Resource\Image\RGBImage.hpp" />
     <ClInclude Include="src\Resource\Mesh\Dev\LineMesh.hpp" />
-    <ClInclude Include="src\Graphics\Common\DrawMode.hpp" />
-    <ClInclude Include="src\Graphics\Common\RenderData.hpp" />
-    <ClInclude Include="src\Graphics\Common\RenderOptions.hpp" />
-    <ClInclude Include="src\Graphics\Common\Texture\DefaultTextureHandle.hpp" />
-    <ClInclude Include="src\Graphics\Common\Texture\LoadableTextureHandle.hpp" />
-    <ClInclude Include="src\Graphics\Common\Texture\TextureBuildOptions.hpp" />
-    <ClInclude Include="src\Graphics\Common\Texture\TextureCache.hpp" />
-    <ClInclude Include="src\Graphics\Common\Texture\TextureHandle.hpp" />
-    <ClInclude Include="src\Graphics\Common\VertexBuffer\DefaultVertexBufferHandle.hpp" />
-    <ClInclude Include="src\Graphics\Common\VertexBuffer\LoadableVertexBufferHandle.hpp" />
-    <ClInclude Include="src\Graphics\Common\VertexBuffer\VertexBufferCache.hpp" />
-    <ClInclude Include="src\Graphics\Common\VertexBuffer\VertexBufferData.hpp" />
-    <ClInclude Include="src\Graphics\Common\VertexBuffer\VertexBufferHandle.hpp" />
-    <ClInclude Include="src\Graphics\Common\Viewport.hpp" />
-    <ClInclude Include="src\Graphics\Graphics.hpp" />
-    <ClInclude Include="src\Graphics\OpenGL\Framebuffer\FrameBufferObject.hpp" />
-    <ClInclude Include="src\Graphics\OpenGL\Framebuffer\GBuffer.hpp" />
-    <ClInclude Include="src\Graphics\OpenGL\OpenGL43Graphics.hpp" />
-    <ClInclude Include="src\Graphics\OpenGL\PixelBuffer\PixelBufferCache.hpp" />
-    <ClInclude Include="src\Graphics\OpenGL\Shaders\GLSLProgram.hpp" />
-    <ClInclude Include="src\Graphics\OpenGL\Shaders\GLSLShader.hpp" />
-    <ClInclude Include="src\Graphics\OpenGL\Shaders\ShaderStore.hpp" />
-    <ClInclude Include="src\Graphics\OpenGL\Textures\DevTexture.hpp" />
-    <ClInclude Include="src\Graphics\OpenGL\Textures\Texture.hpp" />
-    <ClInclude Include="src\Graphics\OpenGL\Textures\WhiteTexture.hpp" />
+    <ClInclude Include="src\Subsystem\Graphics\Api\DrawMode.hpp" />
+    <ClInclude Include="src\Subsystem\Graphics\Api\RenderData.hpp" />
+    <ClInclude Include="src\Subsystem\Graphics\Api\RenderOptions.hpp" />
+    <ClInclude Include="src\Subsystem\Graphics\Api\Texture\DefaultTextureHandle.hpp" />
+    <ClInclude Include="src\Core\Texture\LoadableTextureHandle.hpp" />
+    <ClInclude Include="src\Subsystem\Graphics\Api\Texture\TextureBuildOptions.hpp" />
+    <ClInclude Include="src\Core\Texture\TextureCache.hpp" />
+    <ClInclude Include="src\Subsystem\Graphics\Api\Texture\TextureHandle.hpp" />
+    <ClInclude Include="src\Subsystem\Graphics\Api\VertexBuffer\DefaultVertexBufferHandle.hpp" />
+    <ClInclude Include="src\Core\VertexBuffer\LoadableVertexBufferHandle.hpp" />
+    <ClInclude Include="src\Core\VertexBuffer\VertexBufferCache.hpp" />
+    <ClInclude Include="src\Subsystem\Graphics\Api\VertexBuffer\VertexBufferData.hpp" />
+    <ClInclude Include="src\Subsystem\Graphics\Api\VertexBuffer\VertexBufferHandle.hpp" />
+    <ClInclude Include="src\Subsystem\Graphics\Api\Viewport.hpp" />
+    <ClInclude Include="src\Subsystem\Graphics\Graphics.hpp" />
+    <ClInclude Include="src\Subsystem\Graphics\Impl\OpenGL\Framebuffer\FrameBufferObject.hpp" />
+    <ClInclude Include="src\Subsystem\Graphics\Impl\OpenGL\Framebuffer\GBuffer.hpp" />
+    <ClInclude Include="src\Subsystem\Graphics\Impl\OpenGL\OpenGL43Graphics.hpp" />
+    <ClInclude Include="src\Subsystem\Graphics\Impl\OpenGL\PixelBuffer\PixelBufferCache.hpp" />
+    <ClInclude Include="src\Subsystem\Graphics\Impl\OpenGL\Shaders\GLSLProgram.hpp" />
+    <ClInclude Include="src\Subsystem\Graphics\Impl\OpenGL\Shaders\GLSLShader.hpp" />
+    <ClInclude Include="src\Subsystem\Graphics\Impl\OpenGL\Shaders\ShaderStore.hpp" />
+    <ClInclude Include="src\Subsystem\Graphics\Impl\OpenGL\Textures\DevTexture.hpp" />
+    <ClInclude Include="src\Subsystem\Graphics\Impl\OpenGL\Textures\Texture.hpp" />
+    <ClInclude Include="src\Subsystem\Graphics\Impl\OpenGL\Textures\WhiteTexture.hpp" />
     <ClInclude Include="src\Inputs\KeyboardState.hpp" />
     <ClInclude Include="src\Inputs\MouseState.hpp" />
     <ClInclude Include="src\Resource\Image\CheckersImage.hpp" />
@@ -387,7 +387,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <OutDir>$(SolutionDir)$(Platform)\$(Configuration)\</OutDir>
     <ExecutablePath>$(ProjectDir)lib\Qt 5.7\bin;$(ExecutablePath)</ExecutablePath>
-    <IncludePath>$(ProjectDir)include;$(ProjectDir)lib\Qt 5.7\include;$(IncludePath)</IncludePath>
+    <IncludePath>$(ProjectDir)src/Subsystem/Graphics/Impl/OpenGL/Textures;$(ProjectDir)src/Subsystem/Graphics/Impl/OpenGL;$(ProjectDir)src/Subsystem/Graphics/Api;$(ProjectDir)src/Subsystem/Graphics;$(ProjectDir)src/Core/Texture;$(ProjectDir)src/Core/VertexBuffer;$(ProjectDir)src/Subsystem/Graphics/Api/VertexBuffer;$(ProjectDir)src/Subsystem/Graphics/Api/Texture;$(ProjectDir)include;$(ProjectDir)lib\Qt 5.7\include;$(IncludePath)</IncludePath>
     <LibraryPath>$(ProjectDir)lib;$(ProjectDir)lib\Qt 5.7\lib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">

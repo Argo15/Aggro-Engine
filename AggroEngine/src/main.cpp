@@ -1,6 +1,6 @@
 #include <QtWidgets/QApplication>
 #include <memory>
-#include "Widgets/MainWindow.hpp"
+#include "MainWindow.hpp"
 #include "Config.hpp"
 
 int main(int argc, char* argv[]) {

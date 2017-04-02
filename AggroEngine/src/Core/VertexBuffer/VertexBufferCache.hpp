@@ -1,12 +1,12 @@
 #pragma once
 
+#include <string>
+#include <memory>
+#include <boost/unordered_map.hpp>
 #include "LoadableVertexBufferHandle.hpp"
 #include "AssimpMeshImporter.hpp"
 #include "Graphics.hpp"
 #include "JobManager.hpp"
-#include <string>
-#include <memory>
-#include <boost/unordered_map.hpp>
 using namespace std;
 
 class VertexBufferCache

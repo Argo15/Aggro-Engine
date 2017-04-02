@@ -1,10 +1,10 @@
 #pragma once
 
-#include "../../Graphics.hpp"
-#include "GLSLShader.hpp"
 #include <string>
 #include <map>
 #include <vector>
+#include "Graphics.hpp"
+#include "GLSLShader.hpp"
 
 /**
  * This GLSL shader class is based off the book "More OpenGL Game Programming."

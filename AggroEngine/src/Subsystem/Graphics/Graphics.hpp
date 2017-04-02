@@ -3,13 +3,13 @@
 #define GLEW_STATIC
 #include <GL/glew.h>
 #include <memory>
-#include "VertexBufferHandle.hpp"
-#include "RenderData.hpp"
-#include "Mesh.hpp"
 #include "Image.hpp"
-#include "RenderOptions.hpp"
 #include "TextureHandle.hpp"
 #include "TextureBuildOptions.hpp"
+#include "Mesh.hpp"
+#include "VertexBufferHandle.hpp"
+#include "RenderData.hpp"
+#include "RenderOptions.hpp"
 #include "Viewport.hpp"
 using namespace std;
 

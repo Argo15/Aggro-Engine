@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../../Graphics.hpp"
+#include "Graphics.hpp"
 
 /**
  * OpenGL texture.

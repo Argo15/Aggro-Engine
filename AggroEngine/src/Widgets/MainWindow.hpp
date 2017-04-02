@@ -1,10 +1,10 @@
 #pragma once
 
+#include <QtWidgets/QMainWindow>
+#include <memory>
 #include "MainWidget.hpp"
 #include "timer.hpp"
 #include "EngineContext.hpp"
-#include <QtWidgets/QMainWindow>
-#include <memory>
 using namespace std;
 
 class MainWindow : public QMainWindow

@@ -2,8 +2,8 @@
 
 #include "OpenGL43Graphics.hpp"
 #include "Scene.hpp"
-#include "VertexBufferCache.hpp"
 #include "TextureCache.hpp"
+#include "VertexBufferCache.hpp"
 #include "JobManager.hpp"
 
 class Scene;

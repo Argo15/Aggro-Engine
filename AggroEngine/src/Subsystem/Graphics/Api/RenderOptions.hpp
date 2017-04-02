@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../../Util/Math/Matrix.hpp"
+#include "Matrix.hpp"
 
 /**
  * Options passed into start of the rendering execution.

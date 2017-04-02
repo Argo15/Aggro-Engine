@@ -1,5 +1,5 @@
 #include "AssimpMeshImporter.hpp"
-#include "Dev/CubeMesh.hpp"
+#include "CubeMesh.hpp"
 #include <iostream>
 
 AssimpMeshImporter::AssimpMeshImporter()

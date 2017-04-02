@@ -2,9 +2,9 @@
 
 #include <memory>
 #include "DrawMode.hpp"
-#include "VertexBuffer\VertexBufferHandle.hpp"
-#include "Texture\TextureHandle.hpp"
-#include "../../Util/Math/Matrix.hpp"
+#include "VertexBufferHandle.hpp"
+#include "TextureHandle.hpp"
+#include "Matrix.hpp"
 using namespace std;
 
 /**

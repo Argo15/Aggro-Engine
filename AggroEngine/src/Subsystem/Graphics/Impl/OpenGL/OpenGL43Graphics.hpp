@@ -4,10 +4,9 @@ class OpenGL43Graphics;
 
 #include <queue>
 #include <memory>
-#include "ShaderStore.hpp"
-#include "GBuffer.hpp"
-#include "Graphics.hpp"
-#include "PixelBufferCache.hpp"
+#include "Shaders/ShaderStore.hpp"
+#include "Framebuffer/GBuffer.hpp"
+#include "../../Graphics.hpp"
 #include "Locks.hpp"
 
 /**
@@ -23,7 +22,6 @@ private:
 	std::queue<shared_ptr<RenderData>> renderQueue;
 	ShaderStore m_shaderStore;
 	shared_ptr<GBuffer> m_gBuffer;
-	shared_ptr<PixelBufferCache> m_pboCache;
 	shared_ptr<Viewport> m_viewport;
 
 	void _drawScreen(RenderOptions &renderOptions, float nX1, float nY1, float nX2, float nY2);

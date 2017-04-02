@@ -1,11 +1,11 @@
 #pragma once
 
+#include <QDockWidget>
+#include <memory>
 #include "Scene.hpp"
 #include "SceneNodeTreeItem.hpp"
 #include "EngineContext.hpp"
 #include "StaticObjectRenderComponent.hpp"
-#include <QDockWidget>
-#include <memory>
 using namespace std;
 
 /**

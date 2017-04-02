@@ -1,7 +1,7 @@
 #pragma once
 
 #include <string>
-#include "../../Graphics.hpp"
+#include "Graphics.hpp"
 
 /**
  * This GLSL shader class is based off the book "More OpenGL Game Programming."

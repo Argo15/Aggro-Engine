@@ -1,5 +1,4 @@
 #include "DevTexture.hpp"
-
 #include <iostream>
 
 DevTexture::DevTexture(unsigned int nWidth, unsigned int nHeight)

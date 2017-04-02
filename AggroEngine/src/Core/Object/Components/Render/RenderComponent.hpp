@@ -1,8 +1,8 @@
 #pragma once
 
-#include "../Component.hpp"
-#include "../../../../Graphics/Graphics.hpp"
-#include "../../../../Util/Math/Matrix.hpp"
+#include "Component.hpp"
+#include "Graphics.hpp"
+#include "Matrix.hpp"
 
 /**
  * Abstract Component that defines rendering behavior

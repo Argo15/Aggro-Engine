@@ -1,5 +1,5 @@
 #include "OpenGL43Graphics.hpp"
-#include "WhiteTexture.hpp"
+#include "Textures/WhiteTexture.hpp"
 #include "DefaultTextureHandle.hpp"
 #include "DefaultVertexBufferHandle.hpp"
 #include "Grid.hpp"
@@ -34,7 +34,6 @@ void OpenGL43Graphics::init()
 	const Properties& props = gConfig->getProperties();
 	vector<int> nDimensions = props.getIntArrayProperty("graphics.resolution");
 	m_gBuffer = shared_ptr<GBuffer>(new GBuffer(this, nDimensions[0], nDimensions[1]));
-	m_pboCache = shared_ptr<PixelBufferCache>(new PixelBufferCache());
 	m_viewport = shared_ptr<Viewport>(new Viewport());
 }
 
