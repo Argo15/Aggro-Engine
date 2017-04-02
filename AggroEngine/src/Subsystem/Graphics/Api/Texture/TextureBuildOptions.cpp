@@ -7,9 +7,9 @@ TextureBuildOptions::TextureBuildOptions(shared_ptr<Image> pImage)
 	, m_minFilter(Filter::LINEAR)
 	, m_wrapS(Wrap::REPEAT)
 	, m_wrapT(Wrap::REPEAT)
+	, m_internalFormat(InternalFormat::RGBA8)
 	, m_genMipmaps(true)
 {
-	
 }
 
 shared_ptr<Image> TextureBuildOptions::getImage()
@@ -67,6 +67,12 @@ TextureBuildOptions *TextureBuildOptions::genMipmaps(bool genMipmaps)
 	return this;
 }
 
+TextureBuildOptions *TextureBuildOptions::setInternalFormat(InternalFormat format)
+{
+	m_internalFormat = format;
+	return this;
+}
+
 Target TextureBuildOptions::getTarget()
 {
 	return m_target;
@@ -90,6 +96,21 @@ Wrap TextureBuildOptions::getWrapS()
 Wrap TextureBuildOptions::getWrapT()
 {
 	return m_wrapT;
+}
+
+
+InternalFormat TextureBuildOptions::getInternalFormat()
+{
+	return m_internalFormat;
+}
+
+unsigned int TextureBuildOptions::getComponents()
+{
+	if (m_internalFormat == InternalFormat::DEPTH_COMPONENT32 || m_internalFormat == InternalFormat::R16UI)
+	{
+		return 1;
+	}
+	return 4;
 }
 
 bool TextureBuildOptions::isGenMipmaps()

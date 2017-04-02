@@ -25,6 +25,18 @@ enum Wrap
 	REPEAT = 0x2901
 };
 
+/**
+ * Specifies the number of color components in the texture.
+ * Should be the format we would see in the graphics card memory
+*/
+enum InternalFormat
+{
+	RGBA8 = 0x8058,
+	RGBA16 = 0x805B,
+	DEPTH_COMPONENT32 = 0x81A7,
+	R16UI = 0x822A
+};
+
 class TextureBuildOptions
 {
 public:
@@ -35,6 +47,7 @@ private:
 	Filter m_minFilter;
 	Wrap m_wrapS;
 	Wrap m_wrapT;
+	InternalFormat m_internalFormat;
 	bool m_genMipmaps;
 
 public:
@@ -50,11 +63,14 @@ public:
 	TextureBuildOptions *setWrapS(Wrap name);
 	TextureBuildOptions *setWrapT(Wrap name);
 	TextureBuildOptions *genMipmaps(bool genMipmaps);
+	TextureBuildOptions *setInternalFormat(InternalFormat format);
 
 	Target getTarget();
 	Filter getMagFilter();
 	Filter getMinFilter();
 	Wrap getWrapS();
 	Wrap getWrapT();
+	InternalFormat getInternalFormat();
+	unsigned int getComponents();
 	bool isGenMipmaps();
 };

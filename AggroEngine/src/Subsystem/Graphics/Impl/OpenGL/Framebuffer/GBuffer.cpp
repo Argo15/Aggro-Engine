@@ -22,10 +22,12 @@ GBuffer::GBuffer(OpenGL43Graphics *graphics, int width, int height)
 	glGenFramebuffers(1, &m_buffer);
 	glBindFramebuffer(GL_FRAMEBUFFER, m_buffer);
 
-	shared_ptr<Image> fboImage(new Image(width, height, ImageFormat::RGBA, InternalFormat::RGBA16, 0, boost::shared_array<unsigned char>(0)));
+	shared_ptr<Image> fboImage((new Image(width, height, boost::shared_array<unsigned char>(0)))
+		->setImageFormat(ImageFormat::RGBA)
+	);
 	fboImage->setImageType(ImageType::FLOAT_TYPE);
 	shared_ptr<TextureBuildOptions> texOptions(new TextureBuildOptions(fboImage));
-	texOptions->genMipmaps(false)->setWrap(Wrap::CLAMP_TO_EDGE);
+	texOptions->genMipmaps(false)->setWrap(Wrap::CLAMP_TO_EDGE)->setInternalFormat(InternalFormat::RGBA16);
 
 	// Generate normal
 	m_normalTex = graphics->createTexture(texOptions);
@@ -36,12 +38,13 @@ GBuffer::GBuffer(OpenGL43Graphics *graphics, int width, int height)
 	glFramebufferTexture2D(GL_FRAMEBUFFER, getSelectionColorAttachment(), GL_TEXTURE_2D, m_selectionTex->get(), 0);
 
 	// Generate albedo
-	fboImage->setInternalFormat(InternalFormat::RGBA8);
+	texOptions->setInternalFormat(InternalFormat::RGBA8);
 	m_albedoTex = graphics->createTexture(texOptions);
 	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT1, GL_TEXTURE_2D, m_albedoTex->get(), 0);
 
 	// Generate depth texture
-	fboImage->setImageFormat(ImageFormat::DEPTH_COMPONENT)->setInternalFormat(InternalFormat::DEPTH_COMPONENT32);
+	fboImage->setImageFormat(ImageFormat::DEPTH_COMPONENT);
+	texOptions->setInternalFormat(InternalFormat::DEPTH_COMPONENT32);
 	m_depthTex = graphics->createTexture(texOptions);
 	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, m_depthTex->get(), 0);
 

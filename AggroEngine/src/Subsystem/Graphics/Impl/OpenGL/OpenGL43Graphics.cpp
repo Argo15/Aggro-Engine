@@ -88,11 +88,11 @@ shared_ptr<TextureHandle> OpenGL43Graphics::createTexture(shared_ptr<TextureBuil
 	glTexParameteri(target, GL_TEXTURE_WRAP_T, pTexOptions->getWrapT());
 	if (pTexOptions->isGenMipmaps())
 	{
-		gluBuild2DMipmaps(target, pImage->getComponents(), pImage->getWidth(), pImage->getHeight(), pImage->getFormat(), pImage->getImageType(), pImage->getData().get());
+		gluBuild2DMipmaps(target, pTexOptions->getComponents(), pImage->getWidth(), pImage->getHeight(), pImage->getFormat(), pImage->getImageType(), pImage->getData().get());
 	}
 	else
 	{
-		glTexImage2D(target, 0, pImage->getInternalFormat(), pImage->getWidth(), pImage->getHeight(), 0, pImage->getFormat(), pImage->getImageType(), 0);
+		glTexImage2D(target, 0, pTexOptions->getInternalFormat(), pImage->getWidth(), pImage->getHeight(), 0, pImage->getFormat(), pImage->getImageType(), 0);
 	}
  	return shared_ptr<TextureHandle>(new DefaultTextureHandle(m_nHandle));
 }
@@ -219,8 +219,10 @@ shared_ptr<Image> OpenGL43Graphics::getRenderImage(int x, int y, int width, int 
 	glReadPixels(x, y, width, height, GL_RGBA, GL_UNSIGNED_SHORT, pixels);
 	m_gBuffer->unbind();
 
-	return shared_ptr<Image>(new Image(width, height, ImageFormat::RGBA,
-		InternalFormat::RGBA16, 0, boost::shared_array<unsigned char>(pixels)));
+	return shared_ptr<Image>((new Image(width, height, boost::shared_array<unsigned char>(pixels)))
+		->setImageFormat(ImageFormat::RGBA)
+		->setImageType(ImageType::UNSIGNED_SHORT)
+	);
 }
 
 boost::shared_array<unsigned short> OpenGL43Graphics::getRenderImagePixel(int x, int y, RenderOptions::RenderTarget target)

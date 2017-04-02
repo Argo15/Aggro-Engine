@@ -58,5 +58,13 @@ shared_ptr<Image> FreeImageImporter::importImage(string sFilename)
 	if((bits == 0) || (width == 0) || (height == 0))
 		return shared_ptr<Image>(new CheckersImage(16,16));
 
-	return shared_ptr<Image>(new Image(width,height,ImageFormat::BGRA, InternalFormat::RGBA8, 4,boost::shared_array<unsigned char>(bits, [imagen](unsigned char* a){ FreeImage_Unload(imagen); })));
+	return shared_ptr<Image>((
+		new Image(
+			width, height, 
+			boost::shared_array<unsigned char>(bits, [imagen](unsigned char* a)
+			{ 
+				FreeImage_Unload(imagen); 
+			}))
+		)->setImageFormat(ImageFormat::BGRA)
+	);
 }
