@@ -14,7 +14,7 @@ VertexBufferCache::VertexBufferCache(shared_ptr<Graphics> graphics, shared_ptr<J
 
 shared_ptr<VertexBufferHandle> VertexBufferCache::getVertexBuffer(string sFilename)
 {
-	// Load texture if not loaded
+	// Load vertex buffer if not loaded
 	if (m_pathsToVbo.find(sFilename) == m_pathsToVbo.end())
 	{
 		m_jobManager->add(shared_ptr<Job>(new Job([this, sFilename]()

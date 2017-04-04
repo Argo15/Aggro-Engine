@@ -93,20 +93,20 @@
     <ClCompile Include="src\Core\Jobs\CameraUpdateJob.cpp" />
     <ClCompile Include="src\Core\Jobs\TickingJob.cpp" />
     <ClCompile Include="src\Core\MouseController.cpp" />
-    <ClCompile Include="src\Core\Object\Cameras\Camera.cpp" />
-    <ClCompile Include="src\Core\Object\Cameras\CameraController.cpp" />
-    <ClCompile Include="src\Core\Object\Cameras\FreeRoamCameraController.cpp" />
-    <ClCompile Include="src\Core\Object\Components\Component.cpp" />
-    <ClCompile Include="src\Core\Object\Components\Render\RenderComponent.cpp" />
-    <ClCompile Include="src\Core\Object\Components\Render\StaticObjectRenderComponent.cpp" />
-    <ClCompile Include="src\Core\Object\Components\Transform\TransformComponent.cpp" />
+    <ClCompile Include="src\Core\Scene\Cameras\Camera.cpp" />
+    <ClCompile Include="src\Core\Scene\Cameras\CameraController.cpp" />
+    <ClCompile Include="src\Core\Scene\Cameras\FreeRoamCameraController.cpp" />
+    <ClCompile Include="src\Core\Components\Component.cpp" />
+    <ClCompile Include="src\Core\Components\Render\RenderComponent.cpp" />
+    <ClCompile Include="src\Core\Components\Render\StaticObjectRenderComponent.cpp" />
+    <ClCompile Include="src\Core\Components\Transform\TransformComponent.cpp" />
     <ClCompile Include="src\Core\Renderer\Renderer.cpp" />
     <ClCompile Include="src\Core\Scene\Scene.cpp" />
     <ClCompile Include="src\Core\Scene\SceneNode.cpp" />
     <ClCompile Include="src\Core\Selection\Selection.cpp" />
-    <ClCompile Include="src\Core\TransformHook\LineHook.cpp" />
-    <ClCompile Include="src\Core\TransformHook\ScaleHook.cpp" />
-    <ClCompile Include="src\Core\TransformHook\TranslateHook.cpp" />
+    <ClCompile Include="src\Core\Scene\TransformHook\LineHook.cpp" />
+    <ClCompile Include="src\Core\Scene\TransformHook\ScaleHook.cpp" />
+    <ClCompile Include="src\Core\Scene\TransformHook\TranslateHook.cpp" />
     <ClCompile Include="src\Subsystem\Graphics\Api\RenderData.cpp" />
     <ClCompile Include="src\Subsystem\Graphics\Api\RenderOptions.cpp" />
     <ClCompile Include="src\Subsystem\Graphics\Api\Texture\DefaultTextureHandle.cpp" />
@@ -190,21 +190,21 @@
     <ClInclude Include="src\Core\Jobs\CameraUpdateJob.hpp" />
     <ClInclude Include="src\Core\Jobs\TickingJob.hpp" />
     <ClInclude Include="src\Core\MouseController.hpp" />
-    <ClInclude Include="src\Core\Object\Cameras\Camera.hpp" />
-    <ClInclude Include="src\Core\Object\Cameras\CameraController.hpp" />
-    <ClInclude Include="src\Core\Object\Cameras\FreeRoamCameraController.hpp" />
-    <ClInclude Include="src\Core\Object\Components\Component.hpp" />
-    <ClInclude Include="src\Core\Object\Components\Render\RenderComponent.hpp" />
-    <ClInclude Include="src\Core\Object\Components\Render\StaticObjectRenderComponent.hpp" />
-    <ClInclude Include="src\Core\Object\Components\Transform\TransformComponent.hpp" />
+    <ClInclude Include="src\Core\Scene\Cameras\Camera.hpp" />
+    <ClInclude Include="src\Core\Scene\Cameras\CameraController.hpp" />
+    <ClInclude Include="src\Core\Scene\Cameras\FreeRoamCameraController.hpp" />
+    <ClInclude Include="src\Core\Components\Component.hpp" />
+    <ClInclude Include="src\Core\Components\Render\RenderComponent.hpp" />
+    <ClInclude Include="src\Core\Components\Render\StaticObjectRenderComponent.hpp" />
+    <ClInclude Include="src\Core\Components\Transform\TransformComponent.hpp" />
     <ClInclude Include="src\Core\Renderer\Renderer.hpp" />
     <ClInclude Include="src\Core\Scene\Scene.hpp" />
     <ClInclude Include="src\Core\Scene\SceneNode.hpp" />
     <ClInclude Include="src\Core\Selection\Selection.hpp" />
-    <ClInclude Include="src\Core\TransformHook\LineHook.hpp" />
-    <ClInclude Include="src\Core\TransformHook\ScaleHook.hpp" />
-    <ClInclude Include="src\Core\TransformHook\TransformHook.hpp" />
-    <ClInclude Include="src\Core\TransformHook\TranslateHook.hpp" />
+    <ClInclude Include="src\Core\Scene\TransformHook\LineHook.hpp" />
+    <ClInclude Include="src\Core\Scene\TransformHook\ScaleHook.hpp" />
+    <ClInclude Include="src\Core\Scene\TransformHook\TransformHook.hpp" />
+    <ClInclude Include="src\Core\Scene\TransformHook\TranslateHook.hpp" />
     <ClInclude Include="src\Resource\Image\RGBImage.hpp" />
     <ClInclude Include="src\Resource\Mesh\Dev\LineMesh.hpp" />
     <ClInclude Include="src\Subsystem\Graphics\Api\DrawMode.hpp" />
@@ -387,7 +387,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <OutDir>$(SolutionDir)$(Platform)\$(Configuration)\</OutDir>
     <ExecutablePath>$(ProjectDir)lib\Qt 5.7\bin;$(ExecutablePath)</ExecutablePath>
-    <IncludePath>$(ProjectDir)src/Subsystem/Graphics/Impl/OpenGL/Textures;$(ProjectDir)src/Subsystem/Graphics/Impl/OpenGL;$(ProjectDir)src/Subsystem/Graphics/Api;$(ProjectDir)src/Subsystem/Graphics;$(ProjectDir)src/Core/Texture;$(ProjectDir)src/Core/VertexBuffer;$(ProjectDir)src/Subsystem/Graphics/Api/VertexBuffer;$(ProjectDir)src/Subsystem/Graphics/Api/Texture;$(ProjectDir)include;$(ProjectDir)lib\Qt 5.7\include;$(IncludePath)</IncludePath>
+    <IncludePath>$(ProjectDir)src/Core/Components/Render;$(ProjectDir)src/Core/Components/Transform;$(ProjectDir)src/Core/Components;$(ProjectDir)src/Core/Scene/TransformHook;$(ProjectDir)src/Core/Scene/Cameras;$(ProjectDir)src/Subsystem/Graphics/Impl/OpenGL/Textures;$(ProjectDir)src/Subsystem/Graphics/Impl/OpenGL;$(ProjectDir)src/Subsystem/Graphics/Api;$(ProjectDir)src/Subsystem/Graphics;$(ProjectDir)src/Core/Texture;$(ProjectDir)src/Core/VertexBuffer;$(ProjectDir)src/Subsystem/Graphics/Api/VertexBuffer;$(ProjectDir)src/Subsystem/Graphics/Api/Texture;$(ProjectDir)include;$(ProjectDir)lib\Qt 5.7\include;$(IncludePath)</IncludePath>
     <LibraryPath>$(ProjectDir)lib;$(ProjectDir)lib\Qt 5.7\lib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">

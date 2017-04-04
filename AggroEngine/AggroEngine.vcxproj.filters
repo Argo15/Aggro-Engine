@@ -85,24 +85,6 @@
     <ClCompile Include="src\Resource\Mesh\Mesh.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\Core\Object\Cameras\Camera.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Core\Object\Cameras\CameraController.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Core\Object\Cameras\FreeRoamCameraController.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Core\Object\Components\Render\RenderComponent.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Core\Object\Components\Render\StaticObjectRenderComponent.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Core\Object\Components\Component.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="src\Core\Scene\Scene.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -160,9 +142,6 @@
     <ClCompile Include="src\Widgets\Inspector\TransformWidget.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\Core\Object\Components\Transform\TransformComponent.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="src\Widgets\GLWidget\GLWidget.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -193,9 +172,6 @@
     <ClCompile Include="src\Core\Jobs\TickingJob.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\Core\TransformHook\TranslateHook.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="src\Resource\Mesh\Dev\LineMesh.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -209,12 +185,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\Util\Math\Line.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Core\TransformHook\LineHook.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Core\TransformHook\ScaleHook.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\Widgets\GLWidget\ToolBar\ModeSelector.cpp">
@@ -307,6 +277,36 @@
     <ClCompile Include="src\Core\VertexBuffer\LoadableVertexBufferHandle.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\Core\Scene\Cameras\Camera.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Core\Scene\Cameras\CameraController.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Core\Scene\Cameras\FreeRoamCameraController.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Core\Scene\TransformHook\LineHook.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Core\Scene\TransformHook\ScaleHook.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Core\Scene\TransformHook\TranslateHook.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Core\Components\Render\RenderComponent.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Core\Components\Render\StaticObjectRenderComponent.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Core\Components\Transform\TransformComponent.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Core\Components\Component.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Resource\Image\CheckersImage.hpp">
@@ -331,24 +331,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\Resource\Mesh\MeshImporter.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Core\Object\Cameras\Camera.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Core\Object\Cameras\CameraController.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Core\Object\Cameras\FreeRoamCameraController.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Core\Object\Components\Render\RenderComponent.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Core\Object\Components\Render\StaticObjectRenderComponent.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Core\Object\Components\Component.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\Core\Scene\Scene.hpp">
@@ -426,9 +408,6 @@
     <ClInclude Include="src\Widgets\Inspector\TransformWidget.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\Core\Object\Components\Transform\TransformComponent.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="src\Core\MouseController.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -450,12 +429,6 @@
     <ClInclude Include="src\Core\Jobs\TickingJob.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\Core\TransformHook\TransformHook.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Core\TransformHook\TranslateHook.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="src\Resource\Mesh\Dev\LineMesh.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -469,12 +442,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\Util\Math\Line.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Core\TransformHook\LineHook.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Core\TransformHook\ScaleHook.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\Subsystem\Graphics\Graphics.hpp">
@@ -548,6 +515,39 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\Core\VertexBuffer\LoadableVertexBufferHandle.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Core\Scene\Cameras\Camera.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Core\Scene\Cameras\CameraController.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Core\Scene\Cameras\FreeRoamCameraController.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Core\Scene\TransformHook\LineHook.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Core\Scene\TransformHook\ScaleHook.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Core\Scene\TransformHook\TransformHook.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Core\Scene\TransformHook\TranslateHook.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Core\Components\Render\RenderComponent.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Core\Components\Render\StaticObjectRenderComponent.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Core\Components\Transform\TransformComponent.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Core\Components\Component.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
