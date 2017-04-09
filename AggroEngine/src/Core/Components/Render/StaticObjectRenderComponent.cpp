@@ -2,38 +2,45 @@
 
 StaticObjectRenderComponent::StaticObjectRenderComponent()
 	: RenderComponent()
-	, m_vertexBuffer(shared_ptr<VertexBufferHandle>(nullptr))
-	, m_texture(shared_ptr<TextureHandle>(nullptr))
+	, m_meshId()
+	, m_textureImageId()
 {
 }
 
-void StaticObjectRenderComponent::render(shared_ptr<Graphics> graphics, glm::mat4 m4Transform, int objId)
+void StaticObjectRenderComponent::render(shared_ptr<GraphicsContext> context, glm::mat4 m4Transform, int objId)
 {
-	if (m_vertexBuffer && m_texture && this->getVertexBuffer()->isLoaded())
+	if (!m_meshId || !m_textureImageId)
 	{
-		shared_ptr<RenderData> renderData = shared_ptr<RenderData>(new RenderData(this->getVertexBuffer(), this->getTexture()));
+		return;
+	}
+
+	shared_ptr<VertexBufferHandle> vbo = context->getVboCache()->getVertexBuffer(*m_meshId);
+	shared_ptr<TextureHandle> texture = context->getTextureCache()->getTexture(*m_textureImageId);
+	if (vbo->isLoaded())
+	{
+		shared_ptr<RenderData> renderData(new RenderData(vbo, texture));
 		renderData->setModelMatrix(m4Transform);
 		renderData->setId(objId);
-		graphics->stageTriangleRender(renderData);
+		context->getGraphics()->stageTriangleRender(renderData);
 	}
 }
 
-void StaticObjectRenderComponent::setVertexBuffer(shared_ptr<VertexBufferHandle> vertexBuffer)
+void StaticObjectRenderComponent::setMeshId(int meshId)
 {
-	m_vertexBuffer = vertexBuffer;
+	m_meshId = meshId;
 }
-	
-shared_ptr<VertexBufferHandle> StaticObjectRenderComponent::getVertexBuffer()
+
+boost::optional<int> StaticObjectRenderComponent::getMeshId()
 {
-	return m_vertexBuffer;
+	return m_meshId;
 }
-	
-void StaticObjectRenderComponent::setTexture(shared_ptr<TextureHandle> texture)
+
+void StaticObjectRenderComponent::setTextureImageId(int imageId)
 {
-	m_texture = texture;
+	m_textureImageId = imageId;
 }
-	
-shared_ptr<TextureHandle> StaticObjectRenderComponent::getTexture()
+
+boost::optional<int> StaticObjectRenderComponent::getTextureImageId()
 {
-	return m_texture;
+	return m_textureImageId;
 }

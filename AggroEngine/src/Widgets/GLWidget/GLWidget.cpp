@@ -12,7 +12,7 @@ GLWidget::GLWidget(shared_ptr<EngineContext> context, QWidget *parent)
 	, m_graphicsClock(new Clock())
 	, m_selection(new Selection())
 {
-	m_renderer = shared_ptr<Renderer>(new Renderer(m_context->getGraphics()));
+	m_renderer = shared_ptr<Renderer>(new Renderer(m_context->getGraphicsContext()));
 	setFocusPolicy(Qt::StrongFocus);
 	this->setMouseTracking(true);
 	const Properties& props = gConfig->getProperties();
@@ -30,7 +30,7 @@ void GLWidget::initializeGL()
 	glewInit();
 
 	m_context->getGraphics()->init();
-	m_renderer->init(m_context->getVboCache(), m_context->getTextureCache());
+	m_renderer->init();
 
 	(new CameraUpdateJob(m_context, shared_ptr<CameraController>(new FreeRoamCameraController()), m_keyboard, m_mouse))->run();
 
@@ -44,8 +44,8 @@ void GLWidget::initializeGL()
 
 	// add render data
 	shared_ptr<StaticObjectRenderComponent> objectRenderComponent(new StaticObjectRenderComponent());
-	objectRenderComponent->setVertexBuffer(m_context->getVboCache()->getVertexBuffer("Resources/Mesh/sphere.obj"));
-	objectRenderComponent->setTexture(m_context->getTextureCache()->getTexture("Resources/Textures/Walls/wall01/wall01_Diffuse.tga"));
+	objectRenderComponent->setMeshId(m_context->getResources()->getIdForPath("Resources/Mesh/sphere.obj"));
+	objectRenderComponent->setTextureImageId(m_context->getResources()->getIdForPath("Resources/Textures/Walls/wall01/wall01_Diffuse.tga"));
 	child1->setRenderComponent(objectRenderComponent);
 	child2->setRenderComponent(objectRenderComponent);
 

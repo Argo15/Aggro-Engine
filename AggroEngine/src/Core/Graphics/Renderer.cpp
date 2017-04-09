@@ -2,29 +2,27 @@
 #include "Grid.hpp"
 #include "StaticObjectRenderComponent.hpp"
 
-Renderer::Renderer(shared_ptr<Graphics> graphics)
+Renderer::Renderer(shared_ptr<GraphicsContext> graphicsContext)
 {
-	m_graphics = graphics;
+	m_graphicsContext = graphicsContext;
 }
 
-void Renderer::init(shared_ptr<VertexBufferCache> vboCache, shared_ptr<TextureCache> textureCache)
+void Renderer::init()
 {
 	// Build grid
 	shared_ptr<Mesh> grid = unique_ptr<Mesh>(new Grid(16));
-	shared_ptr<VertexBufferHandle> gridVBO = m_graphics->createVertexBuffer(grid);
-	shared_ptr<StaticObjectRenderComponent> objectRenderComponent(new StaticObjectRenderComponent());
-	objectRenderComponent->setVertexBuffer(vboCache->getVertexBuffer("Resources/Mesh/sphere.obj"));
-	objectRenderComponent->setTexture(textureCache->getTexture("Resources/Image/Banana2.png"));
-	m_gridRenderData = shared_ptr<RenderData>(new RenderData(gridVBO, objectRenderComponent->getTexture(), DrawMode::LINES));
+	shared_ptr<VertexBufferHandle> gridVBO = m_graphicsContext->getGraphics()->createVertexBuffer(grid);
+	shared_ptr<TextureHandle> defaultTexture = m_graphicsContext->getGraphics()->createTexture();
+	m_gridRenderData = shared_ptr<RenderData>(new RenderData(gridVBO, defaultTexture, DrawMode::LINES));
 }
 
 void Renderer::renderScene(shared_ptr<Scene> scene, shared_ptr<RenderOptions> renderOptions)
 {
-	m_graphics->clearDepthAndColor(); // clear
-	m_graphics->stageTriangleRender(m_gridRenderData); // Render grid
+	m_graphicsContext->getGraphics()->clearDepthAndColor(); // clear
+	m_graphicsContext->getGraphics()->stageTriangleRender(m_gridRenderData); // Render grid
 	if (scene->getTransformHook())
 	{
-		scene->getTransformHook()->render(m_graphics, scene); // Render transformer
+		scene->getTransformHook()->render(m_graphicsContext->getGraphics(), scene); // Render transformer
 	}
 	_renderSceneNodeRecursive(scene->getRoot(), glm::mat4(1.0)); // Render scene
 
@@ -33,7 +31,7 @@ void Renderer::renderScene(shared_ptr<Scene> scene, shared_ptr<RenderOptions> re
 	renderOptions->setViewMatrix(scene->getCamera()->getViewMatrix());
 
 	// execute
-	m_graphics->executeRender(*(renderOptions.get()));
+	m_graphicsContext->getGraphics()->executeRender(*(renderOptions.get()));
 }
 
 
@@ -45,7 +43,7 @@ void Renderer::_renderSceneNodeRecursive(shared_ptr<SceneNode> node, glm::mat4 t
 		curTransform = transform * node->getTransformComponent()->getTransform();
 		if (node->hasRenderComponent())
 		{
-			node->getRenderComponent()->render(m_graphics, curTransform, node->getId());
+			node->getRenderComponent()->render(m_graphicsContext, curTransform, node->getId());
 		}
 	}
 	shared_ptr<vector<shared_ptr<SceneNode>>> children = node->getChildren();

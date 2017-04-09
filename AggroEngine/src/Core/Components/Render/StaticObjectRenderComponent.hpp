@@ -1,21 +1,22 @@
 #pragma once
 
+#include <boost/optional.hpp>
 #include "RenderComponent.hpp"
 
 class StaticObjectRenderComponent : public RenderComponent
 {
 private:
-	shared_ptr<VertexBufferHandle> m_vertexBuffer;
-	shared_ptr<TextureHandle> m_texture;
+	boost::optional<int> m_meshId;
+	boost::optional<int> m_textureImageId;
 
 public:
 	StaticObjectRenderComponent();
 
-	void render(shared_ptr<Graphics> graphics, glm::mat4 m4Transform, int objId);
+	void render(shared_ptr<GraphicsContext> context, glm::mat4 m4Transform, int objId);
 
-	void setVertexBuffer(shared_ptr<VertexBufferHandle> vertexBuffer);
-	shared_ptr<VertexBufferHandle> getVertexBuffer();
+	void setMeshId(int meshId);
+	boost::optional<int> getMeshId();
 	
-	void setTexture(shared_ptr<TextureHandle> texture);
-	shared_ptr<TextureHandle> getTexture();
+	void setTextureImageId(int meshId);
+	boost::optional<int> getTextureImageId();
 };

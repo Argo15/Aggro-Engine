@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Component.hpp"
-#include "Graphics.hpp"
+#include "GraphicsContext.hpp"
 #include "Matrix.hpp"
 
 /**
@@ -15,5 +15,5 @@ class RenderComponent : public Component
 public:
 	RenderComponent();
 
-	virtual void render(shared_ptr<Graphics> graphics, glm::mat4 m4Transform, int objId) = 0;
+	virtual void render(shared_ptr<GraphicsContext> context, glm::mat4 m4Transform, int objId) = 0;
 };

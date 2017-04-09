@@ -1,8 +1,7 @@
 #pragma once
 
 #include "Scene.hpp"
-#include "VertexBufferCache.hpp"
-#include "TextureCache.hpp"
+#include "GraphicsContext.hpp"
 
 /**
 * Render's a scene graph.
@@ -13,14 +12,14 @@
 class Renderer
 {
 private:
-	shared_ptr<Graphics> m_graphics;
+	shared_ptr<GraphicsContext> m_graphicsContext;
 	shared_ptr<RenderData> m_gridRenderData;
 
 	void _renderSceneNodeRecursive(shared_ptr<SceneNode> node, glm::mat4 transform);
 
 public:
-	Renderer(shared_ptr<Graphics> graphics);
+	Renderer(shared_ptr<GraphicsContext> graphicsContext);
 
-	void init(shared_ptr<VertexBufferCache> vboCache, shared_ptr<TextureCache> textureCache);
+	void init();
 	void renderScene(shared_ptr<Scene> scene, shared_ptr<RenderOptions> renderOptions);
 };

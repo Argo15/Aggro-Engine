@@ -17,16 +17,16 @@ SceneGraphTree::SceneGraphTree(shared_ptr<EngineContext> context, QWidget *paren
 	m_addCubeAction = new QAction(tr("Add Cube"), this);
 	connect(m_addCubeAction, &QAction::triggered, this, [this]() {
 		shared_ptr<StaticObjectRenderComponent> renderComponent(new StaticObjectRenderComponent());
-		renderComponent->setVertexBuffer(m_context->getVboCache()->getVertexBuffer("Resources/Mesh/cube.obj"));
-		renderComponent->setTexture(m_context->getTextureCache()->getTexture("Resources/Textures/Walls/wall01/wall01_Diffuse.tga"));
+		renderComponent->setMeshId(m_context->getResources()->getIdForPath("Resources/Mesh/cube.obj"));
+		renderComponent->setTextureImageId(m_context->getResources()->getIdForPath("Resources/Textures/Walls/wall01/wall01_Diffuse.tga"));
 		_addNewNode(renderComponent, "Cube");
 	});
 
 	m_addSphereAction = new QAction(tr("Add Sphere"), this);
 	connect(m_addSphereAction, &QAction::triggered, this, [this]() {
 		shared_ptr<StaticObjectRenderComponent> renderComponent(new StaticObjectRenderComponent());
-		renderComponent->setVertexBuffer(m_context->getVboCache()->getVertexBuffer("Resources/Mesh/sphere.obj"));
-		renderComponent->setTexture(m_context->getTextureCache()->getTexture("Resources/Textures/Walls/wall01/wall01_Diffuse.tga"));
+		renderComponent->setMeshId(m_context->getResources()->getIdForPath("Resources/Mesh/sphere.obj"));
+		renderComponent->setTextureImageId(m_context->getResources()->getIdForPath("Resources/Textures/Walls/wall01/wall01_Diffuse.tga"));
 		_addNewNode(renderComponent, "Sphere");
 	});
 

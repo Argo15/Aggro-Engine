@@ -1,28 +1,32 @@
 #include "EngineContext.hpp"
 
 EngineContext::EngineContext()
-	: m_graphics(new OpenGL43Graphics())
-	, m_jobManager(new JobManager())
+	: m_jobManager(new JobManager())
 	, m_scene(new Scene())
 	, m_renderOptions(new RenderOptions())
+	, m_resources(new Resources())
 {
-	m_textureCache = shared_ptr<TextureCache>(new TextureCache(m_graphics, m_jobManager));
-	m_vboCache = shared_ptr<VertexBufferCache>(new VertexBufferCache(m_graphics, m_jobManager));
+	m_graphicsContext = shared_ptr<GraphicsContext>(new GraphicsContext(m_jobManager, m_resources));
+}
+
+shared_ptr<GraphicsContext> EngineContext::getGraphicsContext()
+{
+	return m_graphicsContext;
 }
 
 shared_ptr<Graphics> EngineContext::getGraphics()
 {
-	return m_graphics;
+	return m_graphicsContext->getGraphics();
 }
 
 shared_ptr<VertexBufferCache> EngineContext::getVboCache()
 {
-	return m_vboCache;
+	return m_graphicsContext->getVboCache();
 }
 
 shared_ptr<TextureCache> EngineContext::getTextureCache()
 {
-	return m_textureCache;
+	return m_graphicsContext->getTextureCache();
 }
 
 shared_ptr<Scene> EngineContext::getScene()
@@ -38,4 +42,9 @@ shared_ptr<RenderOptions> EngineContext::getRenderOptions()
 shared_ptr<JobManager> EngineContext::getJobManager()
 {
 	return m_jobManager;
+}
+
+shared_ptr<Resources> EngineContext::getResources()
+{
+	return m_resources;
 }
