@@ -29,6 +29,7 @@ void Renderer::renderScene(shared_ptr<Scene> scene, shared_ptr<RenderOptions> re
 	// set scene options
 	renderOptions->setProjectionMatrix(scene->getCamera()->getProjMatrix());
 	renderOptions->setViewMatrix(scene->getCamera()->getViewMatrix());
+	renderOptions->setViewport(scene->getCamera()->getViewport());
 
 	// execute
 	m_graphicsContext->getGraphics()->executeRender(*(renderOptions.get()));

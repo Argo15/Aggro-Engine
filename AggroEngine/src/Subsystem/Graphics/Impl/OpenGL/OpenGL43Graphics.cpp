@@ -155,6 +155,10 @@ void OpenGL43Graphics::_drawScreen(RenderOptions &renderOptions, float nX1, floa
 {
 	clearDepth();
 	boost::lock_guard<OpenGL43Graphics> guard(*this);
+
+	glm::vec4 viewport = renderOptions.getViewport();
+	setViewport(viewport[0], viewport[1], viewport[2], viewport[3]);
+
 	glDisable(GL_LIGHTING);
 	for (int i = 31; i >= 0; i--)
 	{

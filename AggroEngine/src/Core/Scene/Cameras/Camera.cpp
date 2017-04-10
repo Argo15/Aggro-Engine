@@ -12,6 +12,7 @@ Camera::Camera()
 	, m_v3LookDir(baseLookDir)
 	, m_v3UpDir(baseUpDir)
 	, m_v3RightDir(baseRightDir)
+	, m_v4Viewport(glm::vec4(0, 0, 1000, 1000))
 {
 	// Default position
 	translate(glm::vec3(4.f, 4.f, 4.f));
@@ -59,6 +60,11 @@ void Camera::setLookAt(glm::vec3 &eye, glm::vec3 &center, glm::vec3 &up)
 	// TODO, math this one out.
 }
 
+void Camera::setViewport(glm::vec4 &viewport)
+{
+	m_v4Viewport = viewport;
+}
+
 glm::mat4 &Camera::getViewMatrix()
 {
 	return m_m4ViewMatrix;
@@ -87,4 +93,9 @@ glm::vec3 &Camera::getUpDir()
 glm::vec3 &Camera::getRightDir()
 {
 	return m_v3RightDir;
+}
+
+glm::vec4 &Camera::getViewport()
+{
+	return m_v4Viewport;
 }

@@ -93,7 +93,7 @@ bool LineHook::updateSelection(shared_ptr<MouseState> mouse, shared_ptr<EngineCo
 		// Get Camera ray
 		const glm::mat4 projMat = context->getRenderOptions()->getProjectionMatrix();
 		const glm::mat4 viewMat = context->getRenderOptions()->getViewMatrix();
-		const glm::vec4 viewport = context->getGraphics()->getViewport()->asVec4();
+		const glm::vec4 viewport = context->getScene()->getCamera()->getViewport();
 		const glm::vec3 lookNearPos = glm::unProject(glm::vec3(mouse->getPosX(), viewport.w - mouse->getPosY(), 0), viewMat, projMat, viewport);
 		const glm::vec3 lookFarPos = glm::unProject(glm::vec3(mouse->getPosX(), viewport.w - mouse->getPosY(), 1.0), viewMat, projMat, viewport);
 		const glm::vec3 lookDir = glm::normalize(lookFarPos - lookNearPos);

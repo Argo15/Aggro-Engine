@@ -14,7 +14,7 @@ private:
 public:
 	Selection(unsigned int m_size = 19);
 
-	void updateSelection(shared_ptr<MouseState> mouse, shared_ptr<EngineContext> context);
+	void updateSelection(shared_ptr<MouseState> mouse, shared_ptr<Graphics> graphics);
 
 	unsigned int getSelectionAsId();
 	unsigned int getSelectionAsId(unsigned int x, unsigned int y);

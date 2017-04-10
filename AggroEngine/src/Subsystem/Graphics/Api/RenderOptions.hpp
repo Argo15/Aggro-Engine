@@ -19,9 +19,7 @@ public:
 private:
 	glm::mat4 m_m4ProjectionMatrix; // Ortho or perspective
 	glm::mat4 m_m4ViewMatrix;  // Camera position/orientation
-
-	int resWidth;
-	int resHeight;
+	glm::vec4 m_v4Viewport; // Dimensions of window
 
 	RenderTarget m_renderTarget;
 
@@ -30,13 +28,12 @@ public:
 
 	RenderOptions &setProjectionMatrix(glm::mat4 &m4Projection);
 	RenderOptions &setViewMatrix(glm::mat4 &m4View);
+	RenderOptions &setViewport(glm::vec4 &m4Viewport);
 
 	const glm::mat4 &getProjectionMatrix();
 	const glm::mat4 &getViewMatrix();
+	const glm::vec4 &getViewport();
 
 	void setRenderTarget(RenderTarget target);
 	RenderTarget getRenderTarget();
-
-	int getResolutionWidth();
-	int getResolutionHeight();
 };

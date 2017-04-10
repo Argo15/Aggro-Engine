@@ -20,6 +20,7 @@ private:
 	glm::vec3 m_v3RightDir;
 	glm::mat4 m_m4ViewMatrix;
 	glm::mat4 m_m4ProjMatrix;
+	glm::vec4 m_v4Viewport;
 
 	shared_ptr<TransformComponent> m_transformComponent;
 
@@ -33,8 +34,8 @@ public:
 	void scale(const glm::vec3 &scale);
 	
 	void setProjection(glm::mat4 &m4Projection);
-
 	void setLookAt(glm::vec3 &eye, glm::vec3 &center, glm::vec3 &up);
+	void setViewport(glm::vec4 &viewport);
 
 	glm::mat4 &getViewMatrix();
 	glm::mat4 &getProjMatrix();
@@ -42,4 +43,5 @@ public:
 	glm::vec3 &getLookDir();
 	glm::vec3 &getUpDir();
 	glm::vec3 &getRightDir();
+	glm::vec4 &getViewport();
 };

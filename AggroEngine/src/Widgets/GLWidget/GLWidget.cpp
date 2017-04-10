@@ -8,11 +8,13 @@ GLWidget::GLWidget(shared_ptr<EngineContext> context, QWidget *parent)
 	, m_keyboard(new KeyboardState())
 	, m_mouse(new MouseState())
 	, m_mouseController(new MouseController())
-	, m_context(context)
+	, m_engineContext(context)
 	, m_graphicsClock(new Clock())
 	, m_selection(new Selection())
 {
-	m_renderer = shared_ptr<Renderer>(new Renderer(m_context->getGraphicsContext()));
+	m_graphicsContext = shared_ptr<GraphicsContext>(new GraphicsContext(context->getJobManager(), context->getResources()));
+	m_renderer = shared_ptr<Renderer>(new Renderer(m_graphicsContext));
+
 	setFocusPolicy(Qt::StrongFocus);
 	this->setMouseTracking(true);
 	const Properties& props = gConfig->getProperties();
@@ -29,13 +31,13 @@ void GLWidget::initializeGL()
 {
 	glewInit();
 
-	m_context->getGraphics()->init();
+	m_graphicsContext->getGraphics()->init();
 	m_renderer->init();
 
-	(new CameraUpdateJob(m_context, shared_ptr<CameraController>(new FreeRoamCameraController()), m_keyboard, m_mouse))->run();
+	(new CameraUpdateJob(m_engineContext, shared_ptr<CameraController>(new FreeRoamCameraController()), m_keyboard, m_mouse))->run();
 
 	// create a root object
-	shared_ptr<Scene> scene = m_context->getScene();
+	shared_ptr<Scene> scene = m_engineContext->getScene();
 	shared_ptr<SceneNode> rootNode = shared_ptr<SceneNode>(new SceneNode(scene->getNextId()));
 	shared_ptr<SceneNode> child1 = shared_ptr<SceneNode>(new SceneNode(scene->getNextId(), rootNode.get()));
 	rootNode->addChild(child1);
@@ -44,8 +46,8 @@ void GLWidget::initializeGL()
 
 	// add render data
 	shared_ptr<StaticObjectRenderComponent> objectRenderComponent(new StaticObjectRenderComponent());
-	objectRenderComponent->setMeshId(m_context->getResources()->getIdForPath("Resources/Mesh/sphere.obj"));
-	objectRenderComponent->setTextureImageId(m_context->getResources()->getIdForPath("Resources/Textures/Walls/wall01/wall01_Diffuse.tga"));
+	objectRenderComponent->setMeshId(m_engineContext->getResources()->getIdForPath("Resources/Mesh/sphere.obj"));
+	objectRenderComponent->setTextureImageId(m_engineContext->getResources()->getIdForPath("Resources/Textures/Walls/wall01/wall01_Diffuse.tga"));
 	child1->setRenderComponent(objectRenderComponent);
 	child2->setRenderComponent(objectRenderComponent);
 
@@ -72,15 +74,16 @@ void GLWidget::initializeGL()
 
 void GLWidget::resizeGL(int width, int height)
 {
-	m_context->getGraphics()->setViewport(0, 0, width, height);
-	m_context->getScene()->getCamera()->setProjection(glm::perspective(45.f, (float)width / (float)height, 0.01f, 100.f));
+	shared_ptr<Camera> camera = m_engineContext->getScene()->getCamera();
+	camera->setViewport(glm::vec4(0, 0, width, height));
+	camera->setProjection(glm::perspective(45.f, (float)width / (float)height, 0.01f, 100.f));
 }
 
 void GLWidget::paintGL()
 {
 	// First process any jobs that require opengl (uploading images, VBOs, etc)
-	m_context->getJobManager()->tick();
-	shared_ptr<Job> graphicsJob = m_context->getJobManager()->nextGraphicsJob();
+	m_engineContext->getJobManager()->tick();
+	shared_ptr<Job> graphicsJob = m_engineContext->getJobManager()->nextGraphicsJob();
 	while (graphicsJob)
 	{
 		graphicsJob->runInThread();
@@ -88,17 +91,17 @@ void GLWidget::paintGL()
 		{
 			break; // Give 3 milliseconds to execute render
 		}
-		graphicsJob = m_context->getJobManager()->nextGraphicsJob();
+		graphicsJob = m_engineContext->getJobManager()->nextGraphicsJob();
 	}
 
 	// If enough time has passed, render a new frame
 	if (m_graphicsClock->getTimerMillis() > 1000 / m_maxFps)
 	{
 		m_graphicsClock->resetTimer();
-		m_renderer->renderScene(m_context->getScene(), m_context->getRenderOptions());
+		m_renderer->renderScene(m_engineContext->getScene(), m_engineContext->getRenderOptions());
 		swapBuffers();
-		m_selection->updateSelection(m_mouse, m_context);
-		m_mouseController->handleMouseInput(m_mouse, m_context, m_selection);
+		m_selection->updateSelection(m_mouse, m_graphicsContext->getGraphics());
+		m_mouseController->handleMouseInput(m_mouse, m_engineContext, m_selection);
 	}
 }
 

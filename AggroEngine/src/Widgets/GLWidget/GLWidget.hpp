@@ -22,7 +22,8 @@ private:
 	shared_ptr<KeyboardState> m_keyboard;
 	shared_ptr<MouseState> m_mouse;
 	shared_ptr<MouseController> m_mouseController;
-	shared_ptr<EngineContext> m_context;
+	shared_ptr<EngineContext> m_engineContext;
+	shared_ptr<GraphicsContext> m_graphicsContext;
 	shared_ptr<Clock> m_graphicsClock;
 	shared_ptr<Selection> m_selection;
 	int m_maxFps;

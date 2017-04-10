@@ -8,13 +8,13 @@ Selection::Selection(unsigned int size)
 
 }
 
-void Selection::updateSelection(shared_ptr<MouseState> mouse, shared_ptr<EngineContext> context)
+void Selection::updateSelection(shared_ptr<MouseState> mouse, shared_ptr<Graphics> graphics)
 {
-	float percentX = (float)mouse->getPosX() / (float)context->getGraphics()->getViewport()->getWidth();
-	float percentY = (float)mouse->getPosY() / (float)context->getGraphics()->getViewport()->getHeight();
-	unsigned int imgX = std::max<unsigned int>(0, percentX * context->getGraphics()->getFrameBufferWidth() - (m_size / 2));
-	unsigned int imgY = std::max<unsigned int>(0, context->getGraphics()->getFrameBufferHeight() - (percentY * context->getGraphics()->getFrameBufferHeight()) - (m_size / 2));
-	m_selectedArea = context->getGraphics()->getRenderImage(imgX, imgY, m_size, m_size, RenderOptions::SELECTION);
+	float percentX = (float)mouse->getPosX() / (float)graphics->getViewport()->getWidth();
+	float percentY = (float)mouse->getPosY() / (float)graphics->getViewport()->getHeight();
+	unsigned int imgX = std::max<unsigned int>(0, percentX * graphics->getFrameBufferWidth() - (m_size / 2));
+	unsigned int imgY = std::max<unsigned int>(0, graphics->getFrameBufferHeight() - (percentY * graphics->getFrameBufferHeight()) - (m_size / 2));
+	m_selectedArea = graphics->getRenderImage(imgX, imgY, m_size, m_size, RenderOptions::SELECTION);
 }
 
 unsigned int Selection::getSelectionAsId()
