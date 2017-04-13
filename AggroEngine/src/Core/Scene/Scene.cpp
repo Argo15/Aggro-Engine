@@ -1,5 +1,4 @@
 #include "Scene.hpp"
-#include "FunctionUtil.hpp"
 
 Scene::Scene()
 	: m_nextId(1)

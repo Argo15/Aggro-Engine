@@ -34,10 +34,11 @@ void GLWidget::initializeGL()
 	m_graphicsContext->getGraphics()->init();
 	m_renderer->init();
 
-	(new CameraUpdateJob(m_engineContext, shared_ptr<CameraController>(new FreeRoamCameraController()), m_keyboard, m_mouse))->run();
+	shared_ptr<Scene> scene = m_engineContext->getScene();
+
+	(new CameraUpdateJob(scene->getCamera(), shared_ptr<CameraController>(new FreeRoamCameraController()), m_keyboard, m_mouse))->run();
 
 	// create a root object
-	shared_ptr<Scene> scene = m_engineContext->getScene();
 	shared_ptr<SceneNode> rootNode = shared_ptr<SceneNode>(new SceneNode(scene->getNextId()));
 	shared_ptr<SceneNode> child1 = shared_ptr<SceneNode>(new SceneNode(scene->getNextId(), rootNode.get()));
 	rootNode->addChild(child1);

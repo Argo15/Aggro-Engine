@@ -35,19 +35,19 @@
     <CustomBuild Include="src\Widgets\MainWindow.hpp">
       <Filter>Header Files</Filter>
     </CustomBuild>
-    <CustomBuild Include="src\Widgets\GLWidget\GLWidget.hpp">
+    <CustomBuild Include="src\Widgets\Main\MainWidget.hpp">
       <Filter>Header Files</Filter>
     </CustomBuild>
-    <CustomBuild Include="src\Widgets\GLWidget\MainWidget.hpp">
+    <CustomBuild Include="src\Widgets\Main\GLWidget\GLWidget.hpp">
       <Filter>Header Files</Filter>
     </CustomBuild>
-    <CustomBuild Include="src\Widgets\GLWidget\ToolBar\ModeSelector.hpp">
+    <CustomBuild Include="src\Widgets\Main\Toolbar\ModeSelector.hpp">
       <Filter>Header Files</Filter>
     </CustomBuild>
-    <CustomBuild Include="src\Widgets\GLWidget\ToolBar\Toolbar.hpp">
+    <CustomBuild Include="src\Widgets\Main\Toolbar\Toolbar.hpp">
       <Filter>Header Files</Filter>
     </CustomBuild>
-    <CustomBuild Include="src\Widgets\GLWidget\Toolbar\TransformSelector.hpp">
+    <CustomBuild Include="src\Widgets\Main\Toolbar\TransformSelector.hpp">
       <Filter>Header Files</Filter>
     </CustomBuild>
   </ItemGroup>
@@ -133,12 +133,6 @@
     <ClCompile Include="src\Widgets\Inspector\TransformWidget.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\Widgets\GLWidget\GLWidget.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Widgets\GLWidget\MainWidget.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="GeneratedFiles\Debug\moc_MainWidget.cpp">
       <Filter>Generated Files\Debug</Filter>
     </ClCompile>
@@ -175,9 +169,6 @@
     <ClCompile Include="src\Util\Math\Line.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\Widgets\GLWidget\ToolBar\ModeSelector.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="GeneratedFiles\Debug\moc_ModeSelector.cpp">
       <Filter>Generated Files\Debug</Filter>
     </ClCompile>
@@ -187,9 +178,6 @@
     <ClCompile Include="GeneratedFiles\Debug\moc_Toolbar.cpp">
       <Filter>Generated Files\Debug</Filter>
     </ClCompile>
-    <ClCompile Include="src\Widgets\GLWidget\Toolbar\Toolbar.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="GeneratedFiles\Release\moc_Toolbar.cpp">
       <Filter>Generated Files\Release</Filter>
     </ClCompile>
@@ -198,9 +186,6 @@
     </ClCompile>
     <ClCompile Include="GeneratedFiles\Release\moc_TransformSelector.cpp">
       <Filter>Generated Files\Release</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Widgets\GLWidget\Toolbar\TransformSelector.cpp">
-      <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\Subsystem\Graphics\Api\Texture\DefaultTextureHandle.cpp">
       <Filter>Source Files</Filter>
@@ -313,6 +298,21 @@
     <ClCompile Include="src\Core\Graphics\GraphicsContext.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\Widgets\Main\MainWidget.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Widgets\Main\GLWidget\GLWidget.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Widgets\Main\Toolbar\ModeSelector.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Widgets\Main\Toolbar\Toolbar.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Widgets\Main\Toolbar\TransformSelector.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Resource\Image\CheckersImage.hpp">
@@ -403,9 +403,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\Widgets\Inspector\TransformWidget.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Core\Jobs\Locks.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\Core\Jobs\JobManager.hpp">
@@ -560,6 +557,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\Core\Graphics\GraphicsContext.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Util\Locks.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

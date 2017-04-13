@@ -1,5 +1,4 @@
 #include "Camera.hpp"
-#include <iostream>
 
 static glm::vec4 baseEyePos(0.f,0.f,0.f,1.f);
 static glm::vec4 baseLookDir(0.f,0.f,-1.f,0.f);

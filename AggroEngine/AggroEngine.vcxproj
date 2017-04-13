@@ -149,11 +149,11 @@
     <ClCompile Include="src\Util\Math\Line.cpp" />
     <ClCompile Include="src\Util\Math\MatrixDecompose.cpp" />
     <ClCompile Include="src\Util\StringUtil.cpp" />
-    <ClCompile Include="src\Widgets\GLWidget\GLWidget.cpp" />
-    <ClCompile Include="src\Widgets\GLWidget\MainWidget.cpp" />
-    <ClCompile Include="src\Widgets\GLWidget\ToolBar\ModeSelector.cpp" />
-    <ClCompile Include="src\Widgets\GLWidget\Toolbar\Toolbar.cpp" />
-    <ClCompile Include="src\Widgets\GLWidget\Toolbar\TransformSelector.cpp" />
+    <ClCompile Include="src\Widgets\Main\GLWidget\GLWidget.cpp" />
+    <ClCompile Include="src\Widgets\Main\MainWidget.cpp" />
+    <ClCompile Include="src\Widgets\Main\Toolbar\ModeSelector.cpp" />
+    <ClCompile Include="src\Widgets\Main\Toolbar\Toolbar.cpp" />
+    <ClCompile Include="src\Widgets\Main\Toolbar\TransformSelector.cpp" />
     <ClCompile Include="src\Widgets\Inspector\HeaderWidget.cpp" />
     <ClCompile Include="src\Widgets\Inspector\InspectorSubWidget.cpp" />
     <ClCompile Include="src\Widgets\Inspector\InspectorWidget.cpp" />
@@ -164,7 +164,7 @@
     <ClCompile Include="src\Widgets\SceneGraph\SceneTreeWidget.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <CustomBuild Include="src\Widgets\GLWidget\GLWidget.hpp">
+    <CustomBuild Include="src\Widgets\Main\GLWidget\GLWidget.hpp">
       <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(QTDIR)\bin\moc.exe;%(FullPath)</AdditionalInputs>
       <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Moc%27ing GLWidget.hpp...</Message>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">.\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp</Outputs>
@@ -189,7 +189,7 @@
     <ClInclude Include="src\Core\Graphics\GraphicsContext.hpp" />
     <ClInclude Include="src\Core\Jobs\Job.hpp" />
     <ClInclude Include="src\Core\Jobs\JobManager.hpp" />
-    <ClInclude Include="src\Core\Jobs\Locks.hpp" />
+    <ClInclude Include="src\Util\Locks.hpp" />
     <ClInclude Include="src\Core\Jobs\CameraUpdateJob.hpp" />
     <ClInclude Include="src\Core\Jobs\TickingJob.hpp" />
     <ClInclude Include="src\Core\Inputs\MouseController.hpp" />
@@ -260,7 +260,7 @@
     <ClInclude Include="src\Util\Math\MatrixDecompose.hpp" />
     <ClInclude Include="src\Util\StringUtil.hpp" />
     <ClInclude Include="src\Util\timer.hpp" />
-    <CustomBuild Include="src\Widgets\GLWidget\MainWidget.hpp">
+    <CustomBuild Include="src\Widgets\Main\MainWidget.hpp">
       <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(QTDIR)\bin\moc.exe;%(FullPath)</AdditionalInputs>
       <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Moc%27ing MainWidget.hpp...</Message>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">.\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp</Outputs>
@@ -278,7 +278,7 @@
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">.\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp</Outputs>
       <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">"$(QTDIR)\bin\moc.exe"  "%(FullPath)" -o ".\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp"  -DUNICODE -DWIN32 -DQT_DLL -DQT_NO_DEBUG -DNDEBUG -DQT_CORE_LIB -DQT_GUI_LIB -DQT_OPENGL_LIB -DQT_WIDGETS_LIB  "-I.\GeneratedFiles" "-I." "-I$(QTDIR)\include" "-I.\GeneratedFiles\$(ConfigurationName)\." "-I$(QTDIR)\include\QtCore" "-I$(QTDIR)\include\QtGui" "-I$(QTDIR)\include\QtOpenGL" "-I$(QTDIR)\include\QtWidgets" "-I.\src\Widgets" "-I.\src\Graphics" "-I.\src\Graphics\OpenGL\Shaders" "-I.\src\Graphics\OpenGL\Textures" "-I.\src\Graphics\OpenGL" "-I.\src\Graphics\Common\Texture" "-I.\src\Graphics\Common\VertexBuffer" "-I.\src\Graphics\Common" "-I.\src\Resource\Image" "-I.\src\Resource\Mesh" "-I.\src\Core\Engine" "-I.\src\Core\Gui" "-I.\src\Core\Object\Cameras" "-I.\src\Core\Object\Components\Render" "-I.\src\Core\Object\Components" "-I.\src\Core\Object" "-I.\src\Core\Scene" "-I.\src\Core\Updater" "-I.\src\Core" "-I.\src\Util\Config" "-I.\src\Util\Math" "-I.\src\Util" "-I.\src\Inputs" "-I.\src\Resource\Mesh\Dev" "-I.\src\Core\Renderer" "-I.\src\Widgets\SceneGraph" "-I.\src\Widgets\Inspector" "-I.\src\Core\Object\Components\Transform" "-I.\src\Widgets\GLWidget" "-I.\src\Graphics\OpenGL\Framebuffer" "-I.\src\Graphics\OpenGL\PixelBuffer" "-I.\src\Core\Jobs" "-I.\src\Core\TransformHook" "-I.\src\Core\Selection" "-I.\src\Widgets\GLWidget\ToolBar" "-I.\src\Resource" "-I.\src\Core\Graphics"</Command>
     </CustomBuild>
-    <CustomBuild Include="src\Widgets\GLWidget\ToolBar\ModeSelector.hpp">
+    <CustomBuild Include="src\Widgets\Main\Toolbar\ModeSelector.hpp">
       <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(QTDIR)\bin\moc.exe;%(FullPath)</AdditionalInputs>
       <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Moc%27ing ModeSelector.hpp...</Message>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">.\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp</Outputs>
@@ -296,7 +296,7 @@
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">.\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp</Outputs>
       <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">"$(QTDIR)\bin\moc.exe"  "%(FullPath)" -o ".\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp"  -DUNICODE -DWIN32 -DQT_DLL -DQT_NO_DEBUG -DNDEBUG -DQT_CORE_LIB -DQT_GUI_LIB -DQT_OPENGL_LIB -DQT_WIDGETS_LIB  "-I.\GeneratedFiles" "-I." "-I$(QTDIR)\include" "-I.\GeneratedFiles\$(ConfigurationName)\." "-I$(QTDIR)\include\QtCore" "-I$(QTDIR)\include\QtGui" "-I$(QTDIR)\include\QtOpenGL" "-I$(QTDIR)\include\QtWidgets" "-I.\src\Widgets" "-I.\src\Graphics" "-I.\src\Graphics\OpenGL\Shaders" "-I.\src\Graphics\OpenGL\Textures" "-I.\src\Graphics\OpenGL" "-I.\src\Graphics\Common\Texture" "-I.\src\Graphics\Common\VertexBuffer" "-I.\src\Graphics\Common" "-I.\src\Resource\Image" "-I.\src\Resource\Mesh" "-I.\src\Core\Engine" "-I.\src\Core\Gui" "-I.\src\Core\Object\Cameras" "-I.\src\Core\Object\Components\Render" "-I.\src\Core\Object\Components" "-I.\src\Core\Object" "-I.\src\Core\Scene" "-I.\src\Core\Updater" "-I.\src\Core" "-I.\src\Util\Config" "-I.\src\Util\Math" "-I.\src\Util" "-I.\src\Inputs" "-I.\src\Resource\Mesh\Dev" "-I.\src\Core\Renderer" "-I.\src\Widgets\SceneGraph" "-I.\src\Widgets\Inspector" "-I.\src\Core\Object\Components\Transform" "-I.\src\Widgets\GLWidget" "-I.\src\Graphics\OpenGL\Framebuffer" "-I.\src\Graphics\OpenGL\PixelBuffer" "-I.\src\Core\Jobs" "-I.\src\Core\TransformHook" "-I.\src\Core\Selection" "-I.\src\Widgets\GLWidget\ToolBar" "-I.\src\Resource" "-I.\src\Core\Graphics"</Command>
     </CustomBuild>
-    <CustomBuild Include="src\Widgets\GLWidget\ToolBar\Toolbar.hpp">
+    <CustomBuild Include="src\Widgets\Main\Toolbar\Toolbar.hpp">
       <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(QTDIR)\bin\moc.exe;%(FullPath)</AdditionalInputs>
       <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Moc%27ing Toolbar.hpp...</Message>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">.\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp</Outputs>
@@ -314,7 +314,7 @@
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">.\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp</Outputs>
       <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">"$(QTDIR)\bin\moc.exe"  "%(FullPath)" -o ".\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp"  -DUNICODE -DWIN32 -DQT_DLL -DQT_NO_DEBUG -DNDEBUG -DQT_CORE_LIB -DQT_GUI_LIB -DQT_OPENGL_LIB -DQT_WIDGETS_LIB  "-I.\GeneratedFiles" "-I." "-I$(QTDIR)\include" "-I.\GeneratedFiles\$(ConfigurationName)\." "-I$(QTDIR)\include\QtCore" "-I$(QTDIR)\include\QtGui" "-I$(QTDIR)\include\QtOpenGL" "-I$(QTDIR)\include\QtWidgets" "-I.\src\Widgets" "-I.\src\Graphics" "-I.\src\Graphics\OpenGL\Shaders" "-I.\src\Graphics\OpenGL\Textures" "-I.\src\Graphics\OpenGL" "-I.\src\Graphics\Common\Texture" "-I.\src\Graphics\Common\VertexBuffer" "-I.\src\Graphics\Common" "-I.\src\Resource\Image" "-I.\src\Resource\Mesh" "-I.\src\Core\Engine" "-I.\src\Core\Gui" "-I.\src\Core\Object\Cameras" "-I.\src\Core\Object\Components\Render" "-I.\src\Core\Object\Components" "-I.\src\Core\Object" "-I.\src\Core\Scene" "-I.\src\Core\Updater" "-I.\src\Core" "-I.\src\Util\Config" "-I.\src\Util\Math" "-I.\src\Util" "-I.\src\Inputs" "-I.\src\Resource\Mesh\Dev" "-I.\src\Core\Renderer" "-I.\src\Widgets\SceneGraph" "-I.\src\Widgets\Inspector" "-I.\src\Core\Object\Components\Transform" "-I.\src\Widgets\GLWidget" "-I.\src\Graphics\OpenGL\Framebuffer" "-I.\src\Graphics\OpenGL\PixelBuffer" "-I.\src\Core\Jobs" "-I.\src\Core\TransformHook" "-I.\src\Core\Selection" "-I.\src\Widgets\GLWidget\ToolBar" "-I.\src\Resource" "-I.\src\Core\Graphics"</Command>
     </CustomBuild>
-    <CustomBuild Include="src\Widgets\GLWidget\Toolbar\TransformSelector.hpp">
+    <CustomBuild Include="src\Widgets\Main\Toolbar\TransformSelector.hpp">
       <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(QTDIR)\bin\moc.exe;%(FullPath)</AdditionalInputs>
       <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Moc%27ing TransformSelector.hpp...</Message>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">.\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp</Outputs>
