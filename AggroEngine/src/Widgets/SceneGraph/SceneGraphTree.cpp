@@ -12,7 +12,6 @@ SceneGraphTree::SceneGraphTree(shared_ptr<EngineContext> context, QWidget *paren
 	: QDockWidget(parent)
 	, m_treeWidget(shared_ptr<QTreeWidget>(new SceneTreeWidget()))
 	, m_context(context)
-	, m_isRefreshing(false)
 {
 	m_addCubeAction = new QAction(tr("Add Cube"), this);
 	connect(m_addCubeAction, &QAction::triggered, this, [this]() {
@@ -51,9 +50,8 @@ SceneGraphTree::SceneGraphTree(shared_ptr<EngineContext> context, QWidget *paren
 
 void SceneGraphTree::refresh(Scene* scene)
 {
-	m_isRefreshing = true;
+	QSignalBlocker block(m_treeWidget.get());
 	_addSceneNodeRecursive(scene->getRoot(), nullptr, true);
-	m_isRefreshing = false;
 }
 
 void SceneGraphTree::_addSceneNodeRecursive(shared_ptr<SceneNode> node, QTreeWidgetItem *parent, bool isRoot)
@@ -146,22 +144,19 @@ void SceneGraphTree::_addNewNode(shared_ptr<StaticObjectRenderComponent> renderC
 
 void SceneGraphTree::_selectionChanged()
 {
-	if (!m_isRefreshing)
+	m_context->getScene()->deselectAllNodes();
+	QTreeWidgetItemIterator it(m_treeWidget.get(), QTreeWidgetItemIterator::Selected);
+	bool hasSelected = false;
+	while (*it)
 	{
-		m_context->getScene()->deselectAllNodes();
-		QTreeWidgetItemIterator it(m_treeWidget.get(), QTreeWidgetItemIterator::Selected);
-		bool hasSelected = false;
-		while (*it)
-		{
-			SceneNodeTreeItem *item = (SceneNodeTreeItem *)(*it);
-			shared_ptr<SceneNode> node = item->getSceneNode();
-			m_context->getScene()->selectNode(node);
-			hasSelected = true;
-			it++;
-		}
-
-		m_deleteAction->setEnabled(hasSelected);
+		SceneNodeTreeItem *item = (SceneNodeTreeItem *)(*it);
+		shared_ptr<SceneNode> node = item->getSceneNode();
+		m_context->getScene()->selectNode(node);
+		hasSelected = true;
+		it++;
 	}
+
+	m_deleteAction->setEnabled(hasSelected);
 }
 
 void SceneGraphTree::_deleteSelected()
@@ -195,9 +190,9 @@ void SceneGraphTree::_deleteNode(SceneNode *node)
 
 void SceneGraphTree::_selectNode(SceneNode *node)
 {
+	QSignalBlocker block(m_treeWidget.get());
 	if (node != nullptr && m_currentNodes[node] != nullptr)
 	{
-		m_isRefreshing = true;
 		QTreeWidgetItemIterator it(m_treeWidget.get(), QTreeWidgetItemIterator::Selected);
 		while (*it)
 		{
@@ -212,6 +207,5 @@ void SceneGraphTree::_selectNode(SceneNode *node)
 			parent = parent->parent();
 		}
 		m_currentNodes[node]->setSelected(true);
-		m_isRefreshing = false;
 	}
 }

@@ -27,6 +27,7 @@ private:
 	shared_ptr<Clock> m_graphicsClock;
 	shared_ptr<Selection> m_selection;
 	int m_maxFps;
+	int m_millisPerFrame;
 
 public:
 	GLWidget(shared_ptr<EngineContext> context, QWidget *parent = 0);

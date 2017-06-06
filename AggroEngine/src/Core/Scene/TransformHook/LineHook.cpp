@@ -5,11 +5,10 @@
 #include "Line.hpp"
 #include <Qt>
 
-const glm::vec3 transAxis[] = { glm::vec3(1.0f, 0, 0), glm::vec3(0, 1.0f, 0), glm::vec3(0, 0, 1.0f) };
+const glm::vec3 axis[] = { glm::vec3(1.0f, 0, 0), glm::vec3(0, 1.0f, 0), glm::vec3(0, 0, 1.0f) };
 
 LineHook::LineHook()
 	: m_lastPos()
-	, m_hasSelection(false)
 {
 
 }
@@ -20,8 +19,8 @@ void LineHook::_initialize(shared_ptr<Graphics> graphics, shared_ptr<Scene> scen
 	{
 		m_renderData[i] = shared_ptr<RenderData>(new RenderData());
 		m_renderData[i]->setDrawMode(DrawMode::LINES);
-		m_renderData[i]->setVertexBufferHandle(graphics->createVertexBuffer(shared_ptr<Mesh>(new LineMesh(glm::vec3(0), 2.0f * transAxis[i]))));
-		m_texture[i] = graphics->createTexture(shared_ptr<Image>(new RGBImage(1, 1, transAxis[i])));
+		m_renderData[i]->setVertexBufferHandle(graphics->createVertexBuffer(shared_ptr<Mesh>(new LineMesh(glm::vec3(0), 2.0f * axis[i]))));
+		m_texture[i] = graphics->createTexture(shared_ptr<Image>(new RGBImage(1, 1, axis[i])));
 		m_renderData[i]->setTextureHandle(m_texture[i]);
 		m_renderData[i]->setLineWidth(2);
 		m_renderData[i]->setDepthTestEnabled(false);
@@ -68,27 +67,21 @@ bool LineHook::updateSelection(shared_ptr<MouseState> mouse, shared_ptr<EngineCo
 	unsigned int id = selection->getSelectionAsId();
 	if (!mouse->getButtonPressed(Qt::MouseButton::LeftButton))
 	{
-		m_hasSelection = false;
-		int selectedIndex = _getSelectedIndex(selection);
+		m_lastPos = shared_ptr<glm::vec3>();
+		m_selectedIdx = _getSelectedIndex(selection);
 		for (int i = 0; i < 3; i++)
 		{
-			if (i == selectedIndex)
+			if (i == m_selectedIdx)
 			{
 				m_renderData[i]->setTextureHandle(m_texture[3]);
-				m_hasSelection = true;
-				m_selectedIdx = i;
 			}
 			else
 			{
 				m_renderData[i]->setTextureHandle(m_texture[i]);
 			}
 		}
-		if (m_lastPos && !m_hasSelection)
-		{
-			m_lastPos = shared_ptr<glm::vec3>();
-		}
 	}
-	else if (m_hasSelection && selectedNode)
+	else if (m_selectedIdx >= 0 && selectedNode)
 	{
 		// Get Camera ray
 		const glm::mat4 projMat = context->getRenderOptions()->getProjectionMatrix();
@@ -103,23 +96,28 @@ bool LineHook::updateSelection(shared_ptr<MouseState> mouse, shared_ptr<EngineCo
 		MatrixDecompose worldMat(selectedNode->getWorldTransform());
 		MatrixDecompose parentMat(selectedNode->getParentTransform());
 		const glm::vec3 worldScale = worldMat.getScale();
-		const glm::vec3 selectionDir = worldMat.getRotate() * transAxis[m_selectedIdx];
+		const glm::vec3 selectionDir = worldMat.getRotate() * axis[m_selectedIdx];
 		const Line selectionLine(worldMat.getTranslate(), selectionDir);
 
 		const glm::vec3 newPos = lookLine.nearestPoint(selectionLine);
-		const glm::mat4 objSpaceTransform = glm::inverse(selectedNode->getParentTransform());
-		const glm::vec3 newPosObjSpace = objSpaceTransform * glm::vec4(newPos, 1.0);
+		const glm::mat4 relativeSpaceTransform = glm::inverse(getRelativeTransform(selectedNode));
+		const glm::vec3 newPosInRelativeSpace = relativeSpaceTransform * glm::vec4(newPos, 1.0);
 		if (m_lastPos)
 		{
-			glm::vec3 diff = newPosObjSpace - *m_lastPos;
+			glm::vec3 diff = newPosInRelativeSpace - *m_lastPos;
 			if (glm::length(diff) > 0)
 			{
 				updateTransform(selectedNode->getTransformComponent(), diff);
 			}
 		}
-		m_lastPos = shared_ptr<glm::vec3>(new glm::vec3(newPosObjSpace));
+		m_lastPos = shared_ptr<glm::vec3>(new glm::vec3(newPosInRelativeSpace));
 	}
-	return m_hasSelection;
+	return m_selectedIdx >= 0;
+}
+
+glm::mat4 LineHook::getRelativeTransform(shared_ptr<SceneNode> node)
+{
+	return node->getParentTransform();
 }
 
 /*

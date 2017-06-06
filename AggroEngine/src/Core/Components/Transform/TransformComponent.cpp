@@ -79,6 +79,11 @@ glm::vec3 TransformComponent::getRotateEuler()
 	return glm::eulerAngles(m_rotateMat);
 }
 
+glm::mat4 TransformComponent::getRotate()
+{
+	return glm::toMat4(m_rotateMat);
+}
+
 glm::vec3 *TransformComponent::getScale()
 {
 	return &m_scale;

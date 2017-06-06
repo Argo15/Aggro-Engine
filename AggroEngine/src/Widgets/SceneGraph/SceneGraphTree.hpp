@@ -23,7 +23,6 @@ private:
 	QAction *m_addSphereAction;
 	QAction *m_deleteAction;
 
-	bool m_isRefreshing;
 	boost::unordered_map<SceneNode *, QTreeWidgetItem *> m_currentNodes;
 
 	void _addSceneNodeRecursive(shared_ptr<SceneNode> node, QTreeWidgetItem *parent, bool isRoot);

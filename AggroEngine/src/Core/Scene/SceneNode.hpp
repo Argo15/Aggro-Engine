@@ -53,9 +53,11 @@ public:
 
 	void removeChild(shared_ptr<SceneNode> child);
 
-	glm::mat4 getWorldTransform();
 	glm::vec3 getWorldTranslate();
+	glm::mat4 getWorldTransform();
 	glm::mat4 getParentTransform();
+	glm::mat4 getObjectTransform();
+	glm::mat4 getOrthogonalObjectTransform();
 
 	//Components
 	bool hasTransformComponent();

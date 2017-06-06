@@ -114,11 +114,7 @@ void SceneNode::removeChild(shared_ptr<SceneNode> child)
 
 glm::mat4 SceneNode::getWorldTransform()
 {
-	if (!m_transformComponent)
-	{
-		return glm::mat4(1.0);
-	}
-	glm::mat4 tansform = m_transformComponent->getTransform();
+	glm::mat4 tansform = getObjectTransform();
 	if (m_parent)
 	{
 		return m_parent->getWorldTransform() * tansform;
@@ -140,6 +136,27 @@ glm::mat4 SceneNode::getParentTransform()
 		return m_parent->getWorldTransform() * tansform;
 	}
 	return tansform;
+}
+
+glm::mat4 SceneNode::getObjectTransform()
+{
+	if (!m_transformComponent)
+	{
+		return glm::mat4(1.0);
+	}
+	return m_transformComponent->getTransform();
+}
+
+glm::mat4 SceneNode::getOrthogonalObjectTransform()
+{
+	if (!m_transformComponent)
+	{
+		return glm::mat4(1.0);
+	}
+	glm::mat4 rotate(m_transformComponent->getRotate());
+	glm::vec4 translate = glm::vec4(*m_transformComponent->getTranslate(), 1.0f);
+	rotate[3] = translate;
+	return rotate;
 }
 
 bool SceneNode::hasTransformComponent()

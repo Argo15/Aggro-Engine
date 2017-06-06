@@ -24,6 +24,7 @@ public:
 
 	glm::vec3 *getTranslate();
 	glm::vec3 getRotateEuler();
+	glm::mat4 getRotate();
 	glm::vec3 *getScale();
 
 	void translate(const glm::vec3 &translate);

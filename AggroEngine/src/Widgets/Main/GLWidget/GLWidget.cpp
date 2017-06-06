@@ -24,6 +24,7 @@ GLWidget::GLWidget(shared_ptr<EngineContext> context, QWidget *parent)
 		format.setSwapInterval(0);
 	}
 	m_maxFps = props.getIntProperty("graphics.max_fps");
+	m_millisPerFrame = 1000 / m_maxFps;
 	this->setFormat(format);
 }
 
@@ -35,8 +36,6 @@ void GLWidget::initializeGL()
 	m_renderer->init();
 
 	shared_ptr<Scene> scene = m_engineContext->getScene();
-
-	(new CameraUpdateJob(scene->getCamera(), shared_ptr<CameraController>(new FreeRoamCameraController()), m_keyboard, m_mouse))->run();
 
 	// create a root object
 	shared_ptr<SceneNode> rootNode = shared_ptr<SceneNode>(new SceneNode(scene->getNextId()));
@@ -70,6 +69,8 @@ void GLWidget::initializeGL()
 	scene->setCamera(shared_ptr<Camera>(new Camera()));
 	scene->update(); // Alert all listeners
 
+	(new CameraUpdateJob(scene->getCamera(), shared_ptr<CameraController>(new FreeRoamCameraController()), m_keyboard, m_mouse))->run();
+
 	setAutoBufferSwap(false);
 }
 
@@ -82,27 +83,30 @@ void GLWidget::resizeGL(int width, int height)
 
 void GLWidget::paintGL()
 {
-	// First process any jobs that require opengl (uploading images, VBOs, etc)
 	m_engineContext->getJobManager()->tick();
-	shared_ptr<Job> graphicsJob = m_engineContext->getJobManager()->nextGraphicsJob();
-	while (graphicsJob)
-	{
-		graphicsJob->runInThread();
-		if (m_graphicsClock->getTimerMillis() + 3 > 1000 / m_maxFps)
-		{
-			break; // Give 3 milliseconds to execute render
-		}
-		graphicsJob = m_engineContext->getJobManager()->nextGraphicsJob();
-	}
+	shared_ptr<Job> graphicsJob;
 
 	// If enough time has passed, render a new frame
-	if (m_graphicsClock->getTimerMillis() > 1000 / m_maxFps)
+	if (m_graphicsClock->getTimerMillis() >= m_millisPerFrame)
 	{
 		m_graphicsClock->resetTimer();
 		m_renderer->renderScene(m_engineContext->getScene(), m_engineContext->getRenderOptions());
 		swapBuffers();
 		m_selection->updateSelection(m_mouse, m_graphicsContext->getGraphics());
 		m_mouseController->handleMouseInput(m_mouse, m_engineContext, m_selection);
+
+		// Process at least one graphics job
+		if (graphicsJob = m_engineContext->getJobManager()->nextGraphicsJob())
+		{
+			graphicsJob->runInThread(); 
+		}
+	}
+
+	// Process any jobs that require opengl (uploading images, VBOs, etc)
+	while (m_graphicsClock->getTimerMillis() + 1 < m_millisPerFrame &&
+			(graphicsJob = m_engineContext->getJobManager()->nextGraphicsJob()))
+	{
+		graphicsJob->runInThread();
 	}
 }
 
