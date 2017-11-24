@@ -29,3 +29,13 @@ const glm::vec3 Line::nearestPoint(const Line& other) const
 	}
 	return nearestPoint;
 }
+
+glm::vec3 Line::getOrig() const
+{
+	return m_pos;
+}
+
+glm::vec3 Line::getDir() const
+{
+	return m_dir;
+}

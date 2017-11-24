@@ -5,7 +5,7 @@ ScaleHook::ScaleHook()
 {
 }
 
-void ScaleHook::updateTransform(shared_ptr<TransformComponent> transform, glm::vec3 &diff)
+void ScaleHook::updateTransform(shared_ptr<TransformComponent> transform, glm::vec3 &diff, const glm::vec3 &selectorDir)
 {
 	transform->scale(glm::vec3(1.0) + diff);
 }

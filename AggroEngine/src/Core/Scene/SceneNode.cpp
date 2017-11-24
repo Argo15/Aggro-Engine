@@ -122,6 +122,16 @@ glm::mat4 SceneNode::getWorldTransform()
 	return tansform;
 }
 
+glm::mat4 SceneNode::getOrthogonalWorldTransform()
+{
+	glm::mat4 tansform = getOrthogonalObjectTransform();
+	if (m_parent)
+	{
+		return m_parent->getOrthogonalWorldTransform() * tansform;
+	}
+	return tansform;
+}
+
 glm::vec3 SceneNode::getWorldTranslate()
 {
 	glm::mat4 tansform = getWorldTransform();
@@ -134,6 +144,16 @@ glm::mat4 SceneNode::getParentTransform()
 	if (m_parent)
 	{
 		return m_parent->getWorldTransform() * tansform;
+	}
+	return tansform;
+}
+
+glm::mat4 SceneNode::getOrthogonalParentTransform()
+{
+	glm::mat4 tansform = glm::mat4(1.0);
+	if (m_parent)
+	{
+		return m_parent->getOrthogonalWorldTransform() * tansform;
 	}
 	return tansform;
 }

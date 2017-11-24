@@ -1,26 +1,16 @@
 #pragma once
 
-#include "Graphics.hpp"
 #include "TransformHook.hpp"
+#include "Line.hpp"
 
 class LineHook : public TransformHook
 {
-private:
-	shared_ptr<RenderData> m_renderData[3];
-	shared_ptr<TextureHandle> m_texture[4];
-	shared_ptr<glm::vec3> m_lastPos;
-	int m_selectedIdx;
-
-	void _initialize(shared_ptr<Graphics> graphics, shared_ptr<Scene> scene);
-	unsigned int _getSelectedIndex(shared_ptr<Selection> selection);
-
 protected:
-	virtual void updateTransform(shared_ptr<TransformComponent> transform, glm::vec3 &diff) = 0;
+	virtual void updateTransform(shared_ptr<SceneNode> selectedNode, const Line &lookLine, const glm::vec3 &axis);
+	virtual void updateTransform(shared_ptr<TransformComponent> transform, glm::vec3 &diff, const glm::vec3 &selectorDir) = 0;
 	virtual glm::mat4 getRelativeTransform(shared_ptr<SceneNode> node);
+	virtual shared_ptr<Mesh> getMesh(glm::vec3 axis);
 
 public:
 	LineHook();
-
-	void render(shared_ptr<Graphics> graphics, shared_ptr<Scene> scene);
-	bool updateSelection(shared_ptr<MouseState> mouse, shared_ptr<EngineContext> context, shared_ptr<Selection> selection); // Returns true if hook selected
 };

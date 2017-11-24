@@ -22,6 +22,7 @@ private:
 	shared_ptr<QLineEdit> m_scaleZEdit;
 	boost::mutex m_textLock;
 	glm::vec3 m_lastTranslate;
+	glm::vec3 m_lastRotate;
 	glm::vec3 m_lastScale;
 
 protected:

@@ -5,7 +5,7 @@ TranslateHook::TranslateHook()
 {
 }
 
-void TranslateHook::updateTransform(shared_ptr<TransformComponent> transform, glm::vec3 &diff)
+void TranslateHook::updateTransform(shared_ptr<TransformComponent> transform, glm::vec3 &diff, const glm::vec3 &selectorDir)
 {
 	transform->translate(diff);
 }

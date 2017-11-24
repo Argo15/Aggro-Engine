@@ -5,6 +5,7 @@ TransformSelector::TransformSelector(shared_ptr<Scene> scene, QWidget *parent)
 	: QWidget(parent)
 	, m_scene(scene)
 	, m_translateHook(new TranslateHook())
+	, m_rotateHook(new RotateHook())
 	, m_scaleHook(new ScaleHook())
 {
 	m_transBtn = shared_ptr<QPushButton>(new QPushButton("T"));
@@ -28,7 +29,7 @@ TransformSelector::TransformSelector(shared_ptr<Scene> scene, QWidget *parent)
 	setStyleSheet("font-weight: bold;");
 
 	connect(m_transBtn.get(), &QPushButton::clicked, this, [this](auto pressed) { _select(m_transBtn, m_translateHook); });
-	connect(m_rotBtn.get(), &QPushButton::clicked, this, [this](auto pressed) { _select(m_rotBtn, m_translateHook); });
+	connect(m_rotBtn.get(), &QPushButton::clicked, this, [this](auto pressed) { _select(m_rotBtn, m_rotateHook); });
 	connect(m_scaleBtn.get(), &QPushButton::clicked, this, [this](auto pressed) { _select(m_scaleBtn, m_scaleHook); });
 
 	setLayout(layout);

@@ -5,16 +5,18 @@
 #include "Matrix.hpp"
 
 /**
-* Builds a mesh for a single line.
+* Builds a mesh for a circle.
 *
 * author: wcrane
-* since: 2016-11-12
+* since: 2017-11-22
 **/
-class LineMesh : public Mesh
+class CircleMesh : public Mesh
 {
 private:
-	glm::vec3 m_p1;
-	glm::vec3 m_p2;
+	glm::vec3 m_center;
+	glm::vec3 m_axis;
+	float m_size;
+	int m_sides;
 
 	shared_ptr<float> _getVertices();
 	shared_ptr<float> _getTexCoords();
@@ -22,5 +24,5 @@ private:
 	shared_ptr<int> _getIndices();
 
 public:
-	LineMesh(glm::vec3 p1, glm::vec3 p2);
+	CircleMesh(glm::vec3 center, glm::vec3 axis, float size, int sides);
 };

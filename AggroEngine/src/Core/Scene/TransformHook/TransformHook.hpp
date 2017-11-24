@@ -1,9 +1,11 @@
 #pragma once
 
+#include "Graphics.hpp"
 #include "RenderData.hpp"
 #include "Scene.hpp"
 #include "Selection.hpp"
 #include "MouseState.hpp"
+#include "Line.hpp"
 
 class Scene;
 class Selection;
@@ -18,7 +20,24 @@ class EngineContext;
 **/
 class TransformHook
 {
+private:
+	shared_ptr<RenderData> m_renderData[3];
+	shared_ptr<TextureHandle> m_texture[4];
+	int m_selectedIdx;
+
+	void _initialize(shared_ptr<Graphics> graphics, shared_ptr<Scene> scene);
+	unsigned int _getSelectedIndex(shared_ptr<Selection> selection);
+
+protected:
+	shared_ptr<glm::vec3> m_lastPos;
+
+	virtual void updateTransform(shared_ptr<SceneNode> selectedNode, const Line &lookLine, const glm::vec3 &axis) = 0;
+	virtual shared_ptr<Mesh> getMesh(glm::vec3 axis) = 0;
+
 public:
-	virtual void render(shared_ptr<Graphics> graphics, shared_ptr<Scene> scene) = 0;
-	virtual bool updateSelection(shared_ptr<MouseState> mouse, shared_ptr<EngineContext> context, shared_ptr<Selection> selection) = 0; // Returns true if hook selected
+	TransformHook();
+
+	void render(shared_ptr<Graphics> graphics, shared_ptr<Scene> scene);
+	bool updateSelection(shared_ptr<MouseState> mouse, shared_ptr<EngineContext> context, shared_ptr<Selection> selection); // Returns true if hook selected
+
 };

@@ -1,6 +1,7 @@
 #pragma once
 
 #include <string>
+#include "Matrix.hpp"
 using namespace std;
 
 /**
@@ -13,4 +14,5 @@ class StringUtil
 {
 public:
 	static string intToString(int value);
+	static string vec3ToString(glm::vec3 vector);
 };

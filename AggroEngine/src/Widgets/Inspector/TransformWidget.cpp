@@ -166,7 +166,7 @@ void TransformWidget::_refresh(TransformComponent *transform)
 		glm::vec3 translate = *transform->getTranslate();
 		glm::vec3 rotate = transform->getRotateEuler() * 180.f / 3.14159f;
 		glm::vec3 scale = *transform->getScale();
-		if (translate != m_lastTranslate || scale != m_lastScale)
+		if (translate != m_lastTranslate || rotate != m_lastRotate || scale != m_lastScale)
 		{
 			boost::lock_guard<boost::mutex> guard(m_textLock);
 			static const QRegExp trailingZeros("0+$");
@@ -174,13 +174,14 @@ void TransformWidget::_refresh(TransformComponent *transform)
 			m_transXEdit->setText(QString::number(translate.x, 'f', 3).remove(trailingZeros).remove(trailingDot));
 			m_transYEdit->setText(QString::number(translate.y, 'f', 3).remove(trailingZeros).remove(trailingDot));
 			m_transZEdit->setText(QString::number(translate.z, 'f', 3).remove(trailingZeros).remove(trailingDot));
-			m_rotXEdit->setText(QString::number((int)rotate.x).left(3));
-			m_rotYEdit->setText(QString::number((int)rotate.y).left(3));
-			m_rotZEdit->setText(QString::number((int)rotate.z).left(3));
+			m_rotXEdit->setText(QString::number((int)rotate.x).left(4));
+			m_rotYEdit->setText(QString::number((int)rotate.y).left(4));
+			m_rotZEdit->setText(QString::number((int)rotate.z).left(4));
 			m_scaleXEdit->setText(QString::number(scale.x, 'f', 3).remove(trailingZeros).remove(trailingDot));
 			m_scaleYEdit->setText(QString::number(scale.y, 'f', 3).remove(trailingZeros).remove(trailingDot));
 			m_scaleZEdit->setText(QString::number(scale.z, 'f', 3).remove(trailingZeros).remove(trailingDot));
 			m_lastTranslate = translate;
+			m_lastRotate = rotate;
 			m_lastScale = scale;
 		}
 	}
