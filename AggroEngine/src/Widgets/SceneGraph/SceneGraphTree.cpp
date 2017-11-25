@@ -5,6 +5,7 @@
 #include <QAction>
 #include <QMouseEvent>
 #include <QModelIndex>
+#include <QFileDialog>
 #include <iostream>
 #include <boost/unordered_map.hpp>
 
@@ -29,6 +30,16 @@ SceneGraphTree::SceneGraphTree(shared_ptr<EngineContext> context, QWidget *paren
 		_addNewNode(renderComponent, "Sphere");
 	});
 
+	QAction *addSphereAction2 = new QAction(tr("Add From File"), this);
+	connect(addSphereAction2, &QAction::triggered, this, [this]() {
+		QDir workingDirectory = QDir::current();
+		QString filename = QFileDialog::getOpenFileName(this, tr("Add Object From File"), workingDirectory.path() + "/Resources/Mesh");
+		shared_ptr<StaticObjectRenderComponent> renderComponent(new StaticObjectRenderComponent());
+		renderComponent->setMeshId(m_context->getResources()->getIdForPath(workingDirectory.relativeFilePath(filename).toStdString()));
+		renderComponent->setTextureImageId(m_context->getResources()->getIdForPath("Resources/Textures/Walls/wall01/wall01_Diffuse.tga"));
+		_addNewNode(renderComponent, QFileInfo(filename).fileName().split(".").first().toStdString());
+	});
+
 	m_deleteAction = new QAction(tr("Delete"), this);
 	m_deleteAction->setEnabled(false);
 	connect(m_deleteAction, &QAction::triggered, this, &SceneGraphTree::_deleteSelected);
@@ -39,6 +50,7 @@ SceneGraphTree::SceneGraphTree(shared_ptr<EngineContext> context, QWidget *paren
 	m_treeWidget->setContextMenuPolicy(Qt::ActionsContextMenu);
 	m_treeWidget->addAction(m_addCubeAction);
 	m_treeWidget->addAction(m_addSphereAction);
+	m_treeWidget->addAction(addSphereAction2);
 	m_treeWidget->addAction(m_deleteAction);
 	connect(m_treeWidget.get(), &QTreeWidget::itemSelectionChanged, this, &SceneGraphTree::_selectionChanged);
 	
@@ -207,5 +219,13 @@ void SceneGraphTree::_selectNode(SceneNode *node)
 			parent = parent->parent();
 		}
 		m_currentNodes[node]->setSelected(true);
+	}
+}
+
+void SceneGraphTree::keyPressEvent(QKeyEvent *event)
+{
+	if (event->key() == Qt::Key_Delete)
+	{
+		_deleteSelected();
 	}
 }

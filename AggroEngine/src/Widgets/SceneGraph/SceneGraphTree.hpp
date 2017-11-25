@@ -39,4 +39,7 @@ public:
 	SceneGraphTree(shared_ptr<EngineContext> context, QWidget *parent);
 
 	void refresh(Scene *scene);
+
+protected:
+	void keyPressEvent(QKeyEvent *event);
 };

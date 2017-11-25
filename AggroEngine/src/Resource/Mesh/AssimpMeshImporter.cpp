@@ -16,6 +16,11 @@ shared_ptr<Mesh> AssimpMeshImporter::importMesh(string sFilename)
 	aiProcess_FixInfacingNormals);
 	if (scene != nullptr)
 	{
+		if (!scene->HasMeshes())
+		{
+			cout << "Failed importing " << sFilename << " no mesh data." << endl;
+			return shared_ptr<Mesh>();
+		}
 		int nNumVerts = scene->mMeshes[0]->mNumVertices;
 		int nNumFaces = scene->mMeshes[0]->mNumFaces;
 		float *verts = new float[nNumVerts*3];
@@ -43,5 +48,6 @@ shared_ptr<Mesh> AssimpMeshImporter::importMesh(string sFilename)
 		return shared_ptr<Mesh>(new Mesh(sizeof(float)*nNumVerts*3, sizeof(int)*nNumFaces*3, shared_ptr<float>(verts), shared_ptr<float>(texcoords), shared_ptr<float>(normals), shared_ptr<int>(indices)));
 	}
 
-	return shared_ptr<Mesh>(new CubeMesh());
+	cout << "Failed importing " << sFilename << " no scene found." << endl;
+	return shared_ptr<Mesh>();
 }

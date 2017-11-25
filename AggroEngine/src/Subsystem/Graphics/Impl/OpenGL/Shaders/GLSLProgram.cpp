@@ -66,7 +66,6 @@ void GLSLProgram::GetProgramLog(std::string &log) const
 	debug = new GLcharARB[debugLength];
 	glGetProgramInfoLog(handle_, debugLength, &debugLength, debug);
 
-	//cout << debug;
 	log.append(debug,0,debugLength);
 	delete [] debug;
 }

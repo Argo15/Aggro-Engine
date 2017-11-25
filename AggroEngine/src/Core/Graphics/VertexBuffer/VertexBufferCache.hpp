@@ -27,4 +27,5 @@ public:
 
 	shared_ptr<VertexBufferHandle> getVertexBuffer(int meshId);
 	void finishLoading(int meshId, shared_ptr<VertexBufferHandle> handle);
+	void failLoading(int meshId);
 };

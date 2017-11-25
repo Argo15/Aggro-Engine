@@ -113,6 +113,10 @@ void GLWidget::paintGL()
 void GLWidget::keyPressEvent(QKeyEvent *event)
 {
 	m_keyboard->setKeyPressed(event->key(), true);
+	if (event->key() == Qt::Key_Delete)
+	{
+		m_engineContext->getScene()->deleteSelectedNode();
+	}
 }
 
 void GLWidget::keyReleaseEvent(QKeyEvent *event)

@@ -61,6 +61,7 @@ public:
 	void addSelectionChangeListener(std::function<void(shared_ptr<SceneNode>)> listener);
 
 	void deleteNode(shared_ptr<SceneNode> node);
+	void deleteSelectedNode();
 
 	unsigned int getNextId();
 };

@@ -152,6 +152,16 @@ void Scene::deleteNode(shared_ptr<SceneNode> node)
 	node->notifyDeleted();
 }
 
+void Scene::deleteSelectedNode()
+{
+	if (m_selectedNode)
+	{
+		deleteNode(m_selectedNode);
+	}
+	m_selectedNode = shared_ptr<SceneNode>();
+}
+
+
 unsigned int Scene::getNextId()
 {
 	return m_nextId++;

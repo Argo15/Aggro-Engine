@@ -28,11 +28,18 @@ shared_ptr<VertexBufferHandle> VertexBufferCache::getVertexBuffer(int meshId)
 		m_jobManager->add(shared_ptr<Job>(new Job([this, meshId, meshPath]()
 		{
 			shared_ptr<Mesh> mesh(m_meshImporter->importMesh(meshPath));
-			m_jobManager->addGraphicsJob(shared_ptr<Job>(new Job([this, mesh, meshId]()
+			if (mesh)
 			{
-				shared_ptr<VertexBufferHandle> newVbo = m_graphics->createVertexBuffer(mesh);
-				finishLoading(meshId, newVbo);
-			})));
+				m_jobManager->addGraphicsJob(shared_ptr<Job>(new Job([this, mesh, meshId]()
+				{
+					shared_ptr<VertexBufferHandle> newVbo = m_graphics->createVertexBuffer(mesh);
+					finishLoading(meshId, newVbo);
+				})));
+			}
+			else
+			{
+				failLoading(meshId);
+			}
 		})));
 		shared_ptr<LoadableVertexBufferHandle> loadingVbo(new LoadableVertexBufferHandle(m_defaultVbo));
 		m_loadingVbos[meshId] = loadingVbo;
@@ -49,4 +56,9 @@ void VertexBufferCache::finishLoading(int meshId, shared_ptr<VertexBufferHandle>
 		m_loadingVbos[meshId]->setHandle(handle);
 		m_loadingVbos.erase(meshId);
 	}
+}
+
+void VertexBufferCache::failLoading(int meshId)
+{
+	m_loadingVbos.erase(meshId);
 }
