@@ -39,5 +39,5 @@ public:
 
 	void render(shared_ptr<Graphics> graphics, shared_ptr<Scene> scene);
 	bool updateSelection(shared_ptr<MouseState> mouse, shared_ptr<EngineContext> context, shared_ptr<Selection> selection); // Returns true if hook selected
-
+	void deselect();
 };

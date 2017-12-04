@@ -1,4 +1,5 @@
 #include "Grid.hpp"
+#include "MemoryUtil.hpp"
 
 // Verts around the circumference
 void Grid::_buildVerticies(int size)
@@ -45,7 +46,7 @@ shared_ptr<float> Grid::_getVertices()
 {
 	float *arr = new float[m_verticies.size()];
 	std::copy(m_verticies.begin(), m_verticies.end(), arr);
-	return shared_ptr<float>(arr);
+	return mem::shared_array(arr);
 }
 
 // Inits to 0
@@ -57,7 +58,7 @@ shared_ptr<float> Grid::_getTexCoords()
 	{
 		arr[i] = 0.f;
 	}
-	return shared_ptr<float>(arr);
+	return mem::shared_array(arr);
 }
 
 // Inits to 0
@@ -68,14 +69,14 @@ shared_ptr<float> Grid::_getNormals()
 	{
 		arr[i] = 0.f;
 	}
-	return shared_ptr<float>(arr);
+	return mem::shared_array(arr);
 }
 
 shared_ptr<int> Grid::_getIndices()
 {
 	int *arr = new int[m_indicies.size()];
 	std::copy(m_indicies.begin(), m_indicies.end(), arr);
-	return shared_ptr<int>(arr);
+	return mem::shared_array(arr);
 }
 
 Grid::Grid(int size)

@@ -1,4 +1,5 @@
 #include "CubeMesh.hpp"
+#include "MemoryUtil.hpp"
 #include <iostream>
 
 static const float verts[] = 
@@ -127,7 +128,7 @@ shared_ptr<float> CubeMesh::_getVertices()
 	{
 		pVerts[i] = verts[i];
 	}
-	return shared_ptr<float>(pVerts);
+	return mem::shared_array(pVerts);
 }
 
 shared_ptr<float> CubeMesh::_getTexCoords()
@@ -138,7 +139,7 @@ shared_ptr<float> CubeMesh::_getTexCoords()
 	{
 		pTex[i] = texcoords[i];
 	}
-	return shared_ptr<float>(pTex);
+	return mem::shared_array(pTex);
 }
 
 shared_ptr<float> CubeMesh::_getNormals()
@@ -149,7 +150,7 @@ shared_ptr<float> CubeMesh::_getNormals()
 	{
 		pNorms[i] = normals[i];
 	}
-	return shared_ptr<float>(pNorms);
+	return mem::shared_array(pNorms);
 }
 
 shared_ptr<int> CubeMesh::_getIndices()
@@ -160,7 +161,7 @@ shared_ptr<int> CubeMesh::_getIndices()
 	{
 		pIdx[i] = idxs[i];
 	}
-	return shared_ptr<int>(pIdx);
+	return mem::shared_array(pIdx);
 }
 
 CubeMesh::CubeMesh()

@@ -14,6 +14,7 @@ class MainWindow : public QMainWindow
 private:
 	shared_ptr<EngineContext> m_context;
 	shared_ptr<MainWidget> m_mainWidget;
+	shared_ptr<string> m_lastSaveFile;
 	Timer timer;
 	int m_maxFps;
 
@@ -21,9 +22,12 @@ private:
 	void newFile();
 	void open();
 	void save();
+	void saveAs();
 
 	// menus, actions, ect..
 	void createMenus();
+
+	shared_ptr<Scene> _loadDefaultScene();
 
 protected:
 	void timerEvent(QTimerEvent *event);

@@ -1,4 +1,5 @@
 #include "VertexBufferData.hpp"
+#include "MemoryUtil.hpp"
 #include <iostream>
 
 VertexBufferData::VertexBufferData(int nSizeOfVerticies)
@@ -11,7 +12,7 @@ VertexBufferData::VertexBufferData(int nSizeOfVerticies)
 	{
 		nTmpIndicies[i] = i;
 	}
-	m_nIndicies = shared_ptr<int>(nTmpIndicies);
+	m_nIndicies = mem::shared_array(nTmpIndicies);
 }
 
 VertexBufferData::VertexBufferData(int nSizeOfVerticies, int nSizeOfIndicies)

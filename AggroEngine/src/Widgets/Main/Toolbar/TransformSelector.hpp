@@ -15,7 +15,8 @@ class TransformSelector : public QWidget
 	Q_OBJECT
 
 private:
-	shared_ptr<Scene> m_scene;
+	shared_ptr<EngineContext> m_context;
+	shared_ptr<TransformHook> m_currentHook;
 	shared_ptr<TranslateHook> m_translateHook;
 	shared_ptr<RotateHook> m_rotateHook;
 	shared_ptr<ScaleHook> m_scaleHook;
@@ -24,5 +25,5 @@ private:
 	void _select(shared_ptr<QPushButton> button, shared_ptr<TransformHook> hook);
 
 public:
-	TransformSelector(shared_ptr<Scene> scene, QWidget *parent = nullptr);
+	TransformSelector(shared_ptr<EngineContext> context, QWidget *parent = nullptr);
 };

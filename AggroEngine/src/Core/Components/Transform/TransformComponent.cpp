@@ -11,6 +11,37 @@ TransformComponent::TransformComponent()
 
 }
 
+TransformComponent::TransformComponent(Chunk * const byteChunk)
+{
+	ByteParser parser = ByteParser(*byteChunk->getNumBytes(), byteChunk->getByteData().get());
+	m_rotateMat = glm::quat(parser.parseMat4().get_value_or(glm::mat4(1.0)));
+	m_translateMat = parser.parseMat4().get_value_or(glm::mat4(1.0));
+	m_scaleMat = parser.parseMat4().get_value_or(glm::mat4(1.0));
+	m_translate = parser.parseVec3().get_value_or(glm::vec3(0));
+	m_scale = parser.parseVec3().get_value_or(glm::vec3(1));
+}
+
+shared_ptr<Chunk> TransformComponent::serialize()
+{
+	ByteAccumulator bytes = ByteAccumulator();
+	bytes.add(&glm::toMat4(m_rotateMat));
+	bytes.add(&m_translateMat);
+	bytes.add(&m_scaleMat);
+	bytes.add(&m_translate);
+	bytes.add(&m_scale);
+	return shared_ptr<Chunk>(new Chunk(ChunkType::TRANSFORM_COMPONENT, bytes.getNumBytes(), bytes.collect()));
+}
+
+shared_ptr<TransformComponent> TransformComponent::deserialize(Chunk * const byteChunk)
+{
+	if (*byteChunk->getType() != ChunkType::TRANSFORM_COMPONENT)
+	{
+		return shared_ptr<TransformComponent>();
+	}
+
+	return shared_ptr<TransformComponent>(new TransformComponent(byteChunk));
+}
+
 void TransformComponent::translate(const glm::vec3 &translate)
 {
 	boost::lock_guard<TransformComponent> guard(*this);

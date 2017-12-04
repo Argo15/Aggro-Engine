@@ -4,15 +4,20 @@
 #include <QPushButton>
 #include <QAction>
 #include <QMenuBar>
+#include <QDir>
+#include <QFileDialog>
 #include "SceneGraphTree.hpp"
 #include "InspectorWidget.hpp"
 #include "StringUtil.hpp"
 #include "Config.hpp"
+#include "FileWriter.hpp"
 
 MainWindow::MainWindow()
 	: m_context(shared_ptr<EngineContext>(new EngineContext()))
 	, m_mainWidget(shared_ptr<MainWidget>(new MainWidget(m_context, this)))
+	, m_lastSaveFile()
 {
+	m_context->setScene(_loadDefaultScene());
 	setCentralWidget(m_mainWidget.get());
 
 	createMenus();
@@ -51,11 +56,14 @@ void MainWindow::createMenus()
 	connect(openAction, &QAction::triggered, this, &MainWindow::open);
 
 	QAction *saveAction = new QAction(tr("&Save"), this);
-	openAction->setShortcut(QKeySequence::Save);
+	saveAction->setShortcut(QKeySequence::Save);
 	connect(saveAction, &QAction::triggered, this, &MainWindow::save);
 
+	QAction *saveAsAction = new QAction(tr("&Save As"), this);
+	connect(saveAsAction, &QAction::triggered, this, &MainWindow::saveAs);
+
 	QAction *exitAction = new QAction(tr("Exit"), this);
-	openAction->setShortcut(QKeySequence::Close);
+	exitAction->setShortcut(QKeySequence::Close);
 	connect(exitAction, &QAction::triggered, this, &MainWindow::close);
 
 	QMenu *fileMenu = menuBar()->addMenu(tr("File"));
@@ -72,20 +80,63 @@ void MainWindow::createMenus()
 
 void MainWindow::newFile()
 {
-	
+	m_lastSaveFile = shared_ptr<string>();
+	shared_ptr<Scene> scene(new Scene(
+		shared_ptr<SceneNode>(new SceneNode(Scene::getNextId())),
+		shared_ptr<Camera>(new Camera())
+	));
+	m_context->setScene(scene);
 }
 
 void MainWindow::open()
 {
-	
+	QDir workingDirectory = QDir::current();
+	QString filename = QFileDialog::getOpenFileName(this, tr("Open Scene"), workingDirectory.path() + "/Saves/", "*.ascn");
+	m_lastSaveFile = shared_ptr<string>(new string(filename.toStdString()));
+	if (shared_ptr<Chunk> chunk = FileWriter::readFile(filename.toStdString()))
+	{
+		shared_ptr<Scene> scene = Scene::deserialize(chunk.get(), m_context->getResources());
+		if (scene)
+		{
+			m_context->setScene(scene);
+		}
+	}
 }
 
 void MainWindow::save()
 {
-	
+	if (!m_lastSaveFile)
+	{
+		saveAs();
+	}
+	else
+	{
+		shared_ptr<Chunk> chunk = m_context->getScene()->serialize(m_context->getResources());
+		FileWriter::writeToFile(*m_lastSaveFile.get(), chunk);
+	}
+}
+
+void MainWindow::saveAs()
+{
+	QDir workingDirectory = QDir::current();
+	QString filename = QFileDialog::getSaveFileName(this, tr("Save Scene"), workingDirectory.path() + "/Saves/", "*.ascn");
+	shared_ptr<StaticObjectRenderComponent> renderComponent(new StaticObjectRenderComponent());
+	shared_ptr<Chunk> chunk = m_context->getScene()->serialize(m_context->getResources());
+	FileWriter::writeToFile(filename.toStdString(), chunk);
+	m_lastSaveFile = shared_ptr<string>(new string(filename.toStdString()));
 }
 
 void MainWindow::closeEvent(QCloseEvent *event)
 {
 	exit(0);
+}
+
+shared_ptr<Scene> MainWindow::_loadDefaultScene()
+{
+	QDir workingDirectory = QDir::current();
+	if (shared_ptr<Chunk> chunk = FileWriter::readFile(workingDirectory.path().toStdString() + "/Saves/default.ascn"))
+	{
+		return Scene::deserialize(chunk.get(), m_context->getResources());
+	}
+	return shared_ptr<Scene>(new Scene());
 }

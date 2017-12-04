@@ -1,18 +1,49 @@
 #include "Scene.hpp"
 
 Scene::Scene()
-	: m_nextId(1)
-	, m_transformHook()
+	: m_transformHook()
 {
 }
 
 Scene::Scene(shared_ptr<SceneNode> root, shared_ptr<Camera> camera)
 	: m_root(root)
 	, m_camera(camera)
-	, m_nextId(1)
 	, m_transformHook()
 {
 }
+
+Scene::Scene(Chunk * const byteChunk, shared_ptr<Resources> resources)
+	: m_camera(shared_ptr<Camera>(new Camera()))
+	, m_transformHook()
+{
+	ByteParser parser = ByteParser(*byteChunk->getNumBytes(), byteChunk->getByteData().get());
+	if (boost::optional<Chunk> nextChunk = parser.parseChunk())
+	{
+		if (*nextChunk->getType() == ChunkType::SCENE_NODE)
+		{
+			m_root = SceneNode::deserialize(&*nextChunk, resources);
+		}
+	}
+}
+
+shared_ptr<Chunk> Scene::serialize(shared_ptr<Resources> resources)
+{
+	shared_ptr<Chunk> rootChunk = m_root->serialize(resources);
+	ByteAccumulator bytes;
+	bytes.add(rootChunk.get());
+	return shared_ptr<Chunk>(new Chunk(ChunkType::SCENE, bytes.getNumBytes(), bytes.collect()));
+}
+
+shared_ptr<Scene> Scene::deserialize(Chunk * const byteChunk, shared_ptr<Resources> resources)
+{
+	if (*byteChunk->getType() != ChunkType::SCENE)
+	{
+		return shared_ptr<Scene>();
+	}
+
+	return shared_ptr<Scene>(new Scene(byteChunk, resources));
+}
+
 
 shared_ptr<SceneNode> Scene::getRoot()
 {
@@ -161,8 +192,26 @@ void Scene::deleteSelectedNode()
 	m_selectedNode = shared_ptr<SceneNode>();
 }
 
-
+int Scene::s_nextId = 1;
 unsigned int Scene::getNextId()
 {
-	return m_nextId++;
+	return s_nextId++;
+}
+
+int Scene::_getMaxNodeIdRecursive(shared_ptr<SceneNode> node)
+{
+	if (!node)
+	{
+		return 0;
+	}
+	int maxId = node->getId();
+	shared_ptr<vector<shared_ptr<SceneNode>>> children = node->getChildren();
+	if (children->size() > 0)
+	{
+		for (auto &child : *children.get())
+		{
+			maxId = max(maxId, _getMaxNodeIdRecursive(child));
+		}
+	}
+	return maxId;
 }

@@ -1,4 +1,5 @@
 #include "CircleMesh.hpp"
+#include "MemoryUtil.hpp"
 #include <math.h> 
 
 static const double pi(3.14159265);
@@ -42,7 +43,7 @@ shared_ptr<float> CircleMesh::_getVertices()
 		arr[6 * i + 4] = m_center[1] + xAxis * right[1] + yAxis * forward[1];
 		arr[6 * i + 5] = m_center[2] + xAxis * right[2] + yAxis * forward[2];
 	}
-	return shared_ptr<float>(arr);
+	return mem::shared_array(arr);
 }
 
 shared_ptr<float> CircleMesh::_getTexCoords()
@@ -52,7 +53,7 @@ shared_ptr<float> CircleMesh::_getTexCoords()
 	{
 		arr[i] = 0.f;
 	}
-	return shared_ptr<float>(arr);
+	return mem::shared_array(arr);
 }
 
 shared_ptr<float> CircleMesh::_getNormals()
@@ -62,7 +63,7 @@ shared_ptr<float> CircleMesh::_getNormals()
 	{
 		arr[i] = 0.f;
 	}
-	return shared_ptr<float>(arr);
+	return mem::shared_array(arr);
 }
 
 shared_ptr<int> CircleMesh::_getIndices()
@@ -72,5 +73,5 @@ shared_ptr<int> CircleMesh::_getIndices()
 	{
 		arr[i] = i;
 	}
-	return shared_ptr<int>(arr);
+	return mem::shared_array(arr);
 }

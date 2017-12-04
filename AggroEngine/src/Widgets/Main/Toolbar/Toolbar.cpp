@@ -9,7 +9,7 @@ Toolbar::Toolbar(shared_ptr<EngineContext> context, QWidget *parent)
 	QHBoxLayout *toolbarLayout = new QHBoxLayout;
 
 	toolbarLayout->addWidget(new ModeSelector(context->getRenderOptions()));
-	toolbarLayout->addWidget(new TransformSelector(context->getScene()));
+	toolbarLayout->addWidget(new TransformSelector(context));
 	toolbarLayout->addStretch();
 
 	toolbarLayout->setContentsMargins(5, 0, 0, 0);

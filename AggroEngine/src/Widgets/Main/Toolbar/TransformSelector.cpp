@@ -1,9 +1,9 @@
 #include "TransformSelector.hpp"
 #include <QHBoxLayout>
 
-TransformSelector::TransformSelector(shared_ptr<Scene> scene, QWidget *parent)
+TransformSelector::TransformSelector(shared_ptr<EngineContext> context, QWidget *parent)
 	: QWidget(parent)
-	, m_scene(scene)
+	, m_context(context)
 	, m_translateHook(new TranslateHook())
 	, m_rotateHook(new RotateHook())
 	, m_scaleHook(new ScaleHook())
@@ -35,6 +35,10 @@ TransformSelector::TransformSelector(shared_ptr<Scene> scene, QWidget *parent)
 	setLayout(layout);
 
 	_select(m_transBtn, m_translateHook);
+	m_context->addNewSceneListener([this](auto scene) {
+		m_currentHook->deselect();
+		scene->setTransformHook(m_currentHook);
+	});
 }
 
 void TransformSelector::_select(shared_ptr<QPushButton> button, shared_ptr<TransformHook> hook)
@@ -44,5 +48,6 @@ void TransformSelector::_select(shared_ptr<QPushButton> button, shared_ptr<Trans
 	m_scaleBtn->setStyleSheet("");
 
 	button->setStyleSheet("background-color: #BBB; border: 1px solid #888;");
-	m_scene->setTransformHook(hook);
+	m_currentHook = hook;
+	m_context->getScene()->setTransformHook(hook);
 }

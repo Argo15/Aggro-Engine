@@ -11,6 +11,7 @@ GLWidget::GLWidget(shared_ptr<EngineContext> context, QWidget *parent)
 	, m_engineContext(context)
 	, m_graphicsClock(new Clock())
 	, m_selection(new Selection())
+	, m_cameraUpdateJob()
 {
 	m_graphicsContext = shared_ptr<GraphicsContext>(new GraphicsContext(context->getJobManager(), context->getResources()));
 	m_renderer = shared_ptr<Renderer>(new Renderer(m_graphicsContext));
@@ -36,40 +37,16 @@ void GLWidget::initializeGL()
 	m_renderer->init();
 
 	shared_ptr<Scene> scene = m_engineContext->getScene();
-
-	// create a root object
-	shared_ptr<SceneNode> rootNode = shared_ptr<SceneNode>(new SceneNode(scene->getNextId()));
-	shared_ptr<SceneNode> child1 = shared_ptr<SceneNode>(new SceneNode(scene->getNextId(), rootNode.get()));
-	rootNode->addChild(child1);
-	shared_ptr<SceneNode> child2 = shared_ptr<SceneNode>(new SceneNode(scene->getNextId(), rootNode.get()));
-	rootNode->addChild(child2);
-
-	// add render data
-	shared_ptr<StaticObjectRenderComponent> objectRenderComponent(new StaticObjectRenderComponent());
-	objectRenderComponent->setMeshId(m_engineContext->getResources()->getIdForPath("Resources/Mesh/sphere.obj"));
-	objectRenderComponent->setTextureImageId(m_engineContext->getResources()->getIdForPath("Resources/Textures/Walls/wall01/wall01_Diffuse.tga"));
-	child1->setRenderComponent(objectRenderComponent);
-	child2->setRenderComponent(objectRenderComponent);
-
-	// add transform data
-	shared_ptr<TransformComponent> transform(new TransformComponent());
-	transform->translate(glm::vec3(3.0, 0, 0));
-	transform->rotate(0.79f, glm::vec3(1.0, 0, 0));
-	transform->rotate(0.79f, glm::vec3(0, 1.0, 0));
-	transform->scale(glm::vec3(2.0, 2.0, 2.0));
-	child1->setTransformComponent(transform);
-	child1->setTransformComponent(transform);
-	transform = shared_ptr<TransformComponent>(new TransformComponent());
-	transform->translate(glm::vec3(0, 0, -3.0));
-	child2->setTransformComponent(transform);
-	child2->setTransformComponent(transform);
-
-	// set initial scene
-	scene->setRoot(rootNode);
 	scene->setCamera(shared_ptr<Camera>(new Camera()));
-	scene->update(); // Alert all listeners
+	scene->update(); // notify listners
 
-	(new CameraUpdateJob(scene->getCamera(), shared_ptr<CameraController>(new FreeRoamCameraController()), m_keyboard, m_mouse))->run();
+	m_cameraUpdateJob = _setupCameraUpdateJob(scene->getCamera());
+
+	m_engineContext->addNewSceneListener([this](auto scene) { 
+		this->resizeGL(width(), height());
+		m_cameraUpdateJob->stop();
+		m_cameraUpdateJob = _setupCameraUpdateJob(scene->getCamera());
+	});
 
 	setAutoBufferSwap(false);
 }
@@ -142,4 +119,14 @@ void GLWidget::mouseMoveEvent(QMouseEvent *event)
 void GLWidget::wheelEvent(QWheelEvent *event)
 {
 	m_mouse->setScroll(m_mouse->getScroll() + event->delta());
+}
+
+shared_ptr<Job> GLWidget::_setupCameraUpdateJob(shared_ptr<Camera> camera)
+{
+	shared_ptr<Job> newJob = shared_ptr<Job>(new CameraUpdateJob(
+		camera,
+		shared_ptr<CameraController>(new FreeRoamCameraController()),
+		m_keyboard, m_mouse));
+	newJob->run();
+	return newJob;
 }

@@ -4,6 +4,7 @@
 #include "Matrix.hpp"
 #include "Component.hpp"
 #include "Listener.hpp"
+#include "Serialization.hpp"
 
 class TransformComponent : public Component,
 	public boost::basic_lockable_adapter<recursive_mutex>
@@ -17,8 +18,14 @@ private:
 
 	Listener<TransformComponent *> m_changeListeners;
 
+	TransformComponent(Chunk * const byteChunk);
+
 public:
 	TransformComponent();
+
+	// Serialization
+	shared_ptr<Chunk> serialize();
+	static shared_ptr<TransformComponent> deserialize(Chunk * const byteChunk);
 
 	glm::mat4 getTransform();
 

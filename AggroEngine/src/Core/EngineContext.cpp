@@ -5,6 +5,7 @@ EngineContext::EngineContext()
 	, m_scene(new Scene())
 	, m_renderOptions(new RenderOptions())
 	, m_resources(new Resources())
+	, m_newSceneListeners()
 {
 }
 
@@ -26,4 +27,15 @@ shared_ptr<JobManager> EngineContext::getJobManager()
 shared_ptr<Resources> EngineContext::getResources()
 {
 	return m_resources;
+}
+
+void EngineContext::setScene(shared_ptr<Scene> scene)
+{
+	m_scene = scene;
+	m_newSceneListeners.notify(m_scene.get());
+}
+
+void EngineContext::addNewSceneListener(function<void(Scene *)> listner)
+{
+	m_newSceneListeners.add(listner);
 }

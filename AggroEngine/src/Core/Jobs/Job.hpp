@@ -19,4 +19,5 @@ public:
 	void run();
 	void runInThread();
 	shared_ptr<boost::thread> getThread();
+	virtual void stop();
 };

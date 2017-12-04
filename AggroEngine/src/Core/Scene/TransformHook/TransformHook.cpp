@@ -23,7 +23,7 @@ void TransformHook::_initialize(shared_ptr<Graphics> graphics, shared_ptr<Scene>
 		m_renderData[i]->setTextureHandle(m_texture[i]);
 		m_renderData[i]->setLineWidth(2);
 		m_renderData[i]->setDepthTestEnabled(false);
-		m_renderData[i]->setId(scene->getNextId());
+		m_renderData[i]->setId(Scene::getNextId());
 	}
 	m_texture[3] = graphics->createTexture(shared_ptr<Image>(new RGBImage(1, 1, glm::vec3(1.0f, 1.0f, 0))));
 }
@@ -139,4 +139,9 @@ unsigned int TransformHook::_getSelectedIndex(shared_ptr<Selection> selection)
 		return 2;
 	}
 	return -1;
+}
+
+void TransformHook::deselect()
+{
+	m_selectedIdx = -1;
 }

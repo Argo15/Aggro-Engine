@@ -1,5 +1,7 @@
 #include "SceneNode.hpp"
 #include "StringUtil.hpp"
+#include "Serialization.hpp"
+#include "Scene.hpp"
 #include <set>
 
 SceneNode::SceneNode(unsigned int id, SceneNode *parent)
@@ -12,6 +14,83 @@ SceneNode::SceneNode(unsigned int id, SceneNode *parent)
 	, m_id(id)
 {
 	setName("Object");
+}
+
+SceneNode::SceneNode(Chunk * const byteChunk, shared_ptr<Resources> resources)
+	: m_parent(nullptr)
+	, m_children(shared_ptr<vector<shared_ptr<SceneNode>>>(new vector<shared_ptr<SceneNode>>()))
+	, m_isSelected(false)
+	, m_changeListeners()
+	, m_deletedListeners()
+{
+	ByteParser parser = ByteParser(*byteChunk->getNumBytes(), byteChunk->getByteData().get());
+	while (boost::optional<Chunk> nextChunk = parser.parseChunk())
+	{
+		if (*nextChunk->getType() == ChunkType::PRIMITIVES)
+		{
+			ByteParser primitives = ByteParser(*nextChunk);
+			m_id = Scene::getNextId();
+			setName(primitives.parseString().get_value_or("unknown"));
+		}
+		else if (*nextChunk->getType() == ChunkType::SCENE_NODE)
+		{
+			addChild(SceneNode::deserialize(nextChunk.get_ptr(), resources));
+		}
+		else if (*nextChunk->getType() == ChunkType::TRANSFORM_COMPONENT)
+		{
+			m_transformComponent = TransformComponent::deserialize(nextChunk.get_ptr());
+		}
+		else if (*nextChunk->getType() == ChunkType::RENDER_COMPONENT)
+		{
+			m_renderComponent = RenderComponent::deserialize(nextChunk.get_ptr(), resources);
+		}
+	}
+}
+
+shared_ptr<Chunk> SceneNode::serialize(shared_ptr<Resources> resources)
+{
+	// To keep shared_ptr in scope
+	shared_ptr<Chunk> chunk;
+	vector<shared_ptr<Chunk>> chunks; 
+
+	ByteAccumulator bytes;
+
+	ByteAccumulator primitiveBytes;
+	primitiveBytes.add(&m_name);
+	bytes.add(new Chunk(ChunkType::PRIMITIVES, primitiveBytes.getNumBytes(), primitiveBytes.collect()));
+
+	for (auto & child : *m_children)
+	{
+		chunk = child->serialize(resources);
+		chunks.push_back(chunk);
+		bytes.add(chunk.get());
+	}
+
+	if (m_transformComponent)
+	{
+		chunk = m_transformComponent->serialize();
+		chunks.push_back(chunk);
+		bytes.add(chunk.get());
+	}
+
+	if (m_renderComponent)
+	{
+		chunk = m_renderComponent->serialize(resources);
+		chunks.push_back(chunk);
+		bytes.add(chunk.get());
+	}
+
+	return shared_ptr<Chunk>(new Chunk(ChunkType::SCENE_NODE, bytes.getNumBytes(), bytes.collect()));
+}
+
+shared_ptr<SceneNode> SceneNode::deserialize(Chunk * const byteChunk, shared_ptr<Resources> resources)
+{
+	if (*byteChunk->getType() != ChunkType::SCENE_NODE)
+	{
+		return shared_ptr<SceneNode>();
+	}
+
+	return shared_ptr<SceneNode>(new SceneNode(byteChunk, resources));
 }
 
 shared_ptr<vector<shared_ptr<SceneNode>>> SceneNode::getChildren()

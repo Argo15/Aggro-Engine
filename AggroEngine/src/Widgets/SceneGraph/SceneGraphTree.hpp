@@ -14,7 +14,8 @@ using namespace std;
 * author: wcrane
 * since: 2016-08-28
 **/
-class SceneGraphTree : public QDockWidget
+class SceneGraphTree : public QDockWidget,
+	public boost::basic_lockable_adapter<recursive_mutex>
 {
 private:
 	shared_ptr<QTreeWidget> m_treeWidget;

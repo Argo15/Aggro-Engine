@@ -6,7 +6,7 @@ class OpenGL43Graphics;
 #include <memory>
 #include "Shaders/ShaderStore.hpp"
 #include "Framebuffer/GBuffer.hpp"
-#include "../../Graphics.hpp"
+#include "Graphics.hpp"
 #include "Locks.hpp"
 
 /**

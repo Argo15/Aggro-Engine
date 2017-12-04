@@ -187,57 +187,6 @@
     <ClCompile Include="GeneratedFiles\Release\moc_TransformSelector.cpp">
       <Filter>Generated Files\Release</Filter>
     </ClCompile>
-    <ClCompile Include="src\Subsystem\Graphics\Api\Texture\DefaultTextureHandle.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Subsystem\Graphics\Api\Texture\TextureBuildOptions.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Subsystem\Graphics\Api\VertexBuffer\DefaultVertexBufferHandle.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Subsystem\Graphics\Api\VertexBuffer\VertexBufferData.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Subsystem\Graphics\Api\RenderData.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Subsystem\Graphics\Api\RenderOptions.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Subsystem\Graphics\Api\Viewport.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Subsystem\Graphics\Impl\OpenGL\Framebuffer\FrameBufferObject.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Subsystem\Graphics\Impl\OpenGL\Framebuffer\GBuffer.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Subsystem\Graphics\Impl\OpenGL\PixelBuffer\PixelBufferCache.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Subsystem\Graphics\Impl\OpenGL\Shaders\GLSLProgram.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Subsystem\Graphics\Impl\OpenGL\Shaders\GLSLShader.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Subsystem\Graphics\Impl\OpenGL\Shaders\ShaderStore.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Subsystem\Graphics\Impl\OpenGL\Textures\DevTexture.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Subsystem\Graphics\Impl\OpenGL\Textures\Texture.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Subsystem\Graphics\Impl\OpenGL\Textures\WhiteTexture.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Subsystem\Graphics\Impl\OpenGL\OpenGL43Graphics.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="src\Core\Scene\Cameras\Camera.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -326,6 +275,69 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\Util\Math\Plane.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Util\Serialization\Chunk.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Util\Serialization\ByteAccumulator.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Util\Serialization\ByteParser.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Subsystem\Graphics\Api\Texture\DefaultTextureHandle.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Subsystem\Graphics\Api\Texture\TextureBuildOptions.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Subsystem\Graphics\Api\VertexBuffer\DefaultVertexBufferHandle.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Subsystem\Graphics\Api\VertexBuffer\VertexBufferData.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Subsystem\Graphics\Api\RenderData.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Subsystem\Graphics\Api\RenderOptions.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Subsystem\Graphics\Api\Viewport.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Subsystem\Graphics\Impl\OpenGL\Framebuffer\FrameBufferObject.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Subsystem\Graphics\Impl\OpenGL\Framebuffer\GBuffer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Subsystem\Graphics\Impl\OpenGL\PixelBuffer\PixelBufferCache.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Subsystem\Graphics\Impl\OpenGL\Shaders\GLSLProgram.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Subsystem\Graphics\Impl\OpenGL\Shaders\GLSLShader.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Subsystem\Graphics\Impl\OpenGL\Shaders\ShaderStore.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Subsystem\Graphics\Impl\OpenGL\Textures\DevTexture.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Subsystem\Graphics\Impl\OpenGL\Textures\Texture.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Subsystem\Graphics\Impl\OpenGL\Textures\WhiteTexture.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Subsystem\Graphics\Impl\OpenGL\OpenGL43Graphics.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Util\Serialization\FileWriter.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -450,67 +462,6 @@
     <ClInclude Include="src\Util\Math\Line.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\Subsystem\Graphics\Graphics.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Subsystem\Graphics\Api\Texture\DefaultTextureHandle.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Subsystem\Graphics\Api\Texture\TextureBuildOptions.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Subsystem\Graphics\Api\Texture\TextureHandle.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Subsystem\Graphics\Api\VertexBuffer\DefaultVertexBufferHandle.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Subsystem\Graphics\Api\VertexBuffer\VertexBufferData.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Subsystem\Graphics\Api\VertexBuffer\VertexBufferHandle.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Subsystem\Graphics\Api\DrawMode.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Subsystem\Graphics\Api\RenderData.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Subsystem\Graphics\Api\RenderOptions.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Subsystem\Graphics\Api\Viewport.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Subsystem\Graphics\Impl\OpenGL\Framebuffer\FrameBufferObject.hpp" />
-    <ClInclude Include="src\Subsystem\Graphics\Impl\OpenGL\Framebuffer\GBuffer.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Subsystem\Graphics\Impl\OpenGL\PixelBuffer\PixelBufferCache.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Subsystem\Graphics\Impl\OpenGL\Shaders\GLSLProgram.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Subsystem\Graphics\Impl\OpenGL\Shaders\GLSLShader.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Subsystem\Graphics\Impl\OpenGL\Shaders\ShaderStore.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Subsystem\Graphics\Impl\OpenGL\Textures\DevTexture.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Subsystem\Graphics\Impl\OpenGL\Textures\Texture.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Subsystem\Graphics\Impl\OpenGL\Textures\WhiteTexture.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Subsystem\Graphics\Impl\OpenGL\OpenGL43Graphics.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="src\Core\Scene\Cameras\Camera.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -587,6 +538,85 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\Util\Math\Plane.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Util\Serialization\Chunk.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Util\Serialization\ByteAccumulator.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Util\Serialization\ByteParser.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Subsystem\Graphics\Api\Texture\DefaultTextureHandle.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Subsystem\Graphics\Api\Texture\TextureBuildOptions.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Subsystem\Graphics\Api\Texture\TextureHandle.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Subsystem\Graphics\Api\VertexBuffer\DefaultVertexBufferHandle.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Subsystem\Graphics\Api\VertexBuffer\VertexBufferData.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Subsystem\Graphics\Api\VertexBuffer\VertexBufferHandle.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Subsystem\Graphics\Api\DrawMode.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Subsystem\Graphics\Api\RenderData.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Subsystem\Graphics\Api\RenderOptions.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Subsystem\Graphics\Api\Viewport.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Subsystem\Graphics\Impl\OpenGL\Framebuffer\FrameBufferObject.hpp" />
+    <ClInclude Include="src\Subsystem\Graphics\Impl\OpenGL\Framebuffer\GBuffer.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Subsystem\Graphics\Impl\OpenGL\PixelBuffer\PixelBufferCache.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Subsystem\Graphics\Impl\OpenGL\Shaders\GLSLProgram.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Subsystem\Graphics\Impl\OpenGL\Shaders\GLSLShader.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Subsystem\Graphics\Impl\OpenGL\Shaders\ShaderStore.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Subsystem\Graphics\Impl\OpenGL\Textures\DevTexture.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Subsystem\Graphics\Impl\OpenGL\Textures\Texture.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Subsystem\Graphics\Impl\OpenGL\Textures\WhiteTexture.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Subsystem\Graphics\Impl\OpenGL\OpenGL43Graphics.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Subsystem\Graphics\Graphics.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Util\Serialization\Serialization.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Util\Serialization\FileWriter.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Util\MemoryUtil.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

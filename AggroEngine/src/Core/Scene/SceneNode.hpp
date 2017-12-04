@@ -5,6 +5,7 @@
 #include "TransformComponent.hpp"
 #include "RenderComponent.hpp"
 #include "Listener.hpp"
+#include "Chunk.hpp"
 using namespace std;
 
 /**
@@ -29,8 +30,14 @@ private:
 	Listener<SceneNode *> m_changeListeners;
 	Listener<SceneNode *> m_deletedListeners;
 
+	SceneNode(Chunk * const byteChunk, shared_ptr<Resources> resources);
+
 public:
 	SceneNode(unsigned int m_id, SceneNode *parent = nullptr);
+
+	// Serialization
+	shared_ptr<Chunk> serialize(shared_ptr<Resources> resources);
+	static shared_ptr<SceneNode> deserialize(Chunk * const byteChunk, shared_ptr<Resources> resources);
 
 	shared_ptr<vector<shared_ptr<SceneNode>>> getChildren();
 	void setSelected(bool selected);

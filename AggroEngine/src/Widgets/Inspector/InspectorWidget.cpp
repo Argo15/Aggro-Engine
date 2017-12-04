@@ -19,6 +19,9 @@ InspectorWidget::InspectorWidget(shared_ptr<EngineContext> context, QWidget *par
 
 	_refresh(m_context->getScene()->getSelectedNode());
 	m_context->getScene()->addSelectionChangeListener([this](auto node) {_refresh(node);});
+	m_context->addNewSceneListener([this](auto scene) {
+		scene->addSelectionChangeListener([this](auto node) {_refresh(node); });
+	});
 
 	setLayout(m_layout);
 	this->show();

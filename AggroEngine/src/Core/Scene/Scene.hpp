@@ -27,14 +27,21 @@ private:
 
 	shared_ptr<SceneNode> m_selectedNode;
 
-	unsigned int m_nextId;
+	static int s_nextId;
 
 	void _applyToNodeRecursive(shared_ptr<SceneNode> node, std::function<void(SceneNode*)> func);
 	shared_ptr<SceneNode> _getNodeByIdRecursive(shared_ptr<SceneNode> node, unsigned int id);
+	int _getMaxNodeIdRecursive(shared_ptr<SceneNode> node);
+
+	Scene(Chunk * const byteChunk, shared_ptr<Resources> resources);
 
 public:
 	Scene();
 	Scene(shared_ptr<SceneNode> root, shared_ptr<Camera> camera);
+
+	// Serialization
+	shared_ptr<Chunk> serialize(shared_ptr<Resources> resources);
+	static shared_ptr<Scene> deserialize(Chunk * const byteChunk, shared_ptr<Resources> resources);
 
 	shared_ptr<SceneNode> getRoot();
 	shared_ptr<Camera> getCamera();
@@ -63,5 +70,5 @@ public:
 	void deleteNode(shared_ptr<SceneNode> node);
 	void deleteSelectedNode();
 
-	unsigned int getNextId();
+	static unsigned int getNextId();
 };

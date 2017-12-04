@@ -26,8 +26,11 @@ private:
 	shared_ptr<GraphicsContext> m_graphicsContext;
 	shared_ptr<Clock> m_graphicsClock;
 	shared_ptr<Selection> m_selection;
+	shared_ptr<Job> m_cameraUpdateJob;
 	int m_maxFps;
 	int m_millisPerFrame;
+
+	shared_ptr<Job> _setupCameraUpdateJob(shared_ptr<Camera> camera);
 
 public:
 	GLWidget(shared_ptr<EngineContext> context, QWidget *parent = 0);

@@ -56,12 +56,20 @@ SceneGraphTree::SceneGraphTree(shared_ptr<EngineContext> context, QWidget *paren
 	
 	m_context->getScene()->addUpdateListener([this](auto scene) {refresh(scene);});
 	m_context->getScene()->addSelectionChangeListener([this](auto node) {_selectNode(node.get());});
+	m_context->addNewSceneListener([this](auto scene) {
+		m_treeWidget->clear();
+		m_currentNodes = boost::unordered_map<SceneNode *, QTreeWidgetItem *>();
+		refresh(scene);
+		scene->addUpdateListener([this](auto scene) {refresh(scene); });
+		scene->addSelectionChangeListener([this](auto node) {_selectNode(node.get()); });
+	});
 	setMouseTracking(true);
 	setWidget(m_treeWidget.get());
 }
 
 void SceneGraphTree::refresh(Scene* scene)
 {
+	boost::lock_guard<SceneGraphTree> guard(*this);
 	QSignalBlocker block(m_treeWidget.get());
 	_addSceneNodeRecursive(scene->getRoot(), nullptr, true);
 }
@@ -98,7 +106,14 @@ void SceneGraphTree::_addSceneNodeRecursive(shared_ptr<SceneNode> node, QTreeWid
 			treeItem->setText(0, QString::fromStdString(node->getName()));
 			parent->addChild(treeItem);
 		}
-		m_currentNodes[node.get()] = treeItem;
+		if (treeItem != nullptr)
+		{
+			m_currentNodes[node.get()] = treeItem;
+		}
+		else
+		{
+			_deleteNode(node.get());
+		}
 		node->addChangeListener(this, [this](auto updateNode) {this->_refreshNode(updateNode);});
 		node->addDeletedListener(this, [this](auto deleteNode) {this->_deleteNode(deleteNode);});
 	}
@@ -132,6 +147,7 @@ void SceneGraphTree::_addSceneNodeRecursive(shared_ptr<SceneNode> node, QTreeWid
 
 void SceneGraphTree::_addNewNode(shared_ptr<StaticObjectRenderComponent> renderComponent, string name)
 {
+	boost::lock_guard<SceneGraphTree> guard(*this);
 	QTreeWidgetItemIterator it(m_treeWidget.get(), QTreeWidgetItemIterator::Selected);
 	shared_ptr<SceneNode> node = m_context->getScene()->getRoot();
 
@@ -142,7 +158,7 @@ void SceneGraphTree::_addNewNode(shared_ptr<StaticObjectRenderComponent> renderC
 	}
 
 	//Create new scene node
-	shared_ptr<SceneNode> newNode = shared_ptr<SceneNode>(new SceneNode(m_context->getScene()->getNextId(), node.get()));
+	shared_ptr<SceneNode> newNode = shared_ptr<SceneNode>(new SceneNode(Scene::getNextId(), node.get()));
 	newNode->setRenderComponent(renderComponent);
 	newNode->setTransformComponent(shared_ptr<TransformComponent>(new TransformComponent()));
 	newNode->setName(name);
@@ -185,6 +201,7 @@ void SceneGraphTree::_deleteSelected()
 
 void SceneGraphTree::_refreshNode(SceneNode *node)
 {
+	boost::lock_guard<SceneGraphTree> guard(*this);
 	if (node != nullptr && m_currentNodes[node] != nullptr)
 	{
 		m_currentNodes[node]->setText(0, QString::fromStdString(node->getName()));
@@ -193,10 +210,15 @@ void SceneGraphTree::_refreshNode(SceneNode *node)
 
 void SceneGraphTree::_deleteNode(SceneNode *node)
 {
+	boost::lock_guard<SceneGraphTree> guard(*this);
 	if (node != nullptr && m_currentNodes[node] != nullptr)
 	{
-		delete m_currentNodes[node];
-		m_currentNodes[node] = nullptr;
+		QTreeWidgetItem *item = m_currentNodes[node];
+		if (item != nullptr)
+		{
+			delete item;
+			m_currentNodes[node] = nullptr;
+		}
 	}
 }
 

@@ -7,7 +7,6 @@ Job::Job()
 Job::Job(function<void()> function)
 	: m_function(function)
 {
-
 }
 
 void Job::run()
@@ -23,4 +22,8 @@ void Job::runInThread()
 shared_ptr<boost::thread> Job::getThread()
 {
 	return m_thread;
+}
+
+void Job::stop()
+{
 }

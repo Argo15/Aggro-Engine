@@ -16,6 +16,8 @@ private:
 	shared_ptr<JobManager> m_jobManager;
 	shared_ptr<Resources> m_resources;
 
+	Listener<Scene *> m_newSceneListeners;
+
 public:
 	EngineContext();
 
@@ -23,4 +25,7 @@ public:
 	shared_ptr<RenderOptions> getRenderOptions();
 	shared_ptr<JobManager> getJobManager();
 	shared_ptr<Resources> getResources();
+
+	void setScene(shared_ptr<Scene> scene);
+	void addNewSceneListener(function<void(Scene *)> func);
 };
