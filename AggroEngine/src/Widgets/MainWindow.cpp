@@ -70,6 +70,7 @@ void MainWindow::createMenus()
 	fileMenu->addAction(newAction);
 	fileMenu->addAction(openAction);
 	fileMenu->addAction(saveAction);
+	fileMenu->addAction(saveAsAction);
 	fileMenu->addAction(exitAction);
 
 	QMenu *editMenu = menuBar()->addMenu(tr("Edit"));

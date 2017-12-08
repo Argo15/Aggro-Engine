@@ -16,14 +16,14 @@ public:
 	StaticObjectRenderComponent();
 
 	// Serialization
-	shared_ptr<Chunk> serialize(shared_ptr<Resources> resources);
+	virtual shared_ptr<Chunk> serialize(shared_ptr<Resources> resources);
 	static shared_ptr<RenderComponent> deserialize(Chunk * const byteChunk, shared_ptr<Resources> resources);
 
-	void render(shared_ptr<GraphicsContext> context, glm::mat4 m4Transform, int objId);
+	virtual void render(shared_ptr<GraphicsContext> context, glm::mat4 m4Transform, glm::mat4 m4ViewMat, int objId);
 
 	void setMeshId(int meshId);
 	boost::optional<int> getMeshId();
 	
-	void setTextureImageId(int meshId);
+	void setTextureImageId(int imageId);
 	boost::optional<int> getTextureImageId();
 };

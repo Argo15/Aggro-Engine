@@ -35,15 +35,21 @@ shared_ptr<Image> FreeImageImporter::importImage(string sFilename)
 	if(fif == FIF_UNKNOWN) 
 		fif = FreeImage_GetFIFFromFilename(sFilename.c_str());
 	//if still unkown, return failure
-	if(fif == FIF_UNKNOWN)
-		return false;
+	if (fif == FIF_UNKNOWN)
+	{
+		cout << "failed loading image " << sFilename << endl;
+		return shared_ptr<Image>(new CheckersImage(16, 16));
+	}
 
 	//check that the plugin has reading capabilities and load the file
 	if(FreeImage_FIFSupportsReading(fif))
 		imagen = FreeImage_Load(fif, sFilename.c_str());
 	//if the image failed to load, return failure
-	if(!imagen)
-		return shared_ptr<Image>(new CheckersImage(16,16));
+	if (!imagen)
+	{
+		cout << "failed loading image " << sFilename << endl;
+		return shared_ptr<Image>(new CheckersImage(16, 16));
+	}
 
 	FIBITMAP* temp = imagen;
 	imagen = FreeImage_ConvertTo32Bits(imagen);
@@ -55,8 +61,11 @@ shared_ptr<Image> FreeImageImporter::importImage(string sFilename)
 	width = FreeImage_GetWidth(imagen);
 	height = FreeImage_GetHeight(imagen);
 	//if this somehow one of these failed (they shouldn't), return failure
-	if((bits == 0) || (width == 0) || (height == 0))
-		return shared_ptr<Image>(new CheckersImage(16,16));
+	if ((bits == 0) || (width == 0) || (height == 0))
+	{
+		cout << "failed loading image " << sFilename << endl;
+		return shared_ptr<Image>(new CheckersImage(16, 16));
+	}
 
 	return shared_ptr<Image>((
 		new Image(

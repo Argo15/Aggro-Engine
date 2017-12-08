@@ -47,7 +47,7 @@ shared_ptr<RenderComponent> StaticObjectRenderComponent::deserialize(
 	return shared_ptr<StaticObjectRenderComponent>(new StaticObjectRenderComponent(byteChunk, resources));
 }
 
-void StaticObjectRenderComponent::render(shared_ptr<GraphicsContext> context, glm::mat4 m4Transform, int objId)
+void StaticObjectRenderComponent::render(shared_ptr<GraphicsContext> context, glm::mat4 m4Transform, glm::mat4 m4ViewMat, int objId)
 {
 	if (!m_meshId || !m_textureImageId)
 	{

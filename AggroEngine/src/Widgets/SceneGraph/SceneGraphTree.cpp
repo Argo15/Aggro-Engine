@@ -1,6 +1,6 @@
 #include "SceneGraphTree.hpp"
 #include "SceneTreeWidget.hpp"
-#include "StaticObjectRenderComponent.hpp"
+#include "SpriteRenderComponent.hpp"
 #include <QPushButton>
 #include <QAction>
 #include <QMouseEvent>
@@ -17,7 +17,7 @@ SceneGraphTree::SceneGraphTree(shared_ptr<EngineContext> context, QWidget *paren
 	m_addCubeAction = new QAction(tr("Add Cube"), this);
 	connect(m_addCubeAction, &QAction::triggered, this, [this]() {
 		shared_ptr<StaticObjectRenderComponent> renderComponent(new StaticObjectRenderComponent());
-		renderComponent->setMeshId(m_context->getResources()->getIdForPath("Resources/Mesh/cube.obj"));
+		renderComponent->setMeshId(m_context->getResources()->getIdForPath("Resources/Mesh/Engine/cube.obj"));
 		renderComponent->setTextureImageId(m_context->getResources()->getIdForPath("Resources/Textures/Walls/wall01/wall01_Diffuse.tga"));
 		_addNewNode(renderComponent, "Cube");
 	});
@@ -25,19 +25,46 @@ SceneGraphTree::SceneGraphTree(shared_ptr<EngineContext> context, QWidget *paren
 	m_addSphereAction = new QAction(tr("Add Sphere"), this);
 	connect(m_addSphereAction, &QAction::triggered, this, [this]() {
 		shared_ptr<StaticObjectRenderComponent> renderComponent(new StaticObjectRenderComponent());
-		renderComponent->setMeshId(m_context->getResources()->getIdForPath("Resources/Mesh/sphere.obj"));
+		renderComponent->setMeshId(m_context->getResources()->getIdForPath("Resources/Mesh/Engine/sphere.obj"));
 		renderComponent->setTextureImageId(m_context->getResources()->getIdForPath("Resources/Textures/Walls/wall01/wall01_Diffuse.tga"));
 		_addNewNode(renderComponent, "Sphere");
 	});
 
-	QAction *addSphereAction2 = new QAction(tr("Add From File"), this);
-	connect(addSphereAction2, &QAction::triggered, this, [this]() {
+	QAction *addFromFileAction = new QAction(tr("Add From File"), this);
+	connect(addFromFileAction, &QAction::triggered, this, [this]() {
 		QDir workingDirectory = QDir::current();
 		QString filename = QFileDialog::getOpenFileName(this, tr("Add Object From File"), workingDirectory.path() + "/Resources/Mesh");
 		shared_ptr<StaticObjectRenderComponent> renderComponent(new StaticObjectRenderComponent());
 		renderComponent->setMeshId(m_context->getResources()->getIdForPath(workingDirectory.relativeFilePath(filename).toStdString()));
 		renderComponent->setTextureImageId(m_context->getResources()->getIdForPath("Resources/Textures/Walls/wall01/wall01_Diffuse.tga"));
 		_addNewNode(renderComponent, QFileInfo(filename).fileName().split(".").first().toStdString());
+	});
+
+	QAction *addSpriteAction = new QAction(tr("Add Sprite"), this);
+	connect(addSpriteAction, &QAction::triggered, this, [this]() {
+		QDir workingDirectory = QDir::current();
+		QString filename = QFileDialog::getOpenFileName(this, tr("Add Sprite"), workingDirectory.path() + "/Resources/Textures");
+		shared_ptr<SpriteRenderComponent> renderComponent(new SpriteRenderComponent(
+			m_context->getResources(),
+			m_context->getResources()->getIdForPath(workingDirectory.relativeFilePath(filename).toStdString())));
+		shared_ptr<SceneNode> newNode = _addNewNode(renderComponent, "Sprite");
+		if (newNode->getTransformComponent())
+		{
+			newNode->getTransformComponent()->setScale(glm::vec3(0.3, 0.3, 0.3));
+		}
+	});
+
+	QAction *addDirectLightAction = new QAction(tr("Add Direct Light"), this);
+	connect(addDirectLightAction, &QAction::triggered, this, [this]() {
+		shared_ptr<SpriteRenderComponent> renderComponent(new SpriteRenderComponent(
+			m_context->getResources(),
+			m_context->getResources()->getIdForPath("Resources/Textures/Engine/sun_icon.png")));
+		shared_ptr<SceneNode> newNode = _addNewNode(renderComponent, "Direct Light");
+		if (newNode->getTransformComponent())
+		{
+			newNode->getTransformComponent()->setScale(glm::vec3(0.3, 0.3, 0.3));
+			newNode->getTransformComponent()->setTranslate(glm::vec3(0, 3, 0));
+		}
 	});
 
 	m_deleteAction = new QAction(tr("Delete"), this);
@@ -50,7 +77,9 @@ SceneGraphTree::SceneGraphTree(shared_ptr<EngineContext> context, QWidget *paren
 	m_treeWidget->setContextMenuPolicy(Qt::ActionsContextMenu);
 	m_treeWidget->addAction(m_addCubeAction);
 	m_treeWidget->addAction(m_addSphereAction);
-	m_treeWidget->addAction(addSphereAction2);
+	m_treeWidget->addAction(addFromFileAction);
+	m_treeWidget->addAction(addSpriteAction);
+	m_treeWidget->addAction(addDirectLightAction);
 	m_treeWidget->addAction(m_deleteAction);
 	connect(m_treeWidget.get(), &QTreeWidget::itemSelectionChanged, this, &SceneGraphTree::_selectionChanged);
 	
@@ -145,7 +174,7 @@ void SceneGraphTree::_addSceneNodeRecursive(shared_ptr<SceneNode> node, QTreeWid
 	}
 }
 
-void SceneGraphTree::_addNewNode(shared_ptr<StaticObjectRenderComponent> renderComponent, string name)
+shared_ptr<SceneNode> SceneGraphTree::_addNewNode(shared_ptr<StaticObjectRenderComponent> renderComponent, string name)
 {
 	boost::lock_guard<SceneGraphTree> guard(*this);
 	QTreeWidgetItemIterator it(m_treeWidget.get(), QTreeWidgetItemIterator::Selected);
@@ -168,6 +197,8 @@ void SceneGraphTree::_addNewNode(shared_ptr<StaticObjectRenderComponent> renderC
 	m_context->getScene()->deselectAllNodes();
 	m_context->getScene()->selectNode(newNode);
 	m_context->getScene()->update();
+
+	return newNode;
 }
 
 void SceneGraphTree::_selectionChanged()

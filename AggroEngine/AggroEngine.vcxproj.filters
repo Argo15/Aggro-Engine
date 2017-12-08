@@ -340,6 +340,9 @@
     <ClCompile Include="src\Util\Serialization\FileWriter.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\Core\Components\Render\SpriteRenderComponent.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Resource\Image\CheckersImage.hpp">
@@ -617,6 +620,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\Util\MemoryUtil.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Core\Components\Render\SpriteRenderComponent.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

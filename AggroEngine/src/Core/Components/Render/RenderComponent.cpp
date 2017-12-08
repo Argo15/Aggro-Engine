@@ -1,5 +1,5 @@
 #include "RenderComponent.hpp"
-#include "StaticObjectRenderComponent.hpp"
+#include "SpriteRenderComponent.hpp"
 
 RenderComponent::RenderComponent()
 	: Component()
@@ -19,6 +19,10 @@ shared_ptr<RenderComponent> RenderComponent::deserialize(Chunk * const byteChunk
 		if (*subChunk->getType() == ChunkType::STATIC_OBJECT_RENDER_COMPONENT)
 		{
 			return StaticObjectRenderComponent::deserialize(&*subChunk, resources);
+		}
+		else if (*subChunk->getType() == ChunkType::SPRITE_RENDER_COMPONENT)
+		{
+			return SpriteRenderComponent::deserialize(&*subChunk, resources);
 		}
 	}
 	return shared_ptr<RenderComponent>();
