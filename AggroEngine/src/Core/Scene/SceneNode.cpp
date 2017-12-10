@@ -44,6 +44,10 @@ SceneNode::SceneNode(Chunk * const byteChunk, shared_ptr<Resources> resources)
 		{
 			m_renderComponent = RenderComponent::deserialize(nextChunk.get_ptr(), resources);
 		}
+		else if (*nextChunk->getType() == ChunkType::DIRECT_LIGHT_COMPONENT)
+		{
+			m_directLightComponent = DirectLightComponent::deserialize(nextChunk.get_ptr());
+		}
 	}
 }
 
@@ -76,6 +80,13 @@ shared_ptr<Chunk> SceneNode::serialize(shared_ptr<Resources> resources)
 	if (m_renderComponent)
 	{
 		chunk = m_renderComponent->serialize(resources);
+		chunks.push_back(chunk);
+		bytes.add(chunk.get());
+	}
+
+	if (m_directLightComponent)
+	{
+		chunk = m_directLightComponent->serialize();
 		chunks.push_back(chunk);
 		bytes.add(chunk.get());
 	}
@@ -286,4 +297,19 @@ void SceneNode::setRenderComponent(shared_ptr<RenderComponent> renderComponent)
 shared_ptr<RenderComponent> SceneNode::getRenderComponent()
 {
 	return m_renderComponent;
+}
+
+bool SceneNode::hasDirectLightComponent()
+{
+	return m_directLightComponent != nullptr;
+}
+
+void SceneNode::setDirectLightComponent(shared_ptr<DirectLightComponent> directLightComponent)
+{
+	m_directLightComponent = directLightComponent;
+}
+
+shared_ptr<DirectLightComponent> SceneNode::getDirectLightComponent()
+{
+	return m_directLightComponent;
 }

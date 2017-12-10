@@ -47,7 +47,7 @@ shared_ptr<RenderComponent> StaticObjectRenderComponent::deserialize(
 	return shared_ptr<StaticObjectRenderComponent>(new StaticObjectRenderComponent(byteChunk, resources));
 }
 
-void StaticObjectRenderComponent::render(shared_ptr<GraphicsContext> context, glm::mat4 m4Transform, glm::mat4 m4ViewMat, int objId)
+void StaticObjectRenderComponent::render(shared_ptr<GraphicsContext> context, glm::mat4 m4Transform, glm::mat4 m4ViewMat, int objId, bool lightingEnabled)
 {
 	if (!m_meshId || !m_textureImageId)
 	{
@@ -61,6 +61,7 @@ void StaticObjectRenderComponent::render(shared_ptr<GraphicsContext> context, gl
 		shared_ptr<RenderData> renderData(new RenderData(vbo, texture));
 		renderData->setModelMatrix(m4Transform);
 		renderData->setId(objId);
+		renderData->setLightingEnabled(lightingEnabled);
 		context->getGraphics()->stageTriangleRender(renderData);
 	}
 }

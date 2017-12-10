@@ -1,5 +1,5 @@
 #include "RenderComponent.hpp"
-#include "SpriteRenderComponent.hpp"
+#include "DirectLightRenderComponent.hpp"
 
 RenderComponent::RenderComponent()
 	: Component()
@@ -23,6 +23,10 @@ shared_ptr<RenderComponent> RenderComponent::deserialize(Chunk * const byteChunk
 		else if (*subChunk->getType() == ChunkType::SPRITE_RENDER_COMPONENT)
 		{
 			return SpriteRenderComponent::deserialize(&*subChunk, resources);
+		}
+		else if (*subChunk->getType() == ChunkType::DIRECT_LIGHT_RENDER_COMPONENT)
+		{
+			return DirectLightRenderComponent::deserialize(&*subChunk, resources);
 		}
 	}
 	return shared_ptr<RenderComponent>();

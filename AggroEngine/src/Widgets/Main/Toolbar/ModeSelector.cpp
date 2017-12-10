@@ -7,6 +7,7 @@ ModeSelector::ModeSelector(shared_ptr<RenderOptions> renderOptions, QWidget *par
 	addItem("Shaded");
 	addItem("Albedo");
 	addItem("Normal");
+	addItem("Lighting");
 	addItem("Selection");
 
 	setFixedWidth(200);

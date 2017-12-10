@@ -65,10 +65,6 @@ void ByteAccumulator::add(const int numBytes, const void *pBytes)
 
 void ByteAccumulator::add(Chunk *chunk)
 {
-	if (*chunk->getNumBytes() == 0 || !chunk->getByteData())
-	{
-		return;
-	}
 	m_numBytes += *chunk->getNumBytes();
 	add((int *)chunk->getType());
 	add(chunk->getNumBytes());

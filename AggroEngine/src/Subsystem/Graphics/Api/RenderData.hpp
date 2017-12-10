@@ -8,7 +8,7 @@
 using namespace std;
 
 /**
- * Data for a single render operation, such as VBO handle, transformation, material, etc.
+ * Data for a single renderable object. Includes VBO handle, transformation, material, etc.
  *
  * author: wcrane
  * since: 2014-01-25
@@ -23,6 +23,7 @@ private:
 	DrawMode m_drawMode;
 	int m_lineWidth;
 	bool m_depthTestEnabled;
+	bool m_lightingEnabled;
 
 public:
 	RenderData();
@@ -47,4 +48,7 @@ public:
 
 	void setDepthTestEnabled(bool enabled);
 	bool isDepthTestEnabled();
+
+	void setLightingEnabled(bool enabled);
+	bool isLightingEnabled();
 };

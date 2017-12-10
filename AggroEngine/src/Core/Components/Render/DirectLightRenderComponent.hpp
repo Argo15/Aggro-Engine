@@ -1,25 +1,22 @@
 #pragma once
 
-#include <boost/optional.hpp>
-#include "StaticObjectRenderComponent.hpp"
-#include "Serialization.hpp"
+#include "SpriteRenderComponent.hpp"
 
 /**
-* Renders an image that is always orthoganal to the camera
+* Renders a sprite with lines indicating the light direction
 *
 * author: wcrane
 * since: 2017-12-08
 **/
-class SpriteRenderComponent : public StaticObjectRenderComponent
+class DirectLightRenderComponent : public SpriteRenderComponent
 {
 private:
-	SpriteRenderComponent(Chunk * const byteChunk, shared_ptr<Resources> resources);
+	shared_ptr<RenderData> m_lineRenderData;
 
-protected:
-	SpriteRenderComponent();
+	DirectLightRenderComponent(Chunk * const byteChunk, shared_ptr<Resources> resources);
 
 public:
-	SpriteRenderComponent(shared_ptr<Resources> resources, int imageId);
+	DirectLightRenderComponent(shared_ptr<Resources> resources);
 
 	// Serialization
 	virtual shared_ptr<Chunk> serialize(shared_ptr<Resources> resources);

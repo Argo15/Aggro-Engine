@@ -1,6 +1,6 @@
 #include "SceneGraphTree.hpp"
 #include "SceneTreeWidget.hpp"
-#include "SpriteRenderComponent.hpp"
+#include "DirectLightRenderComponent.hpp"
 #include <QPushButton>
 #include <QAction>
 #include <QMouseEvent>
@@ -56,14 +56,14 @@ SceneGraphTree::SceneGraphTree(shared_ptr<EngineContext> context, QWidget *paren
 
 	QAction *addDirectLightAction = new QAction(tr("Add Direct Light"), this);
 	connect(addDirectLightAction, &QAction::triggered, this, [this]() {
-		shared_ptr<SpriteRenderComponent> renderComponent(new SpriteRenderComponent(
-			m_context->getResources(),
-			m_context->getResources()->getIdForPath("Resources/Textures/Engine/sun_icon.png")));
+		shared_ptr<DirectLightRenderComponent> renderComponent(new DirectLightRenderComponent(m_context->getResources()));
 		shared_ptr<SceneNode> newNode = _addNewNode(renderComponent, "Direct Light");
+		newNode->setDirectLightComponent(shared_ptr<DirectLightComponent>(new DirectLightComponent()));
 		if (newNode->getTransformComponent())
 		{
 			newNode->getTransformComponent()->setScale(glm::vec3(0.3, 0.3, 0.3));
 			newNode->getTransformComponent()->setTranslate(glm::vec3(0, 3, 0));
+			newNode->getTransformComponent()->setRotate(glm::vec3(0.52, 0, -0.52));
 		}
 	});
 

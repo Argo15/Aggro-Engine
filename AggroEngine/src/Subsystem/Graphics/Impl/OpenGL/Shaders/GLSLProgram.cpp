@@ -148,6 +148,16 @@ void GLSLProgram::sendUniform(const std::string &name, float x, float y, float z
 	glUniform4f(getLoc(name), x, y, z, w);
 }
 
+void GLSLProgram::sendUniform(const std::string &name, shared_ptr<TextureHandle> tex, int x)
+{
+	glActiveTexture(GL_TEXTURE0 + x);
+	if (tex)
+	{
+		glBindTexture(GL_TEXTURE_2D, tex->get());
+	}
+	sendUniform(name, x);
+}
+
 void GLSLProgram::sendUniform(const std::string &name, int x)
 {
 	glUniform1i(getLoc(name), x);

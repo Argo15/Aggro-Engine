@@ -12,6 +12,14 @@ RenderOptions::RenderOptions()
 {
 }
 
+void RenderOptions::clear()
+{
+	m_m4ProjectionMatrix = defaultProjMat;
+	m_m4ViewMatrix = defaultViewMat;
+	m_v4Viewport = defaultViewport;
+	m_directLight = shared_ptr<DirectLight>();
+}
+
 RenderOptions &RenderOptions::setProjectionMatrix(glm::mat4 &m4Projection)
 {
 	m_m4ProjectionMatrix = m4Projection;
@@ -53,4 +61,19 @@ void RenderOptions::setRenderTarget(RenderTarget target)
 RenderOptions::RenderTarget RenderOptions::getRenderTarget()
 {
 	return m_renderTarget;
+}
+
+bool RenderOptions::RenderOptions::hasDirectLight()
+{
+	return m_directLight != nullptr;
+}
+
+void RenderOptions::addDirectLight(shared_ptr<DirectLight> directLight)
+{
+	m_directLight = directLight;
+}
+
+shared_ptr<DirectLight> RenderOptions::getDirectLight()
+{
+	return m_directLight;
 }

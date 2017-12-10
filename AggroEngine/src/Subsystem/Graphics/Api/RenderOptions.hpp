@@ -1,6 +1,9 @@
 #pragma once
 
 #include "Matrix.hpp"
+#include "DirectLight.hpp"
+#include <memory>
+using namespace std;
 
 /**
  * Options passed into start of the rendering execution.
@@ -13,7 +16,7 @@ class RenderOptions
 public:
 	enum RenderTarget
 	{
-		SHADED, ALBEDO, NORMAL, SELECTION
+		SHADED, ALBEDO, NORMAL, LIGHTING, SELECTION
 	};
 
 private:
@@ -23,8 +26,12 @@ private:
 
 	RenderTarget m_renderTarget;
 
+	shared_ptr<DirectLight> m_directLight;
+
 public:
 	RenderOptions();
+
+	void clear();
 
 	RenderOptions &setProjectionMatrix(glm::mat4 &m4Projection);
 	RenderOptions &setViewMatrix(glm::mat4 &m4View);
@@ -36,4 +43,8 @@ public:
 
 	void setRenderTarget(RenderTarget target);
 	RenderTarget getRenderTarget();
+
+	bool hasDirectLight();
+	void addDirectLight(shared_ptr<DirectLight> directLight);
+	shared_ptr<DirectLight> getDirectLight();
 };

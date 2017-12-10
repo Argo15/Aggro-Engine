@@ -15,7 +15,7 @@ private:
 	shared_ptr<GraphicsContext> m_graphicsContext;
 	shared_ptr<RenderData> m_gridRenderData;
 
-	void _renderSceneNodeRecursive(shared_ptr<SceneNode> node, glm::mat4 transform, glm::mat4 viewMat);
+	void _renderSceneNodeRecursive(shared_ptr<SceneNode> node, glm::mat4 transform, glm::mat4 viewMat, shared_ptr<RenderOptions> renderOptions);
 
 public:
 	Renderer(shared_ptr<GraphicsContext> graphicsContext);

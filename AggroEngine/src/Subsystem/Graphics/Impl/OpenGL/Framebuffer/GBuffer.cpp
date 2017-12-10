@@ -2,20 +2,17 @@
 #include "WhiteTexture.hpp"
 #include "Locks.hpp"
 
-#define BUFFER_OFFSET(i) ((char *)NULL + (i))
 unique_ptr<WhiteTexture> devTexture;
 
 GBuffer::GBuffer(OpenGL43Graphics *graphics, int width, int height)
+	: FrameBufferObject(width, height)
 {
-	m_width = width;
-	m_height = height;
 	m_graphics = graphics;
 
 	boost::lock_guard<OpenGL43Graphics> guard(*m_graphics);
 
 	std::string log;
-	m_gBufferProg = graphics->getShaderStore().getShader("Resources/Shaders/v_GBuffer.glsl", "Resources/Shaders/f_GBuffer.glsl");
-
+	m_glslProgram = graphics->getShaderStore().getShader("Resources/Shaders/v_GBuffer.glsl", "Resources/Shaders/f_GBuffer.glsl");
 
 	glEnable(GL_TEXTURE_2D);
 
@@ -40,6 +37,7 @@ GBuffer::GBuffer(OpenGL43Graphics *graphics, int width, int height)
 	// Generate albedo
 	texOptions->setInternalFormat(InternalFormat::RGBA8);
 	m_albedoTex = graphics->createTexture(texOptions);
+	m_texture = m_albedoTex;
 	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT1, GL_TEXTURE_2D, m_albedoTex->get(), 0);
 
 	// Generate depth texture
@@ -68,8 +66,8 @@ void GBuffer::drawToBuffer(RenderOptions renderOptions, std::queue<shared_ptr<Re
 {
 	boost::lock_guard<OpenGL43Graphics> guard(*m_graphics);
 
-	bind();
-	m_gBufferProg->use();
+	bindFrameBuffer();
+	m_glslProgram->use();
 	GLenum mrt[] = { GL_COLOR_ATTACHMENT0_EXT, GL_COLOR_ATTACHMENT1_EXT, GL_COLOR_ATTACHMENT2_EXT };
 	glDrawBuffers(3, mrt);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -81,12 +79,12 @@ void GBuffer::drawToBuffer(RenderOptions renderOptions, std::queue<shared_ptr<Re
 	bool isDepthDisabled = false;
 	shared_ptr<RenderData> disabledDepthObject; // needs to be rendered at the end
 
-	glBindFragDataLocation(m_gBufferProg->getHandle(), 0, "normalBuffer");
-	glBindFragDataLocation(m_gBufferProg->getHandle(), 1, "albedoBuffer");
-	glBindFragDataLocation(m_gBufferProg->getHandle(), 2, "selectionBuffer");
-	glBindAttribLocation(m_gBufferProg->getHandle(), 0, "v_a_vertex");
-	glBindAttribLocation(m_gBufferProg->getHandle(), 1, "v_b_texcoord");
-	glBindAttribLocation(m_gBufferProg->getHandle(), 2, "v_c_normal");
+	glBindFragDataLocation(m_glslProgram->getHandle(), 0, "normalBuffer");
+	glBindFragDataLocation(m_glslProgram->getHandle(), 1, "albedoBuffer");
+	glBindFragDataLocation(m_glslProgram->getHandle(), 2, "selectionBuffer");
+	glBindAttribLocation(m_glslProgram->getHandle(), 0, "v_vertex");
+	glBindAttribLocation(m_glslProgram->getHandle(), 1, "v_texcoord");
+	glBindAttribLocation(m_glslProgram->getHandle(), 2, "v_normal");
 	while (!renderQueue.empty())
 	{
 		shared_ptr<RenderData> renderData = renderQueue.front();
@@ -110,9 +108,10 @@ void GBuffer::drawToBuffer(RenderOptions renderOptions, std::queue<shared_ptr<Re
 		if (renderData->getVertexBufferHandle())
 		{
 			glm::mat4 mvpMatrix = renderOptions.getProjectionMatrix()*renderOptions.getViewMatrix()*renderData->getModelMatrix();
-			m_gBufferProg->sendUniform("modelViewProjectionMatrix", glm::value_ptr(mvpMatrix), false, 4);
+			m_glslProgram->sendUniform("modelViewProjectionMatrix", glm::value_ptr(mvpMatrix), false, 4);
 			glm::mat3 normalMatrix = glm::mat3(renderData->getModelMatrix());
-			m_gBufferProg->sendUniform("normalMatrix", glm::value_ptr(normalMatrix), false, 3);
+			m_glslProgram->sendUniform("normalMatrix", glm::value_ptr(normalMatrix), false, 3);
+			m_glslProgram->sendUniform("lightingEnabled", renderData->isLightingEnabled());
 
 			glActiveTexture(GL_TEXTURE0);
 			if (renderData->getTextureHandle())
@@ -123,12 +122,12 @@ void GBuffer::drawToBuffer(RenderOptions renderOptions, std::queue<shared_ptr<Re
 			{
 				glBindTexture(GL_TEXTURE_2D, devTexture->getHandle()->get());
 			}
-			m_gBufferProg->sendUniform("tex", 0);
+			m_glslProgram->sendUniform("tex", 0);
 			unsigned int id = renderData->getId();
 			float r = (id % 255) / 255.0f;
 			float g = ((id / 255) % 255) / 255.0f;
 			float b = ((id / 65025) % 255) / 255.0f;
-			m_gBufferProg->sendUniform("objId", r, g, b);
+			m_glslProgram->sendUniform("objId", r, g, b);
 
 			if (currentLineWidth != renderData->getLineWidth())
 			{
@@ -158,19 +157,9 @@ void GBuffer::drawToBuffer(RenderOptions renderOptions, std::queue<shared_ptr<Re
 			Texture::unbind();
 		}
 	}
-	m_gBufferProg->disable();
-	unbind();
+	m_glslProgram->disable();
+	unbindFrameBuffer();
 	glPopAttrib();
-}
-
-void GBuffer::bind() 
-{ 
-	glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, m_buffer); 
-}
-
-void GBuffer::unbind() 
-{
-	glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, 0); 
 }
 
 void GBuffer::bindDepthTex() 
@@ -211,21 +200,6 @@ shared_ptr<TextureHandle> GBuffer::getAlbedoTex()
 shared_ptr<TextureHandle> GBuffer::getSelectionTex()
 {
 	return m_selectionTex;
-}
-
-shared_ptr<GLSLProgram> GBuffer::getProgram()
-{ 
-	return m_gBufferProg; 
-}
-
-int GBuffer::getWidth() 
-{ 
-	return m_width; 
-}
-
-int GBuffer::getHeight() 
-{ 
-	return m_height; 
 }
 
 GLenum GBuffer::getSelectionColorAttachment()

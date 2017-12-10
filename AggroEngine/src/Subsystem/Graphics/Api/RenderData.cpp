@@ -8,6 +8,7 @@ RenderData::RenderData()
 	, m_drawMode(DrawMode::TRIANGLES)
 	, m_lineWidth(1)
 	, m_depthTestEnabled(true)
+	, m_lightingEnabled(true)
 {
 }
 
@@ -18,6 +19,7 @@ RenderData::RenderData(shared_ptr<VertexBufferHandle> pVertexBufferHandle, share
 	, m_drawMode(DrawMode::TRIANGLES)
 	, m_lineWidth(1)
 	, m_depthTestEnabled(true)
+	, m_lightingEnabled(true)
 {
 }
 
@@ -30,6 +32,7 @@ RenderData::RenderData(shared_ptr<VertexBufferHandle> pVertexBufferHandle,
 	, m_drawMode(drawMode)
 	, m_lineWidth(1)
 	, m_depthTestEnabled(true)
+	, m_lightingEnabled(true)
 {
 }
 
@@ -105,4 +108,14 @@ void RenderData::setDepthTestEnabled(bool enabled)
 bool RenderData::isDepthTestEnabled()
 {
 	return m_depthTestEnabled;
+}
+
+void RenderData::setLightingEnabled(bool enabled)
+{
+	m_lightingEnabled = enabled;
+}
+
+bool RenderData::isLightingEnabled()
+{
+	return m_lightingEnabled;
 }

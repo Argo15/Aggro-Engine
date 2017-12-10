@@ -129,12 +129,16 @@ boost::optional<Chunk> ByteParser::parseChunk()
 {
 	boost::optional<int> type = parseInt();
 	boost::optional<int> numBytes = parseInt();
-	if (type && numBytes)
+	if (type )
 	{
-		if (boost::optional<char *> bytes = parseBytes(*numBytes))
+		if (numBytes)
 		{
-			return boost::optional<Chunk>(Chunk((ChunkType)type.get(), *numBytes, mem::shared_array(*bytes)));
+			if (boost::optional<char *> bytes = parseBytes(*numBytes))
+			{
+				return boost::optional<Chunk>(Chunk((ChunkType)type.get(), *numBytes, mem::shared_array(*bytes)));
+			}
 		}
+		return boost::optional<Chunk>(Chunk((ChunkType)type.get(), 0, shared_ptr<char>()));
 	}
 	return boost::optional<Chunk>();
 }

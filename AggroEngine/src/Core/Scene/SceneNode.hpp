@@ -4,6 +4,7 @@
 #include <vector>
 #include "TransformComponent.hpp"
 #include "RenderComponent.hpp"
+#include "DirectLightComponent.hpp"
 #include "Listener.hpp"
 #include "Chunk.hpp"
 using namespace std;
@@ -26,6 +27,7 @@ private:
 	// Components
 	shared_ptr<TransformComponent> m_transformComponent;
 	shared_ptr<RenderComponent> m_renderComponent;
+	shared_ptr<DirectLightComponent> m_directLightComponent;
 
 	Listener<SceneNode *> m_changeListeners;
 	Listener<SceneNode *> m_deletedListeners;
@@ -76,4 +78,8 @@ public:
 	bool hasRenderComponent();
 	void setRenderComponent(shared_ptr<RenderComponent> renderComponent);
 	shared_ptr<RenderComponent> getRenderComponent();
+
+	bool hasDirectLightComponent();
+	void setDirectLightComponent(shared_ptr<DirectLightComponent> directLightComponent);
+	shared_ptr<DirectLightComponent> getDirectLightComponent();
 };

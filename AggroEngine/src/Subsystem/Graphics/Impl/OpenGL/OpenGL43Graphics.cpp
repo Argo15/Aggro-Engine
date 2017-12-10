@@ -22,7 +22,6 @@ void OpenGL43Graphics::init()
 	this->lock();
 	glShadeModel(GL_SMOOTH);
 	glClearDepth(1.0f);
-	glClearColor(0.3f, 0.3f, 0.3f, 1.0f);
 	glEnable(GL_DEPTH_TEST);
 	glDepthFunc(GL_LEQUAL);
 	glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_FASTEST);
@@ -34,6 +33,8 @@ void OpenGL43Graphics::init()
 	const Properties& props = gConfig->getProperties();
 	vector<int> nDimensions = props.getIntArrayProperty("graphics.resolution");
 	m_gBuffer = shared_ptr<GBuffer>(new GBuffer(this, nDimensions[0], nDimensions[1]));
+	m_lightBuffer = shared_ptr<LightBuffer>(new LightBuffer(this, nDimensions[0], nDimensions[1]));
+	m_shadedBuffer = shared_ptr<ShadedBuffer>(new ShadedBuffer(this, nDimensions[0], nDimensions[1]));
 	m_viewport = shared_ptr<Viewport>(new Viewport());
 }
 
@@ -113,6 +114,8 @@ void OpenGL43Graphics::stageTriangleRender(shared_ptr<RenderData> pRenderData)
 void OpenGL43Graphics::executeRender(RenderOptions &renderOptions)
 {
 	m_gBuffer->drawToBuffer(renderOptions, renderQueue);
+	m_lightBuffer->drawToBuffer(renderOptions, m_gBuffer->getNormalTex());
+	m_shadedBuffer->drawToBuffer(renderOptions, m_gBuffer->getAlbedoTex(), m_lightBuffer->getTexture());
 	_drawScreen(renderOptions, 0.0, 0.0, 1.0, 1.0);
 }
 
@@ -131,6 +134,7 @@ shared_ptr<Viewport> OpenGL43Graphics::getViewport()
 void OpenGL43Graphics::clearColor()
 {
 	boost::lock_guard<OpenGL43Graphics> guard(*this);
+	glClearColor(0.3f, 0.3f, 0.3f, 0);
 	glClear(GL_COLOR_BUFFER_BIT);
 }
 
@@ -143,6 +147,7 @@ void OpenGL43Graphics::clearDepth()
 void OpenGL43Graphics::clearDepthAndColor()
 {
 	boost::lock_guard<OpenGL43Graphics> guard(*this);
+	glClearColor(0.3f, 0.3f, 0.3f, 0);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 }
 
@@ -190,11 +195,13 @@ shared_ptr<TextureHandle> OpenGL43Graphics::_getRenderTargetTexture(RenderOption
 	switch (target)
 	{
 		case RenderOptions::SHADED:
-			return m_gBuffer->getAlbedoTex();
+			return m_shadedBuffer->getTexture();
 		case RenderOptions::ALBEDO:
 			return m_gBuffer->getAlbedoTex();
 		case RenderOptions::NORMAL:
 			return m_gBuffer->getNormalTex();
+		case RenderOptions::LIGHTING:
+			return m_lightBuffer->getTexture();
 		case RenderOptions::SELECTION:
 			return m_gBuffer->getSelectionTex();
 		default:
@@ -218,10 +225,10 @@ shared_ptr<Image> OpenGL43Graphics::getRenderImage(int x, int y, int width, int 
 	int size = width * height * pixelSize;
 	unsigned char *pixels = new unsigned char[size];
 
-	m_gBuffer->bind();
+	m_gBuffer->bindFrameBuffer();
 	glReadBuffer(m_gBuffer->getSelectionColorAttachment());
 	glReadPixels(x, y, width, height, GL_RGBA, GL_UNSIGNED_SHORT, pixels);
-	m_gBuffer->unbind();
+	m_gBuffer->unbindFrameBuffer();
 
 	return shared_ptr<Image>((new Image(width, height, boost::shared_array<unsigned char>(pixels)))
 		->setImageFormat(ImageFormat::RGBA)

@@ -5,7 +5,9 @@ class OpenGL43Graphics;
 #include <queue>
 #include <memory>
 #include "Shaders/ShaderStore.hpp"
-#include "Framebuffer/GBuffer.hpp"
+#include "GBuffer.hpp"
+#include "LightBuffer.hpp"
+#include "ShadedBuffer.hpp"
 #include "Graphics.hpp"
 #include "Locks.hpp"
 
@@ -22,6 +24,8 @@ private:
 	std::queue<shared_ptr<RenderData>> renderQueue;
 	ShaderStore m_shaderStore;
 	shared_ptr<GBuffer> m_gBuffer;
+	shared_ptr<LightBuffer> m_lightBuffer;
+	shared_ptr<ShadedBuffer> m_shadedBuffer;
 	shared_ptr<Viewport> m_viewport;
 
 	void _drawScreen(RenderOptions &renderOptions, float nX1, float nY1, float nX2, float nY2);
