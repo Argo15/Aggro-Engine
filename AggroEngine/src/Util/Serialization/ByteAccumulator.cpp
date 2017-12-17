@@ -92,6 +92,12 @@ void ByteAccumulator::add(glm::vec3 *vec)
 	add(3 * sizeof(float), values);
 }
 
+void ByteAccumulator::add(glm::vec4 *vec)
+{
+	float *values = glm::value_ptr(*vec);
+	add(4 * sizeof(float), values);
+}
+
 int ByteAccumulator::getNumBytes()
 {
 	return m_numBytes;

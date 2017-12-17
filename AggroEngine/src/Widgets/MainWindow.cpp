@@ -76,7 +76,6 @@ void MainWindow::createMenus()
 	QMenu *editMenu = menuBar()->addMenu(tr("Edit"));
 
 	QMenu *toolsMenu = menuBar()->addMenu(tr("View"));
-
 }
 
 void MainWindow::newFile()

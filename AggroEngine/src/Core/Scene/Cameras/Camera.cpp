@@ -21,6 +21,58 @@ Camera::Camera()
 	rotate(-0.61f, m_v3RightDir);
 }
 
+Camera::Camera(Chunk * const byteChunk)
+{
+	ByteParser parser = ByteParser(*byteChunk->getNumBytes(), byteChunk->getByteData().get());
+	while (boost::optional<Chunk> nextChunk = parser.parseChunk())
+	{
+		if (*nextChunk->getType() == ChunkType::PRIMITIVES)
+		{
+			ByteParser primitives = ByteParser(*nextChunk);
+			m_m4ViewMatrix = primitives.parseMat4().get_value_or(glm::mat4(1.0));
+			m_m4ProjMatrix = primitives.parseMat4().get_value_or(glm::mat4(1.0));
+			m_v4Viewport = primitives.parseVec4().get_value_or(glm::vec4(0, 0, 1000, 1000));
+		}
+		else if (*nextChunk->getType() == ChunkType::TRANSFORM_COMPONENT)
+		{
+			m_transformComponent = TransformComponent::deserialize(nextChunk.get_ptr());
+		}
+	}
+	updateViewMatrix();
+}
+
+shared_ptr<Chunk> Camera::serialize()
+{
+	shared_ptr<Chunk> chunk;
+	vector<shared_ptr<Chunk>> chunks;
+
+	ByteAccumulator bytes;
+
+	ByteAccumulator primitiveBytes;
+	primitiveBytes.add(&m_m4ViewMatrix);
+	primitiveBytes.add(&m_m4ProjMatrix);
+	primitiveBytes.add(&m_v4Viewport);
+	bytes.add(new Chunk(ChunkType::PRIMITIVES, primitiveBytes.getNumBytes(), primitiveBytes.collect()));
+
+	if (m_transformComponent)
+	{
+		chunk = m_transformComponent->serialize();
+		chunks.push_back(chunk);
+		bytes.add(chunk.get());
+	}
+	return shared_ptr<Chunk>(new Chunk(ChunkType::CAMERA, bytes.getNumBytes(), bytes.collect()));
+}
+
+shared_ptr<Camera> Camera::deserialize(Chunk * const byteChunk)
+{
+	if (*byteChunk->getType() != ChunkType::CAMERA)
+	{
+		return shared_ptr<Camera>();
+	}
+
+	return shared_ptr<Camera>(new Camera(byteChunk));
+}
+
 void Camera::updateViewMatrix()
 {
 	glm::mat4 transform = m_transformComponent->getTransform();

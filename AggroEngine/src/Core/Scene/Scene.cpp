@@ -13,15 +13,20 @@ Scene::Scene(shared_ptr<SceneNode> root, shared_ptr<Camera> camera)
 }
 
 Scene::Scene(Chunk * const byteChunk, shared_ptr<Resources> resources)
-	: m_camera(shared_ptr<Camera>(new Camera()))
-	, m_transformHook()
+	: m_transformHook()
+	, m_camera(new Camera())
 {
+	m_camera = shared_ptr<Camera>(new Camera());
 	ByteParser parser = ByteParser(*byteChunk->getNumBytes(), byteChunk->getByteData().get());
-	if (boost::optional<Chunk> nextChunk = parser.parseChunk())
+	while (boost::optional<Chunk> nextChunk = parser.parseChunk())
 	{
 		if (*nextChunk->getType() == ChunkType::SCENE_NODE)
 		{
 			m_root = SceneNode::deserialize(&*nextChunk, resources);
+		}
+		else if (*nextChunk->getType() == ChunkType::CAMERA)
+		{
+			m_camera = Camera::deserialize(nextChunk.get_ptr());
 		}
 	}
 }
@@ -29,8 +34,10 @@ Scene::Scene(Chunk * const byteChunk, shared_ptr<Resources> resources)
 shared_ptr<Chunk> Scene::serialize(shared_ptr<Resources> resources)
 {
 	shared_ptr<Chunk> rootChunk = m_root->serialize(resources);
+	shared_ptr<Chunk> cameraChunk = m_camera->serialize();
 	ByteAccumulator bytes;
 	bytes.add(rootChunk.get());
+	bytes.add(cameraChunk.get());
 	return shared_ptr<Chunk>(new Chunk(ChunkType::SCENE, bytes.getNumBytes(), bytes.collect()));
 }
 

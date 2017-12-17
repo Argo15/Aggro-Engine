@@ -46,6 +46,7 @@ public:
 	void add(string *str);
 	void add(glm::mat4 *mat);
 	void add(glm::vec3 *vec);
+	void add(glm::vec4 *vec);
 
 	int getNumBytes();
 	shared_ptr<char> collect();

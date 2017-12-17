@@ -37,7 +37,6 @@ void GLWidget::initializeGL()
 	m_renderer->init();
 
 	shared_ptr<Scene> scene = m_engineContext->getScene();
-	scene->setCamera(shared_ptr<Camera>(new Camera()));
 	scene->update(); // notify listners
 
 	m_cameraUpdateJob = _setupCameraUpdateJob(scene->getCamera());

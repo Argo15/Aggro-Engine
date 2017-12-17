@@ -26,8 +26,14 @@ private:
 
 	void updateViewMatrix();
 
+	Camera(Chunk * const byteChunk);
+
 public:
 	Camera();
+
+	// Serialization
+	shared_ptr<Chunk> serialize();
+	static shared_ptr<Camera> deserialize(Chunk * const byteChunk);
 
 	void translate(const glm::vec3 &translate);
 	void rotate(float angle, const glm::vec3 &axis);

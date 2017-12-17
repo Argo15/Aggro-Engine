@@ -30,4 +30,5 @@ public:
 	boost::optional<string> parseString();
 	boost::optional<glm::mat4> parseMat4();
 	boost::optional<glm::vec3> parseVec3();
+	boost::optional<glm::vec4> parseVec4();
 };

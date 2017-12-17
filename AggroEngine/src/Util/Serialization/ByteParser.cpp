@@ -165,7 +165,6 @@ boost::optional<glm::mat4> ByteParser::parseMat4()
 	return boost::optional<glm::mat4>();
 }
 
-
 boost::optional<glm::vec3> ByteParser::parseVec3()
 {
 	int numBytes = 3 * sizeof(float);
@@ -174,4 +173,14 @@ boost::optional<glm::vec3> ByteParser::parseVec3()
 		return boost::optional<glm::vec3>(glm::make_vec3((float *)*bytes));
 	}
 	return boost::optional<glm::vec3>();
+}
+
+boost::optional<glm::vec4> ByteParser::parseVec4()
+{
+	int numBytes = 4 * sizeof(float);
+	if (boost::optional<char *> bytes = parseBytes(numBytes))
+	{
+		return boost::optional<glm::vec4>(glm::make_vec4((float *)*bytes));
+	}
+	return boost::optional<glm::vec4>();
 }
