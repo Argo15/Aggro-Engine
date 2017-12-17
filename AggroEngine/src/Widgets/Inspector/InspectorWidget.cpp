@@ -1,6 +1,7 @@
 #include "InspectorWidget.hpp"
 #include "HeaderWidget.hpp"
 #include "TransformWidget.hpp"
+#include "DirectLightWidget.hpp"
 #include <QLabel>
 
 InspectorWidget::InspectorWidget(shared_ptr<EngineContext> context, QWidget *parent)
@@ -10,6 +11,7 @@ InspectorWidget::InspectorWidget(shared_ptr<EngineContext> context, QWidget *par
 	m_layout = new QVBoxLayout();
 	m_widgets.push_back(shared_ptr<InspectorSubWidget>(new HeaderWidget(this)));
 	m_widgets.push_back(shared_ptr<InspectorSubWidget>(new TransformWidget(this)));
+	m_widgets.push_back(shared_ptr<InspectorSubWidget>(new DirectLightWidget(this)));
 	for (auto widget : m_widgets)
 	{
 		m_layout->addWidget(widget.get());

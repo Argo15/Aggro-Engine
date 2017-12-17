@@ -76,6 +76,9 @@ void LightBuffer::drawToBuffer(RenderOptions &renderOptions, shared_ptr<TextureH
 	m_glslProgram->sendUniform("normalTex", normalTex, 0);
 	glm::vec3 dir = directLight->getDirection();
 	m_glslProgram->sendUniform("lightDir", dir.x, dir.y, dir.z);
+	glm::vec3 color = directLight->getColor();
+	m_glslProgram->sendUniform("color", color.x, color.y, color.z);
+	m_glslProgram->sendUniform("ambient", directLight->getAmbient() / 100.0f);
 
 	glm::mat4 mvpMatrix = glm::ortho(0, 1, 0, 1);
 	m_glslProgram->sendUniform("modelViewProjectionMatrix", glm::value_ptr(mvpMatrix), false, 4);

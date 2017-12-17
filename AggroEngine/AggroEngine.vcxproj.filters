@@ -364,6 +364,9 @@
     <ClCompile Include="src\Subsystem\Graphics\Impl\OpenGL\Framebuffer\ShadedBuffer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\Widgets\Inspector\DirectLightWidget.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Resource\Image\CheckersImage.hpp">
@@ -665,6 +668,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\Subsystem\Graphics\Impl\OpenGL\Framebuffer\ShadedBuffer.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Widgets\Inspector\DirectLightWidget.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

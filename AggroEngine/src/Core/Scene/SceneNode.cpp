@@ -286,7 +286,7 @@ shared_ptr<TransformComponent> SceneNode::getTransformComponent()
 
 bool SceneNode::hasRenderComponent()
 {
-	return m_renderComponent != nullptr;
+	return m_renderComponent && m_renderComponent != nullptr;
 }
 
 void SceneNode::setRenderComponent(shared_ptr<RenderComponent> renderComponent)
