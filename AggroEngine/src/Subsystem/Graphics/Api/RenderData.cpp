@@ -3,7 +3,6 @@
 
 RenderData::RenderData()
 	: m_pVertexBufferHandle()
-	, m_pTextureHandle()
 	, m_m4ModelMatrix(1.0)
 	, m_drawMode(DrawMode::TRIANGLES)
 	, m_lineWidth(1)
@@ -12,9 +11,8 @@ RenderData::RenderData()
 {
 }
 
-RenderData::RenderData(shared_ptr<VertexBufferHandle> pVertexBufferHandle, shared_ptr<TextureHandle> pTextureHandle)
+RenderData::RenderData(shared_ptr<VertexBufferHandle> pVertexBufferHandle)
 	: m_pVertexBufferHandle(pVertexBufferHandle)
-	, m_pTextureHandle(pTextureHandle)
 	, m_m4ModelMatrix(1.0)
 	, m_drawMode(DrawMode::TRIANGLES)
 	, m_lineWidth(1)
@@ -23,11 +21,8 @@ RenderData::RenderData(shared_ptr<VertexBufferHandle> pVertexBufferHandle, share
 {
 }
 
-RenderData::RenderData(shared_ptr<VertexBufferHandle> pVertexBufferHandle, 
-					shared_ptr<TextureHandle> pTextureHandle,
-					DrawMode drawMode)
+RenderData::RenderData(shared_ptr<VertexBufferHandle> pVertexBufferHandle, DrawMode drawMode)
 	: m_pVertexBufferHandle(pVertexBufferHandle)
-	, m_pTextureHandle(pTextureHandle)
 	, m_m4ModelMatrix(1.0)
 	, m_drawMode(drawMode)
 	, m_lineWidth(1)
@@ -48,12 +43,6 @@ RenderData *RenderData::setVertexBufferHandle(shared_ptr<VertexBufferHandle> han
 	return this;
 }
 
-RenderData *RenderData::setTextureHandle(shared_ptr<TextureHandle> handle)
-{
-	m_pTextureHandle = handle;
-	return this;
-}
-
 RenderData *RenderData::setDrawMode(DrawMode drawMode)
 {
 	m_drawMode = drawMode;
@@ -63,11 +52,6 @@ RenderData *RenderData::setDrawMode(DrawMode drawMode)
 shared_ptr<VertexBufferHandle> RenderData::getVertexBufferHandle()
 {
 	return m_pVertexBufferHandle;
-}
-
-shared_ptr<TextureHandle> RenderData::getTextureHandle()
-{
-	return m_pTextureHandle;
 }
 
 glm::mat4 &RenderData::getModelMatrix()
@@ -88,6 +72,16 @@ void RenderData::setId(unsigned int id)
 unsigned int RenderData::getId()
 {
 	return m_id;
+}
+
+void RenderData::setMaterial(shared_ptr<Material> material)
+{
+	m_material = material;
+}
+
+shared_ptr<Material> RenderData::getMaterial()
+{
+	return m_material;
 }
 
 void RenderData::setLineWidth(int width)

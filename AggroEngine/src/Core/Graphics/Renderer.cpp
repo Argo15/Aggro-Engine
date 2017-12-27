@@ -13,7 +13,7 @@ void Renderer::init()
 	shared_ptr<Mesh> grid = unique_ptr<Mesh>(new Grid(16));
 	shared_ptr<VertexBufferHandle> gridVBO = m_graphicsContext->getGraphics()->createVertexBuffer(grid);
 	shared_ptr<TextureHandle> defaultTexture = m_graphicsContext->getGraphics()->createTexture();
-	m_gridRenderData = shared_ptr<RenderData>(new RenderData(gridVBO, defaultTexture, DrawMode::LINES));
+	m_gridRenderData = shared_ptr<RenderData>(new RenderData(gridVBO, DrawMode::LINES));
 	m_gridRenderData->setLightingEnabled(false);
 }
 
@@ -46,7 +46,7 @@ void Renderer::_renderSceneNodeRecursive(shared_ptr<SceneNode> node, glm::mat4 t
 		curTransform = transform * node->getTransformComponent()->getTransform();
 		if (node->hasRenderComponent())
 		{
-			node->getRenderComponent()->render(m_graphicsContext, curTransform, viewMat, node->getId(), true);
+			node->getRenderComponent()->render(m_graphicsContext, curTransform, viewMat, node);
 		}
 		if (node->hasDirectLightComponent())
 		{

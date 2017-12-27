@@ -2,7 +2,8 @@
 #include "WhiteTexture.hpp"
 #include "Locks.hpp"
 
-unique_ptr<WhiteTexture> devTexture;
+static unique_ptr<WhiteTexture> devTexture;
+static glm::vec3 defaultColor(1.0);
 
 GBuffer::GBuffer(OpenGL43Graphics *graphics, int width, int height)
 	: FrameBufferObject(width, height)
@@ -111,18 +112,26 @@ void GBuffer::drawToBuffer(RenderOptions renderOptions, std::queue<shared_ptr<Re
 			m_glslProgram->sendUniform("modelViewProjectionMatrix", glm::value_ptr(mvpMatrix), false, 4);
 			glm::mat3 normalMatrix = glm::mat3(renderData->getModelMatrix());
 			m_glslProgram->sendUniform("normalMatrix", glm::value_ptr(normalMatrix), false, 3);
+
 			m_glslProgram->sendUniform("lightingEnabled", renderData->isLightingEnabled());
 
-			glActiveTexture(GL_TEXTURE0);
-			if (renderData->getTextureHandle())
+			shared_ptr<Material> material = renderData->getMaterial();
+			if (material)
 			{
-				glBindTexture(GL_TEXTURE_2D, renderData->getTextureHandle()->get());
+				m_glslProgram->sendUniform("material.color", material->getColor());
+				shared_ptr<TextureHandle> texture = devTexture->getHandle();
+				if (material->getTexture())
+				{
+					texture = material->getTexture();
+				}
+				m_glslProgram->sendUniform("material.tex", texture, 0);
 			}
 			else
 			{
-				glBindTexture(GL_TEXTURE_2D, devTexture->getHandle()->get());
+				m_glslProgram->sendUniform("material.color", defaultColor);
+				m_glslProgram->sendUniform("material.tex", devTexture->getHandle(), 0);
 			}
-			m_glslProgram->sendUniform("tex", 0);
+
 			unsigned int id = renderData->getId();
 			float r = (id % 255) / 255.0f;
 			float g = ((id / 255) % 255) / 255.0f;

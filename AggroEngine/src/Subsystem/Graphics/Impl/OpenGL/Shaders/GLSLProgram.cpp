@@ -142,10 +142,19 @@ void GLSLProgram::sendUniform(const std::string &name, float x, float y, float z
 	glUniform3f(getLoc(name), x, y, z);
 }
 
-void GLSLProgram::sendUniform(const std::string &name, float x, float y, float z,
-			      float w)
+void GLSLProgram::sendUniform(const std::string &name, float x, float y, float z, float w)
 {
 	glUniform4f(getLoc(name), x, y, z, w);
+}
+
+void GLSLProgram::sendUniform(const std::string &name, glm::vec3 vec)
+{
+	sendUniform(getLoc(name), vec.x, vec.y, vec.z);
+}
+
+void GLSLProgram::sendUniform(const std::string &name, glm::vec4 vec)
+{
+	sendUniform(getLoc(name), vec.x, vec.y, vec.z, vec.w);
 }
 
 void GLSLProgram::sendUniform(const std::string &name, shared_ptr<TextureHandle> tex, int x)
@@ -173,14 +182,12 @@ void GLSLProgram::sendUniform(const std::string &name, int x, int y, int z)
 	glUniform3i(getLoc(name), x, y, z);
 }
 
-void GLSLProgram::sendUniform(const std::string &name, int x, int y, int z,
-			      int w)
+void GLSLProgram::sendUniform(const std::string &name, int x, int y, int z, int w)
 {
 	glUniform4i(getLoc(name), x, y, z, w);
 }
 
-void GLSLProgram::sendUniform(const std::string &name, float *matrix, bool transpose,
-			      int size)
+void GLSLProgram::sendUniform(const std::string &name, float *matrix, bool transpose, int size)
 {
 	int loc = getLoc(name);
   
@@ -214,8 +221,7 @@ void GLSLProgram::sendUniform(GLuint location, float x, float y, float z)
 	glUniform3f(location, x, y, z);
 }
 
-void GLSLProgram::sendUniform(GLuint location, float x, float y, float z,
-							  float w)
+void GLSLProgram::sendUniform(GLuint location, float x, float y, float z, float w)
 {
 	glUniform4f(location, x, y, z, w);
 }
@@ -241,8 +247,7 @@ void GLSLProgram::sendUniform(GLuint location, int x, int y, int z,
 	glUniform4i(location, x, y, z, w);
 }
 
-void GLSLProgram::sendUniform(GLuint location, float *matrix, bool transpose,
-							  int size)
+void GLSLProgram::sendUniform(GLuint location, float *matrix, bool transpose, int size)
 {
 	switch(size)
 	{

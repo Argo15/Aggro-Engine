@@ -5,6 +5,7 @@
 #include "VertexBufferHandle.hpp"
 #include "TextureHandle.hpp"
 #include "Matrix.hpp"
+#include "Material.hpp"
 using namespace std;
 
 /**
@@ -18,7 +19,7 @@ class RenderData
 private:
 	unsigned int m_id;
 	shared_ptr<VertexBufferHandle> m_pVertexBufferHandle;
-	shared_ptr<TextureHandle> m_pTextureHandle;
+	shared_ptr<Material> m_material;
 	glm::mat4 m_m4ModelMatrix;
 	DrawMode m_drawMode;
 	int m_lineWidth;
@@ -27,21 +28,22 @@ private:
 
 public:
 	RenderData();
-	RenderData(shared_ptr<VertexBufferHandle> pVertexBufferHandle, shared_ptr<TextureHandle> pTextureHandle);
-	RenderData(shared_ptr<VertexBufferHandle> pVertexBufferHandle, shared_ptr<TextureHandle> pTextureHandle, DrawMode drawMode);
+	RenderData(shared_ptr<VertexBufferHandle> pVertexBufferHandle);
+	RenderData(shared_ptr<VertexBufferHandle> pVertexBufferHandle, DrawMode drawMode);
 
 	void setId(unsigned int id);
 	unsigned int getId();
 
 	RenderData *setModelMatrix(glm::mat4 &m4ModelMatrix);
 	RenderData *setVertexBufferHandle(shared_ptr<VertexBufferHandle> handle);
-	RenderData *setTextureHandle(shared_ptr<TextureHandle> handle);
 	RenderData *setDrawMode(DrawMode drawMode);
 
 	shared_ptr<VertexBufferHandle> getVertexBufferHandle();
-	shared_ptr<TextureHandle> getTextureHandle();
 	glm::mat4 &getModelMatrix();
 	DrawMode getDrawMode();
+
+	void setMaterial(shared_ptr<Material> material);
+	shared_ptr<Material> getMaterial();
 
 	void setLineWidth(int width);
 	int getLineWidth();

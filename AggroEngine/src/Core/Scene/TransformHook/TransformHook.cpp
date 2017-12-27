@@ -20,7 +20,9 @@ void TransformHook::_initialize(shared_ptr<Graphics> graphics, shared_ptr<Scene>
 		m_renderData[i]->setDrawMode(DrawMode::LINES);
 		m_renderData[i]->setVertexBufferHandle(graphics->createVertexBuffer(getMesh(axis[i])));
 		m_texture[i] = graphics->createTexture(shared_ptr<Image>(new RGBImage(1, 1, axis[i])));
-		m_renderData[i]->setTextureHandle(m_texture[i]);
+		shared_ptr<Material> mat(new Material(glm::vec3(1.0)));
+		mat->setTexture(m_texture[i]);
+		m_renderData[i]->setMaterial(mat);
 		m_renderData[i]->setLineWidth(2);
 		m_renderData[i]->setDepthTestEnabled(false);
 		m_renderData[i]->setId(Scene::getNextId());
@@ -71,11 +73,11 @@ bool TransformHook::updateSelection(shared_ptr<MouseState> mouse, shared_ptr<Eng
 		{
 			if (i == m_selectedIdx)
 			{
-				m_renderData[i]->setTextureHandle(m_texture[3]);
+				m_renderData[i]->getMaterial()->setTexture(m_texture[3]);
 			}
 			else
 			{
-				m_renderData[i]->setTextureHandle(m_texture[i]);
+				m_renderData[i]->getMaterial()->setTexture(m_texture[i]);
 			}
 		}
 	}

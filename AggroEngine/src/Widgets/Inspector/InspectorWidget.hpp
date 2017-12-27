@@ -21,9 +21,8 @@ private:
 	QWidget *m_widget;
 	QVBoxLayout *m_layout;
 
-	void _refresh(shared_ptr<SceneNode> node);
-
 public:
 	InspectorWidget(shared_ptr<EngineContext> context, QWidget *parent = nullptr);
 
+	void refresh(shared_ptr<SceneNode> node);
 };

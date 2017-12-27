@@ -2,16 +2,16 @@
 #include "DirectLightMesh.hpp"
 #include "RGBImage.hpp"
 
-const static string imagePath = "Resources/Textures/Engine/sun_icon.png";
+const string DirectLightRenderComponent::s_imagePath = "Resources/Textures/Engine/sun_icon.png";
 
 DirectLightRenderComponent::DirectLightRenderComponent(Chunk * const byteChunk, shared_ptr<Resources> resources)
-	: SpriteRenderComponent(resources, resources->getIdForPath(imagePath))
+	: SpriteRenderComponent(resources)
 	, m_lineRenderData()
 {
 }
 
 DirectLightRenderComponent::DirectLightRenderComponent(shared_ptr<Resources> resources)
-	: SpriteRenderComponent(resources, resources->getIdForPath(imagePath))
+	: SpriteRenderComponent(resources)
 	, m_lineRenderData()
 {
 }
@@ -35,21 +35,28 @@ shared_ptr<RenderComponent> DirectLightRenderComponent::deserialize(Chunk * cons
 	return shared_ptr<DirectLightRenderComponent>(new DirectLightRenderComponent(byteChunk, resources));
 }
 
-void DirectLightRenderComponent::render(shared_ptr<GraphicsContext> context, glm::mat4 m4Transform, glm::mat4 m4ViewMat, int objId, bool lightingEnabled)
+void DirectLightRenderComponent::render(shared_ptr<GraphicsContext> context, glm::mat4 m4Transform, glm::mat4 m4ViewMat, shared_ptr<SceneNode> node)
 {
 	if (!m_lineRenderData)
 	{
 		m_lineRenderData = shared_ptr<RenderData>(new RenderData());
 		m_lineRenderData->setVertexBufferHandle(context->getGraphics()
 			->createVertexBuffer(shared_ptr<Mesh>(new DirectLightMesh())));
-		m_lineRenderData->setTextureHandle(context->getGraphics()
-			->createTexture(shared_ptr<Image>(new RGBImage(1, 1, glm::vec3(0.75, 0.75, 0.25)))));
+
+		shared_ptr<Material> mat(new Material(glm::vec3(1.0)));
+		mat->setTexture(context->getGraphics()->createTexture(
+			shared_ptr<Image>(new RGBImage(1, 1, glm::vec3(0.75, 0.75, 0.25)))));
+		m_lineRenderData->setMaterial(mat);
+
 		m_lineRenderData->setDrawMode(DrawMode::LINES);
 		m_lineRenderData->setLineWidth(2);
-		m_lineRenderData->setId(objId);
 		m_lineRenderData->setLightingEnabled(false);
+		if (node)
+		{
+			m_lineRenderData->setId(node->getId());
+		}
 	}
 	m_lineRenderData->setModelMatrix(m4Transform);
 	context->getGraphics()->stageTriangleRender(m_lineRenderData);
-	SpriteRenderComponent::render(context, m4Transform, m4ViewMat, objId, false);
+	SpriteRenderComponent::render(context, m4Transform, m4ViewMat, node);
 }

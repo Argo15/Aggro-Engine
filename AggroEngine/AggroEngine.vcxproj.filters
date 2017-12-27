@@ -130,9 +130,6 @@
     <ClCompile Include="src\Widgets\Inspector\HeaderWidget.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\Widgets\Inspector\TransformWidget.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="GeneratedFiles\Debug\moc_MainWidget.cpp">
       <Filter>Generated Files\Debug</Filter>
     </ClCompile>
@@ -364,7 +361,22 @@
     <ClCompile Include="src\Subsystem\Graphics\Impl\OpenGL\Framebuffer\ShadedBuffer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\Widgets\Inspector\DirectLightWidget.cpp">
+    <ClCompile Include="src\Core\Components\Material\MaterialComponent.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Widgets\Inspector\Lighting\DirectLightWidget.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Widgets\Inspector\Transform\TransformWidget.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Widgets\Inspector\Material\MaterialWidget.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Widgets\Inspector\Material\AddMaterialWidget.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Subsystem\Graphics\Api\Material\Material.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -454,9 +466,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\Widgets\Inspector\InspectorSubWidget.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Widgets\Inspector\TransformWidget.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\Core\Jobs\JobManager.hpp">
@@ -670,7 +679,22 @@
     <ClInclude Include="src\Subsystem\Graphics\Impl\OpenGL\Framebuffer\ShadedBuffer.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\Widgets\Inspector\DirectLightWidget.hpp">
+    <ClInclude Include="src\Core\Components\Material\MaterialComponent.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Widgets\Inspector\Lighting\DirectLightWidget.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Widgets\Inspector\Transform\TransformWidget.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Widgets\Inspector\Material\MaterialWidget.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Widgets\Inspector\Material\AddMaterialWidget.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Subsystem\Graphics\Api\Material\Material.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
