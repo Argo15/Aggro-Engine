@@ -40,7 +40,7 @@ void TransformHook::render(shared_ptr<Graphics> graphics, shared_ptr<Scene> scen
 
 	shared_ptr<SceneNode> selectedNode = scene->getSelectedNode();
 
-	if (selectedNode)
+	if (selectedNode && selectedNode->hasTransformComponent())
 	{
 		MatrixDecompose transformMat(selectedNode->getWorldTransform());
 		shared_ptr<Camera> camera = scene->getCamera();

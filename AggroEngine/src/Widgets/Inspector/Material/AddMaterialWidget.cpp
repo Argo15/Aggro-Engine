@@ -18,10 +18,10 @@ AddMaterialWidget::AddMaterialWidget(InspectorWidget *parent)
 	m_layout->addLayout(mainLayout);
 
 	connect(m_addMaterialBtn.get(), &QPushButton::pressed, this, [this, parent]() {
-		if (m_lastActiveNode)
+		if (m_currentNode)
 		{
-			m_lastActiveNode->setMaterialComponent(shared_ptr<MaterialComponent>(new MaterialComponent()));
-			parent->refresh(m_lastActiveNode);
+			m_currentNode->setMaterialComponent(shared_ptr<MaterialComponent>(new MaterialComponent(m_lastActiveNode.get())));
+			parent->refresh(m_currentNode);
 		}
 	});
 }

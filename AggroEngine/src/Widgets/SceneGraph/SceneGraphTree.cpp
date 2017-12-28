@@ -11,8 +11,9 @@
 
 SceneGraphTree::SceneGraphTree(shared_ptr<EngineContext> context, QWidget *parent)
 	: QDockWidget(parent)
-	, m_treeWidget(shared_ptr<QTreeWidget>(new SceneTreeWidget()))
+	, m_treeWidget(shared_ptr<QTreeWidget>(new SceneTreeWidget(this)))
 	, m_context(context)
+	, m_materialsItem(nullptr)
 {
 	m_addCubeAction = new QAction(tr("Add Cube"), this);
 	connect(m_addCubeAction, &QAction::triggered, this, [this]() {
@@ -47,7 +48,7 @@ SceneGraphTree::SceneGraphTree(shared_ptr<EngineContext> context, QWidget *paren
 		{
 			newNode->getTransformComponent()->setScale(glm::vec3(0.3, 0.3, 0.3));
 		}
-		newNode->setMaterialComponent(shared_ptr<MaterialComponent>(new MaterialComponent()));
+		newNode->setMaterialComponent(shared_ptr<MaterialComponent>(new MaterialComponent(newNode.get())));
 		newNode->getMaterialComponent()->setTextureImageId(m_context->getResources()->
 			getIdForPath((workingDirectory.relativeFilePath(filename).toStdString())));
 	});
@@ -63,9 +64,20 @@ SceneGraphTree::SceneGraphTree(shared_ptr<EngineContext> context, QWidget *paren
 			newNode->getTransformComponent()->setTranslate(glm::vec3(0, 3, 0));
 			newNode->getTransformComponent()->setRotate(glm::vec3(0.52, 0, -0.52));
 		}
-		newNode->setMaterialComponent(shared_ptr<MaterialComponent>(new MaterialComponent()));
+		newNode->setMaterialComponent(shared_ptr<MaterialComponent>(new MaterialComponent(newNode.get())));
 		newNode->getMaterialComponent()->setTextureImageId(
 			m_context->getResources()->getIdForPath(DirectLightRenderComponent::s_imagePath));
+	});
+
+	QAction *addMaterial = new QAction(tr("Add Material"), this);
+	connect(addMaterial, &QAction::triggered, this, [this]() {
+		shared_ptr<SceneNode> newNode = shared_ptr<SceneNode>(new SceneNode(Scene::getNextId()));
+		newNode->setMaterialComponent(shared_ptr<MaterialComponent>(new MaterialComponent(newNode.get())));
+		newNode->setName("New Material");
+		newNode->setBaseMaterialNode();
+		m_context->getScene()->addBaseMaterial(newNode);
+		m_context->getScene()->selectNodeById(newNode->getId());
+		refresh(m_context->getScene().get());
 	});
 
 	m_deleteAction = new QAction(tr("Delete"), this);
@@ -81,12 +93,14 @@ SceneGraphTree::SceneGraphTree(shared_ptr<EngineContext> context, QWidget *paren
 	m_treeWidget->addAction(addFromFileAction);
 	m_treeWidget->addAction(addSpriteAction);
 	m_treeWidget->addAction(addDirectLightAction);
+	m_treeWidget->addAction(addMaterial);
 	m_treeWidget->addAction(m_deleteAction);
 	connect(m_treeWidget.get(), &QTreeWidget::itemSelectionChanged, this, &SceneGraphTree::_selectionChanged);
 	
 	m_context->getScene()->addUpdateListener([this](auto scene) {refresh(scene);});
 	m_context->getScene()->addSelectionChangeListener([this](auto node) {_selectNode(node.get());});
 	m_context->addNewSceneListener([this](auto scene) {
+		m_materialsItem = nullptr;
 		m_treeWidget->clear();
 		m_currentNodes = boost::unordered_map<SceneNode *, QTreeWidgetItem *>();
 		refresh(scene);
@@ -102,6 +116,32 @@ void SceneGraphTree::refresh(Scene* scene)
 	boost::lock_guard<SceneGraphTree> guard(*this);
 	QSignalBlocker block(m_treeWidget.get());
 	_addSceneNodeRecursive(scene->getRoot(), nullptr, true);
+
+	boost::unordered_map<int, shared_ptr<SceneNode>> matNodes = scene->getBaseMaterials();
+	if (m_materialsItem != nullptr)
+	{
+		delete m_materialsItem;
+	}
+	if (!matNodes.empty())
+	{
+		m_materialsItem = new SceneNodeTreeItem(shared_ptr<SceneNode>(), m_treeWidget.get());
+		m_materialsItem->setText(0, "Materials");
+		m_materialsItem->setFont(0, QFont("Times", -1, QFont::Bold));
+		m_materialsItem->setExpanded(true);
+		for (auto matNode : matNodes | boost::adaptors::map_values)
+		{
+			SceneNodeTreeItem *treeItem = new SceneNodeTreeItem(matNode);
+			treeItem->setText(0, QString::fromStdString(matNode->getName()));
+			m_currentNodes[matNode.get()] = treeItem;
+			m_materialsItem->addChild(treeItem);
+			matNode->addChangeListener(this, [this](auto updateNode) {this->_refreshNode(updateNode); });
+			matNode->addDeletedListener(this, [this](auto deleteNode) {this->_deleteNode(deleteNode); });
+			if (scene->getSelectedNode() == matNode)
+			{
+				treeItem->setSelected(true);
+			}
+		}
+	}
 }
 
 void SceneGraphTree::_addSceneNodeRecursive(shared_ptr<SceneNode> node, QTreeWidgetItem *parent, bool isRoot)
@@ -109,6 +149,10 @@ void SceneGraphTree::_addSceneNodeRecursive(shared_ptr<SceneNode> node, QTreeWid
 	if (!node)
 	{
 		return;
+	}
+	if (parent == m_materialsItem)
+	{
+		parent = nullptr;
 	}
 
 	QTreeWidgetItem *treeItem = nullptr;
@@ -123,7 +167,7 @@ void SceneGraphTree::_addSceneNodeRecursive(shared_ptr<SceneNode> node, QTreeWid
 		// Create item for current
 		if (isRoot)
 		{
-			setWindowTitle("Scene"); // TODO change to scene name
+			setWindowTitle("Scene");
 		}
 		else if (parent == nullptr)
 		{
@@ -184,7 +228,10 @@ shared_ptr<SceneNode> SceneGraphTree::_addNewNode(shared_ptr<StaticObjectRenderC
 	if (*it)
 	{
 		SceneNodeTreeItem *item = (SceneNodeTreeItem *)(*it);
-		node = item->getSceneNode();
+		if (item->getSceneNode())
+		{
+			node = item->getSceneNode();
+		}
 	}
 
 	//Create new scene node
@@ -211,8 +258,11 @@ void SceneGraphTree::_selectionChanged()
 	{
 		SceneNodeTreeItem *item = (SceneNodeTreeItem *)(*it);
 		shared_ptr<SceneNode> node = item->getSceneNode();
-		m_context->getScene()->selectNode(node);
-		hasSelected = true;
+		if (node)
+		{
+			m_context->getScene()->selectNode(node);
+			hasSelected = true;
+		}
 		it++;
 	}
 
@@ -226,7 +276,10 @@ void SceneGraphTree::_deleteSelected()
 	{
 		SceneNodeTreeItem *item = (SceneNodeTreeItem *)(*it);
 		shared_ptr<SceneNode> node = item->getSceneNode();
-		m_context->getScene()->deleteNode(node);
+		if (node)
+		{
+			m_context->getScene()->deleteNode(node);
+		}
 		it++;
 	}
 }

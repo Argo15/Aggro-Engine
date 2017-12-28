@@ -18,11 +18,23 @@ Scene::Scene(Chunk * const byteChunk, shared_ptr<Resources> resources)
 {
 	m_camera = shared_ptr<Camera>(new Camera());
 	ByteParser parser = ByteParser(*byteChunk->getNumBytes(), byteChunk->getByteData().get());
+	boost::unordered_map<int, shared_ptr<SceneNode>> baseMaterials;
 	while (boost::optional<Chunk> nextChunk = parser.parseChunk())
 	{
-		if (*nextChunk->getType() == ChunkType::SCENE_NODE)
+		if (*nextChunk->getType() == ChunkType::BASE_MATERIAL)
 		{
-			m_root = SceneNode::deserialize(&*nextChunk, resources);
+			ByteParser matParser(*nextChunk);
+			int matId = matParser.parseInt().get_value_or(-1);
+			if (boost::optional<Chunk> matChunk = matParser.parseChunk())
+			{
+				shared_ptr<SceneNode> matNode = SceneNode::deserialize(&*matChunk, resources, baseMaterials);
+				addBaseMaterial(matNode);
+				baseMaterials[matId] = matNode;
+			}
+		}
+		else if (*nextChunk->getType() == ChunkType::SCENE_NODE)
+		{
+			m_root = SceneNode::deserialize(&*nextChunk, resources, baseMaterials);
 		}
 		else if (*nextChunk->getType() == ChunkType::CAMERA)
 		{
@@ -33,11 +45,27 @@ Scene::Scene(Chunk * const byteChunk, shared_ptr<Resources> resources)
 
 shared_ptr<Chunk> Scene::serialize(shared_ptr<Resources> resources)
 {
+	ByteAccumulator bytes;
+
+	// Base Materials
+	shared_ptr<Chunk> matChunk;
+	vector<shared_ptr<Chunk>> matChunks;
+	for (int matId : m_baseMaterials | boost::adaptors::map_keys)
+	{
+		ByteAccumulator matBytes;
+		matBytes.add(&matId);
+		shared_ptr<Chunk> mateNodeChunk = m_baseMaterials[matId]->serialize(resources);
+		matBytes.add(mateNodeChunk.get());
+		matChunk = shared_ptr<Chunk>(new Chunk(ChunkType::BASE_MATERIAL, matBytes.getNumBytes(), matBytes.collect()));
+		matChunks.push_back(matChunk);
+		bytes.add(matChunk.get());
+	}
+
 	shared_ptr<Chunk> rootChunk = m_root->serialize(resources);
 	shared_ptr<Chunk> cameraChunk = m_camera->serialize();
-	ByteAccumulator bytes;
 	bytes.add(rootChunk.get());
 	bytes.add(cameraChunk.get());
+
 	return shared_ptr<Chunk>(new Chunk(ChunkType::SCENE, bytes.getNumBytes(), bytes.collect()));
 }
 
@@ -50,7 +78,6 @@ shared_ptr<Scene> Scene::deserialize(Chunk * const byteChunk, shared_ptr<Resourc
 
 	return shared_ptr<Scene>(new Scene(byteChunk, resources));
 }
-
 
 shared_ptr<SceneNode> Scene::getRoot()
 {
@@ -176,6 +203,10 @@ shared_ptr<SceneNode> Scene::_getNodeByIdRecursive(shared_ptr<SceneNode> node, u
 
 shared_ptr<SceneNode> Scene::getNodeById(unsigned int id)
 {
+	if (m_baseMaterials.find(id) != m_baseMaterials.end())
+	{
+		return m_baseMaterials[id];
+	}
 	return _getNodeByIdRecursive(m_root, id);
 }
 
@@ -186,8 +217,17 @@ void Scene::addSelectionChangeListener(std::function<void(shared_ptr<SceneNode>)
 
 void Scene::deleteNode(shared_ptr<SceneNode> node)
 {
-	node->getParent()->removeChild(node);
-	node->notifyDeleted();
+	if (node->getParent())
+	{
+		node->getParent()->removeChild(node);
+		node->notifyDeleted();
+		return;
+	}
+	else if (m_baseMaterials.find(node->getId()) != m_baseMaterials.end())
+	{
+		m_baseMaterials.erase(node->getId());
+		node->notifyDeleted();
+	}
 }
 
 void Scene::deleteSelectedNode()
@@ -221,4 +261,14 @@ int Scene::_getMaxNodeIdRecursive(shared_ptr<SceneNode> node)
 		}
 	}
 	return maxId;
+}
+
+void Scene::addBaseMaterial(shared_ptr<SceneNode> node)
+{
+	m_baseMaterials[node->getId()] = node;
+}
+
+boost::unordered_map<int, shared_ptr<SceneNode>> &Scene::getBaseMaterials()
+{
+	return m_baseMaterials;
 }

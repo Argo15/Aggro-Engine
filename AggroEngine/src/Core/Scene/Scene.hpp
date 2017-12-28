@@ -22,6 +22,7 @@ private:
 	shared_ptr<SceneNode> m_root;
 	shared_ptr<Camera> m_camera;
 	shared_ptr<TransformHook> m_transformHook;
+	boost::unordered_map<int, shared_ptr<SceneNode>> m_baseMaterials;
 	Listener<Scene*> m_updateListeners;
 	Listener<shared_ptr<SceneNode>> m_selectionChangeListeners;
 
@@ -71,4 +72,7 @@ public:
 	void deleteSelectedNode();
 
 	static unsigned int getNextId();
+
+	void addBaseMaterial(shared_ptr<SceneNode> node);
+	boost::unordered_map<int, shared_ptr<SceneNode>> &getBaseMaterials();
 };

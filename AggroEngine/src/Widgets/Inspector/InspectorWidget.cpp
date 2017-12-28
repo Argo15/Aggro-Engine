@@ -4,6 +4,7 @@
 #include "DirectLightWidget.hpp"
 #include "MaterialWidget.hpp"
 #include "AddMaterialWidget.hpp"
+#include "DelegateMaterialWidget.hpp"
 #include <QLabel>
 
 InspectorWidget::InspectorWidget(shared_ptr<EngineContext> context, QWidget *parent)
@@ -16,6 +17,7 @@ InspectorWidget::InspectorWidget(shared_ptr<EngineContext> context, QWidget *par
 	m_widgets.push_back(shared_ptr<InspectorSubWidget>(new DirectLightWidget(this)));
 	m_widgets.push_back(shared_ptr<InspectorSubWidget>(new MaterialWidget(this, context->getResources())));
 	m_widgets.push_back(shared_ptr<InspectorSubWidget>(new AddMaterialWidget(this)));
+	m_widgets.push_back(shared_ptr<InspectorSubWidget>(new DelegateMaterialWidget(this, context->getScene())));
 	for (auto widget : m_widgets)
 	{
 		m_layout->addWidget(widget.get());

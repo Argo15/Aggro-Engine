@@ -1,12 +1,22 @@
 #include "MaterialComponent.hpp"
 
-MaterialComponent::MaterialComponent()
-	: m_color(1.0)
+MaterialComponent::MaterialComponent(SceneNode *owner)
+	: m_owner(owner)
+	, m_color(1.0)
 {
 
 }
 
-MaterialComponent::MaterialComponent(Chunk * const byteChunk, shared_ptr<Resources> resources)
+MaterialComponent::MaterialComponent(SceneNode *owner, shared_ptr<MaterialComponent> copy)
+	: m_owner(owner)
+	, m_color(copy->m_color)
+	, m_textureImageId(copy->m_textureImageId)
+{
+}
+
+
+MaterialComponent::MaterialComponent(Chunk * const byteChunk, SceneNode *owner, shared_ptr<Resources> resources)
+	: m_owner(owner)
 {
 	ByteParser parser(*byteChunk);
 	m_color = parser.parseVec3().get_value_or(glm::vec3(1.0));
@@ -30,14 +40,14 @@ shared_ptr<Chunk> MaterialComponent::serialize(shared_ptr<Resources> resources)
 	return shared_ptr<Chunk>(new Chunk(ChunkType::MATERIAL_COMPONENT, bytes.getNumBytes(), bytes.collect()));
 }
 
-shared_ptr<MaterialComponent> MaterialComponent::deserialize(Chunk * const byteChunk, shared_ptr<Resources> resources)
+shared_ptr<MaterialComponent> MaterialComponent::deserialize(Chunk * const byteChunk, SceneNode *owner, shared_ptr<Resources> resources)
 {
 	if (*byteChunk->getType() != ChunkType::MATERIAL_COMPONENT)
 	{
 		return shared_ptr<MaterialComponent>();
 	}
 
-	return shared_ptr<MaterialComponent>(new MaterialComponent(byteChunk, resources));
+	return shared_ptr<MaterialComponent>(new MaterialComponent(byteChunk, owner, resources));
 }
 
 void MaterialComponent::addChangeListener(void *ns, std::function<void(MaterialComponent *)> listener)
@@ -89,4 +99,9 @@ void MaterialComponent::removeTexture()
 {
 	m_textureImageId = boost::optional<int>();
 	m_changeListeners.notify(this);
+}
+
+SceneNode *MaterialComponent::getOwner()
+{
+	return m_owner;
 }

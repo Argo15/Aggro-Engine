@@ -8,6 +8,7 @@ SceneNode::SceneNode(unsigned int id, SceneNode *parent)
 	: m_parent(parent)
 	, m_children(shared_ptr<vector<shared_ptr<SceneNode>>>(new vector<shared_ptr<SceneNode>>()))
 	, m_isSelected(false)
+	, m_isBaseMaterialNode(false)
 	, m_name("")
 	, m_changeListeners()
 	, m_deletedListeners()
@@ -16,10 +17,11 @@ SceneNode::SceneNode(unsigned int id, SceneNode *parent)
 	setName("Object");
 }
 
-SceneNode::SceneNode(Chunk * const byteChunk, shared_ptr<Resources> resources)
+SceneNode::SceneNode(Chunk * const byteChunk, shared_ptr<Resources> resources, boost::unordered_map<int, shared_ptr<SceneNode>> baseMaterials)
 	: m_parent(nullptr)
 	, m_children(shared_ptr<vector<shared_ptr<SceneNode>>>(new vector<shared_ptr<SceneNode>>()))
 	, m_isSelected(false)
+	, m_isBaseMaterialNode(false)
 	, m_changeListeners()
 	, m_deletedListeners()
 {
@@ -31,10 +33,11 @@ SceneNode::SceneNode(Chunk * const byteChunk, shared_ptr<Resources> resources)
 			ByteParser primitives = ByteParser(*nextChunk);
 			m_id = Scene::getNextId();
 			setName(primitives.parseString().get_value_or("unknown"));
+			m_isBaseMaterialNode = primitives.parseBool().get_value_or(false);
 		}
 		else if (*nextChunk->getType() == ChunkType::SCENE_NODE)
 		{
-			addChild(SceneNode::deserialize(nextChunk.get_ptr(), resources));
+			addChild(SceneNode::deserialize(nextChunk.get_ptr(), resources, baseMaterials));
 		}
 		else if (*nextChunk->getType() == ChunkType::TRANSFORM_COMPONENT)
 		{
@@ -50,7 +53,16 @@ SceneNode::SceneNode(Chunk * const byteChunk, shared_ptr<Resources> resources)
 		}
 		else if (*nextChunk->getType() == ChunkType::MATERIAL_COMPONENT)
 		{
-			m_materialComponent = MaterialComponent::deserialize(nextChunk.get_ptr(), resources);
+			m_materialComponent = MaterialComponent::deserialize(nextChunk.get_ptr(), this, resources);
+		}
+		else if (*nextChunk->getType() == ChunkType::DELEGATE_MATERIAL)
+		{
+			ByteParser matBytes = ByteParser(*nextChunk);
+			int baseId = matBytes.parseInt().get_value_or(-1);
+			if (baseMaterials.find(baseId) != baseMaterials.end())
+			{
+				m_materialComponent = baseMaterials[baseId]->getMaterialComponent();
+			}
 		}
 	}
 }
@@ -65,6 +77,7 @@ shared_ptr<Chunk> SceneNode::serialize(shared_ptr<Resources> resources)
 
 	ByteAccumulator primitiveBytes;
 	primitiveBytes.add(&m_name);
+	primitiveBytes.add(&m_isBaseMaterialNode);
 	bytes.add(new Chunk(ChunkType::PRIMITIVES, primitiveBytes.getNumBytes(), primitiveBytes.collect()));
 
 	for (auto & child : *m_children)
@@ -97,22 +110,32 @@ shared_ptr<Chunk> SceneNode::serialize(shared_ptr<Resources> resources)
 
 	if (m_materialComponent)
 	{
-		chunk = m_materialComponent->serialize(resources);
-		chunks.push_back(chunk);
-		bytes.add(chunk.get());
+		if (this == m_materialComponent->getOwner() || m_materialComponent->getOwner() == nullptr)
+		{
+			chunk = m_materialComponent->serialize(resources);
+			chunks.push_back(chunk);
+			bytes.add(chunk.get());
+		}
+		else
+		{
+			ByteAccumulator matBytes;
+			int ownerId = m_materialComponent->getOwner()->getId();
+			matBytes.add(&ownerId);
+			bytes.add(new Chunk(ChunkType::DELEGATE_MATERIAL, matBytes.getNumBytes(), matBytes.collect()));
+		}
 	}
 
 	return shared_ptr<Chunk>(new Chunk(ChunkType::SCENE_NODE, bytes.getNumBytes(), bytes.collect()));
 }
 
-shared_ptr<SceneNode> SceneNode::deserialize(Chunk * const byteChunk, shared_ptr<Resources> resources)
+shared_ptr<SceneNode> SceneNode::deserialize(Chunk * const byteChunk, shared_ptr<Resources> resources, boost::unordered_map<int, shared_ptr<SceneNode>> baseMaterials)
 {
 	if (*byteChunk->getType() != ChunkType::SCENE_NODE)
 	{
 		return shared_ptr<SceneNode>();
 	}
 
-	return shared_ptr<SceneNode>(new SceneNode(byteChunk, resources));
+	return shared_ptr<SceneNode>(new SceneNode(byteChunk, resources, baseMaterials));
 }
 
 shared_ptr<vector<shared_ptr<SceneNode>>> SceneNode::getChildren()
@@ -342,4 +365,14 @@ void SceneNode::setMaterialComponent(shared_ptr<MaterialComponent> materialCompo
 shared_ptr<MaterialComponent> SceneNode::getMaterialComponent()
 {
 	return m_materialComponent;
+}
+
+void SceneNode::setBaseMaterialNode(bool value)
+{
+	m_isBaseMaterialNode = value;
+}
+
+bool SceneNode::isBaseMaterialNode()
+{
+	return hasMaterialComponent() && m_isBaseMaterialNode;
 }

@@ -107,7 +107,9 @@ void MaterialWidget::_onTexSelect()
 void MaterialWidget::_refresh(SceneNode *newNode)
 {
 	boost::lock_guard<MaterialWidget> guard(*this);
-	if (!newNode->hasMaterialComponent() || newNode->hasDirectLightComponent())
+	if (!newNode->hasMaterialComponent() || 
+		newNode->hasDirectLightComponent() || 
+		newNode->getMaterialComponent()->getOwner() != newNode)
 	{
 		this->hide();
 		return;

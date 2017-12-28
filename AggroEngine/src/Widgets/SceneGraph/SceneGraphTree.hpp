@@ -17,9 +17,12 @@ using namespace std;
 class SceneGraphTree : public QDockWidget,
 	public boost::basic_lockable_adapter<recursive_mutex>
 {
+	Q_OBJECT
+
 private:
 	shared_ptr<QTreeWidget> m_treeWidget;
 	shared_ptr<EngineContext> m_context;
+	QTreeWidgetItem *m_materialsItem;
 	QAction *m_addCubeAction;
 	QAction *m_addSphereAction;
 	QAction *m_deleteAction;

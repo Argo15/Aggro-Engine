@@ -1,4 +1,6 @@
 #include "GLWidget.hpp"
+#include <QDrag>
+#include <QMimeData>
 #include "StaticObjectRenderComponent.hpp"
 #include "Config.hpp"
 #include "CameraUpdateJob.hpp"
@@ -17,7 +19,7 @@ GLWidget::GLWidget(shared_ptr<EngineContext> context, QWidget *parent)
 	m_renderer = shared_ptr<Renderer>(new Renderer(m_graphicsContext));
 
 	setFocusPolicy(Qt::StrongFocus);
-	this->setMouseTracking(true);
+	setMouseTracking(true);
 	const Properties& props = gConfig->getProperties();
 	QGLFormat format;
 	if (!props.getBooleanProperty("graphics.vsync_enabled"))
@@ -26,7 +28,8 @@ GLWidget::GLWidget(shared_ptr<EngineContext> context, QWidget *parent)
 	}
 	m_maxFps = props.getIntProperty("graphics.max_fps");
 	m_millisPerFrame = 1000 / m_maxFps;
-	this->setFormat(format);
+	setFormat(format);
+	setAcceptDrops(true);
 }
 
 void GLWidget::initializeGL()
@@ -128,4 +131,49 @@ shared_ptr<Job> GLWidget::_setupCameraUpdateJob(shared_ptr<Camera> camera)
 		m_keyboard, m_mouse));
 	newJob->run();
 	return newJob;
+}
+
+void GLWidget::dragMoveEvent(QDragMoveEvent *event)
+{
+	if (event->mimeData()->hasFormat("application/x-materialdata"))
+	{
+		m_mouse->setPosition(event->pos().x(), event->pos().y());
+		int selectedId = m_selection->getSelectionAsId();
+		shared_ptr<SceneNode> node = m_engineContext->getScene()->getNodeById(selectedId);
+		if (node)
+		{
+			event->acceptProposedAction();
+			return;
+		}
+	}
+	event->ignore();
+}
+
+void GLWidget::dragEnterEvent(QDragEnterEvent *event)
+{
+	if (event->mimeData()->hasFormat("application/x-materialdata"))
+	{
+		event->acceptProposedAction();
+	}
+}
+
+void GLWidget::dragLeaveEvent(QDragLeaveEvent *event)
+{
+	event->accept();
+}
+
+void GLWidget::dropEvent(QDropEvent *event)
+{
+	if (event->mimeData()->hasFormat("application/x-materialdata"))
+	{
+		shared_ptr<SceneNode> matNode = m_engineContext->getScene()->getSelectedNode();
+		m_mouse->setPosition(event->pos().x(), event->pos().y());
+		int selectedId = m_selection->getSelectionAsId();
+		shared_ptr<SceneNode> dropNode = m_engineContext->getScene()->getNodeById(selectedId);
+		if (matNode && dropNode)
+		{
+			dropNode->setMaterialComponent(matNode->getMaterialComponent());
+		}
+	}
+	event->accept();
 }

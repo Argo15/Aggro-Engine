@@ -50,6 +50,12 @@
     <CustomBuild Include="src\Widgets\Main\Toolbar\TransformSelector.hpp">
       <Filter>Header Files</Filter>
     </CustomBuild>
+    <CustomBuild Include="src\Widgets\SceneGraph\SceneGraphTree.hpp">
+      <Filter>Header Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="src\Widgets\SceneGraph\SceneTreeWidget.hpp">
+      <Filter>Header Files</Filter>
+    </CustomBuild>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Widgets\MainWindow.cpp">
@@ -379,6 +385,21 @@
     <ClCompile Include="src\Subsystem\Graphics\Api\Material\Material.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_SceneGraphTree.cpp">
+      <Filter>Generated Files\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_SceneGraphTree.cpp">
+      <Filter>Generated Files\Release</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_SceneTreeWidget.cpp">
+      <Filter>Generated Files\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_SceneTreeWidget.cpp">
+      <Filter>Generated Files\Release</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Widgets\Inspector\Material\DelegateMaterialWidget.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Resource\Image\CheckersImage.hpp">
@@ -444,13 +465,7 @@
     <ClInclude Include="src\Core\EngineContext.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\Widgets\SceneGraph\SceneGraphTree.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="src\Widgets\SceneGraph\SceneNodeTreeItem.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Widgets\SceneGraph\SceneTreeWidget.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\Util\Listener.hpp">
@@ -695,6 +710,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\Subsystem\Graphics\Api\Material\Material.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Widgets\Inspector\Material\DelegateMaterialWidget.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

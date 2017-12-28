@@ -4,6 +4,10 @@
 #include <GL/glew.h>
 #include <QtOpenGL/QGLWidget>
 #include <QKeyEvent>
+#include <QDragEnterEvent>
+#include <QDragLeaveEvent>
+#include <QDropEvent>
+#include <QDragMoveEvent>
 #include "FreeRoamCameraController.hpp"
 #include "KeyboardState.hpp"
 #include "MouseState.hpp"
@@ -45,4 +49,8 @@ protected:
 	void mouseReleaseEvent(QMouseEvent *event);
 	void mouseMoveEvent(QMouseEvent *event);
 	void wheelEvent(QWheelEvent *event);
+	void dragMoveEvent(QDragMoveEvent *event);
+	void dragEnterEvent(QDragEnterEvent *event);
+	void dragLeaveEvent(QDragLeaveEvent *event);
+	void dropEvent(QDropEvent *event);
 };
