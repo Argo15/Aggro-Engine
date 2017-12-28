@@ -2,6 +2,10 @@
 
 #include <QWidget>
 #include <QTreeWidget>
+#include <QDragEnterEvent>
+#include <QDragLeaveEvent>
+#include <QDropEvent>
+#include <QDragMoveEvent>
 #include "SceneGraphTree.hpp"
 
 class SceneTreeWidget : public QTreeWidget
