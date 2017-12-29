@@ -4,6 +4,7 @@ struct Material
 {
 	vec3 color;
 	sampler2D tex;
+	sampler2D alpha;
 };
 
 uniform vec3 objId;
@@ -27,6 +28,11 @@ vec4 normalColor(vec3 normal, float normal_length, bool lightingEnabled) {
 }
 
 void main() {
+	vec4 alphaColor = texture2D(material.alpha, texCoord);
+	if (alphaColor.x < 0.1)
+	{
+		discard;
+	}
 	vec4 texcolor = texture2D(material.tex, texCoord);
 	normalBuffer = normalColor(normal, normal_length, lightingEnabled);
 	albedoBuffer = vec4(texcolor.rgb * material.color, 1.0);

@@ -67,6 +67,8 @@ SceneGraphTree::SceneGraphTree(shared_ptr<EngineContext> context, QWidget *paren
 		newNode->setMaterialComponent(shared_ptr<MaterialComponent>(new MaterialComponent(newNode.get())));
 		newNode->getMaterialComponent()->setTextureImageId(
 			m_context->getResources()->getIdForPath(DirectLightRenderComponent::s_imagePath));
+		newNode->getMaterialComponent()->setAlphaImageId(
+			m_context->getResources()->getIdForPath(DirectLightRenderComponent::s_alphaPath));
 	});
 
 	QAction *addMaterial = new QAction(tr("Add Material"), this);

@@ -8,6 +8,7 @@ MaterialWidget::MaterialWidget(QWidget *parent, shared_ptr<Resources> resources)
 	, m_colorGEdit(new QLineEdit("0"))
 	, m_colorBEdit(new QLineEdit("0"))
 	, m_textureEdit(new QLineEdit(""))
+	, m_alphaEdit(new QLineEdit(""))
 	, m_resources(resources)
 {
 	QHBoxLayout *mainLayout = new QHBoxLayout;
@@ -15,6 +16,7 @@ MaterialWidget::MaterialWidget(QWidget *parent, shared_ptr<Resources> resources)
 	QVBoxLayout *rightLayout = new QVBoxLayout;
 		QHBoxLayout *colorLayout = new QHBoxLayout;
 		QHBoxLayout *textureLayout = new QHBoxLayout;
+		QHBoxLayout *alphaLayout = new QHBoxLayout;
 
 	m_colorREdit->setFixedWidth(70);
 	m_colorGEdit->setFixedWidth(70);
@@ -27,9 +29,11 @@ MaterialWidget::MaterialWidget(QWidget *parent, shared_ptr<Resources> resources)
 
 	leftLayout->addWidget(new QLabel("Color"));
 	leftLayout->addWidget(new QLabel("Texture"));
+	leftLayout->addWidget(new QLabel("Alpha"));
 
 	rightLayout->addLayout(colorLayout);
 	rightLayout->addLayout(textureLayout);
+	rightLayout->addLayout(alphaLayout);
 
 	// Color
 	lbl = new QLabel("R");
@@ -51,6 +55,12 @@ MaterialWidget::MaterialWidget(QWidget *parent, shared_ptr<Resources> resources)
 	textureLayout->addWidget(m_textureEdit.get());
 	textureLayout->addWidget(selectTexButton);
 
+	QPushButton *selectAlphaButton = new QPushButton("...");
+	selectAlphaButton->setFixedWidth(50);
+	selectAlphaButton->setFixedHeight(25);
+	alphaLayout->addWidget(m_alphaEdit.get());
+	alphaLayout->addWidget(selectAlphaButton);
+
 	lbl = new QLabel("Material");
 	lbl->setStyleSheet("font-weight: bold; font-size: 16px;");
 	m_layout->addWidget(lbl);
@@ -59,7 +69,18 @@ MaterialWidget::MaterialWidget(QWidget *parent, shared_ptr<Resources> resources)
 	connect(m_colorREdit.get(), &QLineEdit::textEdited, this, &MaterialWidget::_onColorChange);
 	connect(m_colorGEdit.get(), &QLineEdit::textEdited, this, &MaterialWidget::_onColorChange);
 	connect(m_colorBEdit.get(), &QLineEdit::textEdited, this, &MaterialWidget::_onColorChange);
-	connect(selectTexButton, &QPushButton::pressed, this, &MaterialWidget::_onTexSelect);
+	connect(selectTexButton, &QPushButton::pressed, this, [this]() {
+		this->_onTexSelect(m_textureEdit,
+			[this](auto material, int id) { material->setTextureImageId(id); },
+			[this](auto material) { material->removeTexture(); }
+		);
+	});
+	connect(selectAlphaButton, &QPushButton::pressed, this, [this]() {
+		this->_onTexSelect(m_alphaEdit,
+			[this](auto material, int id) { material->setAlphaImageId(id); },
+			[this](auto material) { material->removeAlphaMap(); }
+		);
+	});
 }
 
 void MaterialWidget::_onColorChange(QString newValue)
@@ -74,12 +95,13 @@ void MaterialWidget::_onColorChange(QString newValue)
 			m_colorGEdit->text().toFloat(),
 			m_colorBEdit->text().toFloat()
 		));
-		m_lastColor = material->getColor();
 		material->addChangeListener(this, [this](auto newMaterial) {this->_refresh(newMaterial); });
 	}
 }
 
-void MaterialWidget::_onTexSelect()
+void MaterialWidget::_onTexSelect(shared_ptr<QLineEdit> textureEdit,
+								  function<void(shared_ptr<MaterialComponent>, int)> setImageFunc, 
+								  function<void(shared_ptr<MaterialComponent>)> removeFunc)
 {
 	boost::lock_guard<MaterialWidget> guard(*this);
 	if (m_currentNode && m_currentNode->hasMaterialComponent())
@@ -87,20 +109,19 @@ void MaterialWidget::_onTexSelect()
 		QDir workingDirectory = QDir::current();
 		QString filename = QFileDialog::getOpenFileName(this, tr("Select Texture"), workingDirectory.path() + "/Resources/Textures/", "*");
 		filename = workingDirectory.relativeFilePath(filename);
-		m_textureEdit->setText(filename);
+		textureEdit->setText(filename);
 
 		shared_ptr<MaterialComponent> material = m_currentNode->getMaterialComponent();
 		material->removeChangeListener(this);
 		if (!filename.isEmpty())
 		{
-			material->setTextureImageId(m_resources->getIdForPath(filename.toStdString()));
+			setImageFunc(material, m_resources->getIdForPath(filename.toStdString()));
 		}
 		else
 		{
-			material->removeTexture();
+			removeFunc(material);
 		}
 		material->addChangeListener(this, [this](auto newMaterial) {this->_refresh(newMaterial); });
-		m_lastTextureId = material->getTextureImageId().get_value_or(-1);
 	}
 }
 
@@ -138,25 +159,31 @@ void MaterialWidget::_refresh(MaterialComponent *material)
 	if (m_currentNode)
 	{
 		glm::vec3 color = material->getColor();
+		boost::lock_guard<boost::mutex> guard(m_textLock);
+		static const QRegExp trailingZeros("0+$");
+		static const QRegExp trailingDot("\\.$");
+		m_colorREdit->setText(QString::number(color.x, 'f', 3).remove(trailingZeros).remove(trailingDot));
+		m_colorGEdit->setText(QString::number(color.y, 'f', 3).remove(trailingZeros).remove(trailingDot));
+		m_colorBEdit->setText(QString::number(color.z, 'f', 3).remove(trailingZeros).remove(trailingDot));
+
 		int textureId = material->getTextureImageId().get_value_or(-1);
-		if (color != m_lastColor || textureId != m_lastTextureId)
+		if (textureId >= 0)
 		{
-			boost::lock_guard<boost::mutex> guard(m_textLock);
-			static const QRegExp trailingZeros("0+$");
-			static const QRegExp trailingDot("\\.$");
-			m_colorREdit->setText(QString::number(color.x, 'f', 3).remove(trailingZeros).remove(trailingDot));
-			m_colorGEdit->setText(QString::number(color.y, 'f', 3).remove(trailingZeros).remove(trailingDot));
-			m_colorBEdit->setText(QString::number(color.z, 'f', 3).remove(trailingZeros).remove(trailingDot));
-			if (textureId >= 0)
-			{
-				m_textureEdit->setText(QString::fromStdString(m_resources->getPathForId(textureId).get_value_or("")));
-			}
-			else
-			{
-				m_textureEdit->setText("");
-			}
-			m_lastColor = color;
-			m_lastTextureId = textureId;
+			m_textureEdit->setText(QString::fromStdString(m_resources->getPathForId(textureId).get_value_or("")));
+		}
+		else
+		{
+			m_textureEdit->setText("");
+		}
+
+		int alphaId = material->getAlphaImageId().get_value_or(-1);
+		if (alphaId >= 0)
+		{
+			m_alphaEdit->setText(QString::fromStdString(m_resources->getPathForId(alphaId).get_value_or("")));
+		}
+		else
+		{
+			m_alphaEdit->setText("");
 		}
 	}
 }

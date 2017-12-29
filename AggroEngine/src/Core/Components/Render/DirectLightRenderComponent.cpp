@@ -3,6 +3,7 @@
 #include "RGBImage.hpp"
 
 const string DirectLightRenderComponent::s_imagePath = "Resources/Textures/Engine/sun_icon.png";
+const string DirectLightRenderComponent::s_alphaPath = "Resources/Textures/Engine/sun_alpha.png";
 
 DirectLightRenderComponent::DirectLightRenderComponent(Chunk * const byteChunk, shared_ptr<Resources> resources)
 	: SpriteRenderComponent(resources)

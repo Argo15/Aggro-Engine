@@ -119,17 +119,14 @@ void GBuffer::drawToBuffer(RenderOptions renderOptions, std::queue<shared_ptr<Re
 			if (material)
 			{
 				m_glslProgram->sendUniform("material.color", material->getColor());
-				shared_ptr<TextureHandle> texture = devTexture->getHandle();
-				if (material->getTexture())
-				{
-					texture = material->getTexture();
-				}
-				m_glslProgram->sendUniform("material.tex", texture, 0);
+				m_glslProgram->sendUniform("material.tex", material->getTextureOpt().get_value_or(devTexture->getHandle()), 0);
+				m_glslProgram->sendUniform("material.alpha", material->getAlphaOpt().get_value_or(devTexture->getHandle()), 1);
 			}
 			else
 			{
 				m_glslProgram->sendUniform("material.color", defaultColor);
 				m_glslProgram->sendUniform("material.tex", devTexture->getHandle(), 0);
+				m_glslProgram->sendUniform("material.alpha", devTexture->getHandle(), 1);
 			}
 
 			unsigned int id = renderData->getId();

@@ -11,6 +11,7 @@ MaterialComponent::MaterialComponent(SceneNode *owner, shared_ptr<MaterialCompon
 	: m_owner(owner)
 	, m_color(copy->m_color)
 	, m_textureImageId(copy->m_textureImageId)
+	, m_alphaImageId(copy->m_alphaImageId)
 {
 }
 
@@ -25,6 +26,11 @@ MaterialComponent::MaterialComponent(Chunk * const byteChunk, SceneNode *owner, 
 	{
 		m_textureImageId = boost::optional<int>(resources->getIdForPath(texPath));
 	}
+	string alphaPath = parser.parseString().get_value_or("");
+	if (alphaPath != "")
+	{
+		m_alphaImageId = boost::optional<int>(resources->getIdForPath(alphaPath));
+	}
 }
 
 shared_ptr<Chunk> MaterialComponent::serialize(shared_ptr<Resources> resources)
@@ -37,6 +43,12 @@ shared_ptr<Chunk> MaterialComponent::serialize(shared_ptr<Resources> resources)
 		texName = resources->getPathForId(m_textureImageId.get()).get_value_or("");
 	}
 	bytes.add(&texName);
+	string alphaName = "";
+	if (m_alphaImageId)
+	{
+		alphaName = resources->getPathForId(m_alphaImageId.get()).get_value_or("");
+	}
+	bytes.add(&alphaName);
 	return shared_ptr<Chunk>(new Chunk(ChunkType::MATERIAL_COMPONENT, bytes.getNumBytes(), bytes.collect()));
 }
 
@@ -70,6 +82,11 @@ shared_ptr<Material> MaterialComponent::getMaterial(shared_ptr<TextureCache> tex
 		shared_ptr<TextureHandle> texture = textures->getTexture(m_textureImageId.get());
 		material->setTexture(texture);
 	}
+	if (m_alphaImageId)
+	{
+		shared_ptr<TextureHandle> texture = textures->getTexture(m_alphaImageId.get());
+		material->setAlpha(texture);
+	}
 	return material;
 }
 
@@ -98,6 +115,23 @@ boost::optional<int> MaterialComponent::getTextureImageId()
 void MaterialComponent::removeTexture()
 {
 	m_textureImageId = boost::optional<int>();
+	m_changeListeners.notify(this);
+}
+
+void MaterialComponent::setAlphaImageId(int alphaImageId)
+{
+	m_alphaImageId = alphaImageId;
+	m_changeListeners.notify(this);
+}
+
+boost::optional<int> MaterialComponent::getAlphaImageId()
+{
+	return m_alphaImageId;
+}
+
+void MaterialComponent::removeAlphaMap()
+{
+	m_alphaImageId = boost::optional<int>();
 	m_changeListeners.notify(this);
 }
 

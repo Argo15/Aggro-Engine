@@ -23,6 +23,7 @@ class MaterialComponent : public Component,
 private:
 	SceneNode *m_owner;
 	boost::optional<int> m_textureImageId;
+	boost::optional<int> m_alphaImageId;
 	glm::vec3 m_color;
 
 	Listener<MaterialComponent *> m_changeListeners;
@@ -48,6 +49,10 @@ public:
 	void setTextureImageId(int textureImageId);
 	boost::optional<int> getTextureImageId();
 	void removeTexture();
+
+	void setAlphaImageId(int textureImageId);
+	boost::optional<int> getAlphaImageId();
+	void removeAlphaMap();
 
 	SceneNode *getOwner();
 };

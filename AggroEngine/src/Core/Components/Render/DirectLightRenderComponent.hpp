@@ -19,6 +19,7 @@ public:
 	DirectLightRenderComponent(shared_ptr<Resources> resources);
 
 	const static string s_imagePath;
+	const static string s_alphaPath;
 
 	// Serialization
 	virtual shared_ptr<Chunk> serialize(shared_ptr<Resources> resources);
