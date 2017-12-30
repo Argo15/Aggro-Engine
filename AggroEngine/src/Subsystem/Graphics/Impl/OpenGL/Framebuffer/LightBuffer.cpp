@@ -29,6 +29,10 @@ LightBuffer::LightBuffer(OpenGL43Graphics *graphics, int width, int height)
 	m_lightTexture = graphics->createTexture(texOptions);
 	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, m_lightTexture->get(), 0);
 
+	// Generate glow texture
+	m_glowTex = graphics->createTexture(texOptions);
+	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT1, GL_TEXTURE_2D, m_glowTex->get(), 0);
+
 	glDrawBuffer(GL_NONE);
 	glReadBuffer(GL_NONE);
 
@@ -46,7 +50,10 @@ LightBuffer::LightBuffer(OpenGL43Graphics *graphics, int width, int height)
 	m_screenVBO = graphics->createVertexBuffer(shared_ptr<Mesh>(new Screen(0, 0, 1, 1)));
 }
 
-void LightBuffer::drawToBuffer(RenderOptions &renderOptions, shared_ptr<TextureHandle> normalTex)
+void LightBuffer::drawToBuffer(RenderOptions &renderOptions, 
+	shared_ptr<TextureHandle> normalTex, 
+	shared_ptr<TextureHandle> depthTex,
+	shared_ptr<TextureHandle> glowTex)
 {
 	shared_ptr<DirectLight> directLight = renderOptions.getDirectLight();
 	if (!directLight || !normalTex)
@@ -60,8 +67,8 @@ void LightBuffer::drawToBuffer(RenderOptions &renderOptions, shared_ptr<TextureH
 
 	bindFrameBuffer();
 	m_glslProgram->use();
-	GLenum mrt[] = { GL_COLOR_ATTACHMENT0_EXT };
-	glDrawBuffers(1, mrt);
+	GLenum mrt[] = { GL_COLOR_ATTACHMENT0_EXT, GL_COLOR_ATTACHMENT1_EXT };
+	glDrawBuffers(2, mrt);
 	glClearColor(0, 0, 0, 0);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glPushAttrib(GL_VIEWPORT_BIT);
@@ -70,15 +77,26 @@ void LightBuffer::drawToBuffer(RenderOptions &renderOptions, shared_ptr<TextureH
 	glEnable(GL_DEPTH_TEST);
 
 	glBindFragDataLocation(m_glslProgram->getHandle(), 0, "lightBuffer");
+	glBindFragDataLocation(m_glslProgram->getHandle(), 1, "glowBuffer");
 	glBindAttribLocation(m_glslProgram->getHandle(), 0, "v_vertex");
 	glBindAttribLocation(m_glslProgram->getHandle(), 1, "v_texcoord");
 
 	m_glslProgram->sendUniform("normalTex", normalTex, 0);
 	glm::vec3 dir = directLight->getDirection();
-	m_glslProgram->sendUniform("lightDir", dir.x, dir.y, dir.z);
+	m_glslProgram->sendUniform("lightDir", dir);
 	glm::vec3 color = directLight->getColor();
 	m_glslProgram->sendUniform("color", color.x, color.y, color.z);
 	m_glslProgram->sendUniform("ambient", directLight->getAmbient() / 100.0f);
+
+	m_glslProgram->sendUniform("depthTex", depthTex, 1);
+	m_glslProgram->sendUniform("near", renderOptions.getFrustrum()->getZNear());
+	m_glslProgram->sendUniform("far", renderOptions.getFrustrum()->getZFar());
+	m_glslProgram->sendUniform("cameraPos", renderOptions.getFrustrum()->getEyePos());
+
+	m_glslProgram->sendUniform("glowTex", glowTex, 2);
+
+	glm::mat4 inverseMVPMatrix = glm::inverse(renderOptions.getProjectionMatrix()*renderOptions.getViewMatrix());
+	m_glslProgram->sendUniform("inverseMVPMatrix", glm::value_ptr(inverseMVPMatrix), false, 4);
 
 	glm::mat4 mvpMatrix = glm::ortho(0, 1, 0, 1);
 	m_glslProgram->sendUniform("modelViewProjectionMatrix", glm::value_ptr(mvpMatrix), false, 4);
@@ -106,4 +124,9 @@ void LightBuffer::drawToBuffer(RenderOptions &renderOptions, shared_ptr<TextureH
 	m_glslProgram->disable();
 	unbindFrameBuffer();
 	glPopAttrib();
+}
+
+shared_ptr<TextureHandle> LightBuffer::getGlowTex()
+{
+	return m_glowTex;
 }

@@ -13,6 +13,7 @@ private:
 	shared_ptr<TextureHandle> m_normalTex;
 	shared_ptr<TextureHandle> m_albedoTex;
 	shared_ptr<TextureHandle> m_selectionTex;
+	shared_ptr<TextureHandle> m_glowTex;
 	OpenGL43Graphics *m_graphics;
 
 public:
@@ -29,6 +30,7 @@ public:
 	shared_ptr<TextureHandle> getNormalTex();
 	shared_ptr<TextureHandle> getAlbedoTex();
 	shared_ptr<TextureHandle> getSelectionTex();
+	shared_ptr<TextureHandle> getGlowTex();
 
 	GLenum getSelectionColorAttachment();
 };

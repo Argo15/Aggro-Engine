@@ -17,10 +17,13 @@ private:
 	OpenGL43Graphics *m_graphics;
 	shared_ptr<TextureHandle> m_lightTexture;
 	shared_ptr<TextureHandle> m_noLightTexture;
+	shared_ptr<TextureHandle> m_glowTex;
 	shared_ptr<VertexBufferHandle> m_screenVBO;
 
 public:
 	LightBuffer(OpenGL43Graphics *graphics, int width, int height);
 
-	void drawToBuffer(RenderOptions &renderOptions, shared_ptr<TextureHandle> normalTex);
+	void drawToBuffer(RenderOptions &renderOptions, shared_ptr<TextureHandle> normalTex, shared_ptr<TextureHandle> depthTex, shared_ptr<TextureHandle> glowTex);
+
+	shared_ptr<TextureHandle> getGlowTex();
 };

@@ -9,6 +9,9 @@ MaterialWidget::MaterialWidget(QWidget *parent, shared_ptr<Resources> resources)
 	, m_colorBEdit(new QLineEdit("0"))
 	, m_textureEdit(new QLineEdit(""))
 	, m_alphaEdit(new QLineEdit(""))
+	, m_specIntensitySlider(new QSlider(Qt::Horizontal))
+	, m_specShineSlider(new QSlider(Qt::Horizontal))
+	, m_specMapEdit(new QLineEdit(""))
 	, m_resources(resources)
 {
 	QHBoxLayout *mainLayout = new QHBoxLayout;
@@ -17,6 +20,9 @@ MaterialWidget::MaterialWidget(QWidget *parent, shared_ptr<Resources> resources)
 		QHBoxLayout *colorLayout = new QHBoxLayout;
 		QHBoxLayout *textureLayout = new QHBoxLayout;
 		QHBoxLayout *alphaLayout = new QHBoxLayout;
+		QHBoxLayout *specIntensityLayout = new QHBoxLayout;
+		QHBoxLayout *specShineLayout = new QHBoxLayout;
+		QHBoxLayout *specMapLayout = new QHBoxLayout;
 
 	m_colorREdit->setFixedWidth(70);
 	m_colorGEdit->setFixedWidth(70);
@@ -30,10 +36,17 @@ MaterialWidget::MaterialWidget(QWidget *parent, shared_ptr<Resources> resources)
 	leftLayout->addWidget(new QLabel("Color"));
 	leftLayout->addWidget(new QLabel("Texture"));
 	leftLayout->addWidget(new QLabel("Alpha"));
+	leftLayout->addWidget(new QLabel("Specular"));
+	leftLayout->addWidget(new QLabel("Spec Intensity"));
+	leftLayout->addWidget(new QLabel("Spec Shininess"));
+	leftLayout->addWidget(new QLabel("Spec Map"));
 
 	rightLayout->addLayout(colorLayout);
 	rightLayout->addLayout(textureLayout);
 	rightLayout->addLayout(alphaLayout);
+	rightLayout->addLayout(specIntensityLayout);
+	rightLayout->addLayout(specShineLayout);
+	rightLayout->addLayout(specMapLayout);
 
 	// Color
 	lbl = new QLabel("R");
@@ -61,6 +74,18 @@ MaterialWidget::MaterialWidget(QWidget *parent, shared_ptr<Resources> resources)
 	alphaLayout->addWidget(m_alphaEdit.get());
 	alphaLayout->addWidget(selectAlphaButton);
 
+	m_specIntensitySlider->setStyleSheet(QString("border-bottom-style: none;"));
+	specIntensityLayout->addWidget(m_specIntensitySlider.get());
+	m_specShineSlider->setMinimum(5);
+	m_specShineSlider->setMaximum(100);
+	m_specShineSlider->setStyleSheet(QString("border-bottom-style: none;"));
+	specShineLayout->addWidget(m_specShineSlider.get());
+	QPushButton *selectSpecButton = new QPushButton("...");
+	selectSpecButton->setFixedWidth(50);
+	selectSpecButton->setFixedHeight(25);
+	specMapLayout->addWidget(m_specMapEdit.get());
+	specMapLayout->addWidget(selectSpecButton);
+
 	lbl = new QLabel("Material");
 	lbl->setStyleSheet("font-weight: bold; font-size: 16px;");
 	m_layout->addWidget(lbl);
@@ -79,6 +104,14 @@ MaterialWidget::MaterialWidget(QWidget *parent, shared_ptr<Resources> resources)
 		this->_onTexSelect(m_alphaEdit,
 			[this](auto material, int id) { material->setAlphaImageId(id); },
 			[this](auto material) { material->removeAlphaMap(); }
+		);
+	});
+	connect(m_specIntensitySlider.get(), &QSlider::valueChanged, this, &MaterialWidget::_onSpecularChange);
+	connect(m_specShineSlider.get(), &QSlider::valueChanged, this, &MaterialWidget::_onShininessChange);
+	connect(selectSpecButton, &QPushButton::pressed, this, [this]() {
+		this->_onTexSelect(m_specMapEdit,
+			[this](auto material, int id) { material->setSpecularImageId(id); },
+			[this](auto material) { material->removeSpecularMap(); }
 		);
 	});
 }
@@ -121,6 +154,30 @@ void MaterialWidget::_onTexSelect(shared_ptr<QLineEdit> textureEdit,
 		{
 			removeFunc(material);
 		}
+		material->addChangeListener(this, [this](auto newMaterial) {this->_refresh(newMaterial); });
+	}
+}
+
+void MaterialWidget::_onSpecularChange(int value)
+{
+	boost::lock_guard<MaterialWidget> guard(*this);
+	if (m_currentNode && m_currentNode->hasMaterialComponent())
+	{
+		shared_ptr<MaterialComponent> material = m_currentNode->getMaterialComponent();
+		material->removeChangeListener(this);
+		material->setSpecIntensityPct(value);
+		material->addChangeListener(this, [this](auto newMaterial) {this->_refresh(newMaterial); });
+	}
+}
+
+void MaterialWidget::_onShininessChange(int value)
+{
+	boost::lock_guard<MaterialWidget> guard(*this);
+	if (m_currentNode && m_currentNode->hasMaterialComponent())
+	{
+		shared_ptr<MaterialComponent> material = m_currentNode->getMaterialComponent();
+		material->removeChangeListener(this);
+		material->setShininess(value);
 		material->addChangeListener(this, [this](auto newMaterial) {this->_refresh(newMaterial); });
 	}
 }
@@ -184,6 +241,19 @@ void MaterialWidget::_refresh(MaterialComponent *material)
 		else
 		{
 			m_alphaEdit->setText("");
+		}
+
+		m_specIntensitySlider->setValue(material->getSpecIntensityPct());
+		m_specShineSlider->setValue(material->getShininess());
+
+		int specularId = material->getSpecularImageId().get_value_or(-1);
+		if (specularId >= 0)
+		{
+			m_specMapEdit->setText(QString::fromStdString(m_resources->getPathForId(specularId).get_value_or("")));
+		}
+		else
+		{
+			m_specMapEdit->setText("");
 		}
 	}
 }

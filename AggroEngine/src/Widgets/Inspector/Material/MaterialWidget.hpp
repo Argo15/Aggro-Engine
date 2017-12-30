@@ -3,6 +3,8 @@
 #include <QLineEdit>
 #include <QPushButton>
 #include <QLabel>
+#include <QCheckBox>
+#include <QSlider>
 #include "InspectorSubWidget.hpp"
 #include "Locks.hpp"
 
@@ -15,6 +17,9 @@ private:
 	shared_ptr<QLineEdit> m_colorBEdit;
 	shared_ptr<QLineEdit> m_textureEdit;
 	shared_ptr<QLineEdit> m_alphaEdit;
+	shared_ptr<QSlider> m_specIntensitySlider;
+	shared_ptr<QSlider> m_specShineSlider;
+	shared_ptr<QLineEdit> m_specMapEdit;
 	shared_ptr<Resources> m_resources;
 	boost::mutex m_textLock;
 
@@ -25,6 +30,8 @@ protected:
 	void _onTexSelect(shared_ptr<QLineEdit> textureEdit, 
 					  function<void(shared_ptr<MaterialComponent>, int)> setImageFunc,
 					  function<void(shared_ptr<MaterialComponent>)> removeFunc);
+	void _onSpecularChange(int value);
+	void _onShininessChange(int value);
 
 public:
 	MaterialWidget(QWidget *parent, shared_ptr<Resources> resources);

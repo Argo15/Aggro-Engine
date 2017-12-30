@@ -101,9 +101,13 @@ void Camera::scale(const glm::vec3 &scale)
 	updateViewMatrix();
 }
 
-void Camera::setProjection(glm::mat4 &m4Projection)
+void Camera::setProjection(float fov, float aspectRatio, float zNear, float zFar)
 {
-	m_m4ProjMatrix = m4Projection;
+	m_fov = fov;
+	m_aspectRatio = aspectRatio;
+	m_zNear = zNear;
+	m_zFar = zFar;
+	m_m4ProjMatrix = glm::perspective(fov, aspectRatio, zNear, zFar);
 }
 
 void Camera::setLookAt(glm::vec3 &eye, glm::vec3 &center, glm::vec3 &up)
@@ -149,4 +153,10 @@ glm::vec3 &Camera::getRightDir()
 glm::vec4 &Camera::getViewport()
 {
 	return m_v4Viewport;
+}
+
+shared_ptr<Frustrum> Camera::getFrustrum()
+{
+	return shared_ptr<Frustrum>(new Frustrum(m_v3EyePos, m_v3LookDir, m_v3UpDir, m_v3RightDir, 
+											 m_fov, m_aspectRatio, m_zNear, m_zFar));
 }

@@ -25,7 +25,10 @@ GBuffer::GBuffer(OpenGL43Graphics *graphics, int width, int height)
 	);
 	fboImage->setImageType(ImageType::FLOAT_TYPE);
 	shared_ptr<TextureBuildOptions> texOptions(new TextureBuildOptions(fboImage));
-	texOptions->genMipmaps(false)->setWrap(Wrap::CLAMP_TO_EDGE)->setInternalFormat(InternalFormat::RGBA16);
+
+	// Generate 16 bit-per-component here
+	texOptions->genMipmaps(false)->setWrap(Wrap::CLAMP_TO_EDGE)
+		->setInternalFormat(InternalFormat::RGBA16);
 
 	// Generate normal
 	m_normalTex = graphics->createTexture(texOptions);
@@ -35,11 +38,17 @@ GBuffer::GBuffer(OpenGL43Graphics *graphics, int width, int height)
 	m_selectionTex = graphics->createTexture(texOptions);
 	glFramebufferTexture2D(GL_FRAMEBUFFER, getSelectionColorAttachment(), GL_TEXTURE_2D, m_selectionTex->get(), 0);
 
-	// Generate albedo
+	// Generate 8 bit-per-component here
 	texOptions->setInternalFormat(InternalFormat::RGBA8);
+
+	// Generate albedo
 	m_albedoTex = graphics->createTexture(texOptions);
 	m_texture = m_albedoTex;
 	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT1, GL_TEXTURE_2D, m_albedoTex->get(), 0);
+
+	// Generate glow texture
+	m_glowTex = graphics->createTexture(texOptions);
+	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT3, GL_TEXTURE_2D, m_glowTex->get(), 0);
 
 	// Generate depth texture
 	fboImage->setImageFormat(ImageFormat::DEPTH_COMPONENT);
@@ -69,13 +78,14 @@ void GBuffer::drawToBuffer(RenderOptions renderOptions, std::queue<shared_ptr<Re
 
 	bindFrameBuffer();
 	m_glslProgram->use();
-	GLenum mrt[] = { GL_COLOR_ATTACHMENT0_EXT, GL_COLOR_ATTACHMENT1_EXT, GL_COLOR_ATTACHMENT2_EXT };
-	glDrawBuffers(3, mrt);
+	GLenum mrt[] = { GL_COLOR_ATTACHMENT0_EXT, GL_COLOR_ATTACHMENT1_EXT, GL_COLOR_ATTACHMENT2_EXT, GL_COLOR_ATTACHMENT3_EXT };
+	glDrawBuffers(4, mrt);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glPushAttrib(GL_VIEWPORT_BIT);
 	glViewport(0, 0, getWidth(), getHeight());
 	glLineWidth(1);
 	glEnable(GL_DEPTH_TEST);
+	glDisable(GL_BLEND);
 	int currentLineWidth = 1;
 	bool isDepthDisabled = false;
 	shared_ptr<RenderData> disabledDepthObject; // needs to be rendered at the end
@@ -83,6 +93,7 @@ void GBuffer::drawToBuffer(RenderOptions renderOptions, std::queue<shared_ptr<Re
 	glBindFragDataLocation(m_glslProgram->getHandle(), 0, "normalBuffer");
 	glBindFragDataLocation(m_glslProgram->getHandle(), 1, "albedoBuffer");
 	glBindFragDataLocation(m_glslProgram->getHandle(), 2, "selectionBuffer");
+	glBindFragDataLocation(m_glslProgram->getHandle(), 3, "glowBuffer");
 	glBindAttribLocation(m_glslProgram->getHandle(), 0, "v_vertex");
 	glBindAttribLocation(m_glslProgram->getHandle(), 1, "v_texcoord");
 	glBindAttribLocation(m_glslProgram->getHandle(), 2, "v_normal");
@@ -121,12 +132,18 @@ void GBuffer::drawToBuffer(RenderOptions renderOptions, std::queue<shared_ptr<Re
 				m_glslProgram->sendUniform("material.color", material->getColor());
 				m_glslProgram->sendUniform("material.tex", material->getTextureOpt().get_value_or(devTexture->getHandle()), 0);
 				m_glslProgram->sendUniform("material.alpha", material->getAlphaOpt().get_value_or(devTexture->getHandle()), 1);
+				m_glslProgram->sendUniform("material.specIntensity", material->getSpecIntensity());
+				m_glslProgram->sendUniform("material.shininess", (float)material->getShininess());
+				m_glslProgram->sendUniform("material.specMap", material->getSpecularOpt().get_value_or(devTexture->getHandle()), 2);
 			}
 			else
 			{
 				m_glslProgram->sendUniform("material.color", defaultColor);
 				m_glslProgram->sendUniform("material.tex", devTexture->getHandle(), 0);
 				m_glslProgram->sendUniform("material.alpha", devTexture->getHandle(), 1);
+				m_glslProgram->sendUniform("material.specIntensity", 0.f);
+				m_glslProgram->sendUniform("material.shininess", 0.f);
+				m_glslProgram->sendUniform("material.specMap", devTexture->getHandle(), 2);
 			}
 
 			unsigned int id = renderData->getId();
@@ -206,6 +223,11 @@ shared_ptr<TextureHandle> GBuffer::getAlbedoTex()
 shared_ptr<TextureHandle> GBuffer::getSelectionTex()
 {
 	return m_selectionTex;
+}
+
+shared_ptr<TextureHandle> GBuffer::getGlowTex()
+{
+	return m_glowTex;
 }
 
 GLenum GBuffer::getSelectionColorAttachment()

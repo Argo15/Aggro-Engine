@@ -25,6 +25,9 @@ private:
 	boost::optional<int> m_textureImageId;
 	boost::optional<int> m_alphaImageId;
 	glm::vec3 m_color;
+	int m_specIntensityPct;
+	int m_shininess;
+	boost::optional<int> m_specularImageId;
 
 	Listener<MaterialComponent *> m_changeListeners;
 
@@ -55,4 +58,15 @@ public:
 	void removeAlphaMap();
 
 	SceneNode *getOwner();
+
+	void setSpecIntensityPct(int intensity);
+	int getSpecIntensityPct();
+	float getSpecIntensity();
+
+	void setShininess(int shininess);
+	int getShininess();
+
+	void setSpecularImageId(int textureImageId);
+	boost::optional<int> getSpecularImageId();
+	void removeSpecularMap();
 };

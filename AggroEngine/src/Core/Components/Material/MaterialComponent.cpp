@@ -3,6 +3,8 @@
 MaterialComponent::MaterialComponent(SceneNode *owner)
 	: m_owner(owner)
 	, m_color(1.0)
+	, m_specIntensityPct(0)
+	, m_shininess(25)
 {
 
 }
@@ -12,6 +14,9 @@ MaterialComponent::MaterialComponent(SceneNode *owner, shared_ptr<MaterialCompon
 	, m_color(copy->m_color)
 	, m_textureImageId(copy->m_textureImageId)
 	, m_alphaImageId(copy->m_alphaImageId)
+	, m_specIntensityPct(copy->m_specIntensityPct)
+	, m_shininess(copy->m_shininess)
+	, m_specularImageId(copy->m_specularImageId)
 {
 }
 
@@ -31,6 +36,13 @@ MaterialComponent::MaterialComponent(Chunk * const byteChunk, SceneNode *owner, 
 	{
 		m_alphaImageId = boost::optional<int>(resources->getIdForPath(alphaPath));
 	}
+	m_specIntensityPct = parser.parseInt().get_value_or(0);
+	m_shininess = parser.parseInt().get_value_or(25);
+	string specularPath = parser.parseString().get_value_or("");
+	if (specularPath != "")
+	{
+		m_specularImageId = boost::optional<int>(resources->getIdForPath(specularPath));
+	}
 }
 
 shared_ptr<Chunk> MaterialComponent::serialize(shared_ptr<Resources> resources)
@@ -49,6 +61,14 @@ shared_ptr<Chunk> MaterialComponent::serialize(shared_ptr<Resources> resources)
 		alphaName = resources->getPathForId(m_alphaImageId.get()).get_value_or("");
 	}
 	bytes.add(&alphaName);
+	bytes.add(&m_specIntensityPct);
+	bytes.add(&m_shininess);
+	string specularName = "";
+	if (m_specularImageId)
+	{
+		specularName = resources->getPathForId(m_specularImageId.get()).get_value_or("");
+	}
+	bytes.add(&specularName);
 	return shared_ptr<Chunk>(new Chunk(ChunkType::MATERIAL_COMPONENT, bytes.getNumBytes(), bytes.collect()));
 }
 
@@ -86,6 +106,13 @@ shared_ptr<Material> MaterialComponent::getMaterial(shared_ptr<TextureCache> tex
 	{
 		shared_ptr<TextureHandle> texture = textures->getTexture(m_alphaImageId.get());
 		material->setAlpha(texture);
+	}
+	material->setSpecIntensity(getSpecIntensity());
+	material->setShininess(m_shininess);
+	if (m_specularImageId)
+	{
+		shared_ptr<TextureHandle> texture = textures->getTexture(m_specularImageId.get());
+		material->setSpecular(texture);
 	}
 	return material;
 }
@@ -138,4 +165,47 @@ void MaterialComponent::removeAlphaMap()
 SceneNode *MaterialComponent::getOwner()
 {
 	return m_owner;
+}
+
+void MaterialComponent::setSpecIntensityPct(int intensity)
+{
+	m_specIntensityPct = intensity;
+	m_changeListeners.notify(this);
+}
+
+int MaterialComponent::getSpecIntensityPct()
+{
+	return m_specIntensityPct;
+}
+
+float MaterialComponent::getSpecIntensity()
+{
+	return ((float)m_specIntensityPct) / 100.0f;
+}
+
+void MaterialComponent::setShininess(int shininess)
+{
+	m_shininess = shininess;
+	m_changeListeners.notify(this);
+}
+
+int MaterialComponent::getShininess()
+{
+	return m_shininess;
+}
+
+void MaterialComponent::setSpecularImageId(int textureImageId)
+{
+	m_specularImageId = textureImageId;
+	m_changeListeners.notify(this);
+}
+
+boost::optional<int> MaterialComponent::getSpecularImageId()
+{
+	return m_specularImageId;
+}
+
+void MaterialComponent::removeSpecularMap()
+{
+	m_specularImageId = boost::optional<int>();
 }

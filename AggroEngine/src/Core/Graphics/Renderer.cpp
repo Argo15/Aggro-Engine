@@ -32,6 +32,7 @@ void Renderer::renderScene(shared_ptr<Scene> scene, shared_ptr<RenderOptions> re
 	renderOptions->setProjectionMatrix(scene->getCamera()->getProjMatrix());
 	renderOptions->setViewMatrix(scene->getCamera()->getViewMatrix());
 	renderOptions->setViewport(scene->getCamera()->getViewport());
+	renderOptions->setFrustrum(scene->getCamera()->getFrustrum());
 
 	// execute
 	m_graphicsContext->getGraphics()->executeRender(*(renderOptions.get()));

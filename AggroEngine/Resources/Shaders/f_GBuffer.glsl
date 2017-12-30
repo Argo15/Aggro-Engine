@@ -5,6 +5,9 @@ struct Material
 	vec3 color;
 	sampler2D tex;
 	sampler2D alpha;
+	float specIntensity;
+	float shininess;
+	sampler2D specMap;
 };
 
 uniform vec3 objId;
@@ -16,6 +19,7 @@ in vec2 texCoord;
 out vec4 normalBuffer;
 out vec4 albedoBuffer;
 out vec4 selectionBuffer;
+out vec4 glowBuffer;
 
 vec4 normalColor(vec3 normal, float normal_length, bool lightingEnabled) {
 	vec4 normalCol;
@@ -33,8 +37,11 @@ void main() {
 	{
 		discard;
 	}
-	vec4 texcolor = texture2D(material.tex, texCoord);
-	normalBuffer = normalColor(normal, normal_length, lightingEnabled);
-	albedoBuffer = vec4(texcolor.rgb * material.color, 1.0);
-	selectionBuffer = vec4(objId,1.0);
+	vec4 texColor = texture2D(material.tex, texCoord);
+	vec4 normCol = normalColor(normal, normal_length, lightingEnabled);
+	normalBuffer = vec4(normCol.rgb, material.shininess / 100.0);
+	albedoBuffer = vec4(texColor.rgb * material.color, 1.0);
+	selectionBuffer = vec4(objId, 1.0);
+	vec4 specColor = texture2D(material.specMap, texCoord);
+	glowBuffer = vec4(0, 0, 0, material.specIntensity * specColor.r);
 }

@@ -57,7 +57,7 @@ void GLWidget::resizeGL(int width, int height)
 {
 	shared_ptr<Camera> camera = m_engineContext->getScene()->getCamera();
 	camera->setViewport(glm::vec4(0, 0, width, height));
-	camera->setProjection(glm::perspective(45.f, (float)width / (float)height, 0.01f, 100.f));
+	camera->setProjection(45.f, (float)width / (float)height, 0.01f, 100.f);
 }
 
 void GLWidget::paintGL()

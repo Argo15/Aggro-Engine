@@ -20,5 +20,5 @@ private:
 public:
 	ShadedBuffer(OpenGL43Graphics *graphics, int width, int height);
 
-	void drawToBuffer(RenderOptions &renderOptions, shared_ptr<TextureHandle> albedoTex, shared_ptr<TextureHandle> lightingTex);
+	void drawToBuffer(RenderOptions &renderOptions, shared_ptr<TextureHandle> albedoTex, shared_ptr<TextureHandle> lightingTex, shared_ptr<TextureHandle> glowTex);
 };

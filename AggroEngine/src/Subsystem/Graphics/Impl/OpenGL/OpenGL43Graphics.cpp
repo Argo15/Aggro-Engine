@@ -114,8 +114,8 @@ void OpenGL43Graphics::stageTriangleRender(shared_ptr<RenderData> pRenderData)
 void OpenGL43Graphics::executeRender(RenderOptions &renderOptions)
 {
 	m_gBuffer->drawToBuffer(renderOptions, renderQueue);
-	m_lightBuffer->drawToBuffer(renderOptions, m_gBuffer->getNormalTex());
-	m_shadedBuffer->drawToBuffer(renderOptions, m_gBuffer->getAlbedoTex(), m_lightBuffer->getTexture());
+	m_lightBuffer->drawToBuffer(renderOptions, m_gBuffer->getNormalTex(), m_gBuffer->getDepthTex(), m_gBuffer->getGlowTex());
+	m_shadedBuffer->drawToBuffer(renderOptions, m_gBuffer->getAlbedoTex(), m_lightBuffer->getTexture(), m_lightBuffer->getGlowTex());
 	_drawScreen(renderOptions, 0.0, 0.0, 1.0, 1.0);
 }
 
@@ -202,6 +202,8 @@ shared_ptr<TextureHandle> OpenGL43Graphics::_getRenderTargetTexture(RenderOption
 			return m_gBuffer->getNormalTex();
 		case RenderOptions::LIGHTING:
 			return m_lightBuffer->getTexture();
+		case RenderOptions::GLOW:
+			return m_lightBuffer->getGlowTex();
 		case RenderOptions::SELECTION:
 			return m_gBuffer->getSelectionTex();
 		default:

@@ -2,6 +2,7 @@
 
 #include "Matrix.hpp"
 #include "DirectLight.hpp"
+#include "Frustrum.hpp"
 #include <memory>
 using namespace std;
 
@@ -16,13 +17,15 @@ class RenderOptions
 public:
 	enum RenderTarget
 	{
-		SHADED, ALBEDO, NORMAL, LIGHTING, SELECTION
+		SHADED, ALBEDO, NORMAL, LIGHTING, GLOW, SELECTION
 	};
 
 private:
 	glm::mat4 m_m4ProjectionMatrix; // Ortho or perspective
 	glm::mat4 m_m4ViewMatrix;  // Camera position/orientation
 	glm::vec4 m_v4Viewport; // Dimensions of window
+
+	shared_ptr<Frustrum> m_frustrum;
 
 	RenderTarget m_renderTarget;
 
@@ -36,10 +39,12 @@ public:
 	RenderOptions &setProjectionMatrix(glm::mat4 &m4Projection);
 	RenderOptions &setViewMatrix(glm::mat4 &m4View);
 	RenderOptions &setViewport(glm::vec4 &m4Viewport);
+	RenderOptions &setFrustrum(shared_ptr<Frustrum> frustrum);
 
 	const glm::mat4 &getProjectionMatrix();
 	const glm::mat4 &getViewMatrix();
 	const glm::vec4 &getViewport();
+	const shared_ptr<Frustrum> &getFrustrum();
 
 	void setRenderTarget(RenderTarget target);
 	RenderTarget getRenderTarget();

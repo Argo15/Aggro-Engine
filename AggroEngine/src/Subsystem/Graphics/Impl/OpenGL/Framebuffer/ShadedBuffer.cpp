@@ -45,7 +45,7 @@ ShadedBuffer::ShadedBuffer(OpenGL43Graphics *graphics, int width, int height)
 	m_screenVBO = graphics->createVertexBuffer(shared_ptr<Mesh>(new Screen(0, 0, 1, 1)));
 }
 
-void ShadedBuffer::drawToBuffer(RenderOptions &renderOptions, shared_ptr<TextureHandle> albedoTex, shared_ptr<TextureHandle> lightingTex)
+void ShadedBuffer::drawToBuffer(RenderOptions &renderOptions, shared_ptr<TextureHandle> albedoTex, shared_ptr<TextureHandle> lightingTex, shared_ptr<TextureHandle> glowTex)
 {
 	boost::lock_guard<OpenGL43Graphics> guard(*m_graphics);
 
@@ -66,6 +66,7 @@ void ShadedBuffer::drawToBuffer(RenderOptions &renderOptions, shared_ptr<Texture
 
 	m_glslProgram->sendUniform("albedoTex", albedoTex, 0);
 	m_glslProgram->sendUniform("lightingTex", lightingTex, 1);
+	m_glslProgram->sendUniform("glowTex", glowTex, 2);
 
 	glm::mat4 mvpMatrix = glm::ortho(0, 1, 0, 1);
 	m_glslProgram->sendUniform("modelViewProjectionMatrix", glm::value_ptr(mvpMatrix), false, 4);

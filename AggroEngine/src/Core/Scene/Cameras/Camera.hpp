@@ -2,6 +2,7 @@
 
 #include "TransformComponent.hpp"
 #include "Matrix.hpp"
+#include "Frustrum.hpp"
 #include <memory>
 using namespace std;
 
@@ -21,6 +22,10 @@ private:
 	glm::mat4 m_m4ViewMatrix;
 	glm::mat4 m_m4ProjMatrix;
 	glm::vec4 m_v4Viewport;
+	float m_fov;
+	float m_aspectRatio;
+	float m_zNear;
+	float m_zFar;
 
 	shared_ptr<TransformComponent> m_transformComponent;
 
@@ -39,7 +44,7 @@ public:
 	void rotate(float angle, const glm::vec3 &axis);
 	void scale(const glm::vec3 &scale);
 	
-	void setProjection(glm::mat4 &m4Projection);
+	void setProjection(float fov, float aspectRatio, float zNear, float zFar);
 	void setLookAt(glm::vec3 &eye, glm::vec3 &center, glm::vec3 &up);
 	void setViewport(glm::vec4 &viewport);
 
@@ -50,4 +55,6 @@ public:
 	glm::vec3 &getUpDir();
 	glm::vec3 &getRightDir();
 	glm::vec4 &getViewport();
+
+	shared_ptr<Frustrum> getFrustrum();
 };
