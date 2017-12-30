@@ -5,8 +5,12 @@ MaterialComponent::MaterialComponent(SceneNode *owner)
 	, m_color(1.0)
 	, m_specIntensityPct(0)
 	, m_shininess(25)
+	, m_texScaleU(1.0)
+	, m_texScaleV(1.0)
+	, m_texOffsetU(0)
+	, m_texOffsetV(0)
+	, m_texRotate(0)
 {
-
 }
 
 MaterialComponent::MaterialComponent(SceneNode *owner, shared_ptr<MaterialComponent> copy)
@@ -17,6 +21,11 @@ MaterialComponent::MaterialComponent(SceneNode *owner, shared_ptr<MaterialCompon
 	, m_specIntensityPct(copy->m_specIntensityPct)
 	, m_shininess(copy->m_shininess)
 	, m_specularImageId(copy->m_specularImageId)
+	, m_texScaleU(copy->m_texScaleU)
+	, m_texScaleV(copy->m_texScaleV)
+	, m_texOffsetU(copy->m_texOffsetU)
+	, m_texOffsetV(copy->m_texOffsetV)
+	, m_texRotate(copy->m_texRotate)
 {
 }
 
@@ -43,6 +52,11 @@ MaterialComponent::MaterialComponent(Chunk * const byteChunk, SceneNode *owner, 
 	{
 		m_specularImageId = boost::optional<int>(resources->getIdForPath(specularPath));
 	}
+	m_texScaleU = parser.parseFloat().get_value_or(1.0f);
+	m_texScaleV = parser.parseFloat().get_value_or(1.0f);
+	m_texOffsetU = parser.parseFloat().get_value_or(0);
+	m_texOffsetV = parser.parseFloat().get_value_or(0);
+	m_texRotate = parser.parseFloat().get_value_or(0);
 }
 
 shared_ptr<Chunk> MaterialComponent::serialize(shared_ptr<Resources> resources)
@@ -69,6 +83,11 @@ shared_ptr<Chunk> MaterialComponent::serialize(shared_ptr<Resources> resources)
 		specularName = resources->getPathForId(m_specularImageId.get()).get_value_or("");
 	}
 	bytes.add(&specularName);
+	bytes.add(&m_texScaleU);
+	bytes.add(&m_texScaleV);
+	bytes.add(&m_texOffsetU);
+	bytes.add(&m_texOffsetV);
+	bytes.add(&m_texRotate);
 	return shared_ptr<Chunk>(new Chunk(ChunkType::MATERIAL_COMPONENT, bytes.getNumBytes(), bytes.collect()));
 }
 
@@ -114,6 +133,10 @@ shared_ptr<Material> MaterialComponent::getMaterial(shared_ptr<TextureCache> tex
 		shared_ptr<TextureHandle> texture = textures->getTexture(m_specularImageId.get());
 		material->setSpecular(texture);
 	}
+	glm::mat4 textureMatrix = glm::translate(glm::mat4(1.0), glm::vec3(m_texOffsetU, m_texOffsetV, 0));
+	textureMatrix = glm::scale(textureMatrix, glm::vec3(m_texScaleU, m_texScaleV, 1.0));
+	textureMatrix = glm::rotate(textureMatrix, m_texRotate, glm::vec3(0, 0, 1.0));
+	material->setTextureMatrix(textureMatrix);
 	return material;
 }
 
@@ -208,4 +231,54 @@ boost::optional<int> MaterialComponent::getSpecularImageId()
 void MaterialComponent::removeSpecularMap()
 {
 	m_specularImageId = boost::optional<int>();
+}
+
+void MaterialComponent::setTexScaleU(float texScaleU)
+{
+	m_texScaleU = texScaleU;
+}
+
+float MaterialComponent::getTexScaleU()
+{
+	return m_texScaleU;
+}
+
+void MaterialComponent::setTexScaleV(float texScaleV)
+{
+	m_texScaleV = texScaleV;
+}
+
+float MaterialComponent::getTexScaleV()
+{
+	return m_texScaleV;
+}
+
+void MaterialComponent::setTexOffsetU(float texOffsetU)
+{
+	m_texOffsetU = texOffsetU;
+}
+
+float MaterialComponent::getTexOffsetU()
+{
+	return m_texOffsetU;
+}
+
+void MaterialComponent::setTexOffsetV(float texOffsetV)
+{
+	m_texOffsetV = texOffsetV;
+}
+
+float MaterialComponent::getTexOffsetV()
+{
+	return m_texOffsetV;
+}
+
+void MaterialComponent::setTexRotate(float texRotate)
+{
+	m_texRotate = texRotate;
+}
+
+float MaterialComponent::getTexRotate()
+{
+	return m_texRotate;
 }

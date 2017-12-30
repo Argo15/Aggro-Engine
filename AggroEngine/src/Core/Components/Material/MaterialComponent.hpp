@@ -28,6 +28,11 @@ private:
 	int m_specIntensityPct;
 	int m_shininess;
 	boost::optional<int> m_specularImageId;
+	float m_texScaleU;
+	float m_texScaleV;
+	float m_texOffsetU;
+	float m_texOffsetV;
+	float m_texRotate;
 
 	Listener<MaterialComponent *> m_changeListeners;
 
@@ -69,4 +74,15 @@ public:
 	void setSpecularImageId(int textureImageId);
 	boost::optional<int> getSpecularImageId();
 	void removeSpecularMap();
+
+	void setTexScaleU(float texScaleU);
+	float getTexScaleU();
+	void setTexScaleV(float texScaleV);
+	float getTexScaleV();
+	void setTexOffsetU(float texOffsetU);
+	float getTexOffsetU();
+	void setTexOffsetV(float texOffsetV);
+	float getTexOffsetV();
+	void setTexRotate(float texRotate);
+	float getTexRotate();
 };

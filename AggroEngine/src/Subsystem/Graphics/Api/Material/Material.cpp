@@ -4,6 +4,7 @@ Material::Material(glm::vec3 color)
 	: m_color(color)
 	, m_specIntensity(0)
 	, m_shininess(25)
+	, m_textureMatrix(glm::mat4(1.0))
 {
 }
 
@@ -87,4 +88,14 @@ boost::optional<shared_ptr<TextureHandle>> Material::getSpecularOpt()
 		return boost::optional<shared_ptr<TextureHandle>>(m_specular);
 	}
 	return boost::optional<shared_ptr<TextureHandle>>();
+}
+
+void Material::setTextureMatrix(glm::mat4 textureMatrix)
+{
+	m_textureMatrix = textureMatrix;
+}
+
+glm::mat4 Material::getTextureMatrix()
+{
+	return m_textureMatrix;
 }

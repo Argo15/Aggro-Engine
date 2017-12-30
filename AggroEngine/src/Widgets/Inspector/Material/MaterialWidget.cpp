@@ -8,6 +8,11 @@ MaterialWidget::MaterialWidget(QWidget *parent, shared_ptr<Resources> resources)
 	, m_colorGEdit(new QLineEdit("0"))
 	, m_colorBEdit(new QLineEdit("0"))
 	, m_textureEdit(new QLineEdit(""))
+	, m_texScaleUEdit(new QLineEdit(""))
+	, m_texScaleVEdit(new QLineEdit(""))
+	, m_texOffsetUEdit(new QLineEdit(""))
+	, m_texOffsetVEdit(new QLineEdit(""))
+	, m_texRotateSlider(new QSlider(Qt::Horizontal))
 	, m_alphaEdit(new QLineEdit(""))
 	, m_specIntensitySlider(new QSlider(Qt::Horizontal))
 	, m_specShineSlider(new QSlider(Qt::Horizontal))
@@ -23,10 +28,17 @@ MaterialWidget::MaterialWidget(QWidget *parent, shared_ptr<Resources> resources)
 		QHBoxLayout *specIntensityLayout = new QHBoxLayout;
 		QHBoxLayout *specShineLayout = new QHBoxLayout;
 		QHBoxLayout *specMapLayout = new QHBoxLayout;
+		QHBoxLayout *texScaleLayout = new QHBoxLayout;
+		QHBoxLayout *texOffsetLayout = new QHBoxLayout;
+		QHBoxLayout *texRotateLayout = new QHBoxLayout;
 
 	m_colorREdit->setFixedWidth(70);
 	m_colorGEdit->setFixedWidth(70);
 	m_colorBEdit->setFixedWidth(70);
+	m_texScaleUEdit->setFixedWidth(70);
+	m_texScaleVEdit->setFixedWidth(70);
+	m_texOffsetUEdit->setFixedWidth(70);
+	m_texOffsetVEdit->setFixedWidth(70);
 
 	QLabel *lbl;
 
@@ -35,14 +47,19 @@ MaterialWidget::MaterialWidget(QWidget *parent, shared_ptr<Resources> resources)
 
 	leftLayout->addWidget(new QLabel("Color"));
 	leftLayout->addWidget(new QLabel("Texture"));
+	leftLayout->addWidget(new QLabel("Tex Scale"));
+	leftLayout->addWidget(new QLabel("Tex Offset"));
+	leftLayout->addWidget(new QLabel("Tex Rotate"));
 	leftLayout->addWidget(new QLabel("Alpha"));
-	leftLayout->addWidget(new QLabel("Specular"));
 	leftLayout->addWidget(new QLabel("Spec Intensity"));
 	leftLayout->addWidget(new QLabel("Spec Shininess"));
 	leftLayout->addWidget(new QLabel("Spec Map"));
 
 	rightLayout->addLayout(colorLayout);
 	rightLayout->addLayout(textureLayout);
+	rightLayout->addLayout(texScaleLayout);
+	rightLayout->addLayout(texOffsetLayout);
+	rightLayout->addLayout(texRotateLayout);
 	rightLayout->addLayout(alphaLayout);
 	rightLayout->addLayout(specIntensityLayout);
 	rightLayout->addLayout(specShineLayout);
@@ -67,6 +84,33 @@ MaterialWidget::MaterialWidget(QWidget *parent, shared_ptr<Resources> resources)
 	selectTexButton->setFixedHeight(25);
 	textureLayout->addWidget(m_textureEdit.get());
 	textureLayout->addWidget(selectTexButton);
+
+	// Tex Scale
+	lbl = new QLabel("U");
+	lbl->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
+	texScaleLayout->addWidget(lbl);
+	texScaleLayout->addWidget(m_texScaleUEdit.get());
+	lbl = new QLabel("V");
+	lbl->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
+	texScaleLayout->addWidget(lbl);
+	texScaleLayout->addWidget(m_texScaleVEdit.get());
+	texScaleLayout->addStretch();
+	texScaleLayout->addStretch();
+
+	// Tex Offset
+	lbl = new QLabel("U");
+	lbl->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
+	texOffsetLayout->addWidget(lbl);
+	texOffsetLayout->addWidget(m_texOffsetUEdit.get());
+	lbl = new QLabel("V");
+	lbl->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
+	texOffsetLayout->addWidget(lbl);
+	texOffsetLayout->addWidget(m_texOffsetVEdit.get());
+	texOffsetLayout->addStretch();
+	texOffsetLayout->addStretch();
+
+	m_texRotateSlider->setStyleSheet(QString("border-bottom-style: none;"));
+	texRotateLayout->addWidget(m_texRotateSlider.get());
 
 	QPushButton *selectAlphaButton = new QPushButton("...");
 	selectAlphaButton->setFixedWidth(50);
@@ -100,14 +144,33 @@ MaterialWidget::MaterialWidget(QWidget *parent, shared_ptr<Resources> resources)
 			[this](auto material) { material->removeTexture(); }
 		);
 	});
+	connect(m_texScaleUEdit.get(), &QLineEdit::textEdited, this, [this](QString value) {
+		_onValueSelect(value, [this](auto material, float val) { material->setTexScaleU(val); });
+	});
+	connect(m_texScaleVEdit.get(), &QLineEdit::textEdited, this, [this](QString value) {
+		_onValueSelect(value, [this](auto material, float val) { material->setTexScaleV(val); });
+	});
+	connect(m_texOffsetUEdit.get(), &QLineEdit::textEdited, this, [this](QString value) {
+		_onValueSelect(value, [this](auto material, float val) { material->setTexOffsetU(val); });
+	});
+	connect(m_texOffsetVEdit.get(), &QLineEdit::textEdited, this, [this](QString value) {
+		_onValueSelect(value, [this](auto material, float val) { material->setTexOffsetV(val); });
+	});
+	connect(m_texRotateSlider.get(), &QSlider::valueChanged, this, [this](int value) {
+		_onSliderChange(value, [this](auto material, int val) { material->setTexRotate((2 * PI) * val / 100.0f); });
+	});
 	connect(selectAlphaButton, &QPushButton::pressed, this, [this]() {
 		this->_onTexSelect(m_alphaEdit,
 			[this](auto material, int id) { material->setAlphaImageId(id); },
 			[this](auto material) { material->removeAlphaMap(); }
 		);
 	});
-	connect(m_specIntensitySlider.get(), &QSlider::valueChanged, this, &MaterialWidget::_onSpecularChange);
-	connect(m_specShineSlider.get(), &QSlider::valueChanged, this, &MaterialWidget::_onShininessChange);
+	connect(m_specIntensitySlider.get(), &QSlider::valueChanged, this, [this](int value) {
+		_onSliderChange(value, [this](auto material, int val) { material->setSpecIntensityPct(val); });
+	});
+	connect(m_specShineSlider.get(), &QSlider::valueChanged, this, [this](int value) {
+		_onSliderChange(value, [this](auto material, int val) { material->setShininess(val); });
+	});
 	connect(selectSpecButton, &QPushButton::pressed, this, [this]() {
 		this->_onTexSelect(m_specMapEdit,
 			[this](auto material, int id) { material->setSpecularImageId(id); },
@@ -128,6 +191,18 @@ void MaterialWidget::_onColorChange(QString newValue)
 			m_colorGEdit->text().toFloat(),
 			m_colorBEdit->text().toFloat()
 		));
+		material->addChangeListener(this, [this](auto newMaterial) {this->_refresh(newMaterial); });
+	}
+}
+
+void MaterialWidget::_onValueSelect(QString newValue, function<void(shared_ptr<MaterialComponent>, float)> acceptFunc)
+{
+	boost::lock_guard<MaterialWidget> guard(*this);
+	if (m_currentNode && m_currentNode->hasMaterialComponent())
+	{
+		shared_ptr<MaterialComponent> material = m_currentNode->getMaterialComponent();
+		material->removeChangeListener(this);
+		acceptFunc(material, newValue.toFloat());
 		material->addChangeListener(this, [this](auto newMaterial) {this->_refresh(newMaterial); });
 	}
 }
@@ -154,6 +229,18 @@ void MaterialWidget::_onTexSelect(shared_ptr<QLineEdit> textureEdit,
 		{
 			removeFunc(material);
 		}
+		material->addChangeListener(this, [this](auto newMaterial) {this->_refresh(newMaterial); });
+	}
+}
+
+void MaterialWidget::_onSliderChange(int value, function<void(shared_ptr<MaterialComponent>, int)> acceptFunc)
+{
+	boost::lock_guard<MaterialWidget> guard(*this);
+	if (m_currentNode && m_currentNode->hasMaterialComponent())
+	{
+		shared_ptr<MaterialComponent> material = m_currentNode->getMaterialComponent();
+		material->removeChangeListener(this);
+		acceptFunc(material, value);
 		material->addChangeListener(this, [this](auto newMaterial) {this->_refresh(newMaterial); });
 	}
 }
@@ -232,6 +319,12 @@ void MaterialWidget::_refresh(MaterialComponent *material)
 		{
 			m_textureEdit->setText("");
 		}
+
+		m_texScaleUEdit->setText(QString::number(material->getTexScaleU(), 'f', 3).remove(trailingZeros).remove(trailingDot));
+		m_texScaleVEdit->setText(QString::number(material->getTexScaleV(), 'f', 3).remove(trailingZeros).remove(trailingDot));
+		m_texOffsetUEdit->setText(QString::number(material->getTexOffsetU(), 'f', 3).remove(trailingZeros).remove(trailingDot));
+		m_texOffsetVEdit->setText(QString::number(material->getTexOffsetV(), 'f', 3).remove(trailingZeros).remove(trailingDot));
+		m_texRotateSlider->setValue(100.0f * material->getTexRotate() / (2.0f * PI));
 
 		int alphaId = material->getAlphaImageId().get_value_or(-1);
 		if (alphaId >= 0)

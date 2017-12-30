@@ -16,6 +16,11 @@ private:
 	shared_ptr<QLineEdit> m_colorGEdit;
 	shared_ptr<QLineEdit> m_colorBEdit;
 	shared_ptr<QLineEdit> m_textureEdit;
+	shared_ptr<QLineEdit> m_texScaleUEdit;
+	shared_ptr<QLineEdit> m_texScaleVEdit;
+	shared_ptr<QLineEdit> m_texOffsetUEdit;
+	shared_ptr<QLineEdit> m_texOffsetVEdit;
+	shared_ptr<QSlider> m_texRotateSlider;
 	shared_ptr<QLineEdit> m_alphaEdit;
 	shared_ptr<QSlider> m_specIntensitySlider;
 	shared_ptr<QSlider> m_specShineSlider;
@@ -27,9 +32,11 @@ protected:
 	virtual void _refresh(SceneNode *newNode);
 	void _refresh(MaterialComponent *transform);
 	void _onColorChange(QString newValue);
+	void _onValueSelect(QString newValue, function<void(shared_ptr<MaterialComponent>, float)> acceptFunc);
 	void _onTexSelect(shared_ptr<QLineEdit> textureEdit, 
 					  function<void(shared_ptr<MaterialComponent>, int)> setImageFunc,
 					  function<void(shared_ptr<MaterialComponent>)> removeFunc);
+	void _onSliderChange(int value, function<void(shared_ptr<MaterialComponent>, int)> acceptFunc);
 	void _onSpecularChange(int value);
 	void _onShininessChange(int value);
 

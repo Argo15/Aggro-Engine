@@ -126,6 +126,7 @@ void GBuffer::drawToBuffer(RenderOptions renderOptions, std::queue<shared_ptr<Re
 
 			m_glslProgram->sendUniform("lightingEnabled", renderData->isLightingEnabled());
 
+			glm::mat4 textureMatrix = glm::mat4(1.0);
 			shared_ptr<Material> material = renderData->getMaterial();
 			if (material)
 			{
@@ -135,6 +136,7 @@ void GBuffer::drawToBuffer(RenderOptions renderOptions, std::queue<shared_ptr<Re
 				m_glslProgram->sendUniform("material.specIntensity", material->getSpecIntensity());
 				m_glslProgram->sendUniform("material.shininess", (float)material->getShininess());
 				m_glslProgram->sendUniform("material.specMap", material->getSpecularOpt().get_value_or(devTexture->getHandle()), 2);
+				textureMatrix = material->getTextureMatrix();
 			}
 			else
 			{
@@ -145,6 +147,7 @@ void GBuffer::drawToBuffer(RenderOptions renderOptions, std::queue<shared_ptr<Re
 				m_glslProgram->sendUniform("material.shininess", 0.f);
 				m_glslProgram->sendUniform("material.specMap", devTexture->getHandle(), 2);
 			}
+			m_glslProgram->sendUniform("textureMatrix", glm::value_ptr(textureMatrix), false, 4);
 
 			unsigned int id = renderData->getId();
 			float r = (id % 255) / 255.0f;
