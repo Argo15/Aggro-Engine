@@ -25,6 +25,10 @@ private:
 	shared_ptr<QSlider> m_specIntensitySlider;
 	shared_ptr<QSlider> m_specShineSlider;
 	shared_ptr<QLineEdit> m_specMapEdit;
+	shared_ptr<QLineEdit> m_emissionREdit;
+	shared_ptr<QLineEdit> m_emissionGEdit;
+	shared_ptr<QLineEdit> m_emissionBEdit;
+	shared_ptr<QLineEdit> m_emissionMapEdit;
 	shared_ptr<Resources> m_resources;
 	boost::mutex m_textLock;
 
@@ -39,6 +43,7 @@ protected:
 	void _onSliderChange(int value, function<void(shared_ptr<MaterialComponent>, int)> acceptFunc);
 	void _onSpecularChange(int value);
 	void _onShininessChange(int value);
+	void _onEmissionChange(QString newValue);
 
 public:
 	MaterialWidget(QWidget *parent, shared_ptr<Resources> resources);

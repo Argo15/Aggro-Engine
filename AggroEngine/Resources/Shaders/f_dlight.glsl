@@ -36,15 +36,16 @@ void main() {
 	vec3 lookDir = normalize(cameraPos - worldPos.xyz);
 	vec3 reflectedLight = normalize(reflect(lightDir, normalDir));
 	float lightDotLook = dot(reflectedLight, lookDir);
-	float specIntensity = texture2D(glowTex, texCoord).a;
+	vec4 glowColor = texture2D(glowTex, texCoord);
+	float specIntensity = glowColor.a;
 	float shininess = 100.0 * normalColor.a;
 	if (shininess > 1 && specIntensity > 0)
 	{
 		float specular = specIntensity * pow(lightDotLook, shininess);
-		glowBuffer = vec4(color * vec3(specular), 1.0);
+		glowBuffer = vec4(glowColor.rgb + clamp(color * vec3(specular), 0.0, 1.0), 1.0);
 	}
 	else
 	{
-		glowBuffer = vec4(0, 0, 0, 1.0);
+		glowBuffer = vec4(glowColor.rgb, 1.0);
 	}
 } 

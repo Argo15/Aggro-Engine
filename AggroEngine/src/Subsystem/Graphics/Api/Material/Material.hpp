@@ -16,6 +16,8 @@ private:
 	int m_shininess;
 	shared_ptr<TextureHandle> m_specular;
 	glm::mat4 m_textureMatrix;
+	glm::vec3 m_emissionColor;
+	shared_ptr<TextureHandle> m_emissionMap;
 
 public:
 	Material(glm::vec3 color);
@@ -42,4 +44,10 @@ public:
 
 	void setTextureMatrix(glm::mat4 textureMatrix);
 	glm::mat4 getTextureMatrix();
+
+	void setEmission(glm::vec3 emission);
+	glm::vec3 &getEmission();
+	void setEmissionMap(shared_ptr<TextureHandle> texture);
+	shared_ptr<TextureHandle> getEmissionMap();
+	boost::optional<shared_ptr<TextureHandle>> getEmissionMapOpt();
 };

@@ -4,6 +4,7 @@
 
 static unique_ptr<WhiteTexture> devTexture;
 static glm::vec3 defaultColor(1.0);
+static glm::vec3 defaultEmission(0);
 
 GBuffer::GBuffer(OpenGL43Graphics *graphics, int width, int height)
 	: FrameBufferObject(width, height)
@@ -136,6 +137,8 @@ void GBuffer::drawToBuffer(RenderOptions renderOptions, std::queue<shared_ptr<Re
 				m_glslProgram->sendUniform("material.specIntensity", material->getSpecIntensity());
 				m_glslProgram->sendUniform("material.shininess", (float)material->getShininess());
 				m_glslProgram->sendUniform("material.specMap", material->getSpecularOpt().get_value_or(devTexture->getHandle()), 2);
+				m_glslProgram->sendUniform("material.emission", material->getEmission());
+				m_glslProgram->sendUniform("material.emissionMap", material->getEmissionMapOpt().get_value_or(devTexture->getHandle()), 3);
 				textureMatrix = material->getTextureMatrix();
 			}
 			else
@@ -146,6 +149,8 @@ void GBuffer::drawToBuffer(RenderOptions renderOptions, std::queue<shared_ptr<Re
 				m_glslProgram->sendUniform("material.specIntensity", 0.f);
 				m_glslProgram->sendUniform("material.shininess", 0.f);
 				m_glslProgram->sendUniform("material.specMap", devTexture->getHandle(), 2);
+				m_glslProgram->sendUniform("material.emission", defaultEmission);
+				m_glslProgram->sendUniform("material.emissionMap", devTexture->getHandle(), 3);
 			}
 			m_glslProgram->sendUniform("textureMatrix", glm::value_ptr(textureMatrix), false, 4);
 

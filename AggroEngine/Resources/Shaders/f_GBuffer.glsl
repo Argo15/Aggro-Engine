@@ -8,6 +8,8 @@ struct Material
 	float specIntensity;
 	float shininess;
 	sampler2D specMap;
+	vec3 emission;
+	sampler2D emissionMap;
 };
 
 uniform vec3 objId;
@@ -43,5 +45,6 @@ void main() {
 	albedoBuffer = vec4(texColor.rgb * material.color, 1.0);
 	selectionBuffer = vec4(objId, 1.0);
 	vec4 specColor = texture2D(material.specMap, texCoord);
-	glowBuffer = vec4(0, 0, 0, material.specIntensity * specColor.r);
+	vec4 emissionColor = texture2D(material.emissionMap, texCoord);
+	glowBuffer = vec4(material.emission * emissionColor.rgb, material.specIntensity * specColor.r);
 }

@@ -17,6 +17,10 @@ MaterialWidget::MaterialWidget(QWidget *parent, shared_ptr<Resources> resources)
 	, m_specIntensitySlider(new QSlider(Qt::Horizontal))
 	, m_specShineSlider(new QSlider(Qt::Horizontal))
 	, m_specMapEdit(new QLineEdit(""))
+	, m_emissionREdit(new QLineEdit("0"))
+	, m_emissionGEdit(new QLineEdit("0"))
+	, m_emissionBEdit(new QLineEdit("0"))
+	, m_emissionMapEdit(new QLineEdit(""))
 	, m_resources(resources)
 {
 	QHBoxLayout *mainLayout = new QHBoxLayout;
@@ -31,6 +35,8 @@ MaterialWidget::MaterialWidget(QWidget *parent, shared_ptr<Resources> resources)
 		QHBoxLayout *texScaleLayout = new QHBoxLayout;
 		QHBoxLayout *texOffsetLayout = new QHBoxLayout;
 		QHBoxLayout *texRotateLayout = new QHBoxLayout;
+		QHBoxLayout *emissionColorLayout = new QHBoxLayout;
+		QHBoxLayout *emissionMapLayout = new QHBoxLayout;
 
 	m_colorREdit->setFixedWidth(70);
 	m_colorGEdit->setFixedWidth(70);
@@ -39,6 +45,9 @@ MaterialWidget::MaterialWidget(QWidget *parent, shared_ptr<Resources> resources)
 	m_texScaleVEdit->setFixedWidth(70);
 	m_texOffsetUEdit->setFixedWidth(70);
 	m_texOffsetVEdit->setFixedWidth(70);
+	m_emissionREdit->setFixedWidth(70);
+	m_emissionGEdit->setFixedWidth(70);
+	m_emissionBEdit->setFixedWidth(70);
 
 	QLabel *lbl;
 
@@ -54,6 +63,8 @@ MaterialWidget::MaterialWidget(QWidget *parent, shared_ptr<Resources> resources)
 	leftLayout->addWidget(new QLabel("Spec Intensity"));
 	leftLayout->addWidget(new QLabel("Spec Shininess"));
 	leftLayout->addWidget(new QLabel("Spec Map"));
+	leftLayout->addWidget(new QLabel("Emission Color"));
+	leftLayout->addWidget(new QLabel("Emission Map"));
 
 	rightLayout->addLayout(colorLayout);
 	rightLayout->addLayout(textureLayout);
@@ -64,6 +75,8 @@ MaterialWidget::MaterialWidget(QWidget *parent, shared_ptr<Resources> resources)
 	rightLayout->addLayout(specIntensityLayout);
 	rightLayout->addLayout(specShineLayout);
 	rightLayout->addLayout(specMapLayout);
+	rightLayout->addLayout(emissionColorLayout);
+	rightLayout->addLayout(emissionMapLayout);
 
 	// Color
 	lbl = new QLabel("R");
@@ -130,6 +143,26 @@ MaterialWidget::MaterialWidget(QWidget *parent, shared_ptr<Resources> resources)
 	specMapLayout->addWidget(m_specMapEdit.get());
 	specMapLayout->addWidget(selectSpecButton);
 
+	// Emission
+	lbl = new QLabel("R");
+	lbl->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
+	emissionColorLayout->addWidget(lbl);
+	emissionColorLayout->addWidget(m_emissionREdit.get());
+	lbl = new QLabel("G");
+	lbl->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
+	emissionColorLayout->addWidget(lbl);
+	emissionColorLayout->addWidget(m_emissionGEdit.get());
+	lbl = new QLabel("B");
+	lbl->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
+	emissionColorLayout->addWidget(lbl);
+	emissionColorLayout->addWidget(m_emissionBEdit.get());
+
+	emissionMapLayout->addWidget(m_emissionMapEdit.get());
+	QPushButton *selectEmissionButton = new QPushButton("...");
+	selectEmissionButton->setFixedWidth(50);
+	selectEmissionButton->setFixedHeight(25);
+	emissionMapLayout->addWidget(selectEmissionButton);
+
 	lbl = new QLabel("Material");
 	lbl->setStyleSheet("font-weight: bold; font-size: 16px;");
 	m_layout->addWidget(lbl);
@@ -177,6 +210,23 @@ MaterialWidget::MaterialWidget(QWidget *parent, shared_ptr<Resources> resources)
 			[this](auto material) { material->removeSpecularMap(); }
 		);
 	});
+	connect(m_emissionREdit.get(), &QLineEdit::textEdited, this, &MaterialWidget::_onEmissionChange);
+	connect(m_emissionGEdit.get(), &QLineEdit::textEdited, this, &MaterialWidget::_onEmissionChange);
+	connect(m_emissionBEdit.get(), &QLineEdit::textEdited, this, &MaterialWidget::_onEmissionChange);
+	connect(selectEmissionButton, &QPushButton::pressed, this, [this]() {
+		this->_onTexSelect(m_emissionMapEdit,
+			[this](auto material, int id) { 
+				material->setEmissionImageId(id); 
+				material->setEmission(glm::vec3(1.0));
+				this->_refresh(material.get());
+			},
+			[this](auto material) { 
+				material->removeEmissionMap();
+				material->setEmission(glm::vec3(0));
+				this->_refresh(material.get());
+			}
+		);
+	});
 }
 
 void MaterialWidget::_onColorChange(QString newValue)
@@ -190,6 +240,22 @@ void MaterialWidget::_onColorChange(QString newValue)
 			m_colorREdit->text().toFloat(),
 			m_colorGEdit->text().toFloat(),
 			m_colorBEdit->text().toFloat()
+		));
+		material->addChangeListener(this, [this](auto newMaterial) {this->_refresh(newMaterial); });
+	}
+}
+
+void MaterialWidget::_onEmissionChange(QString newValue)
+{
+	boost::lock_guard<MaterialWidget> guard(*this);
+	if (m_currentNode && m_currentNode->hasMaterialComponent())
+	{
+		shared_ptr<MaterialComponent> material = m_currentNode->getMaterialComponent();
+		material->removeChangeListener(this);
+		material->setEmission(glm::vec3(
+			m_emissionREdit->text().toFloat(),
+			m_emissionGEdit->text().toFloat(),
+			m_emissionBEdit->text().toFloat()
 		));
 		material->addChangeListener(this, [this](auto newMaterial) {this->_refresh(newMaterial); });
 	}
@@ -347,6 +413,20 @@ void MaterialWidget::_refresh(MaterialComponent *material)
 		else
 		{
 			m_specMapEdit->setText("");
+		}
+
+		glm::vec3 emission = material->getEmission();
+		m_emissionREdit->setText(QString::number(emission.x, 'f', 3).remove(trailingZeros).remove(trailingDot));
+		m_emissionGEdit->setText(QString::number(emission.y, 'f', 3).remove(trailingZeros).remove(trailingDot));
+		m_emissionBEdit->setText(QString::number(emission.z, 'f', 3).remove(trailingZeros).remove(trailingDot));
+		int emissionId = material->getEmissionImageId().get_value_or(-1);
+		if (emissionId >= 0)
+		{
+			m_emissionMapEdit->setText(QString::fromStdString(m_resources->getPathForId(emissionId).get_value_or("")));
+		}
+		else
+		{
+			m_emissionMapEdit->setText("");
 		}
 	}
 }

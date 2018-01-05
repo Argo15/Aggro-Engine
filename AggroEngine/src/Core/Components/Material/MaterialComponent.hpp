@@ -33,6 +33,8 @@ private:
 	float m_texOffsetU;
 	float m_texOffsetV;
 	float m_texRotate;
+	glm::vec3 m_emissionColor;
+	boost::optional<int> m_emissionImageId;
 
 	Listener<MaterialComponent *> m_changeListeners;
 
@@ -85,4 +87,10 @@ public:
 	float getTexOffsetV();
 	void setTexRotate(float texRotate);
 	float getTexRotate();
+
+	void setEmission(glm::vec3 emission);
+	glm::vec3 getEmission();
+	void setEmissionImageId(int textureImageId);
+	boost::optional<int> getEmissionImageId();
+	void removeEmissionMap();
 };

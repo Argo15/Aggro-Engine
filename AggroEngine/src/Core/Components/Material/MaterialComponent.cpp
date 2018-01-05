@@ -10,6 +10,7 @@ MaterialComponent::MaterialComponent(SceneNode *owner)
 	, m_texOffsetU(0)
 	, m_texOffsetV(0)
 	, m_texRotate(0)
+	, m_emissionColor(0)
 {
 }
 
@@ -26,6 +27,7 @@ MaterialComponent::MaterialComponent(SceneNode *owner, shared_ptr<MaterialCompon
 	, m_texOffsetU(copy->m_texOffsetU)
 	, m_texOffsetV(copy->m_texOffsetV)
 	, m_texRotate(copy->m_texRotate)
+	, m_emissionColor(copy->m_emissionColor)
 {
 }
 
@@ -57,6 +59,12 @@ MaterialComponent::MaterialComponent(Chunk * const byteChunk, SceneNode *owner, 
 	m_texOffsetU = parser.parseFloat().get_value_or(0);
 	m_texOffsetV = parser.parseFloat().get_value_or(0);
 	m_texRotate = parser.parseFloat().get_value_or(0);
+	m_emissionColor = parser.parseVec3().get_value_or(glm::vec3(0));
+	string emissionPath = parser.parseString().get_value_or("");
+	if (emissionPath != "")
+	{
+		m_emissionImageId = boost::optional<int>(resources->getIdForPath(emissionPath));
+	}
 }
 
 shared_ptr<Chunk> MaterialComponent::serialize(shared_ptr<Resources> resources)
@@ -88,6 +96,13 @@ shared_ptr<Chunk> MaterialComponent::serialize(shared_ptr<Resources> resources)
 	bytes.add(&m_texOffsetU);
 	bytes.add(&m_texOffsetV);
 	bytes.add(&m_texRotate);
+	bytes.add(&m_emissionColor);
+	string emissionName = "";
+	if (m_emissionImageId)
+	{
+		emissionName = resources->getPathForId(m_emissionImageId.get()).get_value_or("");
+	}
+	bytes.add(&emissionName);
 	return shared_ptr<Chunk>(new Chunk(ChunkType::MATERIAL_COMPONENT, bytes.getNumBytes(), bytes.collect()));
 }
 
@@ -137,6 +152,12 @@ shared_ptr<Material> MaterialComponent::getMaterial(shared_ptr<TextureCache> tex
 	textureMatrix = glm::scale(textureMatrix, glm::vec3(m_texScaleU, m_texScaleV, 1.0));
 	textureMatrix = glm::rotate(textureMatrix, m_texRotate, glm::vec3(0, 0, 1.0));
 	material->setTextureMatrix(textureMatrix);
+	material->setEmission(m_emissionColor);
+	if (m_emissionImageId)
+	{
+		shared_ptr<TextureHandle> texture = textures->getTexture(m_emissionImageId.get());
+		material->setEmissionMap(texture);
+	}
 	return material;
 }
 
@@ -231,11 +252,13 @@ boost::optional<int> MaterialComponent::getSpecularImageId()
 void MaterialComponent::removeSpecularMap()
 {
 	m_specularImageId = boost::optional<int>();
+	m_changeListeners.notify(this);
 }
 
 void MaterialComponent::setTexScaleU(float texScaleU)
 {
 	m_texScaleU = texScaleU;
+	m_changeListeners.notify(this);
 }
 
 float MaterialComponent::getTexScaleU()
@@ -246,6 +269,7 @@ float MaterialComponent::getTexScaleU()
 void MaterialComponent::setTexScaleV(float texScaleV)
 {
 	m_texScaleV = texScaleV;
+	m_changeListeners.notify(this);
 }
 
 float MaterialComponent::getTexScaleV()
@@ -256,6 +280,7 @@ float MaterialComponent::getTexScaleV()
 void MaterialComponent::setTexOffsetU(float texOffsetU)
 {
 	m_texOffsetU = texOffsetU;
+	m_changeListeners.notify(this);
 }
 
 float MaterialComponent::getTexOffsetU()
@@ -266,6 +291,7 @@ float MaterialComponent::getTexOffsetU()
 void MaterialComponent::setTexOffsetV(float texOffsetV)
 {
 	m_texOffsetV = texOffsetV;
+	m_changeListeners.notify(this);
 }
 
 float MaterialComponent::getTexOffsetV()
@@ -276,9 +302,38 @@ float MaterialComponent::getTexOffsetV()
 void MaterialComponent::setTexRotate(float texRotate)
 {
 	m_texRotate = texRotate;
+	m_changeListeners.notify(this);
 }
 
 float MaterialComponent::getTexRotate()
 {
 	return m_texRotate;
+}
+
+void MaterialComponent::setEmission(glm::vec3 emission)
+{
+	m_emissionColor = emission;
+	m_changeListeners.notify(this);
+}
+
+glm::vec3 MaterialComponent::getEmission()
+{
+	return m_emissionColor;
+}
+
+void MaterialComponent::setEmissionImageId(int textureImageId)
+{
+	m_emissionImageId = textureImageId;
+	m_changeListeners.notify(this);
+}
+
+boost::optional<int> MaterialComponent::getEmissionImageId()
+{
+	return m_emissionImageId;
+}
+
+void MaterialComponent::removeEmissionMap()
+{
+	m_emissionImageId = boost::optional<int>();
+	m_changeListeners.notify(this);
 }

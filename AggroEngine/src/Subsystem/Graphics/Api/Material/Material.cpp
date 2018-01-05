@@ -5,6 +5,7 @@ Material::Material(glm::vec3 color)
 	, m_specIntensity(0)
 	, m_shininess(25)
 	, m_textureMatrix(glm::mat4(1.0))
+	, m_emissionColor(0)
 {
 }
 
@@ -98,4 +99,33 @@ void Material::setTextureMatrix(glm::mat4 textureMatrix)
 glm::mat4 Material::getTextureMatrix()
 {
 	return m_textureMatrix;
+}
+
+void Material::setEmission(glm::vec3 emission)
+{
+	m_emissionColor = emission;
+}
+
+glm::vec3 &Material::getEmission()
+{
+	return m_emissionColor;
+}
+
+void Material::setEmissionMap(shared_ptr<TextureHandle> texture)
+{
+	m_emissionMap = texture;
+}
+
+shared_ptr<TextureHandle> Material::getEmissionMap()
+{
+	return m_emissionMap;
+}
+
+boost::optional<shared_ptr<TextureHandle>> Material::getEmissionMapOpt()
+{
+	if (m_emissionMap)
+	{
+		return boost::optional<shared_ptr<TextureHandle>>(m_emissionMap);
+	}
+	return boost::optional<shared_ptr<TextureHandle>>();
 }
