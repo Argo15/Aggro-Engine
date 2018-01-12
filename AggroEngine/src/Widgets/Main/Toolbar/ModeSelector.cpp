@@ -10,6 +10,7 @@ ModeSelector::ModeSelector(shared_ptr<RenderOptions> renderOptions, QWidget *par
 	addItem("Lighting");
 	addItem("Glow");
 	addItem("Selection");
+	addItem("Direct Light");
 
 	setFixedWidth(200);
 

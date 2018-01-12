@@ -49,6 +49,7 @@ private:
 	Wrap m_wrapT;
 	InternalFormat m_internalFormat;
 	bool m_genMipmaps;
+	bool m_enableDepthCompare;
 
 public:
 	TextureBuildOptions(shared_ptr<Image> pImage);
@@ -64,6 +65,7 @@ public:
 	TextureBuildOptions *setWrapT(Wrap name);
 	TextureBuildOptions *genMipmaps(bool genMipmaps);
 	TextureBuildOptions *setInternalFormat(InternalFormat format);
+	TextureBuildOptions *enableDepthCompare(bool enabled = true);
 
 	Target getTarget();
 	Filter getMagFilter();
@@ -73,4 +75,5 @@ public:
 	InternalFormat getInternalFormat();
 	unsigned int getComponents();
 	bool isGenMipmaps();
+	bool isDepthCompareEnabled();
 };

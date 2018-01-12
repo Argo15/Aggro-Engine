@@ -15,6 +15,7 @@ void Renderer::init()
 	shared_ptr<TextureHandle> defaultTexture = m_graphicsContext->getGraphics()->createTexture();
 	m_gridRenderData = shared_ptr<RenderData>(new RenderData(gridVBO, DrawMode::LINES));
 	m_gridRenderData->setLightingEnabled(false);
+	m_gridRenderData->setShadowsEnabled(false);
 }
 
 void Renderer::renderScene(shared_ptr<Scene> scene, shared_ptr<RenderOptions> renderOptions)

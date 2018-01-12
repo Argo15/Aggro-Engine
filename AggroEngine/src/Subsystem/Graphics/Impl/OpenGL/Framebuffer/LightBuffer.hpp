@@ -4,6 +4,7 @@ class LightBuffer;
 
 #include "FrameBufferObject.hpp"
 #include "OpenGL43Graphics.hpp"
+#include "ShadowMapBuffer.hpp"
 
 /**
 * Uses normals and light info to calculate light contribution
@@ -23,7 +24,7 @@ private:
 public:
 	LightBuffer(OpenGL43Graphics *graphics, int width, int height);
 
-	void drawToBuffer(RenderOptions &renderOptions, shared_ptr<TextureHandle> normalTex, shared_ptr<TextureHandle> depthTex, shared_ptr<TextureHandle> glowTex);
+	void drawToBuffer(RenderOptions &renderOptions, shared_ptr<TextureHandle> normalTex, shared_ptr<TextureHandle> depthTex, shared_ptr<TextureHandle> glowTex, shared_ptr<ShadowMapBuffer> shadowMap);
 
 	shared_ptr<TextureHandle> getGlowTex();
 };

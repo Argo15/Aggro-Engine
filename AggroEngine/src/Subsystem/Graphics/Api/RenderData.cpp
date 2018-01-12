@@ -8,6 +8,7 @@ RenderData::RenderData()
 	, m_lineWidth(1)
 	, m_depthTestEnabled(true)
 	, m_lightingEnabled(true)
+	, m_shadowsEnabled(true)
 {
 }
 
@@ -18,6 +19,7 @@ RenderData::RenderData(shared_ptr<VertexBufferHandle> pVertexBufferHandle)
 	, m_lineWidth(1)
 	, m_depthTestEnabled(true)
 	, m_lightingEnabled(true)
+	, m_shadowsEnabled(true)
 {
 }
 
@@ -28,6 +30,7 @@ RenderData::RenderData(shared_ptr<VertexBufferHandle> pVertexBufferHandle, DrawM
 	, m_lineWidth(1)
 	, m_depthTestEnabled(true)
 	, m_lightingEnabled(true)
+	, m_shadowsEnabled(true)
 {
 }
 
@@ -112,4 +115,14 @@ void RenderData::setLightingEnabled(bool enabled)
 bool RenderData::isLightingEnabled()
 {
 	return m_lightingEnabled;
+}
+
+void RenderData::setShadowsEnabled(bool enabled)
+{
+	m_shadowsEnabled = enabled;
+}
+
+bool RenderData::isShadowsEnabled()
+{
+	return m_shadowsEnabled;
 }

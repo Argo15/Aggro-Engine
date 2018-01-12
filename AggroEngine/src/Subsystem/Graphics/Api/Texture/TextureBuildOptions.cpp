@@ -9,6 +9,7 @@ TextureBuildOptions::TextureBuildOptions(shared_ptr<Image> pImage)
 	, m_wrapT(Wrap::REPEAT)
 	, m_internalFormat(InternalFormat::RGBA8)
 	, m_genMipmaps(true)
+	, m_enableDepthCompare(false)
 {
 }
 
@@ -73,6 +74,12 @@ TextureBuildOptions *TextureBuildOptions::setInternalFormat(InternalFormat forma
 	return this;
 }
 
+TextureBuildOptions *TextureBuildOptions::enableDepthCompare(bool enabled)
+{
+	m_enableDepthCompare = enabled;
+	return this;
+}
+
 Target TextureBuildOptions::getTarget()
 {
 	return m_target;
@@ -116,4 +123,9 @@ unsigned int TextureBuildOptions::getComponents()
 bool TextureBuildOptions::isGenMipmaps()
 {
 	return m_genMipmaps;
+}
+
+bool TextureBuildOptions::isDepthCompareEnabled()
+{
+	return m_enableDepthCompare;
 }

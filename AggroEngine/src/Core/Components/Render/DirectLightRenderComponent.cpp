@@ -52,6 +52,7 @@ void DirectLightRenderComponent::render(shared_ptr<GraphicsContext> context, glm
 		m_lineRenderData->setDrawMode(DrawMode::LINES);
 		m_lineRenderData->setLineWidth(2);
 		m_lineRenderData->setLightingEnabled(false);
+		m_lineRenderData->setShadowsEnabled(false);
 		if (node)
 		{
 			m_lineRenderData->setId(node->getId());

@@ -32,6 +32,7 @@ void OpenGL43Graphics::init()
 	this->unlock();
 	const Properties& props = gConfig->getProperties();
 	vector<int> nDimensions = props.getIntArrayProperty("graphics.resolution");
+	m_shadowBuffer = shared_ptr<ShadowMapBuffer>(new ShadowMapBuffer(this, 2048));
 	m_gBuffer = shared_ptr<GBuffer>(new GBuffer(this, nDimensions[0], nDimensions[1]));
 	m_lightBuffer = shared_ptr<LightBuffer>(new LightBuffer(this, nDimensions[0], nDimensions[1]));
 	m_shadedBuffer = shared_ptr<ShadedBuffer>(new ShadedBuffer(this, nDimensions[0], nDimensions[1]));
@@ -95,6 +96,12 @@ shared_ptr<TextureHandle> OpenGL43Graphics::createTexture(shared_ptr<TextureBuil
 	{
 		glTexImage2D(target, 0, pTexOptions->getInternalFormat(), pImage->getWidth(), pImage->getHeight(), 0, pImage->getFormat(), pImage->getImageType(), 0);
 	}
+	if (pTexOptions->isDepthCompareEnabled())
+	{
+		glTexParameteri(target, GL_TEXTURE_COMPARE_MODE, GL_COMPARE_R_TO_TEXTURE);
+		glTexParameteri(target, GL_DEPTH_TEXTURE_MODE, GL_INTENSITY);
+		glTexParameteri(target, GL_TEXTURE_COMPARE_FUNC, GL_LESS);
+	}
  	return shared_ptr<TextureHandle>(new DefaultTextureHandle(m_nHandle));
 }
 	
@@ -113,8 +120,9 @@ void OpenGL43Graphics::stageTriangleRender(shared_ptr<RenderData> pRenderData)
 
 void OpenGL43Graphics::executeRender(RenderOptions &renderOptions)
 {
+	m_shadowBuffer->drawToBuffer(renderOptions, renderQueue);
 	m_gBuffer->drawToBuffer(renderOptions, renderQueue);
-	m_lightBuffer->drawToBuffer(renderOptions, m_gBuffer->getNormalTex(), m_gBuffer->getDepthTex(), m_gBuffer->getGlowTex());
+	m_lightBuffer->drawToBuffer(renderOptions, m_gBuffer->getNormalTex(), m_gBuffer->getDepthTex(), m_gBuffer->getGlowTex(), m_shadowBuffer);
 	m_shadedBuffer->drawToBuffer(renderOptions, m_gBuffer->getAlbedoTex(), m_lightBuffer->getTexture(), m_lightBuffer->getGlowTex());
 	_drawScreen(renderOptions, 0.0, 0.0, 1.0, 1.0);
 }
@@ -206,6 +214,8 @@ shared_ptr<TextureHandle> OpenGL43Graphics::_getRenderTargetTexture(RenderOption
 			return m_lightBuffer->getGlowTex();
 		case RenderOptions::SELECTION:
 			return m_gBuffer->getSelectionTex();
+		case RenderOptions::DIRECT_LIGHT:
+			return m_shadowBuffer->getTestTex(0);
 		default:
 			break;
 	}

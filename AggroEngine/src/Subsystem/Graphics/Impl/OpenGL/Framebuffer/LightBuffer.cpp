@@ -50,10 +50,11 @@ LightBuffer::LightBuffer(OpenGL43Graphics *graphics, int width, int height)
 	m_screenVBO = graphics->createVertexBuffer(shared_ptr<Mesh>(new Screen(0, 0, 1, 1)));
 }
 
-void LightBuffer::drawToBuffer(RenderOptions &renderOptions, 
-	shared_ptr<TextureHandle> normalTex, 
+void LightBuffer::drawToBuffer(RenderOptions &renderOptions,
+	shared_ptr<TextureHandle> normalTex,
 	shared_ptr<TextureHandle> depthTex,
-	shared_ptr<TextureHandle> glowTex)
+	shared_ptr<TextureHandle> glowTex,
+	shared_ptr<ShadowMapBuffer> shadowMap)
 {
 	shared_ptr<DirectLight> directLight = renderOptions.getDirectLight();
 	if (!directLight || !normalTex)
@@ -81,19 +82,28 @@ void LightBuffer::drawToBuffer(RenderOptions &renderOptions,
 	glBindAttribLocation(m_glslProgram->getHandle(), 0, "v_vertex");
 	glBindAttribLocation(m_glslProgram->getHandle(), 1, "v_texcoord");
 
-	m_glslProgram->sendUniform("normalTex", normalTex, 0);
+	int texCount = 0;
+
+	m_glslProgram->sendUniform("normalTex", normalTex, texCount++);
 	glm::vec3 dir = directLight->getDirection();
 	m_glslProgram->sendUniform("lightDir", dir);
 	glm::vec3 color = directLight->getColor();
 	m_glslProgram->sendUniform("color", color.x, color.y, color.z);
 	m_glslProgram->sendUniform("ambient", directLight->getAmbient() / 100.0f);
 
-	m_glslProgram->sendUniform("depthTex", depthTex, 1);
+	m_glslProgram->sendUniform("depthTex", depthTex, texCount++);
 	m_glslProgram->sendUniform("near", renderOptions.getFrustrum()->getZNear());
 	m_glslProgram->sendUniform("far", renderOptions.getFrustrum()->getZFar());
 	m_glslProgram->sendUniform("cameraPos", renderOptions.getFrustrum()->getEyePos());
 
-	m_glslProgram->sendUniform("glowTex", glowTex, 2);
+	m_glslProgram->sendUniform("glowTex", glowTex, texCount++);
+
+	for (int i = 0; i < 4; i++)
+	{
+		m_glslProgram->sendUniform("shadowMap[" + boost::to_string(i) + "]", shadowMap->getShadowTex(i), texCount++);
+		m_glslProgram->sendUniform("shadowMat[" + boost::to_string(i) + "]", shadowMap->getAdjViewProjectionPointer(i), false, 4);
+	}
+	m_glslProgram->sendUniform("shadowSize", shadowMap->getSizeF());
 
 	glm::mat4 inverseMVPMatrix = glm::inverse(renderOptions.getProjectionMatrix()*renderOptions.getViewMatrix());
 	m_glslProgram->sendUniform("inverseMVPMatrix", glm::value_ptr(inverseMVPMatrix), false, 4);

@@ -10,6 +10,7 @@ class StaticObjectRenderComponent : public RenderComponent
 private:
 	boost::optional<int> m_meshId;
 	bool m_lightingEnabled;
+	bool m_shadowsEnabled;
 
 	StaticObjectRenderComponent(Chunk * const byteChunk, shared_ptr<Resources> resources);
 
@@ -27,4 +28,7 @@ public:
 
 	void setLightingEnabled(int lightingEnabled);
 	bool getLightingEnabled();
+
+	void setShadowsEnabled(int shadowsEnabled);
+	bool getShadowsEnabled();
 };

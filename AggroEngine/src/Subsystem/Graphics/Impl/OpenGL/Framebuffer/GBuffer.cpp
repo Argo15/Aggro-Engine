@@ -13,7 +13,6 @@ GBuffer::GBuffer(OpenGL43Graphics *graphics, int width, int height)
 
 	boost::lock_guard<OpenGL43Graphics> guard(*m_graphics);
 
-	std::string log;
 	m_glslProgram = graphics->getShaderStore().getShader("Resources/Shaders/v_GBuffer.glsl", "Resources/Shaders/f_GBuffer.glsl");
 
 	glEnable(GL_TEXTURE_2D);

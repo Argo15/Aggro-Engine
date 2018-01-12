@@ -22,12 +22,12 @@ public:
 	virtual ~PropertyTreeParser() {}; 
 
 	// Primitive Accessors
-	string getStringProperty(string sPropertyPath) const;
-	int getIntProperty(string sPropertyPath) const;
-	long getLongProperty(string sPropertyPath) const;
-	float getFloatProperty(string sPropertyPath) const;
-	double getDoubleProperty(string sPropertyPath) const;
-	bool getBooleanProperty(string sPropertyPath) const;
+	string getStringProperty(string sPropertyPath, string defaultStr = "") const;
+	int getIntProperty(string sPropertyPath, int defaultInt = 0) const;
+	long getLongProperty(string sPropertyPath, long defaultLong = 0) const;
+	float getFloatProperty(string sPropertyPath, float defaultFloat = 0) const;
+	double getDoubleProperty(string sPropertyPath, double defaultDouble = 0) const;
+	bool getBooleanProperty(string sPropertyPath, bool defaultStr = false) const;
 
 	// Array Accessors
 	vector<string> getStringArrayProperty(string sPropertyPath) const;

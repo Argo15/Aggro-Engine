@@ -10,6 +10,7 @@ class OpenGL43Graphics;
 #include "ShadedBuffer.hpp"
 #include "Graphics.hpp"
 #include "Locks.hpp"
+#include "ShadowMapBuffer.hpp"
 
 /**
  * OpenGL graphics that only guarentees support for OpenGL 4.3 or above.
@@ -23,6 +24,7 @@ class OpenGL43Graphics : public Graphics,
 private:
 	std::queue<shared_ptr<RenderData>> renderQueue;
 	ShaderStore m_shaderStore;
+	shared_ptr<ShadowMapBuffer> m_shadowBuffer;
 	shared_ptr<GBuffer> m_gBuffer;
 	shared_ptr<LightBuffer> m_lightBuffer;
 	shared_ptr<ShadedBuffer> m_shadedBuffer;

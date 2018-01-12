@@ -7,34 +7,34 @@ PropertyTreeParser::PropertyTreeParser(shared_ptr<boost::property_tree::ptree> p
 
 }
 
-string PropertyTreeParser::getStringProperty(string sPropertyPath) const
+string PropertyTreeParser::getStringProperty(string sPropertyPath, string defaultStr) const
 {
-	return pt.get<string>(sPropertyPath,"");
+	return pt.get<string>(sPropertyPath, defaultStr);
 }
 
-int PropertyTreeParser::getIntProperty(string sPropertyPath) const
+int PropertyTreeParser::getIntProperty(string sPropertyPath, int defaultInt) const
 {
-	return pt.get<int>(sPropertyPath,0);
+	return pt.get<int>(sPropertyPath, defaultInt);
 }
 
-long PropertyTreeParser::getLongProperty(string sPropertyPath) const
+long PropertyTreeParser::getLongProperty(string sPropertyPath, long defaultLong) const
 {
-	return pt.get<long>(sPropertyPath,0);
+	return pt.get<long>(sPropertyPath, defaultLong);
 }
 
-float PropertyTreeParser::getFloatProperty(string sPropertyPath) const
+float PropertyTreeParser::getFloatProperty(string sPropertyPath, float defaultFloat) const
 {
-	return pt.get<float>(sPropertyPath,0);
+	return pt.get<float>(sPropertyPath, defaultFloat);
 }
 
-double PropertyTreeParser::getDoubleProperty(string sPropertyPath) const
+double PropertyTreeParser::getDoubleProperty(string sPropertyPath, double defaultDouble) const
 {
-	return pt.get<double>(sPropertyPath,0);
+	return pt.get<double>(sPropertyPath, defaultDouble);
 }
 
-bool PropertyTreeParser::getBooleanProperty(string sPropertyPath) const
+bool PropertyTreeParser::getBooleanProperty(string sPropertyPath, bool defaultBool) const
 {
-	return pt.get<bool>(sPropertyPath,false);
+	return pt.get<bool>(sPropertyPath, defaultBool);
 }
 
 vector<string> PropertyTreeParser::getStringArrayProperty(string sPropertyPath) const

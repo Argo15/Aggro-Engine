@@ -25,6 +25,7 @@ private:
 	int m_lineWidth;
 	bool m_depthTestEnabled;
 	bool m_lightingEnabled;
+	bool m_shadowsEnabled;
 
 public:
 	RenderData();
@@ -53,4 +54,7 @@ public:
 
 	void setLightingEnabled(bool enabled);
 	bool isLightingEnabled();
+
+	void setShadowsEnabled(bool enabled);
+	bool isShadowsEnabled();
 };

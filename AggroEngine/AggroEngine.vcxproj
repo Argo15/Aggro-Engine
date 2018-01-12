@@ -153,6 +153,7 @@
     <ClCompile Include="src\Subsystem\Graphics\Impl\OpenGL\Framebuffer\FrameBufferObject.cpp" />
     <ClCompile Include="src\Subsystem\Graphics\Impl\OpenGL\Framebuffer\GBuffer.cpp" />
     <ClCompile Include="src\Subsystem\Graphics\Impl\OpenGL\Framebuffer\LightBuffer.cpp" />
+    <ClCompile Include="src\Subsystem\Graphics\Impl\OpenGL\Framebuffer\ShadowMapBuffer.cpp" />
     <ClCompile Include="src\Subsystem\Graphics\Impl\OpenGL\OpenGL43Graphics.cpp" />
     <ClCompile Include="src\Subsystem\Graphics\Impl\OpenGL\PixelBuffer\PixelBufferCache.cpp" />
     <ClCompile Include="src\Subsystem\Graphics\Impl\OpenGL\Shaders\GLSLProgram.cpp" />
@@ -243,6 +244,7 @@
     <ClInclude Include="src\Subsystem\Graphics\Api\Material\Material.hpp" />
     <ClInclude Include="src\Subsystem\Graphics\Impl\OpenGL\Framebuffer\ShadedBuffer.hpp" />
     <ClInclude Include="src\Subsystem\Graphics\Impl\OpenGL\Framebuffer\LightBuffer.hpp" />
+    <ClInclude Include="src\Subsystem\Graphics\Impl\OpenGL\Framebuffer\ShadowMapBuffer.hpp" />
     <ClInclude Include="src\Util\Locks.hpp" />
     <ClInclude Include="src\Core\Jobs\CameraUpdateJob.hpp" />
     <ClInclude Include="src\Core\Jobs\TickingJob.hpp" />

@@ -4,12 +4,14 @@ StaticObjectRenderComponent::StaticObjectRenderComponent()
 	: RenderComponent()
 	, m_meshId()
 	, m_lightingEnabled(true)
+	, m_shadowsEnabled(true)
 {
 }
 
 StaticObjectRenderComponent::StaticObjectRenderComponent(Chunk * const byteChunk, shared_ptr<Resources> resources)
 	: RenderComponent()
 	, m_lightingEnabled(true)
+	, m_shadowsEnabled(true)
 {
 	ByteParser parser = ByteParser(*byteChunk->getNumBytes(), byteChunk->getByteData().get());
 	string meshStr = parser.parseString().get_value_or("");
@@ -54,6 +56,7 @@ void StaticObjectRenderComponent::render(shared_ptr<GraphicsContext> context, gl
 		shared_ptr<RenderData> renderData(new RenderData(vbo));
 		renderData->setModelMatrix(m4Transform);
 		renderData->setLightingEnabled(m_lightingEnabled);
+		renderData->setShadowsEnabled(m_shadowsEnabled);
 		if (node)
 		{
 			renderData->setId(node->getId());
@@ -84,4 +87,14 @@ void StaticObjectRenderComponent::setLightingEnabled(int lightingEnabled)
 bool StaticObjectRenderComponent::getLightingEnabled()
 {
 	return m_lightingEnabled;
+}
+
+void StaticObjectRenderComponent::setShadowsEnabled(int shadowsEnabled)
+{
+	m_shadowsEnabled = shadowsEnabled;
+}
+
+bool StaticObjectRenderComponent::getShadowsEnabled()
+{
+	return m_shadowsEnabled;
 }
