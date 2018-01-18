@@ -17,5 +17,5 @@ private:
 	shared_ptr<int> _getIndices();
 
 public:
-	CubeMesh();
+	CubeMesh(int meshId);
 };

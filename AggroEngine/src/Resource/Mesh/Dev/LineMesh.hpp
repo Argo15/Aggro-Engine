@@ -22,5 +22,5 @@ private:
 	shared_ptr<int> _getIndices();
 
 public:
-	LineMesh(glm::vec3 p1, glm::vec3 p2);
+	LineMesh(int meshId, glm::vec3 p1, glm::vec3 p2);
 };

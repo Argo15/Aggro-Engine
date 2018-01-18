@@ -6,6 +6,7 @@
 #include "RenderComponent.hpp"
 #include "DirectLightComponent.hpp"
 #include "MaterialComponent.hpp"
+#include "MeshComponent.hpp"
 #include "Listener.hpp"
 #include "Chunk.hpp"
 using namespace std;
@@ -34,18 +35,19 @@ private:
 	shared_ptr<RenderComponent> m_renderComponent;
 	shared_ptr<DirectLightComponent> m_directLightComponent;
 	shared_ptr<MaterialComponent> m_materialComponent;
+	shared_ptr<MeshComponent> m_meshComponent;
 
 	Listener<SceneNode *> m_changeListeners;
 	Listener<SceneNode *> m_deletedListeners;
 
-	SceneNode(Chunk * const byteChunk, shared_ptr<Resources> resources, boost::unordered_map<int, shared_ptr<SceneNode>> baseMaterials);
+	SceneNode(Chunk * const byteChunk, shared_ptr<Resources> resources, shared_ptr<MeshImporter> meshImporter, boost::unordered_map<int, shared_ptr<SceneNode>> baseMaterials);
 
 public:
 	SceneNode(unsigned int m_id, SceneNode *parent = nullptr);
 
 	// Serialization
 	shared_ptr<Chunk> serialize(shared_ptr<Resources> resources);
-	static shared_ptr<SceneNode> deserialize(Chunk * const byteChunk, shared_ptr<Resources> resources, boost::unordered_map<int, shared_ptr<SceneNode>> baseMaterials);
+	static shared_ptr<SceneNode> deserialize(Chunk * const byteChunk, shared_ptr<Resources> resources, shared_ptr<MeshImporter> meshImporter, boost::unordered_map<int, shared_ptr<SceneNode>> baseMaterials);
 
 	shared_ptr<vector<shared_ptr<SceneNode>>> getChildren();
 	void setSelected(bool selected);
@@ -94,4 +96,8 @@ public:
 	shared_ptr<MaterialComponent> getMaterialComponent();
 	void setBaseMaterialNode(bool value = true);
 	bool isBaseMaterialNode();
+
+	bool hasMeshComponent();
+	void setMeshComponent(shared_ptr<MeshComponent> meshComponent);
+	shared_ptr<MeshComponent> getMeshComponent();
 };

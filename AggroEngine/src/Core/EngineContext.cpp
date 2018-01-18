@@ -5,6 +5,7 @@ EngineContext::EngineContext()
 	, m_scene(new Scene())
 	, m_renderOptions(new RenderOptions())
 	, m_resources(new Resources())
+	, m_meshImporter(new AssimpMeshImporter())
 	, m_newSceneListeners()
 {
 }
@@ -27,6 +28,11 @@ shared_ptr<JobManager> EngineContext::getJobManager()
 shared_ptr<Resources> EngineContext::getResources()
 {
 	return m_resources;
+}
+
+shared_ptr<MeshImporter> EngineContext::getMeshImporter()
+{
+	return m_meshImporter;
 }
 
 void EngineContext::setScene(shared_ptr<Scene> scene)

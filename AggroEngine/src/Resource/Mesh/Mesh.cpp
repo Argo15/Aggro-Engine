@@ -1,18 +1,35 @@
 #include "Mesh.hpp"
 #include <iostream>
 
-Mesh::Mesh()
+Mesh::Mesh(int meshId)
+	: m_meshId(meshId)
 {
 }
 
-Mesh::Mesh(int nSizeOfVerticies, int nSizeOfIndicies, shared_ptr<float> npVertices, shared_ptr<float> npTexCoords, shared_ptr<float> npNormals, shared_ptr<int> npIndices)
-	: m_nSizeOfVertices(nSizeOfVerticies)
+Mesh::Mesh(int meshId, int nSizeOfVerticies, int nSizeOfIndicies, shared_ptr<float> npVertices, shared_ptr<float> npTexCoords, shared_ptr<float> npNormals, shared_ptr<int> npIndices)
+	: m_meshId(meshId)
+	, m_nSizeOfVertices(nSizeOfVerticies)
 	, m_nSizeOfIndices(nSizeOfIndicies)
 	, m_npVertices(npVertices)
 	, m_npTexCoords(npTexCoords)
 	, m_npNormals(npNormals)
 	, m_npIndices(npIndices)
 {
+}
+
+bool Mesh::resolve()
+{
+	return true;
+}
+
+bool Mesh::isResolved()
+{
+	return true;
+}
+
+int Mesh::getId()
+{
+	return m_meshId;
 }
 
 void Mesh::setSizeOfVerticies(unsigned int sizeOfVerticies)
@@ -47,30 +64,41 @@ void Mesh::setIndicies(shared_ptr<int> indicies)
 
 unsigned int Mesh::getSizeOfVerticies()
 {
+	resolve();
 	return m_nSizeOfVertices;
 }
 
 unsigned int Mesh::getSizeOfIndicies()
 {
+	resolve();
 	return m_nSizeOfIndices;
 }
 
 shared_ptr<float> Mesh::getVerticies()
 {
+	resolve();
 	return m_npVertices;
 }
 
 shared_ptr<float> Mesh::getTexCoords()
 {
+	resolve();
 	return m_npTexCoords;
 }
 
 shared_ptr<float> Mesh::getNormals()
 {
+	resolve();
 	return m_npNormals;
 }
 
 shared_ptr<int> Mesh::getIndicies()
 {
+	resolve();
 	return m_npIndices;
+}
+
+boost::optional<string> Mesh::getMeshPath()
+{
+	return boost::optional<string>();
 }

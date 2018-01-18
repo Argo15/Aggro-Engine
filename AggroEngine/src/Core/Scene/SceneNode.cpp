@@ -17,7 +17,7 @@ SceneNode::SceneNode(unsigned int id, SceneNode *parent)
 	setName("Object");
 }
 
-SceneNode::SceneNode(Chunk * const byteChunk, shared_ptr<Resources> resources, boost::unordered_map<int, shared_ptr<SceneNode>> baseMaterials)
+SceneNode::SceneNode(Chunk * const byteChunk, shared_ptr<Resources> resources, shared_ptr<MeshImporter> meshImporter, boost::unordered_map<int, shared_ptr<SceneNode>> baseMaterials)
 	: m_parent(nullptr)
 	, m_children(shared_ptr<vector<shared_ptr<SceneNode>>>(new vector<shared_ptr<SceneNode>>()))
 	, m_isSelected(false)
@@ -37,7 +37,7 @@ SceneNode::SceneNode(Chunk * const byteChunk, shared_ptr<Resources> resources, b
 		}
 		else if (*nextChunk->getType() == ChunkType::SCENE_NODE)
 		{
-			addChild(SceneNode::deserialize(nextChunk.get_ptr(), resources, baseMaterials));
+			addChild(SceneNode::deserialize(nextChunk.get_ptr(), resources, meshImporter, baseMaterials));
 		}
 		else if (*nextChunk->getType() == ChunkType::TRANSFORM_COMPONENT)
 		{
@@ -63,6 +63,10 @@ SceneNode::SceneNode(Chunk * const byteChunk, shared_ptr<Resources> resources, b
 			{
 				m_materialComponent = baseMaterials[baseId]->getMaterialComponent();
 			}
+		}
+		else if (*nextChunk->getType() == ChunkType::MESH_COMPONENT)
+		{
+			m_meshComponent = MeshComponent::deserialize(nextChunk.get_ptr(), resources, meshImporter);
 		}
 	}
 }
@@ -125,17 +129,24 @@ shared_ptr<Chunk> SceneNode::serialize(shared_ptr<Resources> resources)
 		}
 	}
 
+	if (m_meshComponent)
+	{
+		chunk = m_meshComponent->serialize(resources);
+		chunks.push_back(chunk);
+		bytes.add(chunk.get());
+	}
+
 	return shared_ptr<Chunk>(new Chunk(ChunkType::SCENE_NODE, bytes.getNumBytes(), bytes.collect()));
 }
 
-shared_ptr<SceneNode> SceneNode::deserialize(Chunk * const byteChunk, shared_ptr<Resources> resources, boost::unordered_map<int, shared_ptr<SceneNode>> baseMaterials)
+shared_ptr<SceneNode> SceneNode::deserialize(Chunk * const byteChunk, shared_ptr<Resources> resources, shared_ptr<MeshImporter> meshImporter, boost::unordered_map<int, shared_ptr<SceneNode>> baseMaterials)
 {
 	if (*byteChunk->getType() != ChunkType::SCENE_NODE)
 	{
 		return shared_ptr<SceneNode>();
 	}
 
-	return shared_ptr<SceneNode>(new SceneNode(byteChunk, resources, baseMaterials));
+	return shared_ptr<SceneNode>(new SceneNode(byteChunk, resources, meshImporter, baseMaterials));
 }
 
 shared_ptr<vector<shared_ptr<SceneNode>>> SceneNode::getChildren()
@@ -375,4 +386,20 @@ void SceneNode::setBaseMaterialNode(bool value)
 bool SceneNode::isBaseMaterialNode()
 {
 	return hasMaterialComponent() && m_isBaseMaterialNode;
+}
+
+bool SceneNode::hasMeshComponent()
+{
+	return m_meshComponent != nullptr;
+}
+
+void SceneNode::setMeshComponent(shared_ptr<MeshComponent> meshComponent)
+{
+	m_meshComponent = meshComponent;
+	notifyChanged();
+}
+
+shared_ptr<MeshComponent> SceneNode::getMeshComponent()
+{
+	return m_meshComponent;
 }

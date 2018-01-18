@@ -34,7 +34,7 @@ private:
 
 protected:
 	virtual void _refresh(SceneNode *newNode);
-	void _refresh(MaterialComponent *transform);
+	void _refresh(MaterialComponent *material);
 	void _onColorChange(QString newValue);
 	void _onValueSelect(QString newValue, function<void(shared_ptr<MaterialComponent>, float)> acceptFunc);
 	void _onTexSelect(shared_ptr<QLineEdit> textureEdit, 

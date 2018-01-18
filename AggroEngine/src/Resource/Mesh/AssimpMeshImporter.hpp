@@ -15,5 +15,5 @@ private:
 public:
 	AssimpMeshImporter();
 
-	shared_ptr<Mesh> importMesh(string sFilename);
+	shared_ptr<Mesh> importMesh(int meshId, string sFilename);
 };

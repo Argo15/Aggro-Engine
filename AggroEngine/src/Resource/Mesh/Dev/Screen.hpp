@@ -16,5 +16,5 @@ private:
 	shared_ptr<int> _getIndices();
 
 public:
-	Screen(int x, int y, int width, int height);
+	Screen(int meshId, int x, int y, int width, int height);
 };

@@ -1,6 +1,7 @@
 #pragma once
 
 #include <memory>
+#include <boost/optional.hpp>
 using namespace std;
 
 /**
@@ -20,9 +21,17 @@ private:
 	shared_ptr<float> m_npNormals;
 	shared_ptr<int> m_npIndices;
 
+protected:
+	int m_meshId;
+
 public:
-	Mesh();
-	Mesh(int nSizeOfVertices, int nSizeOfIndices, shared_ptr<float> npVertices, shared_ptr<float> npTexCoords, shared_ptr<float> npNormals, shared_ptr<int> npIndices);
+	Mesh(int meshId);
+	Mesh(int meshId, int nSizeOfVertices, int nSizeOfIndices, shared_ptr<float> npVertices, shared_ptr<float> npTexCoords, shared_ptr<float> npNormals, shared_ptr<int> npIndices);
+
+	virtual bool resolve();
+	virtual bool isResolved();
+
+	int getId();
 
 	void setSizeOfVerticies(unsigned int sizeOfVerticies);
 	void setSizeOfIndicies(unsigned int sizeOfIndicies);
@@ -37,4 +46,7 @@ public:
 	shared_ptr<float> getTexCoords();
 	shared_ptr<float> getNormals();
 	shared_ptr<int> getIndicies();
+
+	virtual boost::optional<string> getMeshPath();
+
 };

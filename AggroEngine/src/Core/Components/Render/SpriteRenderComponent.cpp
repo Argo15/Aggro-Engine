@@ -1,23 +1,16 @@
 #include "SpriteRenderComponent.hpp"
 #include "MatrixDecompose.hpp"
 
-const static string meshPath = "Resources/Mesh/Engine/Plane.obj";
-
 SpriteRenderComponent::SpriteRenderComponent(shared_ptr<Resources> resources)
 	: StaticObjectRenderComponent()
 {
 	setLightingEnabled(false);
 	setShadowsEnabled(false);
-	setMeshId(resources->getIdForPath(meshPath));
 }
 
 SpriteRenderComponent::SpriteRenderComponent(Chunk * const byteChunk, shared_ptr<Resources> resources)
-	: StaticObjectRenderComponent()
+	: SpriteRenderComponent(resources)
 {
-	setLightingEnabled(false);
-	setShadowsEnabled(false);
-	ByteParser parser = ByteParser(*byteChunk->getNumBytes(), byteChunk->getByteData().get());
-	setMeshId(resources->getIdForPath(meshPath)); 
 }
 
 SpriteRenderComponent::SpriteRenderComponent()

@@ -30,7 +30,7 @@ private:
 	boost::unordered_map<SceneNode *, QTreeWidgetItem *> m_currentNodes;
 
 	void _addSceneNodeRecursive(shared_ptr<SceneNode> node, QTreeWidgetItem *parent, bool isRoot);
-	shared_ptr<SceneNode> _addNewNode(shared_ptr<StaticObjectRenderComponent> renderComponent, string name);
+	void _addNewNode(shared_ptr<SceneNode> node);
 	void _selectionChanged();
 
 	void _deleteSelected();

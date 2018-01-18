@@ -3,7 +3,8 @@
 
 const static int s_numVerts = 18;
 
-DirectLightMesh::DirectLightMesh()
+DirectLightMesh::DirectLightMesh(int meshId)
+	: Mesh(meshId)
 {
 	setSizeOfVerticies(sizeof(float) * 3 * s_numVerts);
 	setSizeOfIndicies(sizeof(int) * s_numVerts);

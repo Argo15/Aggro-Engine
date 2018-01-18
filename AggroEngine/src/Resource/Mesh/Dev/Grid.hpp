@@ -24,5 +24,5 @@ private:
 	shared_ptr<int> _getIndices();
 
 public:
-	Grid(int size);
+	Grid(int meshId, int size);
 };

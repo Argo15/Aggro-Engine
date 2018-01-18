@@ -47,7 +47,7 @@ LightBuffer::LightBuffer(OpenGL43Graphics *graphics, int width, int height)
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
 	m_noLightTexture = graphics->createTexture(shared_ptr<Image>(new RGBImage(1, 1, glm::vec3(1.f, 1.f, 1.f))));
-	m_screenVBO = graphics->createVertexBuffer(shared_ptr<Mesh>(new Screen(0, 0, 1, 1)));
+	m_screenVBO = graphics->createVertexBuffer(shared_ptr<Mesh>(new Screen(-1, 0, 0, 1, 1)));
 }
 
 void LightBuffer::drawToBuffer(RenderOptions &renderOptions,

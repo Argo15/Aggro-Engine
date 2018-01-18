@@ -1,8 +1,9 @@
 #include "LineMesh.hpp"
 #include "MemoryUtil.hpp"
 
-LineMesh::LineMesh(glm::vec3 p1, glm::vec3 p2)
-	: m_p1(p1)
+LineMesh::LineMesh(int meshId, glm::vec3 p1, glm::vec3 p2)
+	: Mesh(meshId)
+	, m_p1(p1)
 	, m_p2(p2)
 {
 	setSizeOfVerticies(sizeof(float) * 6);

@@ -10,7 +10,7 @@ Renderer::Renderer(shared_ptr<GraphicsContext> graphicsContext)
 void Renderer::init()
 {
 	// Build grid
-	shared_ptr<Mesh> grid = unique_ptr<Mesh>(new Grid(16));
+	shared_ptr<Mesh> grid = unique_ptr<Mesh>(new Grid(-1, 16));
 	shared_ptr<VertexBufferHandle> gridVBO = m_graphicsContext->getGraphics()->createVertexBuffer(grid);
 	shared_ptr<TextureHandle> defaultTexture = m_graphicsContext->getGraphics()->createTexture();
 	m_gridRenderData = shared_ptr<RenderData>(new RenderData(gridVBO, DrawMode::LINES));

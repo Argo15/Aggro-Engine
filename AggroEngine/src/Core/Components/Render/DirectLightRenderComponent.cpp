@@ -42,7 +42,7 @@ void DirectLightRenderComponent::render(shared_ptr<GraphicsContext> context, glm
 	{
 		m_lineRenderData = shared_ptr<RenderData>(new RenderData());
 		m_lineRenderData->setVertexBufferHandle(context->getGraphics()
-			->createVertexBuffer(shared_ptr<Mesh>(new DirectLightMesh())));
+			->createVertexBuffer(shared_ptr<Mesh>(new DirectLightMesh(-1))));
 
 		shared_ptr<Material> mat(new Material(glm::vec3(1.0)));
 		mat->setTexture(context->getGraphics()->createTexture(

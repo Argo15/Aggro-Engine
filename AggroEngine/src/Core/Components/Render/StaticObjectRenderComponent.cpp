@@ -2,7 +2,6 @@
 
 StaticObjectRenderComponent::StaticObjectRenderComponent()
 	: RenderComponent()
-	, m_meshId()
 	, m_lightingEnabled(true)
 	, m_shadowsEnabled(true)
 {
@@ -14,18 +13,11 @@ StaticObjectRenderComponent::StaticObjectRenderComponent(Chunk * const byteChunk
 	, m_shadowsEnabled(true)
 {
 	ByteParser parser = ByteParser(*byteChunk->getNumBytes(), byteChunk->getByteData().get());
-	string meshStr = parser.parseString().get_value_or("");
-	if (meshStr != "")
-	{
-		m_meshId = resources->getIdForPath(meshStr);
-	}
 }
 
 shared_ptr<Chunk> StaticObjectRenderComponent::serialize(shared_ptr<Resources> resources)
 {
 	ByteAccumulator bytes;
-	string meshStr = resources->getPathForId(m_meshId.get_value_or(-1)).get_value_or("");
-	bytes.add(&meshStr);
 	shared_ptr<Chunk> chunk(new Chunk(ChunkType::STATIC_OBJECT_RENDER_COMPONENT, bytes.getNumBytes(), bytes.collect()));
 	bytes = ByteAccumulator();
 	bytes.add(chunk.get());
@@ -45,13 +37,14 @@ shared_ptr<RenderComponent> StaticObjectRenderComponent::deserialize(
 
 void StaticObjectRenderComponent::render(shared_ptr<GraphicsContext> context, glm::mat4 m4Transform, glm::mat4 m4ViewMat, shared_ptr<SceneNode> node)
 {
-	if (!m_meshId)
+	shared_ptr<MeshComponent> meshComponent = node->getMeshComponent();
+	if (!meshComponent || !meshComponent->hasMesh())
 	{
 		return;
 	}
 
-	shared_ptr<VertexBufferHandle> vbo = context->getVboCache()->getVertexBuffer(*m_meshId);
-	if (vbo->isLoaded())
+	shared_ptr<VertexBufferHandle> vbo = context->getVboCache()->getVertexBuffer(meshComponent->getPrimaryMesh());
+	if (vbo && vbo->isLoaded())
 	{
 		shared_ptr<RenderData> renderData(new RenderData(vbo));
 		renderData->setModelMatrix(m4Transform);
@@ -67,16 +60,6 @@ void StaticObjectRenderComponent::render(shared_ptr<GraphicsContext> context, gl
 		}
 		context->getGraphics()->stageTriangleRender(renderData);
 	}
-}
-
-void StaticObjectRenderComponent::setMeshId(int meshId)
-{
-	m_meshId = meshId;
-}
-
-boost::optional<int> StaticObjectRenderComponent::getMeshId()
-{
-	return m_meshId;
 }
 
 void StaticObjectRenderComponent::setLightingEnabled(int lightingEnabled)

@@ -79,7 +79,8 @@ shared_ptr<int> Grid::_getIndices()
 	return mem::shared_array(arr);
 }
 
-Grid::Grid(int size)
+Grid::Grid(int meshId, int size)
+	: Mesh(meshId)
 {
 	_buildVerticies(size);
 	_buildIndices(size);

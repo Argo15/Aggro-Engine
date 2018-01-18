@@ -8,5 +8,5 @@ using namespace std;
 class MeshImporter
 {
 public:
-	virtual shared_ptr<Mesh> importMesh(string sFilename) = 0;
+	virtual shared_ptr<Mesh> importMesh(int meshId, string sFilename) = 0;
 };

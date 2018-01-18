@@ -24,5 +24,5 @@ private:
 	shared_ptr<int> _getIndices();
 
 public:
-	CircleMesh(glm::vec3 center, glm::vec3 axis, float size, int sides);
+	CircleMesh(int meshId, glm::vec3 center, glm::vec3 axis, float size, int sides);
 };

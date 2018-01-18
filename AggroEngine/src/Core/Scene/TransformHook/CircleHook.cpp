@@ -43,5 +43,5 @@ void CircleHook::updateTransform(shared_ptr<SceneNode> node, const Line &lookLin
 
 shared_ptr<Mesh> CircleHook::getMesh(glm::vec3 axis)
 {
-	return shared_ptr<Mesh>(new CircleMesh(glm::vec3(0), axis, 1.5f, 50));
+	return shared_ptr<Mesh>(new CircleMesh(-1, glm::vec3(0), axis, 1.5f, 50));
 }

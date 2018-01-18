@@ -36,5 +36,5 @@ glm::mat4 LineHook::getRelativeTransform(shared_ptr<SceneNode> node)
 
 shared_ptr<Mesh> LineHook::getMesh(glm::vec3 axis)
 {
-	return shared_ptr<Mesh>(new LineMesh(glm::vec3(0), 2.0f * axis));
+	return shared_ptr<Mesh>(new LineMesh(-1, glm::vec3(0), 2.0f * axis));
 }

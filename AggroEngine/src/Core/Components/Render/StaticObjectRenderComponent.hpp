@@ -8,7 +8,6 @@
 class StaticObjectRenderComponent : public RenderComponent
 {
 private:
-	boost::optional<int> m_meshId;
 	bool m_lightingEnabled;
 	bool m_shadowsEnabled;
 
@@ -22,9 +21,6 @@ public:
 	static shared_ptr<RenderComponent> deserialize(Chunk * const byteChunk, shared_ptr<Resources> resources);
 
 	virtual void render(shared_ptr<GraphicsContext> context, glm::mat4 m4Transform, glm::mat4 m4ViewMat, shared_ptr<SceneNode> node);
-
-	void setMeshId(int meshId);
-	boost::optional<int> getMeshId();
 
 	void setLightingEnabled(int lightingEnabled);
 	bool getLightingEnabled();

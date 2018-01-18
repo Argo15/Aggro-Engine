@@ -42,7 +42,7 @@ ShadedBuffer::ShadedBuffer(OpenGL43Graphics *graphics, int width, int height)
 	glBindTexture(GL_TEXTURE_2D, 0);
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
-	m_screenVBO = graphics->createVertexBuffer(shared_ptr<Mesh>(new Screen(0, 0, 1, 1)));
+	m_screenVBO = graphics->createVertexBuffer(shared_ptr<Mesh>(new Screen(-1, 0, 0, 1, 1)));
 }
 
 void ShadedBuffer::drawToBuffer(RenderOptions &renderOptions, shared_ptr<TextureHandle> albedoTex, shared_ptr<TextureHandle> lightingTex, shared_ptr<TextureHandle> glowTex)

@@ -1,8 +1,9 @@
 #include "Screen.hpp"
 #include "MemoryUtil.hpp"
 
-Screen::Screen(int x, int y, int width, int height)
-	: m_x(x)
+Screen::Screen(int meshId, int x, int y, int width, int height)
+	: Mesh(meshId)
+	, m_x(x)
 	, m_y(y)
 	, m_width(width)
 	, m_height(height)

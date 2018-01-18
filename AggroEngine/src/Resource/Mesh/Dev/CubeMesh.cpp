@@ -164,7 +164,7 @@ shared_ptr<int> CubeMesh::_getIndices()
 	return mem::shared_array(pIdx);
 }
 
-CubeMesh::CubeMesh()
-	: Mesh(sizeof(verts), sizeof(idxs), _getVertices(), _getTexCoords(), _getNormals(), _getIndices())
+CubeMesh::CubeMesh(int meshId)
+	: Mesh(meshId, sizeof(verts), sizeof(idxs), _getVertices(), _getTexCoords(), _getNormals(), _getIndices())
 {
 }

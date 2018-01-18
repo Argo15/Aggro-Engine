@@ -1,6 +1,7 @@
 #include "SceneGraphTree.hpp"
 #include "SceneTreeWidget.hpp"
 #include "DirectLightRenderComponent.hpp"
+#include "FileBackedMesh.hpp"
 #include <QPushButton>
 #include <QAction>
 #include <QMouseEvent>
@@ -15,60 +16,94 @@ SceneGraphTree::SceneGraphTree(shared_ptr<EngineContext> context, QWidget *paren
 	, m_context(context)
 	, m_materialsItem(nullptr)
 {
+	shared_ptr<Resources> resources = m_context->getResources();
+	shared_ptr<MeshImporter> meshImporter = m_context->getMeshImporter();
+
 	m_addCubeAction = new QAction(tr("Add Cube"), this);
-	connect(m_addCubeAction, &QAction::triggered, this, [this]() {
+	connect(m_addCubeAction, &QAction::triggered, this, [this, resources, meshImporter]() {
 		shared_ptr<StaticObjectRenderComponent> renderComponent(new StaticObjectRenderComponent());
-		renderComponent->setMeshId(m_context->getResources()->getIdForPath("Resources/Mesh/Engine/cube.obj"));
-		_addNewNode(renderComponent, "Cube");
+		shared_ptr<SceneNode> newNode = shared_ptr<SceneNode>(new SceneNode(Scene::getNextId()));
+		newNode->setRenderComponent(renderComponent);
+		newNode->setTransformComponent(shared_ptr<TransformComponent>(new TransformComponent()));
+		newNode->setName("Cube");
+		shared_ptr<MeshComponent> meshComponent(new MeshComponent());
+		int meshId = resources->getIdForPath("Resources/Mesh/Engine/cube.obj");
+		meshComponent->setPrimaryMesh(shared_ptr<Mesh>(new FileBackedMesh(meshId, resources, meshImporter)));
+		newNode->setMeshComponent(meshComponent);
+		_addNewNode(newNode);
 	});
 
 	m_addSphereAction = new QAction(tr("Add Sphere"), this);
-	connect(m_addSphereAction, &QAction::triggered, this, [this]() {
+	connect(m_addSphereAction, &QAction::triggered, this, [this, resources, meshImporter]() {
 		shared_ptr<StaticObjectRenderComponent> renderComponent(new StaticObjectRenderComponent());
-		renderComponent->setMeshId(m_context->getResources()->getIdForPath("Resources/Mesh/Engine/sphere.obj"));
-		_addNewNode(renderComponent, "Sphere");
+		shared_ptr<SceneNode> newNode = shared_ptr<SceneNode>(new SceneNode(Scene::getNextId()));
+		newNode->setRenderComponent(renderComponent);
+		newNode->setTransformComponent(shared_ptr<TransformComponent>(new TransformComponent()));
+		newNode->setName("Sphere");
+		shared_ptr<MeshComponent> meshComponent(new MeshComponent());
+		int meshId = resources->getIdForPath("Resources/Mesh/Engine/sphere.obj");
+		meshComponent->setPrimaryMesh(shared_ptr<Mesh>(new FileBackedMesh(meshId, resources, meshImporter)));
+		newNode->setMeshComponent(meshComponent);
+		_addNewNode(newNode);
 	});
 
 	QAction *addFromFileAction = new QAction(tr("Add From File"), this);
-	connect(addFromFileAction, &QAction::triggered, this, [this]() {
+	connect(addFromFileAction, &QAction::triggered, this, [this, resources, meshImporter]() {
 		QDir workingDirectory = QDir::current();
 		QString filename = QFileDialog::getOpenFileName(this, tr("Add Object From File"), workingDirectory.path() + "/Resources/Mesh");
 		shared_ptr<StaticObjectRenderComponent> renderComponent(new StaticObjectRenderComponent());
-		renderComponent->setMeshId(m_context->getResources()->getIdForPath(workingDirectory.relativeFilePath(filename).toStdString()));
-		_addNewNode(renderComponent, QFileInfo(filename).fileName().split(".").first().toStdString());
+		shared_ptr<SceneNode> newNode = shared_ptr<SceneNode>(new SceneNode(Scene::getNextId()));
+		newNode->setRenderComponent(renderComponent);
+		newNode->setTransformComponent(shared_ptr<TransformComponent>(new TransformComponent()));
+		newNode->setName(QFileInfo(filename).fileName().split(".").first().toStdString());
+		shared_ptr<MeshComponent> meshComponent(new MeshComponent());
+		int meshId = resources->getIdForPath(workingDirectory.relativeFilePath(filename).toStdString());
+		meshComponent->setPrimaryMesh(shared_ptr<Mesh>(new FileBackedMesh(meshId, resources, meshImporter)));
+		newNode->setMeshComponent(meshComponent);
+		_addNewNode(newNode);
 	});
 
 	QAction *addSpriteAction = new QAction(tr("Add Sprite"), this);
-	connect(addSpriteAction, &QAction::triggered, this, [this]() {
+	connect(addSpriteAction, &QAction::triggered, this, [this, resources, meshImporter]() {
 		QDir workingDirectory = QDir::current();
 		QString filename = QFileDialog::getOpenFileName(this, tr("Add Sprite"), workingDirectory.path() + "/Resources/Textures");
 		shared_ptr<SpriteRenderComponent> renderComponent(new SpriteRenderComponent(m_context->getResources()));
-		shared_ptr<SceneNode> newNode = _addNewNode(renderComponent, "Sprite");
-		if (newNode->getTransformComponent())
-		{
-			newNode->getTransformComponent()->setScale(glm::vec3(0.3, 0.3, 0.3));
-		}
+		shared_ptr<SceneNode> newNode = shared_ptr<SceneNode>(new SceneNode(Scene::getNextId()));
+		newNode->setRenderComponent(renderComponent);
+		newNode->setTransformComponent(shared_ptr<TransformComponent>(new TransformComponent()));
+		newNode->setName("Sprite");
+		newNode->getTransformComponent()->setScale(glm::vec3(0.3, 0.3, 0.3));
 		newNode->setMaterialComponent(shared_ptr<MaterialComponent>(new MaterialComponent(newNode.get())));
 		newNode->getMaterialComponent()->setTextureImageId(m_context->getResources()->
 			getIdForPath((workingDirectory.relativeFilePath(filename).toStdString())));
+		shared_ptr<MeshComponent> meshComponent(new MeshComponent());
+		int meshId = resources->getIdForPath("Resources/Mesh/Engine/Plane.obj");
+		meshComponent->setPrimaryMesh(shared_ptr<Mesh>(new FileBackedMesh(meshId, resources, meshImporter)));
+		newNode->setMeshComponent(meshComponent);
+		_addNewNode(newNode);
 	});
 
 	QAction *addDirectLightAction = new QAction(tr("Add Direct Light"), this);
-	connect(addDirectLightAction, &QAction::triggered, this, [this]() {
+	connect(addDirectLightAction, &QAction::triggered, this, [this, resources, meshImporter]() {
 		shared_ptr<DirectLightRenderComponent> renderComponent(new DirectLightRenderComponent(m_context->getResources()));
-		shared_ptr<SceneNode> newNode = _addNewNode(renderComponent, "Direct Light");
+		shared_ptr<SceneNode> newNode = shared_ptr<SceneNode>(new SceneNode(Scene::getNextId()));
+		newNode->setRenderComponent(renderComponent);
+		newNode->setTransformComponent(shared_ptr<TransformComponent>(new TransformComponent()));
+		newNode->setName("Direct Light");
 		newNode->setDirectLightComponent(shared_ptr<DirectLightComponent>(new DirectLightComponent()));
-		if (newNode->getTransformComponent())
-		{
-			newNode->getTransformComponent()->setScale(glm::vec3(0.3, 0.3, 0.3));
-			newNode->getTransformComponent()->setTranslate(glm::vec3(0, 3, 0));
-			newNode->getTransformComponent()->setRotate(glm::vec3(0.52, 0, -0.52));
-		}
+		newNode->getTransformComponent()->setScale(glm::vec3(0.3, 0.3, 0.3));
+		newNode->getTransformComponent()->setTranslate(glm::vec3(0, 3, 0));
+		newNode->getTransformComponent()->setRotate(glm::vec3(0.52, 0, -0.52));
 		newNode->setMaterialComponent(shared_ptr<MaterialComponent>(new MaterialComponent(newNode.get())));
 		newNode->getMaterialComponent()->setTextureImageId(
 			m_context->getResources()->getIdForPath(DirectLightRenderComponent::s_imagePath));
 		newNode->getMaterialComponent()->setAlphaImageId(
 			m_context->getResources()->getIdForPath(DirectLightRenderComponent::s_alphaPath));
+		shared_ptr<MeshComponent> meshComponent(new MeshComponent());
+		int meshId = resources->getIdForPath("Resources/Mesh/Engine/Plane.obj");
+		meshComponent->setPrimaryMesh(shared_ptr<Mesh>(new FileBackedMesh(meshId, resources, meshImporter)));
+		newNode->setMeshComponent(meshComponent);
+		_addNewNode(newNode);
 	});
 
 	QAction *addMaterial = new QAction(tr("Add Material"), this);
@@ -221,7 +256,7 @@ void SceneGraphTree::_addSceneNodeRecursive(shared_ptr<SceneNode> node, QTreeWid
 	}
 }
 
-shared_ptr<SceneNode> SceneGraphTree::_addNewNode(shared_ptr<StaticObjectRenderComponent> renderComponent, string name)
+void SceneGraphTree::_addNewNode(shared_ptr<SceneNode> newNode)
 {
 	boost::lock_guard<SceneGraphTree> guard(*this);
 	QTreeWidgetItemIterator it(m_treeWidget.get(), QTreeWidgetItemIterator::Selected);
@@ -236,19 +271,13 @@ shared_ptr<SceneNode> SceneGraphTree::_addNewNode(shared_ptr<StaticObjectRenderC
 		}
 	}
 
-	//Create new scene node
-	shared_ptr<SceneNode> newNode = shared_ptr<SceneNode>(new SceneNode(Scene::getNextId(), node.get()));
-	newNode->setRenderComponent(renderComponent);
-	newNode->setTransformComponent(shared_ptr<TransformComponent>(new TransformComponent()));
-	newNode->setName(name);
+	// Add new scene node
 	node->addChild(newNode);
 
 	// Update scene graph tree
 	m_context->getScene()->deselectAllNodes();
 	m_context->getScene()->selectNode(newNode);
 	m_context->getScene()->update();
-
-	return newNode;
 }
 
 void SceneGraphTree::_selectionChanged()

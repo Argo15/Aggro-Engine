@@ -8,7 +8,7 @@ AssimpMeshImporter::AssimpMeshImporter()
 
 }
 
-shared_ptr<Mesh> AssimpMeshImporter::importMesh(string sFilename)
+shared_ptr<Mesh> AssimpMeshImporter::importMesh(int meshId, string sFilename)
 {
 	boost::lock_guard<AssimpMeshImporter> guard(*this);
 	const aiScene* scene = importer.ReadFile( sFilename,
@@ -47,7 +47,7 @@ shared_ptr<Mesh> AssimpMeshImporter::importMesh(string sFilename)
 			indices[i*3+2] = scene->mMeshes[0]->mFaces[i].mIndices[2];
 		}
 		importer.FreeScene();
-		return shared_ptr<Mesh>(new Mesh(sizeof(float)*nNumVerts*3, sizeof(int)*nNumFaces*3, mem::shared_array(verts), mem::shared_array(texcoords), mem::shared_array(normals), mem::shared_array(indices)));
+		return shared_ptr<Mesh>(new Mesh(meshId, sizeof(float)*nNumVerts*3, sizeof(int)*nNumFaces*3, mem::shared_array(verts), mem::shared_array(texcoords), mem::shared_array(normals), mem::shared_array(indices)));
 	}
 
 	cout << "Failed importing " << sFilename << " no scene found." << endl;

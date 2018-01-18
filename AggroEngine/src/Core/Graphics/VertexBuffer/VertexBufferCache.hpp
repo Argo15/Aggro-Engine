@@ -19,13 +19,22 @@ private:
 	shared_ptr<Resources> m_resources;
 	shared_ptr<VertexBufferHandle> m_defaultVbo;
 
-	boost::unordered_map<int, shared_ptr<VertexBufferHandle>> m_pathsToVbo;
+	boost::unordered_map<int, shared_ptr<VertexBufferHandle>> m_idToVbo;
 	boost::unordered_map<int, shared_ptr<LoadableVertexBufferHandle>> m_loadingVbos;
+
+	// For meshes that don't have ids, such as the line grid in the editor.
+	boost::unordered_map<shared_ptr<Mesh>, shared_ptr<LoadableVertexBufferHandle>> m_loadingSingleVbos;
 
 public:
 	VertexBufferCache(shared_ptr<Graphics> graphics, shared_ptr<JobManager> jobManager, shared_ptr<Resources> resources);
 
-	shared_ptr<VertexBufferHandle> getVertexBuffer(int meshId);
+	shared_ptr<VertexBufferHandle> getVertexBuffer(shared_ptr<Mesh> mesh);
 	void finishLoading(int meshId, shared_ptr<VertexBufferHandle> handle);
+	void finishLoading(shared_ptr<Mesh> mesh, shared_ptr<VertexBufferHandle> handle);
 	void failLoading(int meshId);
+	void failLoading(shared_ptr<Mesh> mesh);
+
+	shared_ptr<MeshImporter> getMeshImporter() { return m_meshImporter; }
+	shared_ptr<Resources> getResources() { return m_resources; }
+
 };

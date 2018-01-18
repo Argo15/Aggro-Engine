@@ -34,7 +34,7 @@ private:
 	shared_ptr<SceneNode> _getNodeByIdRecursive(shared_ptr<SceneNode> node, unsigned int id);
 	int _getMaxNodeIdRecursive(shared_ptr<SceneNode> node);
 
-	Scene(Chunk * const byteChunk, shared_ptr<Resources> resources);
+	Scene(Chunk * const byteChunk, shared_ptr<Resources> resources, shared_ptr<MeshImporter> meshImporter);
 
 public:
 	Scene();
@@ -42,7 +42,7 @@ public:
 
 	// Serialization
 	shared_ptr<Chunk> serialize(shared_ptr<Resources> resources);
-	static shared_ptr<Scene> deserialize(Chunk * const byteChunk, shared_ptr<Resources> resources);
+	static shared_ptr<Scene> deserialize(Chunk * const byteChunk, shared_ptr<Resources> resources, shared_ptr<MeshImporter> meshImporter);
 
 	shared_ptr<SceneNode> getRoot();
 	shared_ptr<Camera> getCamera();

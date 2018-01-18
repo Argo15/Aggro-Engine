@@ -6,8 +6,9 @@ static const double pi(3.14159265);
 static const glm::vec3 up(0, 1.f, 0);
 static const glm::vec3 side(1.f, 0, 0);
 
-CircleMesh::CircleMesh(glm::vec3 center, glm::vec3 axis, float size, int sides)
-	: m_center(center)
+CircleMesh::CircleMesh(int meshId, glm::vec3 center, glm::vec3 axis, float size, int sides)
+	: Mesh(meshId)
+	, m_center(center)
 	, m_axis(glm::normalize(axis))
 	, m_size(size)
 	, m_sides(sides)
