@@ -15,7 +15,7 @@ InspectorWidget::InspectorWidget(shared_ptr<EngineContext> context, QWidget *par
 	m_layout = new QVBoxLayout();
 	m_widgets.push_back(shared_ptr<InspectorSubWidget>(new HeaderWidget(this)));
 	m_widgets.push_back(shared_ptr<InspectorSubWidget>(new TransformWidget(this)));
-	m_widgets.push_back(shared_ptr<InspectorSubWidget>(new MeshWidget(this, context->getResources(), context->getMeshImporter())));
+	m_widgets.push_back(shared_ptr<InspectorSubWidget>(new MeshWidget(this, context->getResources(), context->getMeshCache())));
 	m_widgets.push_back(shared_ptr<InspectorSubWidget>(new DirectLightWidget(this)));
 	m_widgets.push_back(shared_ptr<InspectorSubWidget>(new MaterialWidget(this, context->getResources())));
 	m_widgets.push_back(shared_ptr<InspectorSubWidget>(new AddMaterialWidget(this)));

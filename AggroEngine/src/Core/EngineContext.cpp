@@ -5,7 +5,7 @@ EngineContext::EngineContext()
 	, m_scene(new Scene())
 	, m_renderOptions(new RenderOptions())
 	, m_resources(new Resources())
-	, m_meshImporter(new AssimpMeshImporter())
+	, m_meshCache(new MeshCache(m_jobManager, m_resources))
 	, m_newSceneListeners()
 {
 }
@@ -30,9 +30,9 @@ shared_ptr<Resources> EngineContext::getResources()
 	return m_resources;
 }
 
-shared_ptr<MeshImporter> EngineContext::getMeshImporter()
+shared_ptr<MeshCache> EngineContext::getMeshCache()
 {
-	return m_meshImporter;
+	return m_meshCache;
 }
 
 void EngineContext::setScene(shared_ptr<Scene> scene)

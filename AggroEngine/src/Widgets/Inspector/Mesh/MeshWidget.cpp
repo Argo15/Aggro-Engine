@@ -3,11 +3,11 @@
 #include <QDir>
 #include <QFileDialog>
 
-MeshWidget::MeshWidget(QWidget *parent, shared_ptr<Resources> resources, shared_ptr<MeshImporter> importer)
+MeshWidget::MeshWidget(QWidget *parent, shared_ptr<Resources> resources, shared_ptr<MeshCache> meshCache)
 	: m_meshEdit(new QLineEdit(""))
 	, m_triangleCountLbl(new QLabel(""))
 	, m_resources(resources)
-	, m_importer(importer)
+	, m_meshCache(meshCache)
 {
 	QHBoxLayout *mainLayout = new QHBoxLayout;
 	QVBoxLayout *leftLayout = new QVBoxLayout;
@@ -102,7 +102,7 @@ void MeshWidget::_onMeshSelect()
 		{
 			mesh->clearMeshes();
 			int id = m_resources->getIdForPath(filename.toStdString());
-			mesh->setPrimaryMesh(shared_ptr<Mesh>(new FileBackedMesh(id, m_resources, m_importer)));
+			m_meshCache->getMesh(id)->onReady([this, mesh](auto newMesh) {mesh->setPrimaryMesh(newMesh); });
 			_refresh(mesh.get());
 		}
 		mesh->addChangeListener(this, [this](auto newMesh) {this->_refresh(newMesh); });

@@ -5,7 +5,7 @@
 #include "Mesh.hpp"
 #include "Serialization.hpp"
 #include "Resources.hpp"
-#include "MeshImporter.hpp"
+#include "MeshCache.hpp"
 #include "Listener.hpp"
 #include <vector>
 using namespace std;
@@ -24,13 +24,13 @@ private:
 
 	Listener<MeshComponent *> m_changeListeners;
 
-	MeshComponent(Chunk * const byteChunk, shared_ptr<Resources> resources, shared_ptr<MeshImporter> importer);
+	MeshComponent(Chunk * const byteChunk, shared_ptr<Resources> resources, shared_ptr<MeshCache> cache);
 
 public:
 	MeshComponent();
 
 	shared_ptr<Chunk> serialize(shared_ptr<Resources> resources);
-	static shared_ptr<MeshComponent> deserialize(Chunk * const byteChunk, shared_ptr<Resources> resources, shared_ptr<MeshImporter> importer);
+	static shared_ptr<MeshComponent> deserialize(Chunk * const byteChunk, shared_ptr<Resources> resources, shared_ptr<MeshCache> cache);
 
 	void addChangeListener(void *ns, std::function<void(MeshComponent *)> listener);
 	void removeChangeListener(void *ns);

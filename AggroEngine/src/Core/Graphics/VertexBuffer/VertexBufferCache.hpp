@@ -13,7 +13,6 @@ using namespace std;
 class VertexBufferCache
 {
 private:
-	shared_ptr<MeshImporter> m_meshImporter;
 	shared_ptr<Graphics> m_graphics;
 	shared_ptr<JobManager> m_jobManager;
 	shared_ptr<Resources> m_resources;
@@ -33,8 +32,4 @@ public:
 	void finishLoading(shared_ptr<Mesh> mesh, shared_ptr<VertexBufferHandle> handle);
 	void failLoading(int meshId);
 	void failLoading(shared_ptr<Mesh> mesh);
-
-	shared_ptr<MeshImporter> getMeshImporter() { return m_meshImporter; }
-	shared_ptr<Resources> getResources() { return m_resources; }
-
 };

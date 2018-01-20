@@ -9,6 +9,7 @@
 #include "MeshComponent.hpp"
 #include "Listener.hpp"
 #include "Chunk.hpp"
+#include "MeshCache.hpp"
 using namespace std;
 
 class RenderComponent;
@@ -40,14 +41,14 @@ private:
 	Listener<SceneNode *> m_changeListeners;
 	Listener<SceneNode *> m_deletedListeners;
 
-	SceneNode(Chunk * const byteChunk, shared_ptr<Resources> resources, shared_ptr<MeshImporter> meshImporter, boost::unordered_map<int, shared_ptr<SceneNode>> baseMaterials);
+	SceneNode(Chunk * const byteChunk, shared_ptr<Resources> resources, shared_ptr<MeshCache> meshCache, boost::unordered_map<int, shared_ptr<SceneNode>> baseMaterials);
 
 public:
 	SceneNode(unsigned int m_id, SceneNode *parent = nullptr);
 
 	// Serialization
 	shared_ptr<Chunk> serialize(shared_ptr<Resources> resources);
-	static shared_ptr<SceneNode> deserialize(Chunk * const byteChunk, shared_ptr<Resources> resources, shared_ptr<MeshImporter> meshImporter, boost::unordered_map<int, shared_ptr<SceneNode>> baseMaterials);
+	static shared_ptr<SceneNode> deserialize(Chunk * const byteChunk, shared_ptr<Resources> resources, shared_ptr<MeshCache> meshCache, boost::unordered_map<int, shared_ptr<SceneNode>> baseMaterials);
 
 	shared_ptr<vector<shared_ptr<SceneNode>>> getChildren();
 	void setSelected(bool selected);

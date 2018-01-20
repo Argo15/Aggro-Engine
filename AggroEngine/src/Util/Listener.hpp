@@ -14,12 +14,12 @@ private:
 
 public:
 
-	template <class T> void add(function<void(T)> listener)
+	template <class T> void add(function<void(T)> &listener)
 	{
 		add((void *)this, listener);
 	}
 
-	template <class T> void add(void *ns, function<void(T)> listener)
+	template <class T> void add(void *ns, function<void(T)> &listener)
 	{
 		if (m_hmListeners.find(ns) == m_hmListeners.end())
 		{
@@ -34,6 +34,11 @@ public:
 			vector<function<void(T)>> &listeners = m_hmListeners[ns];
 			listeners.push_back(listener);
 		}
+	}
+
+	void remove()
+	{
+		remove((void *)this);
 	}
 
 	void remove(void *ns)

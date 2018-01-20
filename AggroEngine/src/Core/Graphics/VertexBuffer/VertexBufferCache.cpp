@@ -6,7 +6,6 @@ VertexBufferCache::VertexBufferCache(shared_ptr<Graphics> graphics, shared_ptr<J
 	: m_graphics(graphics)
 	, m_jobManager(jobManager)
 	, m_resources(resources)
-	, m_meshImporter(new AssimpMeshImporter())
 	, m_idToVbo()
 	, m_loadingVbos()
 	, m_loadingSingleVbos()
@@ -16,6 +15,11 @@ VertexBufferCache::VertexBufferCache(shared_ptr<Graphics> graphics, shared_ptr<J
 
 shared_ptr<VertexBufferHandle> VertexBufferCache::getVertexBuffer(shared_ptr<Mesh> mesh)
 {
+	if (!mesh)
+	{
+		return shared_ptr<VertexBufferHandle>();
+	}
+
 	// Id < 0 should be loaded immediately
 	if (mesh->getId() < 0)
 	{

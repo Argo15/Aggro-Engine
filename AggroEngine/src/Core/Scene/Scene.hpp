@@ -6,6 +6,7 @@
 #include "SceneNode.hpp"
 #include "Listener.hpp"
 #include "TransformHook.hpp"
+#include "MeshCache.hpp"
 using namespace std;
 
 class TransformHook;
@@ -34,7 +35,7 @@ private:
 	shared_ptr<SceneNode> _getNodeByIdRecursive(shared_ptr<SceneNode> node, unsigned int id);
 	int _getMaxNodeIdRecursive(shared_ptr<SceneNode> node);
 
-	Scene(Chunk * const byteChunk, shared_ptr<Resources> resources, shared_ptr<MeshImporter> meshImporter);
+	Scene(Chunk * const byteChunk, shared_ptr<Resources> resources, shared_ptr<MeshCache> meshCache);
 
 public:
 	Scene();
@@ -42,7 +43,7 @@ public:
 
 	// Serialization
 	shared_ptr<Chunk> serialize(shared_ptr<Resources> resources);
-	static shared_ptr<Scene> deserialize(Chunk * const byteChunk, shared_ptr<Resources> resources, shared_ptr<MeshImporter> meshImporter);
+	static shared_ptr<Scene> deserialize(Chunk * const byteChunk, shared_ptr<Resources> resources, shared_ptr<MeshCache> meshImporter);
 
 	shared_ptr<SceneNode> getRoot();
 	shared_ptr<Camera> getCamera();

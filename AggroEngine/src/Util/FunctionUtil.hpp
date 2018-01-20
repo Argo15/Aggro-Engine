@@ -13,7 +13,7 @@ using namespace std;
 class FunctionUtil
 {
 public:
-	template<class T> static void runAll(vector<std::function<void(T)>> funcs, T arg)
+	template<class T> static void runAll(vector<std::function<void(T)>> &funcs, T arg)
 	{
 		if (funcs.size() > 0)
 		{

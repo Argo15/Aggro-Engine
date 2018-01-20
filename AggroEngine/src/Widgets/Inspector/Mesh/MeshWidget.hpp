@@ -7,6 +7,7 @@
 #include <QSlider>
 #include "InspectorSubWidget.hpp"
 #include "Locks.hpp"
+#include "MeshCache.hpp"
 
 class MeshWidget : public InspectorSubWidget,
 	public boost::basic_lockable_adapter<recursive_mutex>
@@ -15,7 +16,7 @@ private:
 	shared_ptr<QLineEdit> m_meshEdit;
 	shared_ptr<QLabel> m_triangleCountLbl;
 	shared_ptr<Resources> m_resources;
-	shared_ptr<MeshImporter> m_importer;
+	shared_ptr<MeshCache> m_meshCache;
 
 protected:
 	virtual void _refresh(SceneNode *newNode);
@@ -23,5 +24,5 @@ protected:
 	void _onMeshSelect();
 
 public:
-	MeshWidget(QWidget *parent, shared_ptr<Resources> resources, shared_ptr<MeshImporter> importer);
+	MeshWidget(QWidget *parent, shared_ptr<Resources> resources, shared_ptr<MeshCache> meshCache);
 };

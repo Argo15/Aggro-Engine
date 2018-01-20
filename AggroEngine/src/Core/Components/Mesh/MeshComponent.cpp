@@ -7,7 +7,7 @@ MeshComponent::MeshComponent()
 
 }
 
-MeshComponent::MeshComponent(Chunk * const byteChunk, shared_ptr<Resources> resources, shared_ptr<MeshImporter> importer)
+MeshComponent::MeshComponent(Chunk * const byteChunk, shared_ptr<Resources> resources, shared_ptr<MeshCache> cache)
 	: m_primaryMesh()
 {
 	ByteParser bytes = ByteParser(*byteChunk);
@@ -15,8 +15,7 @@ MeshComponent::MeshComponent(Chunk * const byteChunk, shared_ptr<Resources> reso
 	if (path != "")
 	{
 		int id = resources->getIdForPath(path);
-		shared_ptr<Mesh> newMesh(new FileBackedMesh(id, resources, importer));
-		m_primaryMesh = newMesh;
+		cache->getMesh(id)->onReady([this](auto newMesh) {m_primaryMesh = newMesh; });
 	}
 }
 
@@ -28,14 +27,14 @@ shared_ptr<Chunk> MeshComponent::serialize(shared_ptr<Resources> resources)
 	return shared_ptr<Chunk>(new Chunk(ChunkType::MESH_COMPONENT, bytes.getNumBytes(), bytes.collect()));
 }
 
-shared_ptr<MeshComponent> MeshComponent::deserialize(Chunk * const byteChunk, shared_ptr<Resources> resources, shared_ptr<MeshImporter> importer)
+shared_ptr<MeshComponent> MeshComponent::deserialize(Chunk * const byteChunk, shared_ptr<Resources> resources, shared_ptr<MeshCache> cache)
 {
 	if (*byteChunk->getType() != ChunkType::MESH_COMPONENT)
 	{
 		return shared_ptr<MeshComponent>();
 	}
 
-	return shared_ptr<MeshComponent>(new MeshComponent(byteChunk, resources, importer));
+	return shared_ptr<MeshComponent>(new MeshComponent(byteChunk, resources, cache));
 }
 
 void MeshComponent::addChangeListener(void *ns, std::function<void(MeshComponent *)> listener)
