@@ -90,4 +90,5 @@ Grid::Grid(int meshId, int size)
 	setTexCoords(_getTexCoords());
 	setNormals(_getNormals());
 	setIndicies(_getIndices());
+	m_drawMode = DrawMode::LINES;
 }

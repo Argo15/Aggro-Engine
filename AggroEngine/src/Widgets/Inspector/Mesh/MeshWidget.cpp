@@ -6,6 +6,7 @@
 MeshWidget::MeshWidget(QWidget *parent, shared_ptr<Resources> resources, shared_ptr<MeshCache> meshCache)
 	: m_meshEdit(new QLineEdit(""))
 	, m_triangleCountLbl(new QLabel(""))
+	, m_normalLineChk(new QCheckBox("enabled"))
 	, m_resources(resources)
 	, m_meshCache(meshCache)
 {
@@ -14,6 +15,7 @@ MeshWidget::MeshWidget(QWidget *parent, shared_ptr<Resources> resources, shared_
 	QVBoxLayout *rightLayout = new QVBoxLayout;
 		QHBoxLayout *sourceLayout = new QHBoxLayout;
 		QHBoxLayout *trianglesLayout = new QHBoxLayout;
+		QHBoxLayout *normalLinesLayout = new QHBoxLayout;
 
 	QLabel *lbl;
 
@@ -22,9 +24,11 @@ MeshWidget::MeshWidget(QWidget *parent, shared_ptr<Resources> resources, shared_
 
 	leftLayout->addWidget(new QLabel("Mesh"));
 	leftLayout->addWidget(new QLabel("Triangles:"));
+	leftLayout->addWidget(new QLabel("Normal Lines:"));
 
 	rightLayout->addLayout(sourceLayout);
 	rightLayout->addLayout(trianglesLayout);
+	rightLayout->addLayout(normalLinesLayout);
 
 	QPushButton *selectMeshButton = new QPushButton("...");
 	selectMeshButton->setFixedWidth(50);
@@ -34,6 +38,9 @@ MeshWidget::MeshWidget(QWidget *parent, shared_ptr<Resources> resources, shared_
 
 	trianglesLayout->addWidget(m_triangleCountLbl.get());
 	trianglesLayout->addStretch();
+	
+	m_normalLineChk->setStyleSheet(QString("border-bottom-style: none;"));
+	normalLinesLayout->addWidget(m_normalLineChk.get());
 
 	lbl = new QLabel("Mesh");
 	lbl->setStyleSheet("font-weight: bold; font-size: 16px;");
@@ -41,6 +48,7 @@ MeshWidget::MeshWidget(QWidget *parent, shared_ptr<Resources> resources, shared_
 	m_layout->addLayout(mainLayout);
 
 	connect(selectMeshButton, &QPushButton::pressed, this, &MeshWidget::_onMeshSelect);
+	connect(m_normalLineChk.get(), &QCheckBox::stateChanged, this, &MeshWidget::_onNormalLineCheck);
 }
 
 void MeshWidget::_refresh(SceneNode *newNode)
@@ -84,12 +92,14 @@ void MeshWidget::_refresh(MeshComponent *mesh)
 	{
 		m_meshEdit->setText("");
 	}
+
+	m_normalLineChk->setChecked(mesh->isNormalLinesEnabled());
 }
 
 void MeshWidget::_onMeshSelect()
 {
 	boost::lock_guard<MeshWidget> guard(*this);
-	if (m_currentNode && m_currentNode->hasMaterialComponent())
+	if (m_currentNode && m_currentNode->hasMeshComponent())
 	{
 		QDir workingDirectory = QDir::current();
 		QString filename = QFileDialog::getOpenFileName(this, tr("Select Mesh"), workingDirectory.path() + "/Resources/Mesh/", "*");
@@ -106,5 +116,13 @@ void MeshWidget::_onMeshSelect()
 			_refresh(mesh.get());
 		}
 		mesh->addChangeListener(this, [this](auto newMesh) {this->_refresh(newMesh); });
+	}
+}
+
+void MeshWidget::_onNormalLineCheck(int state)
+{
+	if (m_currentNode && m_currentNode->hasMeshComponent())
+	{
+		m_currentNode->getMeshComponent()->enableNormalLines(state == Qt::Checked, state == Qt::Checked);
 	}
 }

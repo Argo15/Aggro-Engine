@@ -19,6 +19,7 @@ CircleMesh::CircleMesh(int meshId, glm::vec3 center, glm::vec3 axis, float size,
 	setTexCoords(_getTexCoords());
 	setNormals(_getNormals());
 	setIndicies(_getIndices());
+	m_drawMode = DrawMode::LINES;
 }
 
 shared_ptr<float> CircleMesh::_getVertices()

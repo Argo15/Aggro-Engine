@@ -3,10 +3,11 @@
 
 Mesh::Mesh(int meshId)
 	: m_meshId(meshId)
+	, m_drawMode(DrawMode::TRIANGLES)
 {
 }
 
-Mesh::Mesh(int meshId, int nSizeOfVerticies, int nSizeOfIndicies, shared_ptr<float> npVertices, shared_ptr<float> npTexCoords, shared_ptr<float> npNormals, shared_ptr<int> npIndices)
+Mesh::Mesh(int meshId, int nSizeOfVerticies, int nSizeOfIndicies, shared_ptr<float> npVertices, shared_ptr<float> npTexCoords, shared_ptr<float> npNormals, shared_ptr<int> npIndices, DrawMode drawMode)
 	: m_meshId(meshId)
 	, m_nSizeOfVertices(nSizeOfVerticies)
 	, m_nSizeOfIndices(nSizeOfIndicies)
@@ -14,6 +15,7 @@ Mesh::Mesh(int meshId, int nSizeOfVerticies, int nSizeOfIndicies, shared_ptr<flo
 	, m_npTexCoords(npTexCoords)
 	, m_npNormals(npNormals)
 	, m_npIndices(npIndices)
+	, m_drawMode(drawMode)
 {
 }
 
@@ -101,4 +103,9 @@ shared_ptr<int> Mesh::getIndicies()
 boost::optional<string> Mesh::getMeshPath()
 {
 	return boost::optional<string>();
+}
+
+DrawMode Mesh::getDrawMode()
+{
+	return m_drawMode;
 }

@@ -23,14 +23,18 @@ shared_ptr<VertexBufferHandle> VertexBufferCache::getVertexBuffer(shared_ptr<Mes
 	// Id < 0 should be loaded immediately
 	if (mesh->getId() < 0)
 	{
-		shared_ptr<LoadableVertexBufferHandle> loadingVbo(new LoadableVertexBufferHandle(m_defaultVbo));
-		m_jobManager->addGraphicsJob(shared_ptr<Job>(new Job([this, mesh]()
+		if (m_meshToVbo.find(mesh) == m_meshToVbo.end())
 		{
-			shared_ptr<VertexBufferHandle> newVbo = m_graphics->createVertexBuffer(mesh);
-			finishLoading(mesh, newVbo);
-		})));
-		m_loadingSingleVbos[mesh] = loadingVbo;
-		return loadingVbo;
+			shared_ptr<LoadableVertexBufferHandle> loadingVbo(new LoadableVertexBufferHandle(m_defaultVbo));
+			m_jobManager->addGraphicsJob(shared_ptr<Job>(new Job([this, mesh]()
+			{
+				shared_ptr<VertexBufferHandle> newVbo = m_graphics->createVertexBuffer(mesh);
+				finishLoading(mesh, newVbo);
+			})));
+			m_loadingSingleVbos[mesh] = loadingVbo;
+			m_meshToVbo[mesh] = loadingVbo;
+		}
+		return m_meshToVbo[mesh];
 	}
 	
 	// Meshes with ids can be cached

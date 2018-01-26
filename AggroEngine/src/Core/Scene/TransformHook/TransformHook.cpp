@@ -51,7 +51,7 @@ void TransformHook::render(shared_ptr<Graphics> graphics, shared_ptr<Scene> scen
 		for (int i = 0; i < 3; i++)
 		{
 			m_renderData[i]->setModelMatrix(transformMat.getOrthogonalTransform());
-			graphics->stageTriangleRender(m_renderData[i]);
+			graphics->stageRender(m_renderData[i]);
 		}
 	}
 }

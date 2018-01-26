@@ -38,7 +38,7 @@ public:
 	virtual void deleteTexture(shared_ptr<TextureHandle> textureHandle) = 0;
 
 	// Rendering
-	virtual void stageTriangleRender(shared_ptr<RenderData> pRenderData) = 0;
+	virtual void stageRender(shared_ptr<RenderData> pRenderData) = 0;
 	virtual void executeRender(RenderOptions &renderOptions) = 0;
 
 	// Window

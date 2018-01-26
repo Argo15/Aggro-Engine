@@ -22,7 +22,7 @@ void Renderer::renderScene(shared_ptr<Scene> scene, shared_ptr<RenderOptions> re
 {
 	renderOptions->clear();
 	m_graphicsContext->getGraphics()->clearDepthAndColor(); // clear
-	m_graphicsContext->getGraphics()->stageTriangleRender(m_gridRenderData); // Render grid
+	m_graphicsContext->getGraphics()->stageRender(m_gridRenderData); // Render grid
 	if (scene->getTransformHook())
 	{
 		scene->getTransformHook()->render(m_graphicsContext->getGraphics(), scene); // Render transformer

@@ -59,6 +59,6 @@ void DirectLightRenderComponent::render(shared_ptr<GraphicsContext> context, glm
 		}
 	}
 	m_lineRenderData->setModelMatrix(m4Transform);
-	context->getGraphics()->stageTriangleRender(m_lineRenderData);
+	context->getGraphics()->stageRender(m_lineRenderData);
 	SpriteRenderComponent::render(context, m4Transform, m4ViewMat, node);
 }

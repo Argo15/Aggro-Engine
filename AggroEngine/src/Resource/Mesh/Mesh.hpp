@@ -2,6 +2,7 @@
 
 #include <memory>
 #include <boost/optional.hpp>
+#include "DrawMode.hpp"
 using namespace std;
 
 /**
@@ -23,10 +24,12 @@ private:
 
 protected:
 	int m_meshId;
+	DrawMode m_drawMode;
 
 public:
 	Mesh(int meshId);
-	Mesh(int meshId, int nSizeOfVertices, int nSizeOfIndices, shared_ptr<float> npVertices, shared_ptr<float> npTexCoords, shared_ptr<float> npNormals, shared_ptr<int> npIndices);
+	Mesh(int meshId, int nSizeOfVertices, int nSizeOfIndices, shared_ptr<float> npVertices, 
+		shared_ptr<float> npTexCoords, shared_ptr<float> npNormals, shared_ptr<int> npIndices, DrawMode drawMode = DrawMode::LINES);
 
 	virtual bool resolve();
 	virtual bool isResolved();
@@ -49,4 +52,5 @@ public:
 
 	virtual boost::optional<string> getMeshPath();
 
+	DrawMode getDrawMode();
 };

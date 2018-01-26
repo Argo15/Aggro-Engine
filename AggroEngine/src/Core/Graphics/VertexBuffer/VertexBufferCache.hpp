@@ -22,6 +22,7 @@ private:
 	boost::unordered_map<int, shared_ptr<LoadableVertexBufferHandle>> m_loadingVbos;
 
 	// For meshes that don't have ids, such as the line grid in the editor.
+	boost::unordered_map<shared_ptr<Mesh>, shared_ptr<VertexBufferHandle>> m_meshToVbo;
 	boost::unordered_map<shared_ptr<Mesh>, shared_ptr<LoadableVertexBufferHandle>> m_loadingSingleVbos;
 
 public:

@@ -43,22 +43,26 @@ void StaticObjectRenderComponent::render(shared_ptr<GraphicsContext> context, gl
 		return;
 	}
 
-	shared_ptr<VertexBufferHandle> vbo = context->getVboCache()->getVertexBuffer(meshComponent->getPrimaryMesh());
-	if (vbo && vbo->isLoaded())
+	for (shared_ptr<Mesh> mesh : meshComponent->getModifiedMeshes())
 	{
-		shared_ptr<RenderData> renderData(new RenderData(vbo));
-		renderData->setModelMatrix(m4Transform);
-		renderData->setLightingEnabled(m_lightingEnabled);
-		renderData->setShadowsEnabled(m_shadowsEnabled);
-		if (node)
+		shared_ptr<VertexBufferHandle> vbo = context->getVboCache()->getVertexBuffer(mesh);
+		if (vbo && vbo->isLoaded())
 		{
-			renderData->setId(node->getId());
-			if (node->hasMaterialComponent())
+			shared_ptr<RenderData> renderData(new RenderData(vbo));
+			renderData->setModelMatrix(m4Transform);
+			renderData->setLightingEnabled(m_lightingEnabled);
+			renderData->setShadowsEnabled(m_shadowsEnabled);
+			if (node)
 			{
-				renderData->setMaterial(node->getMaterialComponent()->getMaterial(context->getTextureCache()));
+				renderData->setId(node->getId());
+				if (node->hasMaterialComponent() && mesh->getDrawMode() == DrawMode::TRIANGLES)
+				{
+					renderData->setMaterial(node->getMaterialComponent()->getMaterial(context->getTextureCache()));
+				}
 			}
+			renderData->setDrawMode(mesh->getDrawMode());
+			context->getGraphics()->stageRender(renderData);
 		}
-		context->getGraphics()->stageTriangleRender(renderData);
 	}
 }
 

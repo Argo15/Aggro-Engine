@@ -7,6 +7,7 @@
 #include "Resources.hpp"
 #include "MeshCache.hpp"
 #include "Listener.hpp"
+#include "GenerateNormalLines.hpp"
 #include <vector>
 using namespace std;
 
@@ -22,6 +23,11 @@ class MeshComponent : public Component,
 private:
 	shared_ptr<Mesh> m_primaryMesh;
 
+	bool m_genNormalLines;
+	shared_ptr<Mesh> m_normalLines;
+
+	vector<shared_ptr<Mesh>> m_modifiedMeshes;
+
 	Listener<MeshComponent *> m_changeListeners;
 
 	MeshComponent(Chunk * const byteChunk, shared_ptr<Resources> resources, shared_ptr<MeshCache> cache);
@@ -35,9 +41,18 @@ public:
 	void addChangeListener(void *ns, std::function<void(MeshComponent *)> listener);
 	void removeChangeListener(void *ns);
 
+	void generateMeshes();
+	void refresh();
+
+	void generateNormalLines();
+	void enableNormalLines(bool enabled, bool generate = false);
+	bool isNormalLinesEnabled();
+
 	void setPrimaryMesh(shared_ptr<Mesh> mesh);
 	shared_ptr<Mesh> getPrimaryMesh();
 	void clearMeshes();
+
+	vector<shared_ptr<Mesh>> &getModifiedMeshes();
 
 	bool hasMesh();
 };

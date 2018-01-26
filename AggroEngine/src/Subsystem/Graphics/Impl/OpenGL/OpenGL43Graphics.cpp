@@ -112,7 +112,7 @@ void OpenGL43Graphics::deleteTexture(shared_ptr<TextureHandle> textureHandle)
 	glDeleteTextures(1,&nHandle);
 }
 
-void OpenGL43Graphics::stageTriangleRender(shared_ptr<RenderData> pRenderData)
+void OpenGL43Graphics::stageRender(shared_ptr<RenderData> pRenderData)
 {
 	boost::lock_guard<OpenGL43Graphics> guard(*this);
 	renderQueue.push(pRenderData);

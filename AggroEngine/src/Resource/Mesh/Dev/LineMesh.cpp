@@ -12,6 +12,7 @@ LineMesh::LineMesh(int meshId, glm::vec3 p1, glm::vec3 p2)
 	setTexCoords(_getTexCoords());
 	setNormals(_getNormals());
 	setIndicies(_getIndices());
+	m_drawMode = DrawMode::LINES;
 }
 
 shared_ptr<float> LineMesh::_getVertices()

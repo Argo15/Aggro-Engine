@@ -47,7 +47,7 @@ public:
 	shared_ptr<TextureHandle> createTexture(shared_ptr<TextureBuildOptions> pTexOptions);
 	void deleteTexture(shared_ptr<TextureHandle> textureHandle);
 
-	void stageTriangleRender(shared_ptr<RenderData> pRenderData);
+	void stageRender(shared_ptr<RenderData> pRenderData);
 	void executeRender(RenderOptions &renderOptions);
 
 	void setViewport(int nX, int nY, int nWidth, int nHeight);
