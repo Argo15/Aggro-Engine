@@ -424,6 +424,9 @@
     <ClCompile Include="src\Resource\Mesh\Modifiers\GenerateNormalLines.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\Resource\Mesh\Modifiers\GenerateTangents.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Resource\Image\CheckersImage.hpp">
@@ -764,6 +767,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\Resource\Mesh\Modifiers\GenerateNormalLines.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Resource\Mesh\Modifiers\GenerateTangents.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

@@ -20,6 +20,8 @@ private:
 	shared_ptr<float> m_npVertices;
 	shared_ptr<float> m_npTexCoords;
 	shared_ptr<float> m_npNormals;
+	shared_ptr<float> m_npTangents;
+	shared_ptr<float> m_npBitangents;
 	shared_ptr<int> m_npIndices;
 
 protected:
@@ -41,6 +43,8 @@ public:
 	void setVerticies(shared_ptr<float> verticies);
 	void setTexCoords(shared_ptr<float> texCoords);
 	void setNormals(shared_ptr<float> normals);
+	void setTangents(shared_ptr<float> tangents);
+	void setBitangents(shared_ptr<float> bitangents);
 	void setIndicies(shared_ptr<int> indicies);
 
 	unsigned int getSizeOfVerticies();
@@ -48,7 +52,11 @@ public:
 	shared_ptr<float> getVerticies();
 	shared_ptr<float> getTexCoords();
 	shared_ptr<float> getNormals();
+	shared_ptr<float> getTangents();
+	shared_ptr<float> getBitangents();
 	shared_ptr<int> getIndicies();
+
+	bool hasTangents();
 
 	virtual boost::optional<string> getMeshPath();
 

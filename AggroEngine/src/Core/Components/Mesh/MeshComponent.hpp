@@ -22,6 +22,8 @@ class MeshComponent : public Component,
 {
 private:
 	shared_ptr<Mesh> m_primaryMesh;
+	shared_ptr<Mesh> m_modifiedPrimaryMesh;
+	bool m_genTangents;
 
 	bool m_genNormalLines;
 	shared_ptr<Mesh> m_normalLines;
@@ -43,6 +45,9 @@ public:
 
 	void generateMeshes();
 	void refresh();
+
+	void enableTangents(bool enabled, bool generate = false);
+	bool isTangentsEnabled();
 
 	void generateNormalLines();
 	void enableNormalLines(bool enabled, bool generate = false);

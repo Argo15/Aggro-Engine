@@ -139,6 +139,7 @@
     <ClCompile Include="src\Resource\Mesh\FileBackedMesh.cpp" />
     <ClCompile Include="src\Resource\Mesh\Cache\MeshCache.cpp" />
     <ClCompile Include="src\Resource\Mesh\Modifiers\GenerateNormalLines.cpp" />
+    <ClCompile Include="src\Resource\Mesh\Modifiers\GenerateTangents.cpp" />
     <ClCompile Include="src\Resource\Resources.cpp" />
     <ClCompile Include="src\Subsystem\Graphics\Api\Frustrum.cpp" />
     <ClCompile Include="src\Subsystem\Graphics\Api\Lighting\DirectLight.cpp" />
@@ -250,6 +251,7 @@
     <ClInclude Include="src\Resource\Mesh\FileBackedMesh.hpp" />
     <ClInclude Include="src\Resource\Mesh\Cache\MeshCache.hpp" />
     <ClInclude Include="src\Resource\Mesh\Modifiers\GenerateNormalLines.hpp" />
+    <ClInclude Include="src\Resource\Mesh\Modifiers\GenerateTangents.hpp" />
     <ClInclude Include="src\Resource\Mesh\Modifiers\MeshModifier.hpp" />
     <ClInclude Include="src\Subsystem\Graphics\Api\Frustrum.hpp" />
     <ClInclude Include="src\Subsystem\Graphics\Api\Lighting\DirectLight.hpp" />

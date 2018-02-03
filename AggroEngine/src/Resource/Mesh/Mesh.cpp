@@ -59,6 +59,16 @@ void Mesh::setNormals(shared_ptr<float> normals)
 	m_npNormals = normals;
 }
 
+void Mesh::setTangents(shared_ptr<float> tangents)
+{
+	m_npTangents = tangents;
+}
+
+void Mesh::setBitangents(shared_ptr<float> bitangents)
+{
+	m_npBitangents = bitangents;
+}
+
 void Mesh::setIndicies(shared_ptr<int> indicies)
 {
 	m_npIndices = indicies;
@@ -94,10 +104,27 @@ shared_ptr<float> Mesh::getNormals()
 	return m_npNormals;
 }
 
+shared_ptr<float> Mesh::getTangents()
+{
+	resolve();
+	return m_npTangents;
+}
+
+shared_ptr<float> Mesh::getBitangents()
+{
+	resolve();
+	return m_npBitangents;
+}
+
 shared_ptr<int> Mesh::getIndicies()
 {
 	resolve();
 	return m_npIndices;
+}
+
+bool Mesh::hasTangents()
+{
+	return m_npTangents != nullptr && m_npBitangents != nullptr;
 }
 
 boost::optional<string> Mesh::getMeshPath()
