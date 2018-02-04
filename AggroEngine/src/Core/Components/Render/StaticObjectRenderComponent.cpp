@@ -35,7 +35,7 @@ shared_ptr<RenderComponent> StaticObjectRenderComponent::deserialize(
 	return shared_ptr<StaticObjectRenderComponent>(new StaticObjectRenderComponent(byteChunk, resources));
 }
 
-void StaticObjectRenderComponent::render(shared_ptr<GraphicsContext> context, glm::mat4 m4Transform, glm::mat4 m4ViewMat, shared_ptr<SceneNode> node)
+void StaticObjectRenderComponent::render(shared_ptr<GraphicsContext> context, glm::mat4 &m4Transform, glm::mat4 &m4ViewMat, shared_ptr<SceneNode> node)
 {
 	shared_ptr<MeshComponent> meshComponent = node->getMeshComponent();
 	if (!meshComponent || !meshComponent->hasMesh())
@@ -43,26 +43,42 @@ void StaticObjectRenderComponent::render(shared_ptr<GraphicsContext> context, gl
 		return;
 	}
 
-	for (shared_ptr<Mesh> mesh : meshComponent->getModifiedMeshes())
+	if (meshComponent->modsReady(context->getVboCache()))
 	{
-		shared_ptr<VertexBufferHandle> vbo = context->getVboCache()->getVertexBuffer(mesh);
-		if (vbo && vbo->isLoaded())
+		for (shared_ptr<Mesh> mesh : meshComponent->getModifiedMeshes())
 		{
-			shared_ptr<RenderData> renderData(new RenderData(vbo));
-			renderData->setModelMatrix(m4Transform);
-			renderData->setLightingEnabled(m_lightingEnabled);
-			renderData->setShadowsEnabled(m_shadowsEnabled);
-			if (node)
-			{
-				renderData->setId(node->getId());
-				if (node->hasMaterialComponent() && mesh->getDrawMode() == DrawMode::TRIANGLES)
-				{
-					renderData->setMaterial(node->getMaterialComponent()->getMaterial(context->getTextureCache()));
-				}
-			}
-			renderData->setDrawMode(mesh->getDrawMode());
-			context->getGraphics()->stageRender(renderData);
+			_renderMesh(mesh, context, m4Transform, m4ViewMat, node);
 		}
+	}
+	else
+	{
+		_renderMesh(meshComponent->getPrimaryMesh(), context, m4Transform, m4ViewMat, node);
+	}
+}
+
+void StaticObjectRenderComponent::_renderMesh(shared_ptr<Mesh> mesh, 
+											  shared_ptr<GraphicsContext> context,
+											  glm::mat4 &m4Transform, 
+											  glm::mat4 &m4ViewMat, 
+											  shared_ptr<SceneNode> node)
+{
+	shared_ptr<VertexBufferHandle> vbo = context->getVboCache()->getVertexBuffer(mesh);
+	if (vbo && vbo->isLoaded())
+	{
+		shared_ptr<RenderData> renderData(new RenderData(vbo));
+		renderData->setModelMatrix(m4Transform);
+		renderData->setLightingEnabled(m_lightingEnabled);
+		renderData->setShadowsEnabled(m_shadowsEnabled);
+		if (node)
+		{
+			renderData->setId(node->getId());
+			if (node->hasMaterialComponent() && mesh->getDrawMode() == DrawMode::TRIANGLES)
+			{
+				renderData->setMaterial(node->getMaterialComponent()->getMaterial(context->getTextureCache()));
+			}
+		}
+		renderData->setDrawMode(mesh->getDrawMode());
+		context->getGraphics()->stageRender(renderData);
 	}
 }
 

@@ -36,7 +36,7 @@ shared_ptr<RenderComponent> DirectLightRenderComponent::deserialize(Chunk * cons
 	return shared_ptr<DirectLightRenderComponent>(new DirectLightRenderComponent(byteChunk, resources));
 }
 
-void DirectLightRenderComponent::render(shared_ptr<GraphicsContext> context, glm::mat4 m4Transform, glm::mat4 m4ViewMat, shared_ptr<SceneNode> node)
+void DirectLightRenderComponent::render(shared_ptr<GraphicsContext> context, glm::mat4 &m4Transform, glm::mat4 &m4ViewMat, shared_ptr<SceneNode> node)
 {
 	if (!m_lineRenderData)
 	{

@@ -12,7 +12,7 @@ Scene::Scene(shared_ptr<SceneNode> root, shared_ptr<Camera> camera)
 {
 }
 
-Scene::Scene(Chunk * const byteChunk, shared_ptr<Resources> resources, shared_ptr<MeshCache> meshCache)
+Scene::Scene(Chunk * const byteChunk, shared_ptr<EngineContext> context)
 	: m_transformHook()
 	, m_camera(new Camera())
 {
@@ -27,14 +27,14 @@ Scene::Scene(Chunk * const byteChunk, shared_ptr<Resources> resources, shared_pt
 			int matId = matParser.parseInt().get_value_or(-1);
 			if (boost::optional<Chunk> matChunk = matParser.parseChunk())
 			{
-				shared_ptr<SceneNode> matNode = SceneNode::deserialize(&*matChunk, resources, meshCache, baseMaterials);
+				shared_ptr<SceneNode> matNode = SceneNode::deserialize(&*matChunk, context, baseMaterials);
 				addBaseMaterial(matNode);
 				baseMaterials[matId] = matNode;
 			}
 		}
 		else if (*nextChunk->getType() == ChunkType::SCENE_NODE)
 		{
-			m_root = SceneNode::deserialize(&*nextChunk, resources, meshCache, baseMaterials);
+			m_root = SceneNode::deserialize(&*nextChunk, context, baseMaterials);
 		}
 		else if (*nextChunk->getType() == ChunkType::CAMERA)
 		{
@@ -69,14 +69,14 @@ shared_ptr<Chunk> Scene::serialize(shared_ptr<Resources> resources)
 	return shared_ptr<Chunk>(new Chunk(ChunkType::SCENE, bytes.getNumBytes(), bytes.collect()));
 }
 
-shared_ptr<Scene> Scene::deserialize(Chunk * const byteChunk, shared_ptr<Resources> resources, shared_ptr<MeshCache> meshCache)
+shared_ptr<Scene> Scene::deserialize(Chunk * const byteChunk, shared_ptr<EngineContext> context)
 {
 	if (*byteChunk->getType() != ChunkType::SCENE)
 	{
 		return shared_ptr<Scene>();
 	}
 
-	return shared_ptr<Scene>(new Scene(byteChunk, resources, meshCache));
+	return shared_ptr<Scene>(new Scene(byteChunk, context));
 }
 
 shared_ptr<SceneNode> Scene::getRoot()

@@ -21,6 +21,7 @@ private:
 	shared_ptr<QLineEdit> m_texOffsetUEdit;
 	shared_ptr<QLineEdit> m_texOffsetVEdit;
 	shared_ptr<QSlider> m_texRotateSlider;
+	shared_ptr<QLineEdit> m_normalEdit;
 	shared_ptr<QLineEdit> m_alphaEdit;
 	shared_ptr<QSlider> m_specIntensitySlider;
 	shared_ptr<QSlider> m_specShineSlider;
@@ -44,6 +45,9 @@ protected:
 	void _onSpecularChange(int value);
 	void _onShininessChange(int value);
 	void _onEmissionChange(QString newValue);
+
+	void _setTexEdit(shared_ptr<QLineEdit> texEdit, boost::optional<int> imageId);
+	QPushButton *_addTexSelect(QHBoxLayout *layout, shared_ptr<QLineEdit> lineEdit);
 
 public:
 	MaterialWidget(QWidget *parent, shared_ptr<Resources> resources);

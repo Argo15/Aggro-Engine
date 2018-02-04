@@ -10,28 +10,24 @@ struct Material
 	sampler2D specMap;
 	vec3 emission;
 	sampler2D emissionMap;
+	bool hasNormals;
+	sampler2D normalMap;
 };
 
 uniform vec3 objId;
 uniform bool lightingEnabled;
+uniform bool hasTangents;
 uniform Material material;
+uniform mat4 textureMatrix;
+uniform mat3 texRotateMatrix;
 in vec3 normal;
-in float normal_length;
+in vec3 tangent;
+in vec3 bitangent;
 in vec2 texCoord;
 out vec4 normalBuffer;
 out vec4 albedoBuffer;
 out vec4 selectionBuffer;
 out vec4 glowBuffer;
-
-vec4 normalColor(vec3 normal, float normal_length, bool lightingEnabled) {
-	vec4 normalCol;
-	if (normal_length < 0.01 || !lightingEnabled) {
-		normalCol = vec4(0, 0, 0, 1.0);
-	} else {
-		normalCol = vec4(normalize(normal)*vec3(0.5)+vec3(0.5), 1.0);
-	}
-	return normalCol;
-}
 
 void main() {
 	vec4 alphaColor = texture2D(material.alpha, texCoord);
@@ -40,7 +36,23 @@ void main() {
 		discard;
 	}
 	vec4 texColor = texture2D(material.tex, texCoord);
-	vec4 normCol = normalColor(normal, normal_length, lightingEnabled);
+
+	// Normal map
+	vec4 normCol = vec4(0, 0, 0, 1.0);
+	if (lightingEnabled && length(normal) > 0.01) {
+		if (hasTangents && material.hasNormals) {
+			mat3 tangmat;
+			tangmat[0] = normalize(tangent);
+			tangmat[1] = normalize(bitangent);
+			tangmat[2] = normalize(normal);
+			vec3 normalcolor = texture2D(material.normalMap, texCoord).rgb;
+			normalcolor = normalcolor*2.0-vec3(1.0);
+			vec3 _normal = normalize(tangmat*texRotateMatrix*normalcolor);
+			normCol = vec4(_normal*vec3(0.5)+vec3(0.5), 1.0);
+		} else {
+			normCol = vec4(normalize(normal)*vec3(0.5)+vec3(0.5), 1.0);
+		}
+	}
 	normalBuffer = vec4(normCol.rgb, material.shininess / 100.0);
 	albedoBuffer = vec4(texColor.rgb * material.color, 1.0);
 	selectionBuffer = vec4(objId, 1.0);

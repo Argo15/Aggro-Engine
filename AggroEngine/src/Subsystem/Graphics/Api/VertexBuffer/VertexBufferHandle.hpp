@@ -13,5 +13,6 @@ public:
 	virtual unsigned int getSizeOfVerticies() const = 0;
 	virtual unsigned int getIndexHandle() const = 0;
 	virtual unsigned int getSizeOfIndicies() const = 0;
+	virtual bool hasTangents() const = 0;
 	virtual bool isLoaded() = 0;
 };

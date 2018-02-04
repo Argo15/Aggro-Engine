@@ -5,15 +5,20 @@
 static shared_ptr<MeshModifier> normalLineGen(new GenerateNormalLines());
 static shared_ptr<MeshModifier> tangentGen(new GenerateTangents());
 
-MeshComponent::MeshComponent()
-	: m_primaryMesh()
+MeshComponent::MeshComponent(shared_ptr<JobManager> jobs)
+	: m_jobs(jobs)
+	, m_primaryMesh()
 	, m_genTangents(true)
 	, m_genNormalLines(false)
 {
 }
 
-MeshComponent::MeshComponent(Chunk * const byteChunk, shared_ptr<Resources> resources, shared_ptr<MeshCache> cache)
-	: m_primaryMesh()
+MeshComponent::MeshComponent(Chunk * const byteChunk, 
+							 shared_ptr<Resources> resources, 
+							 shared_ptr<MeshCache> cache, 
+							 shared_ptr<JobManager> jobs)
+	: m_jobs(jobs)
+	, m_primaryMesh()
 	, m_genTangents(true)
 {
 	ByteParser bytes = ByteParser(*byteChunk);
@@ -38,14 +43,17 @@ shared_ptr<Chunk> MeshComponent::serialize(shared_ptr<Resources> resources)
 	return shared_ptr<Chunk>(new Chunk(ChunkType::MESH_COMPONENT, bytes.getNumBytes(), bytes.collect()));
 }
 
-shared_ptr<MeshComponent> MeshComponent::deserialize(Chunk * const byteChunk, shared_ptr<Resources> resources, shared_ptr<MeshCache> cache)
+shared_ptr<MeshComponent> MeshComponent::deserialize(Chunk * const byteChunk, 
+												 	 shared_ptr<Resources> resources, 
+													 shared_ptr<MeshCache> cache, 
+													 shared_ptr<JobManager> jobs)
 {
 	if (*byteChunk->getType() != ChunkType::MESH_COMPONENT)
 	{
 		return shared_ptr<MeshComponent>();
 	}
 
-	return shared_ptr<MeshComponent>(new MeshComponent(byteChunk, resources, cache));
+	return shared_ptr<MeshComponent>(new MeshComponent(byteChunk, resources, cache, jobs));
 }
 
 void MeshComponent::addChangeListener(void *ns, std::function<void(MeshComponent *)> listener)
@@ -65,13 +73,15 @@ void MeshComponent::generateMeshes()
 	if (m_primaryMesh)
 	{
 		m_modifiedPrimaryMesh = m_primaryMesh;
-		if (m_genTangents)
-		{
-			m_modifiedPrimaryMesh = tangentGen->apply(m_modifiedPrimaryMesh);
-		}
-		generateNormalLines();
+		m_jobs->add(shared_ptr<Job>(new Job([this]() {
+			if (m_genTangents)
+			{
+				m_modifiedPrimaryMesh = tangentGen->apply(m_modifiedPrimaryMesh);
+			}
+			generateNormalLines();
+			refresh();
+		})), JobPriority::HIGH);
 	}
-	refresh();
 }
 
 void MeshComponent::refresh()
@@ -113,7 +123,10 @@ void MeshComponent::enableNormalLines(bool enabled, bool generate)
 	{
 		generateMeshes();
 	}
-	refresh();
+	if (!enabled)
+	{
+		refresh();
+	}
 }
 
 bool MeshComponent::isNormalLinesEnabled()
@@ -148,4 +161,14 @@ vector<shared_ptr<Mesh>> &MeshComponent::getModifiedMeshes()
 bool MeshComponent::hasMesh()
 {
 	return m_primaryMesh != nullptr;
+}
+
+bool MeshComponent::modsReady(shared_ptr<VertexBufferCache> vbos)
+{
+	if (m_modifiedMeshes.empty())
+	{
+		return false;
+	}
+	shared_ptr<VertexBufferHandle> vbo = vbos->getVertexBuffer(m_modifiedMeshes[0]);
+	return vbo && vbo->isLoaded();
 }

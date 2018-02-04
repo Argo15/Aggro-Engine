@@ -35,6 +35,7 @@ private:
 	float m_texRotate;
 	glm::vec3 m_emissionColor;
 	boost::optional<int> m_emissionImageId;
+	boost::optional<int> m_normalImageId;
 
 	Listener<MaterialComponent *> m_changeListeners;
 
@@ -93,4 +94,8 @@ public:
 	void setEmissionImageId(int textureImageId);
 	boost::optional<int> getEmissionImageId();
 	void removeEmissionMap();
+
+	void setNormalImageId(int textureImageId);
+	boost::optional<int> getNormalImageId();
+	void removeNormalMap();
 };

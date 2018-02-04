@@ -8,6 +8,7 @@
 #include "MeshCache.hpp"
 #include "Listener.hpp"
 #include "GenerateNormalLines.hpp"
+#include "VertexBufferCache.hpp"
 #include <vector>
 using namespace std;
 
@@ -21,6 +22,8 @@ class MeshComponent : public Component,
 	public boost::basic_lockable_adapter<recursive_mutex>
 {
 private:
+	shared_ptr<JobManager> m_jobs;
+
 	shared_ptr<Mesh> m_primaryMesh;
 	shared_ptr<Mesh> m_modifiedPrimaryMesh;
 	bool m_genTangents;
@@ -32,13 +35,13 @@ private:
 
 	Listener<MeshComponent *> m_changeListeners;
 
-	MeshComponent(Chunk * const byteChunk, shared_ptr<Resources> resources, shared_ptr<MeshCache> cache);
+	MeshComponent(Chunk * const byteChunk, shared_ptr<Resources> resources, shared_ptr<MeshCache> cache, shared_ptr<JobManager> jobs);
 
 public:
-	MeshComponent();
+	MeshComponent(shared_ptr<JobManager> jobs);
 
 	shared_ptr<Chunk> serialize(shared_ptr<Resources> resources);
-	static shared_ptr<MeshComponent> deserialize(Chunk * const byteChunk, shared_ptr<Resources> resources, shared_ptr<MeshCache> cache);
+	static shared_ptr<MeshComponent> deserialize(Chunk * const byteChunk, shared_ptr<Resources> resources, shared_ptr<MeshCache> cache, shared_ptr<JobManager> jobs);
 
 	void addChangeListener(void *ns, std::function<void(MeshComponent *)> listener);
 	void removeChangeListener(void *ns);
@@ -60,4 +63,5 @@ public:
 	vector<shared_ptr<Mesh>> &getModifiedMeshes();
 
 	bool hasMesh();
+	bool modsReady(shared_ptr<VertexBufferCache> vbos);
 };

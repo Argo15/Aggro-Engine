@@ -45,16 +45,21 @@ shared_ptr<VertexBufferHandle> OpenGL43Graphics::createVertexBuffer(shared_ptr<M
 	GLuint nVertexHandle;
 	glGenBuffers(1, &nVertexHandle);
 	glBindBuffer(GL_ARRAY_BUFFER_ARB, nVertexHandle);
-	glBufferData(GL_ARRAY_BUFFER,mesh->getSizeOfVerticies()*8/3, NULL,GL_STATIC_DRAW); // 8/3 for 3 vert, 2 tex, 3 norm
+	glBufferData(GL_ARRAY_BUFFER,mesh->getSizeOfVerticies()*14/3, NULL,GL_STATIC_DRAW); // 14/3 for 3 vert, 2 tex, 3 norm, 3 tan, 3 bitan
 	glBufferSubData(GL_ARRAY_BUFFER,0,mesh->getSizeOfVerticies(),mesh->getVerticies().get());
 	glBufferSubData(GL_ARRAY_BUFFER,mesh->getSizeOfVerticies(),mesh->getSizeOfVerticies()*2/3,mesh->getTexCoords().get());
 	glBufferSubData(GL_ARRAY_BUFFER,mesh->getSizeOfVerticies()*5/3,mesh->getSizeOfVerticies(),mesh->getNormals().get());
-	
+	if (mesh->hasTangents())
+	{
+		glBufferSubData(GL_ARRAY_BUFFER, mesh->getSizeOfVerticies() * 8 / 3, mesh->getSizeOfVerticies(), mesh->getTangents().get());
+		glBufferSubData(GL_ARRAY_BUFFER, mesh->getSizeOfVerticies() * 11 / 3, mesh->getSizeOfVerticies(), mesh->getBitangents().get());
+	}
+
 	GLuint nIndexHandle;
 	glGenBuffers(1, &nIndexHandle);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, nIndexHandle);
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, mesh->getSizeOfIndicies(), mesh->getIndicies().get(), GL_STATIC_DRAW);
-	return shared_ptr<VertexBufferHandle>(new DefaultVertexBufferHandle(nVertexHandle, mesh->getSizeOfVerticies(), nIndexHandle, mesh->getSizeOfIndicies()));
+	return shared_ptr<VertexBufferHandle>(new DefaultVertexBufferHandle(nVertexHandle, mesh->getSizeOfVerticies(), nIndexHandle, mesh->getSizeOfIndicies(), mesh->hasTangents()));
 }
 
 void OpenGL43Graphics::deleteVertexBuffer(shared_ptr<VertexBufferHandle> nVertexBufferHandle)

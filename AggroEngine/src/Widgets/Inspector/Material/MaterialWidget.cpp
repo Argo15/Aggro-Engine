@@ -13,6 +13,7 @@ MaterialWidget::MaterialWidget(QWidget *parent, shared_ptr<Resources> resources)
 	, m_texOffsetUEdit(new QLineEdit(""))
 	, m_texOffsetVEdit(new QLineEdit(""))
 	, m_texRotateSlider(new QSlider(Qt::Horizontal))
+	, m_normalEdit(new QLineEdit(""))
 	, m_alphaEdit(new QLineEdit(""))
 	, m_specIntensitySlider(new QSlider(Qt::Horizontal))
 	, m_specShineSlider(new QSlider(Qt::Horizontal))
@@ -28,6 +29,7 @@ MaterialWidget::MaterialWidget(QWidget *parent, shared_ptr<Resources> resources)
 	QVBoxLayout *rightLayout = new QVBoxLayout;
 		QHBoxLayout *colorLayout = new QHBoxLayout;
 		QHBoxLayout *textureLayout = new QHBoxLayout;
+		QHBoxLayout *normalLayout = new QHBoxLayout;
 		QHBoxLayout *alphaLayout = new QHBoxLayout;
 		QHBoxLayout *specIntensityLayout = new QHBoxLayout;
 		QHBoxLayout *specShineLayout = new QHBoxLayout;
@@ -59,6 +61,7 @@ MaterialWidget::MaterialWidget(QWidget *parent, shared_ptr<Resources> resources)
 	leftLayout->addWidget(new QLabel("Tex Scale"));
 	leftLayout->addWidget(new QLabel("Tex Offset"));
 	leftLayout->addWidget(new QLabel("Tex Rotate"));
+	leftLayout->addWidget(new QLabel("Normal"));
 	leftLayout->addWidget(new QLabel("Alpha"));
 	leftLayout->addWidget(new QLabel("Spec Intensity"));
 	leftLayout->addWidget(new QLabel("Spec Shininess"));
@@ -71,6 +74,7 @@ MaterialWidget::MaterialWidget(QWidget *parent, shared_ptr<Resources> resources)
 	rightLayout->addLayout(texScaleLayout);
 	rightLayout->addLayout(texOffsetLayout);
 	rightLayout->addLayout(texRotateLayout);
+	rightLayout->addLayout(normalLayout);
 	rightLayout->addLayout(alphaLayout);
 	rightLayout->addLayout(specIntensityLayout);
 	rightLayout->addLayout(specShineLayout);
@@ -92,11 +96,7 @@ MaterialWidget::MaterialWidget(QWidget *parent, shared_ptr<Resources> resources)
 	colorLayout->addWidget(lbl);
 	colorLayout->addWidget(m_colorBEdit.get());
 
-	QPushButton *selectTexButton = new QPushButton("...");
-	selectTexButton->setFixedWidth(50);
-	selectTexButton->setFixedHeight(25);
-	textureLayout->addWidget(m_textureEdit.get());
-	textureLayout->addWidget(selectTexButton);
+	QPushButton *selectTexButton = _addTexSelect(textureLayout, m_textureEdit);
 
 	// Tex Scale
 	lbl = new QLabel("U");
@@ -125,11 +125,8 @@ MaterialWidget::MaterialWidget(QWidget *parent, shared_ptr<Resources> resources)
 	m_texRotateSlider->setStyleSheet(QString("border-bottom-style: none;"));
 	texRotateLayout->addWidget(m_texRotateSlider.get());
 
-	QPushButton *selectAlphaButton = new QPushButton("...");
-	selectAlphaButton->setFixedWidth(50);
-	selectAlphaButton->setFixedHeight(25);
-	alphaLayout->addWidget(m_alphaEdit.get());
-	alphaLayout->addWidget(selectAlphaButton);
+	QPushButton *selectNormalButton = _addTexSelect(normalLayout, m_normalEdit);
+	QPushButton *selectAlphaButton = _addTexSelect(alphaLayout, m_alphaEdit);
 
 	m_specIntensitySlider->setStyleSheet(QString("border-bottom-style: none;"));
 	specIntensityLayout->addWidget(m_specIntensitySlider.get());
@@ -137,11 +134,7 @@ MaterialWidget::MaterialWidget(QWidget *parent, shared_ptr<Resources> resources)
 	m_specShineSlider->setMaximum(100);
 	m_specShineSlider->setStyleSheet(QString("border-bottom-style: none;"));
 	specShineLayout->addWidget(m_specShineSlider.get());
-	QPushButton *selectSpecButton = new QPushButton("...");
-	selectSpecButton->setFixedWidth(50);
-	selectSpecButton->setFixedHeight(25);
-	specMapLayout->addWidget(m_specMapEdit.get());
-	specMapLayout->addWidget(selectSpecButton);
+	QPushButton *selectSpecButton = _addTexSelect(specMapLayout, m_specMapEdit);
 
 	// Emission
 	lbl = new QLabel("R");
@@ -157,11 +150,7 @@ MaterialWidget::MaterialWidget(QWidget *parent, shared_ptr<Resources> resources)
 	emissionColorLayout->addWidget(lbl);
 	emissionColorLayout->addWidget(m_emissionBEdit.get());
 
-	emissionMapLayout->addWidget(m_emissionMapEdit.get());
-	QPushButton *selectEmissionButton = new QPushButton("...");
-	selectEmissionButton->setFixedWidth(50);
-	selectEmissionButton->setFixedHeight(25);
-	emissionMapLayout->addWidget(selectEmissionButton);
+	QPushButton *selectEmissionButton = _addTexSelect(emissionMapLayout, m_emissionMapEdit);
 
 	lbl = new QLabel("Material");
 	lbl->setStyleSheet("font-weight: bold; font-size: 16px;");
@@ -191,6 +180,12 @@ MaterialWidget::MaterialWidget(QWidget *parent, shared_ptr<Resources> resources)
 	});
 	connect(m_texRotateSlider.get(), &QSlider::valueChanged, this, [this](int value) {
 		_onSliderChange(value, [this](auto material, int val) { material->setTexRotate((2 * PI) * val / 100.0f); });
+	});
+	connect(selectNormalButton, &QPushButton::pressed, this, [this]() {
+		this->_onTexSelect(m_normalEdit,
+			[this](auto material, int id) { material->setNormalImageId(id); },
+			[this](auto material) { material->removeNormalMap(); }
+		);
 	});
 	connect(selectAlphaButton, &QPushButton::pressed, this, [this]() {
 		this->_onTexSelect(m_alphaEdit,
@@ -227,6 +222,16 @@ MaterialWidget::MaterialWidget(QWidget *parent, shared_ptr<Resources> resources)
 			}
 		);
 	});
+}
+
+QPushButton *MaterialWidget::_addTexSelect(QHBoxLayout *layout, shared_ptr<QLineEdit> lineEdit)
+{
+	QPushButton *button = new QPushButton("...");
+	button->setFixedWidth(50);
+	button->setFixedHeight(25);
+	layout->addWidget(lineEdit.get());
+	layout->addWidget(button);
+	return button;
 }
 
 void MaterialWidget::_onColorChange(QString newValue)
@@ -376,15 +381,7 @@ void MaterialWidget::_refresh(MaterialComponent *material)
 		m_colorGEdit->setText(QString::number(color.y, 'f', 3).remove(trailingZeros).remove(trailingDot));
 		m_colorBEdit->setText(QString::number(color.z, 'f', 3).remove(trailingZeros).remove(trailingDot));
 
-		int textureId = material->getTextureImageId().get_value_or(-1);
-		if (textureId >= 0)
-		{
-			m_textureEdit->setText(QString::fromStdString(m_resources->getPathForId(textureId).get_value_or("")));
-		}
-		else
-		{
-			m_textureEdit->setText("");
-		}
+		_setTexEdit(m_textureEdit, material->getTextureImageId());
 
 		m_texScaleUEdit->setText(QString::number(material->getTexScaleU(), 'f', 3).remove(trailingZeros).remove(trailingDot));
 		m_texScaleVEdit->setText(QString::number(material->getTexScaleV(), 'f', 3).remove(trailingZeros).remove(trailingDot));
@@ -392,41 +389,30 @@ void MaterialWidget::_refresh(MaterialComponent *material)
 		m_texOffsetVEdit->setText(QString::number(material->getTexOffsetV(), 'f', 3).remove(trailingZeros).remove(trailingDot));
 		m_texRotateSlider->setValue(100.0f * material->getTexRotate() / (2.0f * PI));
 
-		int alphaId = material->getAlphaImageId().get_value_or(-1);
-		if (alphaId >= 0)
-		{
-			m_alphaEdit->setText(QString::fromStdString(m_resources->getPathForId(alphaId).get_value_or("")));
-		}
-		else
-		{
-			m_alphaEdit->setText("");
-		}
+		_setTexEdit(m_normalEdit, material->getNormalImageId());
+		_setTexEdit(m_alphaEdit, material->getAlphaImageId());
 
 		m_specIntensitySlider->setValue(material->getSpecIntensityPct());
 		m_specShineSlider->setValue(material->getShininess());
-
-		int specularId = material->getSpecularImageId().get_value_or(-1);
-		if (specularId >= 0)
-		{
-			m_specMapEdit->setText(QString::fromStdString(m_resources->getPathForId(specularId).get_value_or("")));
-		}
-		else
-		{
-			m_specMapEdit->setText("");
-		}
+		_setTexEdit(m_specMapEdit, material->getSpecularImageId());
 
 		glm::vec3 emission = material->getEmission();
 		m_emissionREdit->setText(QString::number(emission.x, 'f', 3).remove(trailingZeros).remove(trailingDot));
 		m_emissionGEdit->setText(QString::number(emission.y, 'f', 3).remove(trailingZeros).remove(trailingDot));
 		m_emissionBEdit->setText(QString::number(emission.z, 'f', 3).remove(trailingZeros).remove(trailingDot));
-		int emissionId = material->getEmissionImageId().get_value_or(-1);
-		if (emissionId >= 0)
-		{
-			m_emissionMapEdit->setText(QString::fromStdString(m_resources->getPathForId(emissionId).get_value_or("")));
-		}
-		else
-		{
-			m_emissionMapEdit->setText("");
-		}
+
+		_setTexEdit(m_emissionMapEdit, material->getEmissionImageId());
+	}
+}
+
+void MaterialWidget::_setTexEdit(shared_ptr<QLineEdit> texEdit, boost::optional<int> imageId)
+{
+	if (imageId)
+	{
+		texEdit->setText(QString::fromStdString(m_resources->getPathForId(*imageId).get_value_or("")));
+	}
+	else
+	{
+		texEdit->setText("");
 	}
 }

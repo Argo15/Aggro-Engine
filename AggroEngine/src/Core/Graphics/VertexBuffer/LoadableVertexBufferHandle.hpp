@@ -22,6 +22,7 @@ public:
 	unsigned int getSizeOfVerticies() const;
 	unsigned int getIndexHandle() const;
 	unsigned int getSizeOfIndicies() const;
+	bool hasTangents() const;
 	bool isLoaded();
 
 	void setHandle(shared_ptr<VertexBufferHandle> handle);

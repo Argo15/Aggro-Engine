@@ -97,6 +97,8 @@ void GBuffer::drawToBuffer(RenderOptions renderOptions, std::queue<shared_ptr<Re
 	glBindAttribLocation(m_glslProgram->getHandle(), 0, "v_vertex");
 	glBindAttribLocation(m_glslProgram->getHandle(), 1, "v_texcoord");
 	glBindAttribLocation(m_glslProgram->getHandle(), 2, "v_normal");
+	glBindAttribLocation(m_glslProgram->getHandle(), 3, "v_tangent");
+	glBindAttribLocation(m_glslProgram->getHandle(), 4, "v_bitangent");
 	while (!renderQueue.empty())
 	{
 		shared_ptr<RenderData> renderData = renderQueue.front();
@@ -128,30 +130,46 @@ void GBuffer::drawToBuffer(RenderOptions renderOptions, std::queue<shared_ptr<Re
 
 			glm::mat4 textureMatrix = glm::mat4(1.0);
 			shared_ptr<Material> material = renderData->getMaterial();
+			int texId = 0;
 			if (material)
 			{
 				m_glslProgram->sendUniform("material.color", material->getColor());
-				m_glslProgram->sendUniform("material.tex", material->getTextureOpt().get_value_or(devTexture->getHandle()), 0);
-				m_glslProgram->sendUniform("material.alpha", material->getAlphaOpt().get_value_or(devTexture->getHandle()), 1);
+				m_glslProgram->sendUniform("material.tex", material->getTextureOpt().get_value_or(devTexture->getHandle()), texId++);
+				m_glslProgram->sendUniform("material.alpha", material->getAlphaOpt().get_value_or(devTexture->getHandle()), texId++);
 				m_glslProgram->sendUniform("material.specIntensity", material->getSpecIntensity());
 				m_glslProgram->sendUniform("material.shininess", (float)material->getShininess());
-				m_glslProgram->sendUniform("material.specMap", material->getSpecularOpt().get_value_or(devTexture->getHandle()), 2);
+				m_glslProgram->sendUniform("material.specMap", material->getSpecularOpt().get_value_or(devTexture->getHandle()), texId++);
 				m_glslProgram->sendUniform("material.emission", material->getEmission());
-				m_glslProgram->sendUniform("material.emissionMap", material->getEmissionMapOpt().get_value_or(devTexture->getHandle()), 3);
+				m_glslProgram->sendUniform("material.emissionMap", material->getEmissionMapOpt().get_value_or(devTexture->getHandle()), texId++);
+				boost::optional<shared_ptr<TextureHandle>> normalMap = material->getNormalMapOpt();
+				m_glslProgram->sendUniform("material.hasNormals", normalMap.is_initialized());
+				if (normalMap)
+				{
+					m_glslProgram->sendUniform("material.normalMap", normalMap.get(), texId++);
+					glm::mat3 texRotateMatrix = material->getTexRotateMatrix();
+					texRotateMatrix[0] = glm::vec3(texRotateMatrix[0][0], -texRotateMatrix[0][1], 0);
+					texRotateMatrix[1] = glm::vec3(-texRotateMatrix[1][0], texRotateMatrix[1][1], 0);
+					texRotateMatrix[2] = glm::vec3(0, 0, 1.0);
+					m_glslProgram->sendUniform("texRotateMatrix", glm::value_ptr(texRotateMatrix), false, 3);
+				}
+
 				textureMatrix = material->getTextureMatrix();
 			}
 			else
 			{
 				m_glslProgram->sendUniform("material.color", defaultColor);
-				m_glslProgram->sendUniform("material.tex", devTexture->getHandle(), 0);
-				m_glslProgram->sendUniform("material.alpha", devTexture->getHandle(), 1);
+				m_glslProgram->sendUniform("material.tex", devTexture->getHandle(), texId++);
+				m_glslProgram->sendUniform("material.alpha", devTexture->getHandle(), texId++);
 				m_glslProgram->sendUniform("material.specIntensity", 0.f);
 				m_glslProgram->sendUniform("material.shininess", 0.f);
-				m_glslProgram->sendUniform("material.specMap", devTexture->getHandle(), 2);
+				m_glslProgram->sendUniform("material.specMap", devTexture->getHandle(), texId++);
 				m_glslProgram->sendUniform("material.emission", defaultEmission);
-				m_glslProgram->sendUniform("material.emissionMap", devTexture->getHandle(), 3);
+				m_glslProgram->sendUniform("material.emissionMap", devTexture->getHandle(), texId++);
+				m_glslProgram->sendUniform("material.hasNormals", false);
 			}
 			m_glslProgram->sendUniform("textureMatrix", glm::value_ptr(textureMatrix), false, 4);
+			glm::mat4 texRotateMatrix = glm::mat3(1.0);
+
 
 			unsigned int id = renderData->getId();
 			float r = (id % 255) / 255.0f;
@@ -166,21 +184,38 @@ void GBuffer::drawToBuffer(RenderOptions renderOptions, std::queue<shared_ptr<Re
 			}
 
 			shared_ptr<VertexBufferHandle> vboHandle = renderData->getVertexBufferHandle();
+			m_glslProgram->sendUniform("hasTangents", vboHandle->hasTangents());
+
 			glBindBuffer(GL_ARRAY_BUFFER, vboHandle->getVertexHandle());
 			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, vboHandle->getIndexHandle());
 
 			glEnableVertexAttribArray(0);
 			glEnableVertexAttribArray(1);
 			glEnableVertexAttribArray(2);
+			if (vboHandle->hasTangents())
+			{
+				glEnableVertexAttribArray(3);
+				glEnableVertexAttribArray(4);
+			}
 
 			glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, 0);
 			glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(vboHandle->getSizeOfVerticies()));
 			glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(vboHandle->getSizeOfVerticies() * 5 / 3));
+			if (vboHandle->hasTangents())
+			{
+				glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(vboHandle->getSizeOfVerticies() * 8 / 3));
+				glVertexAttribPointer(4, 3, GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(vboHandle->getSizeOfVerticies() * 11 / 3));
+			}
 			glDrawElements((GLenum)(renderData->getDrawMode()), vboHandle->getSizeOfIndicies(), GL_UNSIGNED_INT, 0);
 
 			glDisableVertexAttribArray(0);
 			glDisableVertexAttribArray(1);
 			glDisableVertexAttribArray(2);
+			if (vboHandle->hasTangents())
+			{
+				glDisableVertexAttribArray(3);
+				glDisableVertexAttribArray(4);
+			}
 			glBindBuffer(GL_ARRAY_BUFFER, 0);
 			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 

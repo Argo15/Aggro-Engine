@@ -26,6 +26,11 @@ unsigned int LoadableVertexBufferHandle::getSizeOfIndicies() const
 	return m_delegate->getSizeOfIndicies();
 }
 
+bool LoadableVertexBufferHandle::hasTangents() const
+{
+	return m_delegate->hasTangents();
+}
+
 bool LoadableVertexBufferHandle::isLoaded()
 {
 	return m_delegate->isLoaded();

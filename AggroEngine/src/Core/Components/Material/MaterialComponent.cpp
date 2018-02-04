@@ -28,6 +28,7 @@ MaterialComponent::MaterialComponent(SceneNode *owner, shared_ptr<MaterialCompon
 	, m_texOffsetV(copy->m_texOffsetV)
 	, m_texRotate(copy->m_texRotate)
 	, m_emissionColor(copy->m_emissionColor)
+	, m_normalImageId(copy->m_normalImageId)
 {
 }
 
@@ -64,6 +65,11 @@ MaterialComponent::MaterialComponent(Chunk * const byteChunk, SceneNode *owner, 
 	if (emissionPath != "")
 	{
 		m_emissionImageId = boost::optional<int>(resources->getIdForPath(emissionPath));
+	}
+	string normalPath = parser.parseString().get_value_or("");
+	if (normalPath != "")
+	{
+		m_normalImageId = boost::optional<int>(resources->getIdForPath(normalPath));
 	}
 }
 
@@ -103,6 +109,12 @@ shared_ptr<Chunk> MaterialComponent::serialize(shared_ptr<Resources> resources)
 		emissionName = resources->getPathForId(m_emissionImageId.get()).get_value_or("");
 	}
 	bytes.add(&emissionName);
+	string normalName = "";
+	if (m_normalImageId)
+	{
+		normalName = resources->getPathForId(m_normalImageId.get()).get_value_or("");
+	}
+	bytes.add(&normalName);
 	return shared_ptr<Chunk>(new Chunk(ChunkType::MATERIAL_COMPONENT, bytes.getNumBytes(), bytes.collect()));
 }
 
@@ -150,13 +162,19 @@ shared_ptr<Material> MaterialComponent::getMaterial(shared_ptr<TextureCache> tex
 	}
 	glm::mat4 textureMatrix = glm::translate(glm::mat4(1.0), glm::vec3(m_texOffsetU, m_texOffsetV, 0));
 	textureMatrix = glm::scale(textureMatrix, glm::vec3(m_texScaleU, m_texScaleV, 1.0));
-	textureMatrix = glm::rotate(textureMatrix, m_texRotate, glm::vec3(0, 0, 1.0));
-	material->setTextureMatrix(textureMatrix);
+	glm::mat4 texRotateMatrix = glm::rotate(glm::mat4(1.0), m_texRotate, glm::vec3(0, 0, 1.0));
+	material->setTexRotateMatrix(texRotateMatrix);
+	material->setTextureMatrix(texRotateMatrix * textureMatrix);
 	material->setEmission(m_emissionColor);
 	if (m_emissionImageId)
 	{
 		shared_ptr<TextureHandle> texture = textures->getTexture(m_emissionImageId.get());
 		material->setEmissionMap(texture);
+	}
+	if (m_normalImageId)
+	{
+		shared_ptr<TextureHandle> texture = textures->getTexture(m_normalImageId.get());
+		material->setNormalMap(texture);
 	}
 	return material;
 }
@@ -335,5 +353,22 @@ boost::optional<int> MaterialComponent::getEmissionImageId()
 void MaterialComponent::removeEmissionMap()
 {
 	m_emissionImageId = boost::optional<int>();
+	m_changeListeners.notify(this);
+}
+
+void MaterialComponent::setNormalImageId(int textureImageId)
+{
+	m_normalImageId = textureImageId;
+	m_changeListeners.notify(this);
+}
+
+boost::optional<int> MaterialComponent::getNormalImageId()
+{
+	return m_normalImageId;
+}
+
+void MaterialComponent::removeNormalMap()
+{
+	m_normalImageId = boost::optional<int>();
 	m_changeListeners.notify(this);
 }

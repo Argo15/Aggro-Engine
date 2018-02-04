@@ -95,7 +95,7 @@ void MainWindow::open()
 	m_lastSaveFile = shared_ptr<string>(new string(filename.toStdString()));
 	if (shared_ptr<Chunk> chunk = FileWriter::readFile(filename.toStdString()))
 	{
-		shared_ptr<Scene> scene = Scene::deserialize(chunk.get(), m_context->getResources(), m_context->getMeshCache());
+		shared_ptr<Scene> scene = Scene::deserialize(chunk.get(), m_context);
 		if (scene)
 		{
 			m_context->setScene(scene);
@@ -136,7 +136,7 @@ shared_ptr<Scene> MainWindow::_loadDefaultScene()
 	QDir workingDirectory = QDir::current();
 	if (shared_ptr<Chunk> chunk = FileWriter::readFile(workingDirectory.path().toStdString() + "/Saves/default.ascn"))
 	{
-		return Scene::deserialize(chunk.get(), m_context->getResources(), m_context->getMeshCache());
+		return Scene::deserialize(chunk.get(), m_context);
 	}
 	return shared_ptr<Scene>(new Scene());
 }

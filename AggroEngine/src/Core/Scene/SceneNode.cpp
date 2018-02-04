@@ -17,7 +17,7 @@ SceneNode::SceneNode(unsigned int id, SceneNode *parent)
 	setName("Object");
 }
 
-SceneNode::SceneNode(Chunk * const byteChunk, shared_ptr<Resources> resources, shared_ptr<MeshCache> meshCache, boost::unordered_map<int, shared_ptr<SceneNode>> baseMaterials)
+SceneNode::SceneNode(Chunk * const byteChunk, shared_ptr<EngineContext> context, boost::unordered_map<int, shared_ptr<SceneNode>> baseMaterials)
 	: m_parent(nullptr)
 	, m_children(shared_ptr<vector<shared_ptr<SceneNode>>>(new vector<shared_ptr<SceneNode>>()))
 	, m_isSelected(false)
@@ -37,7 +37,7 @@ SceneNode::SceneNode(Chunk * const byteChunk, shared_ptr<Resources> resources, s
 		}
 		else if (*nextChunk->getType() == ChunkType::SCENE_NODE)
 		{
-			addChild(SceneNode::deserialize(nextChunk.get_ptr(), resources, meshCache, baseMaterials));
+			addChild(SceneNode::deserialize(nextChunk.get_ptr(), context, baseMaterials));
 		}
 		else if (*nextChunk->getType() == ChunkType::TRANSFORM_COMPONENT)
 		{
@@ -45,7 +45,7 @@ SceneNode::SceneNode(Chunk * const byteChunk, shared_ptr<Resources> resources, s
 		}
 		else if (*nextChunk->getType() == ChunkType::RENDER_COMPONENT)
 		{
-			m_renderComponent = RenderComponent::deserialize(nextChunk.get_ptr(), resources);
+			m_renderComponent = RenderComponent::deserialize(nextChunk.get_ptr(), context->getResources());
 		}
 		else if (*nextChunk->getType() == ChunkType::DIRECT_LIGHT_COMPONENT)
 		{
@@ -53,7 +53,7 @@ SceneNode::SceneNode(Chunk * const byteChunk, shared_ptr<Resources> resources, s
 		}
 		else if (*nextChunk->getType() == ChunkType::MATERIAL_COMPONENT)
 		{
-			m_materialComponent = MaterialComponent::deserialize(nextChunk.get_ptr(), this, resources);
+			m_materialComponent = MaterialComponent::deserialize(nextChunk.get_ptr(), this, context->getResources());
 		}
 		else if (*nextChunk->getType() == ChunkType::DELEGATE_MATERIAL)
 		{
@@ -66,7 +66,7 @@ SceneNode::SceneNode(Chunk * const byteChunk, shared_ptr<Resources> resources, s
 		}
 		else if (*nextChunk->getType() == ChunkType::MESH_COMPONENT)
 		{
-			m_meshComponent = MeshComponent::deserialize(nextChunk.get_ptr(), resources, meshCache);
+			m_meshComponent = MeshComponent::deserialize(nextChunk.get_ptr(), context->getResources(), context->getMeshCache(), context->getJobManager());
 		}
 	}
 }
@@ -139,14 +139,14 @@ shared_ptr<Chunk> SceneNode::serialize(shared_ptr<Resources> resources)
 	return shared_ptr<Chunk>(new Chunk(ChunkType::SCENE_NODE, bytes.getNumBytes(), bytes.collect()));
 }
 
-shared_ptr<SceneNode> SceneNode::deserialize(Chunk * const byteChunk, shared_ptr<Resources> resources, shared_ptr<MeshCache> meshCache, boost::unordered_map<int, shared_ptr<SceneNode>> baseMaterials)
+shared_ptr<SceneNode> SceneNode::deserialize(Chunk * const byteChunk, shared_ptr<EngineContext> context, boost::unordered_map<int, shared_ptr<SceneNode>> baseMaterials)
 {
 	if (*byteChunk->getType() != ChunkType::SCENE_NODE)
 	{
 		return shared_ptr<SceneNode>();
 	}
 
-	return shared_ptr<SceneNode>(new SceneNode(byteChunk, resources, meshCache, baseMaterials));
+	return shared_ptr<SceneNode>(new SceneNode(byteChunk, context, baseMaterials));
 }
 
 shared_ptr<vector<shared_ptr<SceneNode>>> SceneNode::getChildren()
