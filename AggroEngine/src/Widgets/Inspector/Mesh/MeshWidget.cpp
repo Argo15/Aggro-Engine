@@ -6,6 +6,7 @@
 MeshWidget::MeshWidget(QWidget *parent, shared_ptr<Resources> resources, shared_ptr<MeshCache> meshCache)
 	: m_meshEdit(new QLineEdit(""))
 	, m_triangleCountLbl(new QLabel(""))
+	, m_alignCombo(new QComboBox())
 	, m_normalLineChk(new QCheckBox("enabled"))
 	, m_resources(resources)
 	, m_meshCache(meshCache)
@@ -15,6 +16,7 @@ MeshWidget::MeshWidget(QWidget *parent, shared_ptr<Resources> resources, shared_
 	QVBoxLayout *rightLayout = new QVBoxLayout;
 		QHBoxLayout *sourceLayout = new QHBoxLayout;
 		QHBoxLayout *trianglesLayout = new QHBoxLayout;
+		QHBoxLayout *alignLayout = new QHBoxLayout;
 		QHBoxLayout *normalLinesLayout = new QHBoxLayout;
 
 	QLabel *lbl;
@@ -24,10 +26,12 @@ MeshWidget::MeshWidget(QWidget *parent, shared_ptr<Resources> resources, shared_
 
 	leftLayout->addWidget(new QLabel("Mesh"));
 	leftLayout->addWidget(new QLabel("Triangles:"));
+	leftLayout->addWidget(new QLabel("Align:"));
 	leftLayout->addWidget(new QLabel("Normal Lines:"));
 
 	rightLayout->addLayout(sourceLayout);
 	rightLayout->addLayout(trianglesLayout);
+	rightLayout->addLayout(alignLayout);
 	rightLayout->addLayout(normalLinesLayout);
 
 	QPushButton *selectMeshButton = new QPushButton("...");
@@ -38,6 +42,11 @@ MeshWidget::MeshWidget(QWidget *parent, shared_ptr<Resources> resources, shared_
 
 	trianglesLayout->addWidget(m_triangleCountLbl.get());
 	trianglesLayout->addStretch();
+
+	m_alignCombo->addItem("None");
+	m_alignCombo->addItem("Center");
+	m_alignCombo->addItem("Bottom");
+	alignLayout->addWidget(m_alignCombo.get());
 	
 	m_normalLineChk->setStyleSheet(QString("border-bottom-style: none;"));
 	normalLinesLayout->addWidget(m_normalLineChk.get());
@@ -49,6 +58,12 @@ MeshWidget::MeshWidget(QWidget *parent, shared_ptr<Resources> resources, shared_
 
 	connect(selectMeshButton, &QPushButton::pressed, this, &MeshWidget::_onMeshSelect);
 	connect(m_normalLineChk.get(), &QCheckBox::stateChanged, this, &MeshWidget::_onNormalLineCheck);
+	connect(m_alignCombo.get(), QOverload<int>::of(&QComboBox::currentIndexChanged), [this](int idx) {
+		if (m_currentNode && m_currentNode->hasMeshComponent())
+		{
+			m_currentNode->getMeshComponent()->setAxisAlign((MeshComponent::AxisAlign)idx);
+		}
+	});
 }
 
 void MeshWidget::_refresh(SceneNode *newNode)
@@ -94,6 +109,7 @@ void MeshWidget::_refresh(MeshComponent *mesh)
 	}
 
 	m_normalLineChk->setChecked(mesh->isNormalLinesEnabled());
+	m_alignCombo->setCurrentIndex(mesh->getAxisAlign());
 }
 
 void MeshWidget::_onMeshSelect()

@@ -138,6 +138,8 @@
     <ClCompile Include="src\Resource\Mesh\Dev\Screen.cpp" />
     <ClCompile Include="src\Resource\Mesh\FileBackedMesh.cpp" />
     <ClCompile Include="src\Resource\Mesh\Cache\MeshCache.cpp" />
+    <ClCompile Include="src\Resource\Mesh\Modifiers\AlignBottom.cpp" />
+    <ClCompile Include="src\Resource\Mesh\Modifiers\AlignCenter.cpp" />
     <ClCompile Include="src\Resource\Mesh\Modifiers\GenerateNormalLines.cpp" />
     <ClCompile Include="src\Resource\Mesh\Modifiers\GenerateTangents.cpp" />
     <ClCompile Include="src\Resource\Resources.cpp" />
@@ -250,6 +252,8 @@
     <ClInclude Include="src\Resource\Mesh\Dev\Screen.hpp" />
     <ClInclude Include="src\Resource\Mesh\FileBackedMesh.hpp" />
     <ClInclude Include="src\Resource\Mesh\Cache\MeshCache.hpp" />
+    <ClInclude Include="src\Resource\Mesh\Modifiers\AlignBottom.hpp" />
+    <ClInclude Include="src\Resource\Mesh\Modifiers\AlignCenter.hpp" />
     <ClInclude Include="src\Resource\Mesh\Modifiers\GenerateNormalLines.hpp" />
     <ClInclude Include="src\Resource\Mesh\Modifiers\GenerateTangents.hpp" />
     <ClInclude Include="src\Resource\Mesh\Modifiers\MeshModifier.hpp" />

@@ -1,15 +1,20 @@
 #include "MeshComponent.hpp"
 #include "FileBackedMesh.hpp"
 #include "GenerateTangents.hpp"
+#include "AlignCenter.hpp"
+#include "AlignBottom.hpp"
 
 static shared_ptr<MeshModifier> normalLineGen(new GenerateNormalLines());
 static shared_ptr<MeshModifier> tangentGen(new GenerateTangents());
+static shared_ptr<MeshModifier> alignCenter(new AlignCenter());
+static shared_ptr<MeshModifier> alignBottom(new AlignBottom());
 
 MeshComponent::MeshComponent(shared_ptr<JobManager> jobs)
 	: m_jobs(jobs)
 	, m_primaryMesh()
 	, m_genTangents(true)
 	, m_genNormalLines(false)
+	, m_axisAlign(NONE)
 {
 }
 
@@ -32,6 +37,7 @@ MeshComponent::MeshComponent(Chunk * const byteChunk,
 			generateMeshes();
 		});
 	}
+	m_axisAlign = (AxisAlign) bytes.parseInt().get_value_or(0);
 }
 
 shared_ptr<Chunk> MeshComponent::serialize(shared_ptr<Resources> resources)
@@ -40,6 +46,8 @@ shared_ptr<Chunk> MeshComponent::serialize(shared_ptr<Resources> resources)
 	string path = resources->getPathForId(m_primaryMesh->getId()).get_value_or("");
 	bytes.add(&path);
 	bytes.add(&m_genNormalLines);
+	int axis = (int) m_axisAlign;
+	bytes.add(&axis);
 	return shared_ptr<Chunk>(new Chunk(ChunkType::MESH_COMPONENT, bytes.getNumBytes(), bytes.collect()));
 }
 
@@ -74,6 +82,12 @@ void MeshComponent::generateMeshes()
 	{
 		m_modifiedPrimaryMesh = m_primaryMesh;
 		m_jobs->add(shared_ptr<Job>(new Job([this]() {
+			switch (m_axisAlign)
+			{
+				case AxisAlign::CENTER: m_modifiedPrimaryMesh = alignCenter->apply(m_modifiedPrimaryMesh);
+				case AxisAlign::BOTTOM: m_modifiedPrimaryMesh = alignBottom->apply(m_modifiedPrimaryMesh);
+				default: break;
+			}
 			if (m_genTangents)
 			{
 				m_modifiedPrimaryMesh = tangentGen->apply(m_modifiedPrimaryMesh);
@@ -132,6 +146,18 @@ void MeshComponent::enableNormalLines(bool enabled, bool generate)
 bool MeshComponent::isNormalLinesEnabled()
 {
 	return m_genNormalLines;
+}
+
+void MeshComponent::setAxisAlign(AxisAlign align)
+{
+	m_axisAlign = align;
+	generateMeshes();
+	m_changeListeners.notify(this);
+}
+
+MeshComponent::AxisAlign MeshComponent::getAxisAlign()
+{
+	return m_axisAlign;
 }
 
 void MeshComponent::setPrimaryMesh(shared_ptr<Mesh> mesh)

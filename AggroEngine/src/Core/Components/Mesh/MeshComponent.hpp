@@ -21,6 +21,14 @@ using namespace std;
 class MeshComponent : public Component,
 	public boost::basic_lockable_adapter<recursive_mutex>
 {
+public:
+	enum AxisAlign
+	{
+		NONE = 0,
+		CENTER = 1,
+		BOTTOM = 2
+	};
+
 private:
 	shared_ptr<JobManager> m_jobs;
 
@@ -30,6 +38,8 @@ private:
 
 	bool m_genNormalLines;
 	shared_ptr<Mesh> m_normalLines;
+
+	AxisAlign m_axisAlign;
 
 	vector<shared_ptr<Mesh>> m_modifiedMeshes;
 
@@ -55,6 +65,9 @@ public:
 	void generateNormalLines();
 	void enableNormalLines(bool enabled, bool generate = false);
 	bool isNormalLinesEnabled();
+
+	void setAxisAlign(AxisAlign align);
+	AxisAlign getAxisAlign();
 
 	void setPrimaryMesh(shared_ptr<Mesh> mesh);
 	shared_ptr<Mesh> getPrimaryMesh();

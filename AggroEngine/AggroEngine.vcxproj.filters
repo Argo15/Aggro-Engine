@@ -427,6 +427,12 @@
     <ClCompile Include="src\Resource\Mesh\Modifiers\GenerateTangents.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\Resource\Mesh\Modifiers\AlignCenter.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Resource\Mesh\Modifiers\AlignBottom.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Resource\Image\CheckersImage.hpp">
@@ -770,6 +776,12 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\Resource\Mesh\Modifiers\GenerateTangents.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Resource\Mesh\Modifiers\AlignCenter.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Resource\Mesh\Modifiers\AlignBottom.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
