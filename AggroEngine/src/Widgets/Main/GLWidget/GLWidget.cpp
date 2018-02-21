@@ -135,7 +135,9 @@ shared_ptr<Job> GLWidget::_setupCameraUpdateJob(shared_ptr<Camera> camera)
 
 void GLWidget::dragMoveEvent(QDragMoveEvent *event)
 {
-	if (event->mimeData()->hasFormat("application/x-materialdata"))
+	if (event->mimeData()->hasFormat("application/x-materialdata") ||
+		event->mimeData()->hasFormat("application/x-texture") ||
+		event->mimeData()->hasFormat("application/x-mesh"))
 	{
 		m_mouse->setPosition(event->pos().x(), event->pos().y());
 		int selectedId = m_selection->getSelectionAsId();
@@ -151,7 +153,9 @@ void GLWidget::dragMoveEvent(QDragMoveEvent *event)
 
 void GLWidget::dragEnterEvent(QDragEnterEvent *event)
 {
-	if (event->mimeData()->hasFormat("application/x-materialdata"))
+	if (event->mimeData()->hasFormat("application/x-materialdata") ||
+		event->mimeData()->hasFormat("application/x-texture") ||
+		event->mimeData()->hasFormat("application/x-mesh"))
 	{
 		event->acceptProposedAction();
 	}
@@ -167,7 +171,6 @@ void GLWidget::dropEvent(QDropEvent *event)
 	if (event->mimeData()->hasFormat("application/x-materialdata"))
 	{
 		shared_ptr<SceneNode> matNode = m_engineContext->getScene()->getSelectedNode();
-		m_mouse->setPosition(event->pos().x(), event->pos().y());
 		int selectedId = m_selection->getSelectionAsId();
 		shared_ptr<SceneNode> dropNode = m_engineContext->getScene()->getNodeById(selectedId);
 		if (matNode && dropNode)
@@ -175,5 +178,57 @@ void GLWidget::dropEvent(QDropEvent *event)
 			dropNode->setMaterialComponent(matNode->getMaterialComponent());
 		}
 	}
+	else if (event->mimeData()->hasFormat("application/x-texture"))
+	{
+		_dropTexture(event);
+	}
+	else if (event->mimeData()->hasFormat("application/x-mesh"))
+	{
+		QString filepath = event->mimeData()->data("application/x-mesh");
+		QString name = filepath.split("/").last().split(".").first();
+		shared_ptr<StaticObjectRenderComponent> renderComponent(new StaticObjectRenderComponent());
+		shared_ptr<SceneNode> newNode = shared_ptr<SceneNode>(new SceneNode(Scene::getNextId()));
+		newNode->setRenderComponent(renderComponent);
+		newNode->setTransformComponent(shared_ptr<TransformComponent>(new TransformComponent()));
+		newNode->setName(name.toStdString());
+		shared_ptr<MeshComponent> meshComponent(new MeshComponent(m_engineContext->getJobManager()));
+		int meshId = m_engineContext->getResources()->getIdForPath(filepath.toStdString());
+		m_engineContext->getMeshCache()->getMesh(meshId)->onReady([this, meshComponent](auto mesh) {meshComponent->setPrimaryMesh(mesh); });
+		newNode->setMeshComponent(meshComponent);
+		m_engineContext->getScene()->getRoot()->addChild(newNode);
+		m_engineContext->getScene()->deselectAllNodes();
+		m_engineContext->getScene()->selectNode(newNode);
+		m_engineContext->getScene()->update();
+	}
 	event->accept();
+}
+
+void GLWidget::_dropTexture(QDropEvent *event)
+{
+	m_mouse->setPosition(event->pos().x(), event->pos().y());
+	int selectedId = m_selection->getSelectionAsId();
+	shared_ptr<SceneNode> dropNode = m_engineContext->getScene()->getNodeById(selectedId);
+	if (dropNode)
+	{
+		string filename = event->mimeData()->data("application/x-texture").toStdString();
+		int imageId = m_engineContext->getResources()->getIdForPath(filename);
+		shared_ptr<MaterialComponent> material = dropNode->getMaterialComponent();
+		if (material && material->getOwner() == dropNode.get())
+		{
+			material->setTextureImageId(imageId);
+		}
+		else
+		{
+			if (material)
+			{
+				material = shared_ptr<MaterialComponent>(new MaterialComponent(dropNode.get(), material));
+			}
+			else
+			{
+				material = shared_ptr<MaterialComponent>(new MaterialComponent(dropNode.get()));
+			}
+			material->setTextureImageId(imageId);
+			dropNode->setMaterialComponent(material);
+		}
+	}
 }

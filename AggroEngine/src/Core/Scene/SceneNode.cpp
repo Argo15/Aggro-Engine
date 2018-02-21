@@ -181,7 +181,10 @@ void SceneNode::setName(string name)
 		{
 			for (auto &sibling : *siblings.get())
 			{
-				usedNames.insert(sibling->getName());
+				if (sibling.get() != this)
+				{
+					usedNames.insert(sibling->getName());
+				}
 			}
 		}
 	}
@@ -210,6 +213,7 @@ unsigned int SceneNode::getId()
 void SceneNode::setParent(SceneNode *parent)
 {
 	m_parent = parent;
+	setName(m_name); // Changes name if it's shared with siblings
 }
 
 SceneNode *SceneNode::getParent()

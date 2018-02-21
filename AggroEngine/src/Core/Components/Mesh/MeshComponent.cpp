@@ -84,8 +84,8 @@ void MeshComponent::generateMeshes()
 		m_jobs->add(shared_ptr<Job>(new Job([this]() {
 			switch (m_axisAlign)
 			{
-				case AxisAlign::CENTER: m_modifiedPrimaryMesh = alignCenter->apply(m_modifiedPrimaryMesh);
-				case AxisAlign::BOTTOM: m_modifiedPrimaryMesh = alignBottom->apply(m_modifiedPrimaryMesh);
+				case AxisAlign::CENTER: m_modifiedPrimaryMesh = alignCenter->apply(m_modifiedPrimaryMesh); break;
+				case AxisAlign::BOTTOM: m_modifiedPrimaryMesh = alignBottom->apply(m_modifiedPrimaryMesh); break;
 				default: break;
 			}
 			if (m_genTangents)
@@ -100,6 +100,7 @@ void MeshComponent::generateMeshes()
 
 void MeshComponent::refresh()
 {
+	boost::lock_guard<MeshComponent> guard(*this);
 	m_modifiedMeshes = vector<shared_ptr<Mesh>>();
 	if (m_primaryMesh)
 	{

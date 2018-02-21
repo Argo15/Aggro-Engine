@@ -95,6 +95,8 @@ void MeshWidget::_refresh(SceneNode *newNode)
 
 void MeshWidget::_refresh(MeshComponent *mesh)
 {
+	m_alignCombo->blockSignals(true);
+	m_normalLineChk->blockSignals(true);
 	std::shared_ptr<Mesh> primaryMesh = mesh->getPrimaryMesh();
 
 	if (primaryMesh)
@@ -110,6 +112,8 @@ void MeshWidget::_refresh(MeshComponent *mesh)
 
 	m_normalLineChk->setChecked(mesh->isNormalLinesEnabled());
 	m_alignCombo->setCurrentIndex(mesh->getAxisAlign());
+	m_alignCombo->blockSignals(false);
+	m_normalLineChk->blockSignals(false);
 }
 
 void MeshWidget::_onMeshSelect()

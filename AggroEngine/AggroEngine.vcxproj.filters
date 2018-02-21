@@ -56,6 +56,12 @@
     <CustomBuild Include="src\Widgets\SceneGraph\SceneTreeWidget.hpp">
       <Filter>Header Files</Filter>
     </CustomBuild>
+    <CustomBuild Include="src\Widgets\ResourceExplorer\ResourceExplorer.hpp">
+      <Filter>Header Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="src\Widgets\ResourceExplorer\FileTreeView.hpp">
+      <Filter>Header Files</Filter>
+    </CustomBuild>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Widgets\MainWindow.cpp">
@@ -433,6 +439,27 @@
     <ClCompile Include="src\Resource\Mesh\Modifiers\AlignBottom.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_ResourceExplorer.cpp">
+      <Filter>Generated Files\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_ResourceExplorer.cpp">
+      <Filter>Generated Files\Release</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Widgets\ResourceExplorer\ResourceExplorer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Widgets\ResourceExplorer\FileTreeView.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_FileTreeView.cpp">
+      <Filter>Generated Files\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_FileTreeView.cpp">
+      <Filter>Generated Files\Release</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Widgets\Inspector\Material\TextureLineEdit.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Resource\Image\CheckersImage.hpp">
@@ -782,6 +809,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\Resource\Mesh\Modifiers\AlignBottom.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Widgets\Inspector\Material\TextureLineEdit.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

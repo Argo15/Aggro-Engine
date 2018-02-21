@@ -42,6 +42,7 @@ void StaticObjectRenderComponent::render(shared_ptr<GraphicsContext> context, gl
 	{
 		return;
 	}
+	boost::lock_guard<MeshComponent> guard(*meshComponent.get());
 
 	if (meshComponent->modsReady(context->getVboCache()))
 	{

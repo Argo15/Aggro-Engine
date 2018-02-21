@@ -2,6 +2,10 @@
 
 #include <QDockWidget>
 #include <memory>
+#include <QDragEnterEvent>
+#include <QDragLeaveEvent>
+#include <QDropEvent>
+#include <QDragMoveEvent>
 #include "Scene.hpp"
 #include "SceneNodeTreeItem.hpp"
 #include "EngineContext.hpp"
@@ -39,6 +43,9 @@ private:
 	void _deleteNode(SceneNode *node);
 	void _selectNode(SceneNode *node);
 
+	shared_ptr<MaterialComponent> _addMaterial(string name = "New Material");
+	shared_ptr<SceneNode> _addMeshNode(string name, string path);
+
 public:
 	SceneGraphTree(shared_ptr<EngineContext> context, QWidget *parent);
 
@@ -46,4 +53,8 @@ public:
 
 protected:
 	void keyPressEvent(QKeyEvent *event);
+	void dragMoveEvent(QDragMoveEvent *event);
+	void dragEnterEvent(QDragEnterEvent *event);
+	void dragLeaveEvent(QDragLeaveEvent *event);
+	void dropEvent(QDropEvent *event);
 };

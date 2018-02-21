@@ -35,6 +35,7 @@ private:
 	int m_millisPerFrame;
 
 	shared_ptr<Job> _setupCameraUpdateJob(shared_ptr<Camera> camera);
+	void _dropTexture(QDropEvent *event);
 
 public:
 	GLWidget(shared_ptr<EngineContext> context, QWidget *parent = 0);

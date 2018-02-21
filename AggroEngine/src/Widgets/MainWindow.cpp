@@ -11,6 +11,7 @@
 #include "StringUtil.hpp"
 #include "Config.hpp"
 #include "FileWriter.hpp"
+#include "ResourceExplorer.hpp"
 
 MainWindow::MainWindow()
 	: m_context(shared_ptr<EngineContext>(new EngineContext()))
@@ -36,6 +37,20 @@ MainWindow::MainWindow()
 	rightWidget->setWidget(inspectorWidget);
 	rightWidget->setWindowTitle(QString::fromStdString("Inspector"));
 	addDockWidget(Qt::RightDockWidgetArea, rightWidget);
+
+	QDockWidget *bottomLeftWidget = new QDockWidget();
+	QWidget *quickResourcesWidget = new QWidget();
+	quickResourcesWidget->setFixedWidth(255);
+	bottomLeftWidget->setWidget(quickResourcesWidget);
+	bottomLeftWidget->setWindowTitle(QString::fromStdString("Quick Resources"));
+	addDockWidget(Qt::BottomDockWidgetArea, bottomLeftWidget);
+
+	QDockWidget *bottomWidget = new QDockWidget();
+	bottomWidget->setMinimumHeight(350);
+	ResourceExplorer *resourceWidget = new ResourceExplorer(m_context, bottomWidget);
+	bottomWidget->setWidget(resourceWidget);
+	bottomWidget->setWindowTitle(QString::fromStdString("Resources"));
+	addDockWidget(Qt::BottomDockWidgetArea, bottomWidget);
 
 }
 

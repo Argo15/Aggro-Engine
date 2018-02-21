@@ -7,6 +7,7 @@
 #include <QMouseEvent>
 #include <QModelIndex>
 #include <QFileDialog>
+#include <QMimeData>
 #include <iostream>
 #include <boost/unordered_map.hpp>
 
@@ -17,47 +18,21 @@ SceneGraphTree::SceneGraphTree(shared_ptr<EngineContext> context, QWidget *paren
 	, m_materialsItem(nullptr)
 {
 	m_addCubeAction = new QAction(tr("Add Cube"), this);
-	connect(m_addCubeAction, &QAction::triggered, this, [this, context]() {
-		shared_ptr<StaticObjectRenderComponent> renderComponent(new StaticObjectRenderComponent());
-		shared_ptr<SceneNode> newNode = shared_ptr<SceneNode>(new SceneNode(Scene::getNextId()));
-		newNode->setRenderComponent(renderComponent);
-		newNode->setTransformComponent(shared_ptr<TransformComponent>(new TransformComponent()));
-		newNode->setName("Cube");
-		shared_ptr<MeshComponent> meshComponent(new MeshComponent(context->getJobManager()));
-		int meshId = context->getResources()->getIdForPath("Resources/Mesh/Engine/cube.obj");
-		context->getMeshCache()->getMesh(meshId)->onReady([this, meshComponent](auto mesh) {meshComponent->setPrimaryMesh(mesh); });
-		newNode->setMeshComponent(meshComponent);
-		_addNewNode(newNode);
+	connect(m_addCubeAction, &QAction::triggered, this, [this]() {
+		_addMeshNode("Cube", "Resources/Mesh/Engine/cube.obj");
 	});
 
 	m_addSphereAction = new QAction(tr("Add Sphere"), this);
 	connect(m_addSphereAction, &QAction::triggered, this, [this, context]() {
-		shared_ptr<StaticObjectRenderComponent> renderComponent(new StaticObjectRenderComponent());
-		shared_ptr<SceneNode> newNode = shared_ptr<SceneNode>(new SceneNode(Scene::getNextId()));
-		newNode->setRenderComponent(renderComponent);
-		newNode->setTransformComponent(shared_ptr<TransformComponent>(new TransformComponent()));
-		newNode->setName("Sphere");
-		shared_ptr<MeshComponent> meshComponent(new MeshComponent(context->getJobManager()));
-		int meshId = context->getResources()->getIdForPath("Resources/Mesh/Engine/sphere.obj");
-		context->getMeshCache()->getMesh(meshId)->onReady([this, meshComponent](auto mesh) {meshComponent->setPrimaryMesh(mesh); });
-		newNode->setMeshComponent(meshComponent);
-		_addNewNode(newNode);
+		_addMeshNode("Sphere", "Resources/Mesh/Engine/sphere.obj");
 	});
 
 	QAction *addFromFileAction = new QAction(tr("Add From File"), this);
 	connect(addFromFileAction, &QAction::triggered, this, [this, context]() {
 		QDir workingDirectory = QDir::current();
 		QString filename = QFileDialog::getOpenFileName(this, tr("Add Object From File"), workingDirectory.path() + "/Resources/Mesh");
-		shared_ptr<StaticObjectRenderComponent> renderComponent(new StaticObjectRenderComponent());
-		shared_ptr<SceneNode> newNode = shared_ptr<SceneNode>(new SceneNode(Scene::getNextId()));
-		newNode->setRenderComponent(renderComponent);
-		newNode->setTransformComponent(shared_ptr<TransformComponent>(new TransformComponent()));
-		newNode->setName(QFileInfo(filename).fileName().split(".").first().toStdString());
-		shared_ptr<MeshComponent> meshComponent(new MeshComponent(context->getJobManager()));
-		int meshId = context->getResources()->getIdForPath(workingDirectory.relativeFilePath(filename).toStdString());
-		context->getMeshCache()->getMesh(meshId)->onReady([this, meshComponent](auto mesh) {meshComponent->setPrimaryMesh(mesh); });
-		newNode->setMeshComponent(meshComponent);
-		_addNewNode(newNode);
+		string name = filename.split("/").last().split(".").first().toStdString();
+		_addMeshNode(name, filename.toStdString());
 	});
 
 	QAction *addSpriteAction = new QAction(tr("Add Sprite"), this);
@@ -104,15 +79,7 @@ SceneGraphTree::SceneGraphTree(shared_ptr<EngineContext> context, QWidget *paren
 	});
 
 	QAction *addMaterial = new QAction(tr("Add Material"), this);
-	connect(addMaterial, &QAction::triggered, this, [this]() {
-		shared_ptr<SceneNode> newNode = shared_ptr<SceneNode>(new SceneNode(Scene::getNextId()));
-		newNode->setMaterialComponent(shared_ptr<MaterialComponent>(new MaterialComponent(newNode.get())));
-		newNode->setName("New Material");
-		newNode->setBaseMaterialNode();
-		m_context->getScene()->addBaseMaterial(newNode);
-		m_context->getScene()->selectNodeById(newNode->getId());
-		refresh(m_context->getScene().get());
-	});
+	connect(addMaterial, &QAction::triggered, this, [this]() {_addMaterial();});
 
 	m_deleteAction = new QAction(tr("Delete"), this);
 	m_deleteAction->setEnabled(false);
@@ -142,6 +109,7 @@ SceneGraphTree::SceneGraphTree(shared_ptr<EngineContext> context, QWidget *paren
 		scene->addSelectionChangeListener([this](auto node) {_selectNode(node.get()); });
 	});
 	setMouseTracking(true);
+	setAcceptDrops(true);
 	setWidget(m_treeWidget.get());
 }
 
@@ -357,10 +325,83 @@ void SceneGraphTree::_selectNode(SceneNode *node)
 	}
 }
 
+shared_ptr<SceneNode> SceneGraphTree::_addMeshNode(string name, string path)
+{
+	shared_ptr<StaticObjectRenderComponent> renderComponent(new StaticObjectRenderComponent());
+	shared_ptr<SceneNode> newNode = shared_ptr<SceneNode>(new SceneNode(Scene::getNextId()));
+	newNode->setRenderComponent(renderComponent);
+	newNode->setTransformComponent(shared_ptr<TransformComponent>(new TransformComponent()));
+	newNode->setName(name);
+	shared_ptr<MeshComponent> meshComponent(new MeshComponent(m_context->getJobManager()));
+	int meshId = m_context->getResources()->getIdForPath(path);
+	m_context->getMeshCache()->getMesh(meshId)->onReady([this, meshComponent](auto mesh) {meshComponent->setPrimaryMesh(mesh); });
+	newNode->setMeshComponent(meshComponent);
+	_addNewNode(newNode);
+	return newNode;
+}
+
+shared_ptr<MaterialComponent> SceneGraphTree::_addMaterial(string name)
+{
+	shared_ptr<SceneNode> newNode = shared_ptr<SceneNode>(new SceneNode(Scene::getNextId()));
+	newNode->setMaterialComponent(shared_ptr<MaterialComponent>(new MaterialComponent(newNode.get())));
+	newNode->setName(name);
+	newNode->setBaseMaterialNode();
+	m_context->getScene()->addBaseMaterial(newNode);
+	m_context->getScene()->selectNodeById(newNode->getId());
+	refresh(m_context->getScene().get());
+	return newNode->getMaterialComponent();
+}
+
 void SceneGraphTree::keyPressEvent(QKeyEvent *event)
 {
 	if (event->key() == Qt::Key_Delete)
 	{
 		_deleteSelected();
 	}
+}
+
+void SceneGraphTree::dragMoveEvent(QDragMoveEvent *event)
+{
+	if (event->mimeData()->hasFormat("application/x-texture") ||
+		event->mimeData()->hasFormat("application/x-mesh"))
+	{
+		event->acceptProposedAction();
+		return;
+	}
+	event->ignore();
+}
+
+void SceneGraphTree::dragEnterEvent(QDragEnterEvent *event)
+{
+	if (event->mimeData()->hasFormat("application/x-texture") ||
+		event->mimeData()->hasFormat("application/x-mesh"))
+	{
+		event->acceptProposedAction();
+		return;
+	}
+}
+
+void SceneGraphTree::dragLeaveEvent(QDragLeaveEvent *event)
+{
+	event->accept();
+}
+
+void SceneGraphTree::dropEvent(QDropEvent *event)
+{
+	if (event->mimeData()->hasFormat("application/x-texture"))
+	{
+		event->acceptProposedAction();
+		QString filepath = event->mimeData()->data("application/x-texture");
+		QString name = filepath.split("/").last().split(".").first();
+		shared_ptr<MaterialComponent> mat = _addMaterial(name.toStdString());
+		mat->setTextureImageId(m_context->getResources()->getIdForPath(filepath.toStdString()));
+		return;
+	}
+	else if (event->mimeData()->hasFormat("application/x-mesh"))
+	{
+		QString filepath = event->mimeData()->data("application/x-mesh");
+		QString name = filepath.split("/").last().split(".").first();
+		_addMeshNode(name.toStdString(), filepath.toStdString());
+	}
+	event->accept();
 }

@@ -10,6 +10,7 @@ SceneTreeWidget::SceneTreeWidget(SceneGraphTree *parent)
 {
 	setMouseTracking(true);
 	setDragEnabled(true);
+	setAcceptDrops(true);
 }
 
 void SceneTreeWidget::mousePressEvent(QMouseEvent *event)
@@ -26,7 +27,6 @@ void SceneTreeWidget::mousePressEvent(QMouseEvent *event)
 			if (sceneNodeItem->getSceneNode() && sceneNodeItem->getSceneNode()->isBaseMaterialNode())
 			{
 				QDrag *drag = new QDrag(this);
-				QByteArray data = QByteArray();
 				QMimeData *mimeData = new QMimeData();
 				mimeData->setData("application/x-materialdata", QByteArray());
 				drag->setMimeData(mimeData);
@@ -35,4 +35,9 @@ void SceneTreeWidget::mousePressEvent(QMouseEvent *event)
 			}
 		}
 	}
+}
+
+void SceneTreeWidget::dropEvent(QDropEvent *event)
+{
+	cout << "test" << endl;
 }

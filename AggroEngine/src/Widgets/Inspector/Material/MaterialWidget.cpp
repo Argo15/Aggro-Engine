@@ -7,21 +7,25 @@ MaterialWidget::MaterialWidget(QWidget *parent, shared_ptr<Resources> resources)
 	, m_colorREdit(new QLineEdit("0"))
 	, m_colorGEdit(new QLineEdit("0"))
 	, m_colorBEdit(new QLineEdit("0"))
-	, m_textureEdit(new QLineEdit(""))
+	, m_textureEdit(new TextureLineEdit(resources, [this](auto material, int id) { material->setTextureImageId(id); }))
 	, m_texScaleUEdit(new QLineEdit(""))
 	, m_texScaleVEdit(new QLineEdit(""))
 	, m_texOffsetUEdit(new QLineEdit(""))
 	, m_texOffsetVEdit(new QLineEdit(""))
 	, m_texRotateSlider(new QSlider(Qt::Horizontal))
-	, m_normalEdit(new QLineEdit(""))
-	, m_alphaEdit(new QLineEdit(""))
+	, m_normalEdit(new TextureLineEdit(resources, [this](auto material, int id) { material->setNormalImageId(id); }))
+	, m_alphaEdit(new TextureLineEdit(resources, [this](auto material, int id) { material->setAlphaImageId(id); }))
 	, m_specIntensitySlider(new QSlider(Qt::Horizontal))
 	, m_specShineSlider(new QSlider(Qt::Horizontal))
-	, m_specMapEdit(new QLineEdit(""))
+	, m_specMapEdit(new TextureLineEdit(resources, [this](auto material, int id) { material->setSpecularImageId(id); }))
 	, m_emissionREdit(new QLineEdit("0"))
 	, m_emissionGEdit(new QLineEdit("0"))
 	, m_emissionBEdit(new QLineEdit("0"))
-	, m_emissionMapEdit(new QLineEdit(""))
+	, m_emissionMapEdit(new TextureLineEdit(resources, [this](auto material, int id) { 
+		material->setEmissionImageId(id);
+		material->setEmission(glm::vec3(1.0));
+		_refresh(material);
+	}))
 	, m_resources(resources)
 {
 	QHBoxLayout *mainLayout = new QHBoxLayout;
@@ -373,6 +377,12 @@ void MaterialWidget::_refresh(MaterialComponent *material)
 {
 	if (m_currentNode)
 	{
+		m_textureEdit->setMaterial(material);
+		m_normalEdit->setMaterial(material);
+		m_alphaEdit->setMaterial(material);
+		m_specMapEdit->setMaterial(material);
+		m_emissionMapEdit->setMaterial(material);
+
 		glm::vec3 color = material->getColor();
 		boost::lock_guard<boost::mutex> guard(m_textLock);
 		static const QRegExp trailingZeros("0+$");
