@@ -11,4 +11,5 @@ public:
 	DefaultTextureHandle(int nTextureId);
 
 	unsigned int get();
+	bool isLoaded();
 };

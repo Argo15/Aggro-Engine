@@ -17,7 +17,6 @@ private:
 	shared_ptr<Graphics> m_graphics;
 	shared_ptr<JobManager> m_jobManager;
 	shared_ptr<Resources> m_resources;
-	shared_ptr<TextureHandle> m_defaultTexture;
 
 	boost::unordered_map<int, shared_ptr<TextureHandle>> m_pathsToTexture;
 	boost::unordered_map<int, shared_ptr<LoadableTextureHandle>> m_loadingTextures;

@@ -10,3 +10,8 @@ unsigned int DefaultTextureHandle::get()
 {
 	return m_nTextureId;
 }
+
+bool DefaultTextureHandle::isLoaded()
+{
+	return true;
+}

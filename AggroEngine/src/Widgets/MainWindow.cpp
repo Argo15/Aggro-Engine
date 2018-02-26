@@ -6,12 +6,14 @@
 #include <QMenuBar>
 #include <QDir>
 #include <QFileDialog>
+#include <QScrollArea>
 #include "SceneGraphTree.hpp"
 #include "InspectorWidget.hpp"
 #include "StringUtil.hpp"
 #include "Config.hpp"
 #include "FileWriter.hpp"
 #include "ResourceExplorer.hpp"
+#include "QuickResources.hpp"
 
 MainWindow::MainWindow()
 	: m_context(shared_ptr<EngineContext>(new EngineContext()))
@@ -38,20 +40,19 @@ MainWindow::MainWindow()
 	rightWidget->setWindowTitle(QString::fromStdString("Inspector"));
 	addDockWidget(Qt::RightDockWidgetArea, rightWidget);
 
+	QDockWidget *bottomWidget = new QDockWidget();
+	bottomWidget->setMinimumHeight(365);
+	ResourceExplorer *resourceWidget = new ResourceExplorer(m_context, bottomWidget);
+	bottomWidget->setWidget(resourceWidget);
+	bottomWidget->setWindowTitle(QString::fromStdString("Resources"));
+
 	QDockWidget *bottomLeftWidget = new QDockWidget();
-	QWidget *quickResourcesWidget = new QWidget();
+	QWidget *quickResourcesWidget = new QuickResources(resourceWidget->getWidget().get());
 	quickResourcesWidget->setFixedWidth(255);
 	bottomLeftWidget->setWidget(quickResourcesWidget);
 	bottomLeftWidget->setWindowTitle(QString::fromStdString("Quick Resources"));
 	addDockWidget(Qt::BottomDockWidgetArea, bottomLeftWidget);
-
-	QDockWidget *bottomWidget = new QDockWidget();
-	bottomWidget->setMinimumHeight(350);
-	ResourceExplorer *resourceWidget = new ResourceExplorer(m_context, bottomWidget);
-	bottomWidget->setWidget(resourceWidget);
-	bottomWidget->setWindowTitle(QString::fromStdString("Resources"));
 	addDockWidget(Qt::BottomDockWidgetArea, bottomWidget);
-
 }
 
 void MainWindow::timerEvent(QTimerEvent *event)

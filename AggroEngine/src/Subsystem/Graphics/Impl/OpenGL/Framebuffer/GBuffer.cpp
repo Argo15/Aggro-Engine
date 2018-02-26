@@ -142,15 +142,19 @@ void GBuffer::drawToBuffer(RenderOptions renderOptions, std::queue<shared_ptr<Re
 				m_glslProgram->sendUniform("material.emission", material->getEmission());
 				m_glslProgram->sendUniform("material.emissionMap", material->getEmissionMapOpt().get_value_or(devTexture->getHandle()), texId++);
 				boost::optional<shared_ptr<TextureHandle>> normalMap = material->getNormalMapOpt();
-				m_glslProgram->sendUniform("material.hasNormals", normalMap.is_initialized());
 				if (normalMap)
 				{
+					m_glslProgram->sendUniform("material.hasNormals", true);
 					m_glslProgram->sendUniform("material.normalMap", normalMap.get(), texId++);
 					glm::mat3 texRotateMatrix = material->getTexRotateMatrix();
 					texRotateMatrix[0] = glm::vec3(texRotateMatrix[0][0], -texRotateMatrix[0][1], 0);
 					texRotateMatrix[1] = glm::vec3(-texRotateMatrix[1][0], texRotateMatrix[1][1], 0);
 					texRotateMatrix[2] = glm::vec3(0, 0, 1.0);
 					m_glslProgram->sendUniform("texRotateMatrix", glm::value_ptr(texRotateMatrix), false, 3);
+				}
+				else
+				{
+					m_glslProgram->sendUniform("material.hasNormals", false);
 				}
 
 				textureMatrix = material->getTextureMatrix();

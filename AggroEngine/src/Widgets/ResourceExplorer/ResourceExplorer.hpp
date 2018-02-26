@@ -2,6 +2,7 @@
 
 #include <QWidget>
 #include "EngineContext.hpp"
+#include "GLResourceWidget.hpp"
 
 class ResourceExplorer : public QWidget
 {
@@ -9,7 +10,10 @@ class ResourceExplorer : public QWidget
 
 private:
 	shared_ptr<EngineContext> m_context;
+	shared_ptr<GLResourceWidget> m_resourceWidget;
 
 public:
 	ResourceExplorer(shared_ptr<EngineContext> context, QWidget *parent = 0);
+
+	shared_ptr<GLResourceWidget> getWidget();
 };

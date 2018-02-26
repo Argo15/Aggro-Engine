@@ -17,7 +17,6 @@ private:
 
 protected:
 	void mousePressEvent(QMouseEvent *event);
-	void dropEvent(QDropEvent *event);
 
 public: 
 	SceneTreeWidget(SceneGraphTree *parent = nullptr);

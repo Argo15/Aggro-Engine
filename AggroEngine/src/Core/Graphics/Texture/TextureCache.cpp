@@ -6,23 +6,17 @@ TextureCache::TextureCache(shared_ptr<Graphics> graphics, shared_ptr<JobManager>
 	, m_imageImporter(new FreeImageImporter())
 	, m_pathsToTexture()
 	, m_resources(resources)
-	, m_defaultTexture()
 {
 
 }
 
 shared_ptr<TextureHandle> TextureCache::getTexture(int imageId)
 {
-	if (!m_defaultTexture)
-	{
-		m_defaultTexture = m_graphics->createTexture();
-	}
-
 	boost::optional<string> imagePathOpt = m_resources->getPathForId(imageId);
 	if (!imagePathOpt)
 	{
 		cout << "unknown image id " << imageId << endl;
-		return m_defaultTexture;
+		return shared_ptr<TextureHandle>();
 	}
 	const string imagePath = imagePathOpt.get();
 
@@ -39,7 +33,7 @@ shared_ptr<TextureHandle> TextureCache::getTexture(int imageId)
 				finishLoading(imageId, newTex);
 			})));
 		})));
-		shared_ptr<LoadableTextureHandle> loadingTexture(new LoadableTextureHandle(m_defaultTexture));
+		shared_ptr<LoadableTextureHandle> loadingTexture(new LoadableTextureHandle());
 		m_loadingTextures[imageId] = loadingTexture;
 		m_pathsToTexture[imageId] = loadingTexture;
 	}

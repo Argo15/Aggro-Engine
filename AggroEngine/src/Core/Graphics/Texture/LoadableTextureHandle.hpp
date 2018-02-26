@@ -10,8 +10,9 @@ private:
 	shared_ptr<TextureHandle> m_delegate;
 
 public:
-	LoadableTextureHandle(shared_ptr<TextureHandle> handle);
+	LoadableTextureHandle(shared_ptr<TextureHandle> handle = shared_ptr<TextureHandle>());
 
 	void setHandle(shared_ptr<TextureHandle> handle);
 	unsigned int get();
+	bool isLoaded();
 };

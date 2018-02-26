@@ -27,7 +27,7 @@ shared_ptr<TextureHandle> Material::getTexture()
 
 boost::optional<shared_ptr<TextureHandle>> Material::getTextureOpt()
 {
-	if (m_texture)
+	if (m_texture && m_texture->isLoaded())
 	{
 		return boost::optional<shared_ptr<TextureHandle>>(m_texture);
 	}
@@ -46,7 +46,7 @@ shared_ptr<TextureHandle> Material::getAlpha()
 
 boost::optional<shared_ptr<TextureHandle>> Material::getAlphaOpt()
 {
-	if (m_alpha)
+	if (m_alpha && m_alpha->isLoaded())
 	{
 		return boost::optional<shared_ptr<TextureHandle>>(m_alpha);
 	}
@@ -85,7 +85,7 @@ shared_ptr<TextureHandle> Material::getSpecular()
 
 boost::optional<shared_ptr<TextureHandle>> Material::getSpecularOpt()
 {
-	if (m_specular)
+	if (m_specular && m_specular->isLoaded())
 	{
 		return boost::optional<shared_ptr<TextureHandle>>(m_specular);
 	}
@@ -134,7 +134,7 @@ shared_ptr<TextureHandle> Material::getEmissionMap()
 
 boost::optional<shared_ptr<TextureHandle>> Material::getEmissionMapOpt()
 {
-	if (m_emissionMap)
+	if (m_emissionMap && m_emissionMap->isLoaded())
 	{
 		return boost::optional<shared_ptr<TextureHandle>>(m_emissionMap);
 	}
@@ -153,7 +153,7 @@ shared_ptr<TextureHandle> Material::getNormalMap()
 
 boost::optional<shared_ptr<TextureHandle>> Material::getNormalMapOpt()
 {
-	if (m_normalMap)
+	if (m_normalMap && m_normalMap->isLoaded())
 	{
 		return boost::optional<shared_ptr<TextureHandle>>(m_normalMap);
 	}

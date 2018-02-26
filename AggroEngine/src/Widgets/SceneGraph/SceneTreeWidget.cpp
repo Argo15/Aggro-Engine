@@ -10,7 +10,6 @@ SceneTreeWidget::SceneTreeWidget(SceneGraphTree *parent)
 {
 	setMouseTracking(true);
 	setDragEnabled(true);
-	setAcceptDrops(true);
 }
 
 void SceneTreeWidget::mousePressEvent(QMouseEvent *event)
@@ -35,9 +34,4 @@ void SceneTreeWidget::mousePressEvent(QMouseEvent *event)
 			}
 		}
 	}
-}
-
-void SceneTreeWidget::dropEvent(QDropEvent *event)
-{
-	cout << "test" << endl;
 }

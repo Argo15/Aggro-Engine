@@ -67,6 +67,15 @@ shared_ptr<Image> FreeImageImporter::importImage(string sFilename)
 		return shared_ptr<Image>(new CheckersImage(16, 16));
 	}
 
+	// Swap R & B channels (default is BGRA)
+	for (int i = 0; i < width*height; i++)
+	{
+		BYTE bVal = bits[i * 4];
+		BYTE rVal = bits[i * 4 + 2];
+		bits[i * 4] = rVal;
+		bits[i * 4 + 2] = bVal;
+	}
+
 	return shared_ptr<Image>((
 		new Image(
 			width, height, 
@@ -74,6 +83,6 @@ shared_ptr<Image> FreeImageImporter::importImage(string sFilename)
 			{ 
 				FreeImage_Unload(imagen); 
 			}))
-		)->setImageFormat(ImageFormat::BGRA)
+		)->setImageFormat(ImageFormat::RGBA)
 	);
 }

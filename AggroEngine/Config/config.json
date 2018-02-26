@@ -17,6 +17,7 @@
     "camera_fps": 300,
     "worker_threads": 15,
     "tex_extensions": [ "tga", "png", "jpg" ],
-    "mesh_extensions": [ "obj" ]
+    "mesh_extensions": [ "obj" ],
+    "quick_resources": [ "Mesh/Engine", "Textures/Walls", "Textures/Engine", "Textures/Normals", "Textures/Test" ]
   }
 }
