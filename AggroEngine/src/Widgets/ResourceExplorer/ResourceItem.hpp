@@ -7,14 +7,7 @@
 #include <QDragMoveEvent>
 #include <unordered_set>
 #include "GLResourceWidget.hpp"
-
-enum FileType
-{
-	DIRECTORY,
-	IMAGE,
-	MESH,
-	OTHER
-};
+#include "FileTypes.hpp"
 
 class ResourceItem : public QWidget
 {
@@ -23,14 +16,12 @@ private:
 	QModelIndex m_idx;
 	QString m_filepath;
 	FileType m_fileType;
-	unordered_set<string> m_supportedImages;
-	unordered_set<string> m_supportedMeshes;
 
 protected:
 	void mousePressEvent(QMouseEvent *event);
 
 public:
-	ResourceItem(GLResourceWidget *parent, QModelIndex idx);
+	ResourceItem(GLResourceWidget *parent, QModelIndex idx, QWidget *iconWidget = nullptr);
 
 	FileType getFileType();
 };

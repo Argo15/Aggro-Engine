@@ -5,7 +5,7 @@
 
 ResourceExplorer::ResourceExplorer(shared_ptr<EngineContext> context, QWidget *parent)
 	: QWidget(parent)
-	, m_resourceWidget(new GLResourceWidget())
+	, m_resourceWidget(new GLResourceWidget(context, this))
 {
 	QHBoxLayout *layout = new QHBoxLayout;
 

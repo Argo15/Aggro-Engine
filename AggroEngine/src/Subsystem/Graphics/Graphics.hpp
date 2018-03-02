@@ -11,6 +11,7 @@
 #include "RenderData.hpp"
 #include "RenderOptions.hpp"
 #include "Viewport.hpp"
+#include "GraphicsInitOptions.hpp"
 using namespace std;
 
 /**
@@ -24,7 +25,7 @@ class Graphics
 public:
 	virtual ~Graphics() {}
 
-	virtual void init() = 0;
+	virtual void init(shared_ptr<GraphicsInitOptions> options) = 0;
 
 	// Vertex buffers
 	// Returns a vertex buffer handle

@@ -146,12 +146,14 @@
     <ClCompile Include="src\Resource\Mesh\Dev\Screen.cpp" />
     <ClCompile Include="src\Resource\Mesh\FileBackedMesh.cpp" />
     <ClCompile Include="src\Resource\Mesh\Cache\MeshCache.cpp" />
+    <ClCompile Include="src\Resource\Mesh\MeshMetaData.cpp" />
     <ClCompile Include="src\Resource\Mesh\Modifiers\AlignBottom.cpp" />
     <ClCompile Include="src\Resource\Mesh\Modifiers\AlignCenter.cpp" />
     <ClCompile Include="src\Resource\Mesh\Modifiers\GenerateNormalLines.cpp" />
     <ClCompile Include="src\Resource\Mesh\Modifiers\GenerateTangents.cpp" />
     <ClCompile Include="src\Resource\Resources.cpp" />
     <ClCompile Include="src\Subsystem\Graphics\Api\Frustrum.cpp" />
+    <ClCompile Include="src\Subsystem\Graphics\Api\GraphicsInitOptions.cpp" />
     <ClCompile Include="src\Subsystem\Graphics\Api\Lighting\DirectLight.cpp" />
     <ClCompile Include="src\Subsystem\Graphics\Api\Material\Material.cpp" />
     <ClCompile Include="src\Subsystem\Graphics\Api\RenderData.cpp" />
@@ -218,6 +220,8 @@
     <ClCompile Include="src\Widgets\Inspector\InspectorWidget.cpp" />
     <ClCompile Include="src\Widgets\Inspector\Transform\TransformWidget.cpp" />
     <ClCompile Include="src\Widgets\MainWindow.cpp" />
+    <ClCompile Include="src\Widgets\ResourceExplorer\FileTypes.cpp" />
+    <ClCompile Include="src\Widgets\ResourceExplorer\GLMeshWidget.cpp" />
     <ClCompile Include="src\Widgets\ResourceExplorer\GLResourceWidget.cpp" />
     <ClCompile Include="src\Widgets\ResourceExplorer\QuickResources.cpp" />
     <ClCompile Include="src\Widgets\ResourceExplorer\ResourceExplorer.cpp" />
@@ -266,12 +270,14 @@
     <ClInclude Include="src\Resource\Mesh\Dev\Screen.hpp" />
     <ClInclude Include="src\Resource\Mesh\FileBackedMesh.hpp" />
     <ClInclude Include="src\Resource\Mesh\Cache\MeshCache.hpp" />
+    <ClInclude Include="src\Resource\Mesh\MeshMetaData.hpp" />
     <ClInclude Include="src\Resource\Mesh\Modifiers\AlignBottom.hpp" />
     <ClInclude Include="src\Resource\Mesh\Modifiers\AlignCenter.hpp" />
     <ClInclude Include="src\Resource\Mesh\Modifiers\GenerateNormalLines.hpp" />
     <ClInclude Include="src\Resource\Mesh\Modifiers\GenerateTangents.hpp" />
     <ClInclude Include="src\Resource\Mesh\Modifiers\MeshModifier.hpp" />
     <ClInclude Include="src\Subsystem\Graphics\Api\Frustrum.hpp" />
+    <ClInclude Include="src\Subsystem\Graphics\Api\GraphicsInitOptions.hpp" />
     <ClInclude Include="src\Subsystem\Graphics\Api\Lighting\DirectLight.hpp" />
     <ClInclude Include="src\Subsystem\Graphics\Api\Material\Material.hpp" />
     <ClInclude Include="src\Subsystem\Graphics\Impl\OpenGL\Framebuffer\ShadedBuffer.hpp" />
@@ -355,6 +361,8 @@
     <ClInclude Include="src\Util\Serialization\Serialization.hpp" />
     <ClInclude Include="src\Util\StringUtil.hpp" />
     <ClInclude Include="src\Util\timer.hpp" />
+    <ClInclude Include="src\Widgets\ResourceExplorer\FileTypes.hpp" />
+    <ClInclude Include="src\Widgets\ResourceExplorer\GLMeshWidget.hpp" />
     <ClInclude Include="src\Widgets\ResourceExplorer\QuickResources.hpp" />
     <ClInclude Include="src\Widgets\ResourceExplorer\ResourceItem.hpp" />
     <ClInclude Include="src\Widgets\Util\FlowLayout.hpp" />

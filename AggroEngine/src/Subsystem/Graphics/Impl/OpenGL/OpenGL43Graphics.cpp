@@ -17,7 +17,7 @@ OpenGL43Graphics::~OpenGL43Graphics()
 {
 }
 
-void OpenGL43Graphics::init()
+void OpenGL43Graphics::init(shared_ptr<GraphicsInitOptions> options)
 {
 	this->lock();
 	glShadeModel(GL_SMOOTH);
@@ -30,12 +30,10 @@ void OpenGL43Graphics::init()
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	this->unlock();
-	const Properties& props = gConfig->getProperties();
-	vector<int> nDimensions = props.getIntArrayProperty("graphics.resolution");
-	m_shadowBuffer = shared_ptr<ShadowMapBuffer>(new ShadowMapBuffer(this, 2048));
-	m_gBuffer = shared_ptr<GBuffer>(new GBuffer(this, nDimensions[0], nDimensions[1]));
-	m_lightBuffer = shared_ptr<LightBuffer>(new LightBuffer(this, nDimensions[0], nDimensions[1]));
-	m_shadedBuffer = shared_ptr<ShadedBuffer>(new ShadedBuffer(this, nDimensions[0], nDimensions[1]));
+	m_shadowBuffer = shared_ptr<ShadowMapBuffer>(new ShadowMapBuffer(this, options->getShadowSize()));
+	m_gBuffer = shared_ptr<GBuffer>(new GBuffer(this, options->getBufferWidth(), options->getBufferHeight()));
+	m_lightBuffer = shared_ptr<LightBuffer>(new LightBuffer(this, options->getBufferWidth(), options->getBufferHeight()));
+	m_shadedBuffer = shared_ptr<ShadedBuffer>(new ShadedBuffer(this, options->getBufferWidth(), options->getBufferHeight()));
 	m_viewport = shared_ptr<Viewport>(new Viewport());
 }
 
@@ -191,7 +189,7 @@ void OpenGL43Graphics::_drawScreen(RenderOptions &renderOptions, float nX1, floa
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
 
-	glActiveTexture(0);
+	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, _getRenderTargetTexture(renderOptions.getRenderTarget())->get());
 	glColor3f(1.0f, 1.0f, 1.0f);
 

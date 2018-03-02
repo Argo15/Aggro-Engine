@@ -34,7 +34,6 @@ GLSLShader::GLSLShader(GLenum shaderType)
 
 GLSLShader::~GLSLShader()
 {
-	glDeleteShader(handle_);
 }
 
 void GLSLShader::compile()

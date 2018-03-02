@@ -122,6 +122,15 @@ shared_ptr<int> Mesh::getIndicies()
 	return m_npIndices;
 }
 
+shared_ptr<MeshMetaData> Mesh::getMetaData()
+{
+	if (!m_metaData)
+	{
+		m_metaData = shared_ptr<MeshMetaData>(new MeshMetaData(this));
+	}
+	return m_metaData;
+}
+
 bool Mesh::hasTangents()
 {
 	return m_npTangents != nullptr && m_npBitangents != nullptr;

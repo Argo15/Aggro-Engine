@@ -40,6 +40,8 @@ private:
 public:
 	GLWidget(shared_ptr<EngineContext> context, QWidget *parent = 0);
 
+	shared_ptr<GraphicsContext> getGraphicsContext();
+
 protected:
 	void initializeGL();
 	void resizeGL(int width, int height);

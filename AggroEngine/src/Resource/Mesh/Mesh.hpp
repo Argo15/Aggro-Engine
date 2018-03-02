@@ -3,7 +3,10 @@
 #include <memory>
 #include <boost/optional.hpp>
 #include "DrawMode.hpp"
+#include "MeshMetaData.hpp"
 using namespace std;
+
+class MeshMetaData;
 
 /**
  * Holds mesh data
@@ -27,6 +30,7 @@ private:
 protected:
 	int m_meshId;
 	DrawMode m_drawMode;
+	shared_ptr<MeshMetaData> m_metaData;
 
 public:
 	Mesh(int meshId);
@@ -55,6 +59,8 @@ public:
 	shared_ptr<float> getTangents();
 	shared_ptr<float> getBitangents();
 	shared_ptr<int> getIndicies();
+
+	shared_ptr<MeshMetaData> getMetaData();
 
 	bool hasTangents();
 

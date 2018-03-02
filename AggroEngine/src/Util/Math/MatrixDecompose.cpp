@@ -3,7 +3,7 @@
 MatrixDecompose::MatrixDecompose(glm::mat4 transform)
 {
 	glm::decompose(transform, m_scale, m_rotate, m_translate, m_skew, m_perspective);
-	m_rotate = glm::conjugate(m_rotate);
+	m_conjugatedRotate = glm::conjugate(m_rotate);
 }
 
 void MatrixDecompose::setScale(glm::vec3 scale)
@@ -36,9 +36,14 @@ glm::vec3 MatrixDecompose::getScale()
 	return m_scale;
 }
 
-glm::quat MatrixDecompose::getRotate()
+glm::quat MatrixDecompose::getOriginalRotate()
 {
 	return m_rotate;
+}
+
+glm::quat MatrixDecompose::getRotate()
+{
+	return m_conjugatedRotate;
 }
 
 glm::vec3 MatrixDecompose::getTranslate()
@@ -59,5 +64,5 @@ glm::vec4 MatrixDecompose::getPerspective()
 // Just rotate and translate
 glm::mat4 MatrixDecompose::getOrthogonalTransform()
 {
-	return glm::translate(glm::mat4(1.0), m_translate) * mat4_cast(m_rotate);
+	return glm::translate(glm::mat4(1.0), m_translate) * mat4_cast(m_conjugatedRotate);
 }

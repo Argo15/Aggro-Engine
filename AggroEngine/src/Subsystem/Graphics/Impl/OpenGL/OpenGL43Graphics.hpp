@@ -37,7 +37,7 @@ public:
 	OpenGL43Graphics();
 	~OpenGL43Graphics();
 
-	void init();
+	void init(shared_ptr<GraphicsInitOptions> options);
 
 	shared_ptr<VertexBufferHandle> createVertexBuffer(shared_ptr<Mesh> mesh); 
 	void deleteVertexBuffer(shared_ptr<VertexBufferHandle> nHandle);

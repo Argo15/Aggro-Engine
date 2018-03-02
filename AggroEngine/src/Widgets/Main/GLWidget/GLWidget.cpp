@@ -36,7 +36,7 @@ void GLWidget::initializeGL()
 {
 	glewInit();
 
-	m_graphicsContext->getGraphics()->init();
+	m_graphicsContext->getGraphics()->init(shared_ptr<GraphicsInitOptions>(new GraphicsInitOptions()));
 	m_renderer->init();
 
 	shared_ptr<Scene> scene = m_engineContext->getScene();
@@ -87,6 +87,11 @@ void GLWidget::paintGL()
 	{
 		graphicsJob->runInThread();
 	}
+}
+
+shared_ptr<GraphicsContext> GLWidget::getGraphicsContext()
+{
+	return m_graphicsContext;
 }
 
 void GLWidget::keyPressEvent(QKeyEvent *event)

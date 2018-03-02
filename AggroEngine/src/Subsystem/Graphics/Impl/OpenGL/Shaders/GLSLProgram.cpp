@@ -48,8 +48,6 @@ GLSLProgram::~GLSLProgram()
 	{
 		delete fragment_;
 	}
-
-	glDeleteProgram(handle_);
 }
 
 GLuint GLSLProgram::getHandle() const

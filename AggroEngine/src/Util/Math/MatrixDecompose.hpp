@@ -7,6 +7,7 @@ class MatrixDecompose
 private:
 	glm::vec3 m_scale;
 	glm::quat m_rotate;
+	glm::quat m_conjugatedRotate;
 	glm::vec3 m_translate;
 	glm::vec3 m_skew;
 	glm::vec4 m_perspective;
@@ -22,6 +23,7 @@ public:
 
 	glm::vec3 getScale();
 	glm::quat getRotate();
+	glm::quat getOriginalRotate();
 	glm::vec3 getTranslate();
 	glm::vec3 getSkew();
 	glm::vec4 getPerspective();

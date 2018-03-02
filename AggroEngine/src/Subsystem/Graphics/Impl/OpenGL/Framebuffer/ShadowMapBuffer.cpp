@@ -64,7 +64,7 @@ void ShadowMapBuffer::drawToBuffer(RenderOptions renderOptions, std::queue<share
 	{
 		glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, m_shadowBuffer[i]);
 		m_glslProgram->use();
-		GLenum mrt[] = { GL_COLOR_ATTACHMENT0_EXT };
+		GLenum mrt[] = { GL_COLOR_ATTACHMENT0 };
 		glDrawBuffers(1, mrt);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		glPushAttrib(GL_VIEWPORT_BIT);

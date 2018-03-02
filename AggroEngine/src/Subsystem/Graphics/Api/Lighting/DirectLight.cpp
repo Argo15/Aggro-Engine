@@ -1,7 +1,7 @@
 #include "DirectLight.hpp"
 
 DirectLight::DirectLight(glm::vec3 direction, glm::vec3 color, int ambientPct)
-	: m_direction(direction)
+	: m_direction(glm::normalize(direction))
 	, m_color(color)
 	, m_ambientPct(ambientPct)
 {

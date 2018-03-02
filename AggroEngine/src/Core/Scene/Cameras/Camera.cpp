@@ -1,4 +1,5 @@
 #include "Camera.hpp"
+#include "MatrixDecompose.hpp"
 
 static glm::vec4 baseEyePos(0.f,0.f,0.f,1.f);
 static glm::vec4 baseLookDir(0.f,0.f,-1.f,0.f);
@@ -112,7 +113,10 @@ void Camera::setProjection(float fov, float aspectRatio, float zNear, float zFar
 
 void Camera::setLookAt(glm::vec3 &eye, glm::vec3 &center, glm::vec3 &up)
 {
-	// TODO, math this one out.
+	MatrixDecompose mat(glm::lookAt(eye, center, up));
+	m_transformComponent->setTranslate(eye);
+	m_transformComponent->setRotate(mat.getOriginalRotate());
+	updateViewMatrix();
 }
 
 void Camera::setViewport(glm::vec4 &viewport)

@@ -13,7 +13,7 @@ private:
 	shared_ptr<GLResourceWidget> m_resourceWidget;
 
 public:
-	ResourceExplorer(shared_ptr<EngineContext> context, QWidget *parent = 0);
+	ResourceExplorer(shared_ptr<EngineContext> context, QWidget *parent = nullptr);
 
 	shared_ptr<GLResourceWidget> getWidget();
 };
