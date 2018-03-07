@@ -20,7 +20,7 @@ GBuffer::GBuffer(OpenGL43Graphics *graphics, int width, int height)
 	glGenFramebuffers(1, &m_buffer);
 	glBindFramebuffer(GL_FRAMEBUFFER, m_buffer);
 
-	shared_ptr<Image> fboImage((new Image(width, height, boost::shared_array<unsigned char>(0)))
+	shared_ptr<ImageUC> fboImage((new ImageUC(width, height, mem::shared_array<unsigned char>(0)))
 		->setImageFormat(ImageFormat::RGBA)
 	);
 	fboImage->setImageType(ImageType::FLOAT_TYPE);

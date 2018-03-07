@@ -36,6 +36,8 @@ private:
 
 	shared_ptr<Job> _setupCameraUpdateJob(shared_ptr<Camera> camera);
 	void _dropTexture(QDropEvent *event);
+	void _dropMesh(QDropEvent *event);
+	shared_ptr<SceneNode> _getPreviewNode();
 
 public:
 	GLWidget(shared_ptr<EngineContext> context, QWidget *parent = 0);

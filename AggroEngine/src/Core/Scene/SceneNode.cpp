@@ -313,7 +313,7 @@ glm::mat4 SceneNode::getOrthogonalObjectTransform()
 		return glm::mat4(1.0);
 	}
 	glm::mat4 rotate(m_transformComponent->getRotate());
-	glm::vec4 translate = glm::vec4(*m_transformComponent->getTranslate(), 1.0f);
+	glm::vec4 translate = glm::vec4(m_transformComponent->getTranslate(), 1.0f);
 	rotate[3] = translate;
 	return rotate;
 }

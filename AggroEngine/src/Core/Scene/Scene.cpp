@@ -1,7 +1,9 @@
 #include "Scene.hpp"
+#include "EngineContext.hpp"
 
 Scene::Scene()
 	: m_transformHook()
+	, m_previewNode(new SceneNode(getNextId()))
 {
 }
 
@@ -9,12 +11,14 @@ Scene::Scene(shared_ptr<SceneNode> root, shared_ptr<Camera> camera)
 	: m_root(root)
 	, m_camera(camera)
 	, m_transformHook()
+	, m_previewNode(new SceneNode(getNextId()))
 {
 }
 
 Scene::Scene(Chunk * const byteChunk, shared_ptr<EngineContext> context)
 	: m_transformHook()
 	, m_camera(new Camera())
+	, m_previewNode(new SceneNode(getNextId()))
 {
 	m_camera = shared_ptr<Camera>(new Camera());
 	ByteParser parser = ByteParser(*byteChunk->getNumBytes(), byteChunk->getByteData().get());
@@ -271,4 +275,38 @@ void Scene::addBaseMaterial(shared_ptr<SceneNode> node)
 boost::unordered_map<int, shared_ptr<SceneNode>> &Scene::getBaseMaterials()
 {
 	return m_baseMaterials;
+}
+
+void Scene::setPreviewNode(shared_ptr<SceneNode> node)
+{
+	m_previewNode = node;
+}
+
+shared_ptr<SceneNode> Scene::getPreviewNode()
+{
+	return m_previewNode;
+}
+
+void Scene::update(shared_ptr<Selection> selection, shared_ptr<MouseState> mouse, shared_ptr<EngineContext> context)
+{
+	if (m_previewNode && m_previewNode->getTransformComponent())
+	{
+		const float hyperDepth = selection->getDepthVal();
+		if (hyperDepth < 1)
+		{
+			const glm::mat4 projMat = context->getRenderOptions()->getProjectionMatrix();
+			const glm::mat4 viewMat = context->getRenderOptions()->getViewMatrix();
+			const glm::vec4 viewport = context->getRenderOptions()->getViewport();
+			const int viewportWidth = (viewport[2] - viewport[0]);
+			const int viewportHeight = (viewport[3] - viewport[1]);
+			const float percentX = (float)mouse->getPosX() / viewportWidth;
+			const float percentY = (float)mouse->getPosY() / viewportHeight;
+			const glm::vec3 intersectPos = glm::unProject(glm::vec3(mouse->getPosX(), viewport[3] - mouse->getPosY(), hyperDepth), viewMat, projMat, viewport);
+			m_previewNode->getTransformComponent()->setTranslate(intersectPos);
+		}
+		else
+		{
+			m_previewNode->getTransformComponent()->setTranslate(glm::vec3(0));
+		}
+	}
 }

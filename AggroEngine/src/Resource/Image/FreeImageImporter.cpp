@@ -1,6 +1,7 @@
 #include "FreeImageImporter.hpp"
 #include "CheckersImage.hpp"
 #include "FreeImage.h"
+#include "MemoryUtil.hpp"
 #include <iostream>
 using namespace std;
 
@@ -18,7 +19,7 @@ FreeImageImporter::FreeImageImporter()
 	FreeImage_Initialise();
 }
 
-shared_ptr<Image> FreeImageImporter::importImage(string sFilename)
+shared_ptr<ImageUC> FreeImageImporter::importImage(string sFilename)
 {
 	//image format
 	FREE_IMAGE_FORMAT fif = FIF_UNKNOWN;
@@ -38,7 +39,7 @@ shared_ptr<Image> FreeImageImporter::importImage(string sFilename)
 	if (fif == FIF_UNKNOWN)
 	{
 		cout << "failed loading image " << sFilename << endl;
-		return shared_ptr<Image>(new CheckersImage(16, 16));
+		return shared_ptr<ImageUC>(new CheckersImage(16, 16));
 	}
 
 	//check that the plugin has reading capabilities and load the file
@@ -48,7 +49,7 @@ shared_ptr<Image> FreeImageImporter::importImage(string sFilename)
 	if (!imagen)
 	{
 		cout << "failed loading image " << sFilename << endl;
-		return shared_ptr<Image>(new CheckersImage(16, 16));
+		return shared_ptr<ImageUC>(new CheckersImage(16, 16));
 	}
 
 	FIBITMAP* temp = imagen;
@@ -64,7 +65,7 @@ shared_ptr<Image> FreeImageImporter::importImage(string sFilename)
 	if ((bits == 0) || (width == 0) || (height == 0))
 	{
 		cout << "failed loading image " << sFilename << endl;
-		return shared_ptr<Image>(new CheckersImage(16, 16));
+		return shared_ptr<ImageUC>(new CheckersImage(16, 16));
 	}
 
 	// Swap R & B channels (default is BGRA)
@@ -76,12 +77,12 @@ shared_ptr<Image> FreeImageImporter::importImage(string sFilename)
 		bits[i * 4 + 2] = bVal;
 	}
 
-	return shared_ptr<Image>((
-		new Image(
+	return shared_ptr<ImageUC>((
+		new ImageUC(
 			width, height, 
-			boost::shared_array<unsigned char>(bits, [imagen](unsigned char* a)
+			shared_ptr<unsigned char>(bits, [imagen](unsigned char* a)
 			{ 
-				FreeImage_Unload(imagen); 
+				FreeImage_Unload(imagen);
 			}))
 		)->setImageFormat(ImageFormat::RGBA)
 	);

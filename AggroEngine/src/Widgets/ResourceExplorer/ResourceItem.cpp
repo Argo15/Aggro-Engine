@@ -35,7 +35,7 @@ ResourceItem::ResourceItem(GLResourceWidget *parent, QModelIndex idx, QWidget *i
 			bool loaded = false;
 			if (m_fileType == IMAGE)
 			{
-				shared_ptr<Image> image = parent->imgImporter()->importImage(m_filepath.toStdString());
+				shared_ptr<ImageUC> image = parent->imgImporter()->importImage(m_filepath.toStdString());
 				QImage qimage(image->getData().get(), image->getWidth(), image->getHeight(), QImage::Format_RGBA8888);
 				if (!qimage.isNull())
 				{

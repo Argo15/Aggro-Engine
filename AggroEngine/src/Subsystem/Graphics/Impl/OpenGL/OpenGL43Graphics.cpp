@@ -74,7 +74,7 @@ shared_ptr<TextureHandle> OpenGL43Graphics::createTexture()
 	return texture.getHandle();
 }
 
-shared_ptr<TextureHandle> OpenGL43Graphics::createTexture(shared_ptr<Image> image)
+shared_ptr<TextureHandle> OpenGL43Graphics::createTexture(shared_ptr<ImageUC> image)
 {
 	return createTexture(shared_ptr<TextureBuildOptions>(new TextureBuildOptions(image)));
 }
@@ -82,7 +82,7 @@ shared_ptr<TextureHandle> OpenGL43Graphics::createTexture(shared_ptr<Image> imag
 shared_ptr<TextureHandle> OpenGL43Graphics::createTexture(shared_ptr<TextureBuildOptions> pTexOptions)
 {
 	boost::lock_guard<OpenGL43Graphics> guard(*this);
-	shared_ptr<Image> pImage = pTexOptions->getImage();
+	shared_ptr<ImageUC> pImage = pTexOptions->getImage();
 	GLuint m_nHandle;
 	glGenTextures(1, &m_nHandle);
 	GLenum target = pTexOptions->getTarget();
@@ -219,42 +219,82 @@ shared_ptr<TextureHandle> OpenGL43Graphics::_getRenderTargetTexture(RenderOption
 			return m_gBuffer->getSelectionTex();
 		case RenderOptions::DIRECT_LIGHT:
 			return m_shadowBuffer->getTestTex(0);
+		case RenderOptions::DEPTH:
+			return m_gBuffer->getDepthTex();
 		default:
 			break;
 	}
 	return m_gBuffer->getAlbedoTex();
 }
 
-shared_ptr<Image> OpenGL43Graphics::getRenderImage(RenderOptions::RenderTarget target)
+shared_ptr<ImageUS> OpenGL43Graphics::getRenderImage(RenderOptions::RenderTarget target)
 {
 	int width = m_gBuffer->getWidth();
 	int height = m_gBuffer->getHeight();
 	return getRenderImage(0, 0, width, height, target);
 }
 
-shared_ptr<Image> OpenGL43Graphics::getRenderImage(int x, int y, int width, int height, RenderOptions::RenderTarget target)
+shared_ptr<ImageUS> OpenGL43Graphics::getRenderImage(int x, int y, int width, int height, RenderOptions::RenderTarget target)
 {
+	if (target != RenderOptions::SELECTION)
+	{
+		return shared_ptr<ImageUS>();
+	}
 	boost::lock_guard<OpenGL43Graphics> guard(*this);
 
-	int pixelSize = sizeof(unsigned short) * 4;
-	int size = width * height * pixelSize;
-	unsigned char *pixels = new unsigned char[size];
-
 	m_gBuffer->bindFrameBuffer();
+	unsigned short *pixels = new unsigned short[width * height * 4];
+
 	glReadBuffer(m_gBuffer->getSelectionColorAttachment());
 	glReadPixels(x, y, width, height, GL_RGBA, GL_UNSIGNED_SHORT, pixels);
 	m_gBuffer->unbindFrameBuffer();
 
-	return shared_ptr<Image>((new Image(width, height, boost::shared_array<unsigned char>(pixels)))
+	return shared_ptr<ImageUS>((new ImageUS(width, height, mem::shared_array<unsigned short>(pixels)))
 		->setImageFormat(ImageFormat::RGBA)
 		->setImageType(ImageType::UNSIGNED_SHORT)
-	);
+		);
 }
 
-boost::shared_array<unsigned short> OpenGL43Graphics::getRenderImagePixel(int x, int y, RenderOptions::RenderTarget target)
+shared_ptr<ImageF> OpenGL43Graphics::getRenderImageF(int x, int y, int width, int height, RenderOptions::RenderTarget target)
 {
-	shared_ptr<Image> image = getRenderImage(x, y, 1, 1, target);
-	return image->getPixelUS(0, 0);
+	if (target != RenderOptions::DEPTH)
+	{
+		return shared_ptr<ImageF>();
+	}
+	boost::lock_guard<OpenGL43Graphics> guard(*this);
+
+	m_gBuffer->bindFrameBuffer();
+	int size = width * height;
+	float *pixels = new float[size];
+
+	glReadBuffer(GL_DEPTH_ATTACHMENT);
+	glReadPixels(x, y, width, height, GL_DEPTH_COMPONENT, GL_FLOAT, pixels);
+	m_gBuffer->unbindFrameBuffer();
+
+	return shared_ptr<ImageF>((new ImageF(width, height, mem::shared_array<float>(pixels)))
+		->setImageFormat(ImageFormat::DEPTH_COMPONENT)
+		->setImageType(ImageType::FLOAT_TYPE)
+		);
+}
+
+shared_ptr<unsigned short> OpenGL43Graphics::getRenderImagePixel(int x, int y, RenderOptions::RenderTarget target)
+{
+	shared_ptr<ImageUS> image = getRenderImage(x, y, 1, 1, target);
+	if (image)
+	{
+		return image->getPixel(0, 0);
+	}
+	return shared_ptr<unsigned short>();
+}
+
+shared_ptr<float> OpenGL43Graphics::getRenderImagePixelF(int x, int y, RenderOptions::RenderTarget target)
+{
+	shared_ptr<ImageF> image = getRenderImageF(x, y, 1, 1, target);
+	if (image)
+	{
+		return image->getPixel(0, 0);
+	}
+	return shared_ptr<float>();
 }
 
 int OpenGL43Graphics::getFrameBufferWidth()

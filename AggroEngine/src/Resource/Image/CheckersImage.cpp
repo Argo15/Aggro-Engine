@@ -1,6 +1,6 @@
 #include "CheckersImage.hpp"
 
-boost::shared_array<unsigned char> CheckersImage::getData(int nWidth, int nHeight)
+shared_ptr<unsigned char> CheckersImage::getData(int nWidth, int nHeight)
 {
 	nWidth = roundUpToNextPowerOfTwo(nWidth); // we want a pow2 texture
 	nHeight = roundUpToNextPowerOfTwo(nHeight);
@@ -23,7 +23,7 @@ boost::shared_array<unsigned char> CheckersImage::getData(int nWidth, int nHeigh
 			pTexture[i+2]=(unsigned char)128;
 		}
 	}
-	return boost::shared_array<unsigned char>(pTexture);
+	return mem::shared_array(pTexture);
 }
 
 CheckersImage::CheckersImage(int nWidth, int nHeight) 

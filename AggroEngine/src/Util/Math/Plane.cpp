@@ -8,7 +8,7 @@ Plane::Plane(glm::vec3 center, glm::vec3 normal)
 }
 
 // Point on the other line that is closest to this line
-const std::shared_ptr<glm::vec3> Plane::intersect(const Line& line) const
+const boost::optional<glm::vec3> Plane::intersect(const Line& line) const
 {
 	glm::vec3 lineDir = glm::normalize(line.getDir());
 	
@@ -17,8 +17,8 @@ const std::shared_ptr<glm::vec3> Plane::intersect(const Line& line) const
 	{
 		float t = dot(m_center - line.getOrig(), m_normal) / denom;
 		if (t >= 0) {
-			return std::shared_ptr<glm::vec3>(new glm::vec3(line.getOrig() + t * lineDir));
+			return boost::optional<glm::vec3>(line.getOrig() + t * lineDir);
 		}
 	}
-	return std::shared_ptr<glm::vec3>();
+	return boost::optional<glm::vec3>();
 }

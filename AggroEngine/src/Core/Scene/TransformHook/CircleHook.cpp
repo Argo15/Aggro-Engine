@@ -17,13 +17,13 @@ void CircleHook::updateTransform(shared_ptr<SceneNode> node, const Line &lookLin
 	const Plane selectionPlane(worldMat.getTranslate(), selectionDir);
 
 	// Calculate change in mouse position along circle's plane
-	const std::shared_ptr<glm::vec3> newPos = selectionPlane.intersect(lookLine);
+	const boost::optional<glm::vec3> newPos = selectionPlane.intersect(lookLine);
 	if (!newPos)
 	{
 		return;
 	}
 	const glm::mat4 relativeSpaceTransform = glm::inverse(node->getParentTransform());
-	const glm::vec3 newPosInRelativeSpace = (glm::vec3) (relativeSpaceTransform * glm::vec4(*newPos, 1.0)) - *node->getTransformComponent()->getTranslate();
+	const glm::vec3 newPosInRelativeSpace = (glm::vec3) (relativeSpaceTransform * glm::vec4(*newPos, 1.0)) - node->getTransformComponent()->getTranslate();
 
 	if (m_lastPos)
 	{

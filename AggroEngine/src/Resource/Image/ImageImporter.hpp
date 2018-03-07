@@ -8,5 +8,5 @@ using namespace std;
 class ImageImporter
 {
 public:
-	virtual shared_ptr<Image> importImage(string sFilename) = 0;
+	virtual shared_ptr<ImageUC> importImage(string sFilename) = 0;
 };

@@ -9,7 +9,7 @@ AlignCenter::AlignCenter()
 
 shared_ptr<Mesh> AlignCenter::apply(shared_ptr<Mesh> &sourceMesh)
 {
-	if (!sourceMesh)
+	if (!sourceMesh || !sourceMesh->getMetaData())
 	{
 		return shared_ptr<Mesh>();
 	}

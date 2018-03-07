@@ -1,7 +1,7 @@
 #pragma once
 
 #include <memory>
-#include <boost/shared_array.hpp>
+#include "MemoryUtil.hpp"
 using namespace std;
 
 // Format values mapped to the same values as OpenGL
@@ -35,11 +35,14 @@ enum ImageType
 };
 
 /**
- * Holds image data
+ * Holds image data. 
+ * T = component size. RGBA16 would be unsigned short, RGBA8 is char.
+ * A depth texture has one float component, so T = float
  *
  * author: wcrane
  * since: 2014-04-12
 **/
+template <class T>
 class Image
 {
 private:
@@ -48,19 +51,80 @@ private:
 	ImageFormat m_format;
 	ImageType m_type;
 
-	boost::shared_array<unsigned char> m_npData;
+	shared_ptr<T> m_npData;
 
 public:
-	Image(unsigned int nWidth, unsigned int nHeight, boost::shared_array<unsigned char> npData);
-	
-	Image *setImageFormat(ImageFormat format);
-	Image *setImageType(ImageType type);
+	Image(unsigned int nWidth, unsigned int nHeight, shared_ptr<T> npData)
+		: m_nWidth(nWidth)
+		, m_nHeight(nHeight)
+		, m_format(RGB)
+		, m_type(UNSIGNED_BYTE)
+		, m_npData(npData)
+	{}
 
-	unsigned int getWidth();
-	unsigned int getHeight();
-	ImageFormat getFormat();
-	ImageType getImageType();
-	boost::shared_array<unsigned char> getData();
-	boost::shared_array<float> getPixelF(int x, int y);
-	boost::shared_array<unsigned short> Image::getPixelUS(int x, int y);
+	~Image()
+	{}
+
+	Image *setImageFormat(ImageFormat format)
+	{
+		m_format = format;
+		return this;
+	}
+
+	Image *setImageType(ImageType type)
+	{
+		m_type = type;
+		return this;
+	}
+
+	unsigned int getWidth()
+	{
+		return m_nWidth;
+	}
+
+	unsigned int getHeight()
+	{
+		return m_nHeight;
+	}
+
+	ImageFormat getFormat()
+	{
+		return m_format;
+	}
+
+	ImageType getImageType()
+	{
+		return m_type;
+	}
+
+	shared_ptr<T> getData()
+	{
+		return m_npData;
+	}
+
+	shared_ptr<T> getPixel(int x, int y)
+	{
+		int componentSize = sizeof(T);
+		int numComponents;
+		int pixelSize;
+		switch (m_format)
+		{
+		case DEPTH_COMPONENT: numComponents = 1; break;
+		case RGB: numComponents = 3; break;
+		default: numComponents = 4;
+		}
+		pixelSize = componentSize * numComponents;
+		int idxStart = (y * m_nWidth * numComponents) + (x * numComponents);
+
+		T *pixel = new T[numComponents];
+		memcpy(pixel, m_npData.get() + idxStart, pixelSize);
+
+		shared_ptr<T> ret = mem::shared_array<T>(pixel);
+
+		return ret;
+	}
 };
+
+using ImageUC = Image<unsigned char>;
+using ImageUS = Image<unsigned short>;
+using ImageF = Image<float>;

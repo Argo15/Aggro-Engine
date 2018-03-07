@@ -4,6 +4,7 @@
 #include <boost/optional.hpp>
 #include "DrawMode.hpp"
 #include "MeshMetaData.hpp"
+#include "Locks.hpp"
 using namespace std;
 
 class MeshMetaData;
@@ -14,7 +15,7 @@ class MeshMetaData;
  * author: wcrane
  * since: 2014-01-25
 **/
-class Mesh
+class Mesh : public boost::basic_lockable_adapter<recursive_mutex>
 {
 private:
 	unsigned int m_nSizeOfVertices;
@@ -36,6 +37,7 @@ public:
 	Mesh(int meshId);
 	Mesh(int meshId, int nSizeOfVertices, int nSizeOfIndices, shared_ptr<float> npVertices, 
 		shared_ptr<float> npTexCoords, shared_ptr<float> npNormals, shared_ptr<int> npIndices, DrawMode drawMode = DrawMode::LINES);
+	~Mesh();
 
 	virtual bool resolve();
 	virtual bool isResolved();

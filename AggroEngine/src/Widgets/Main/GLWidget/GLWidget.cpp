@@ -4,6 +4,9 @@
 #include "StaticObjectRenderComponent.hpp"
 #include "Config.hpp"
 #include "CameraUpdateJob.hpp"
+#include "LineMesh.hpp"
+
+const shared_ptr<Mesh> previewMesh = shared_ptr<Mesh>(new LineMesh(-1, glm::vec3(0), glm::vec3(0, 1.0, 0)));
 
 GLWidget::GLWidget(shared_ptr<EngineContext> context, QWidget *parent)
 	: QGLWidget(parent)
@@ -73,6 +76,7 @@ void GLWidget::paintGL()
 		swapBuffers();
 		m_selection->updateSelection(m_mouse, m_graphicsContext->getGraphics());
 		m_mouseController->handleMouseInput(m_mouse, m_engineContext, m_selection);
+		m_engineContext->getScene()->update(m_selection, m_mouse, m_engineContext);
 
 		// Process at least one graphics job
 		if (graphicsJob = m_engineContext->getJobManager()->nextGraphicsJob())
@@ -140,11 +144,10 @@ shared_ptr<Job> GLWidget::_setupCameraUpdateJob(shared_ptr<Camera> camera)
 
 void GLWidget::dragMoveEvent(QDragMoveEvent *event)
 {
+	m_mouse->setPosition(event->pos().x(), event->pos().y());
 	if (event->mimeData()->hasFormat("application/x-materialdata") ||
-		event->mimeData()->hasFormat("application/x-texture") ||
-		event->mimeData()->hasFormat("application/x-mesh"))
+		event->mimeData()->hasFormat("application/x-texture"))
 	{
-		m_mouse->setPosition(event->pos().x(), event->pos().y());
 		int selectedId = m_selection->getSelectionAsId();
 		shared_ptr<SceneNode> node = m_engineContext->getScene()->getNodeById(selectedId);
 		if (node)
@@ -152,6 +155,11 @@ void GLWidget::dragMoveEvent(QDragMoveEvent *event)
 			event->acceptProposedAction();
 			return;
 		}
+	}
+	else if (event->mimeData()->hasFormat("application/x-mesh"))
+	{
+		event->acceptProposedAction();
+		return;
 	}
 	event->ignore();
 }
@@ -162,12 +170,20 @@ void GLWidget::dragEnterEvent(QDragEnterEvent *event)
 		event->mimeData()->hasFormat("application/x-texture") ||
 		event->mimeData()->hasFormat("application/x-mesh"))
 	{
+		if (event->mimeData()->hasFormat("application/x-mesh"))
+		{
+			_getPreviewNode()->getMeshComponent()->setPrimaryMesh(previewMesh);
+		}
 		event->acceptProposedAction();
 	}
 }
 
 void GLWidget::dragLeaveEvent(QDragLeaveEvent *event)
 {
+	if (m_engineContext->getScene()->getPreviewNode())
+	{
+		_getPreviewNode()->getMeshComponent()->setPrimaryMesh(shared_ptr<Mesh>());
+	}
 	event->accept();
 }
 
@@ -189,21 +205,7 @@ void GLWidget::dropEvent(QDropEvent *event)
 	}
 	else if (event->mimeData()->hasFormat("application/x-mesh"))
 	{
-		QString filepath = event->mimeData()->data("application/x-mesh");
-		QString name = filepath.split("/").last().split(".").first();
-		shared_ptr<StaticObjectRenderComponent> renderComponent(new StaticObjectRenderComponent());
-		shared_ptr<SceneNode> newNode = shared_ptr<SceneNode>(new SceneNode(Scene::getNextId()));
-		newNode->setRenderComponent(renderComponent);
-		newNode->setTransformComponent(shared_ptr<TransformComponent>(new TransformComponent()));
-		newNode->setName(name.toStdString());
-		shared_ptr<MeshComponent> meshComponent(new MeshComponent(m_engineContext->getJobManager()));
-		int meshId = m_engineContext->getResources()->getIdForPath(filepath.toStdString());
-		m_engineContext->getMeshCache()->getMesh(meshId)->onReady([this, meshComponent](auto mesh) {meshComponent->setPrimaryMesh(mesh); });
-		newNode->setMeshComponent(meshComponent);
-		m_engineContext->getScene()->getRoot()->addChild(newNode);
-		m_engineContext->getScene()->deselectAllNodes();
-		m_engineContext->getScene()->selectNode(newNode);
-		m_engineContext->getScene()->update();
+		_dropMesh(event);
 	}
 	event->accept();
 }
@@ -236,4 +238,57 @@ void GLWidget::_dropTexture(QDropEvent *event)
 			dropNode->setMaterialComponent(material);
 		}
 	}
+}
+
+void GLWidget::_dropMesh(QDropEvent *event)
+{
+	QString filepath = event->mimeData()->data("application/x-mesh");
+	QString name = filepath.split("/").last().split(".").first();
+	shared_ptr<StaticObjectRenderComponent> renderComponent(new StaticObjectRenderComponent());
+	shared_ptr<SceneNode> newNode = shared_ptr<SceneNode>(new SceneNode(Scene::getNextId()));
+	newNode->setRenderComponent(renderComponent);
+	newNode->setTransformComponent(shared_ptr<TransformComponent>(new TransformComponent()));
+	newNode->setName(name.toStdString());
+	shared_ptr<MeshComponent> meshComponent(new MeshComponent(m_engineContext->getJobManager()));
+	int meshId = m_engineContext->getResources()->getIdForPath(filepath.toStdString());
+	m_engineContext->getMeshCache()->getMesh(meshId)->onReady([this, meshComponent, newNode](auto mesh) {
+		glm::vec3 intersectPos = _getPreviewNode()->getTransformComponent()->getTranslate();
+		auto metadata = mesh->getMetaData();
+		newNode->getTransformComponent()->setTranslate(intersectPos + glm::vec3(0, metadata->getYLength() / 2.0, 0));
+		meshComponent->setPrimaryMesh(mesh);
+		meshComponent->setAxisAlign(MeshComponent::AxisAlign::CENTER);
+	});
+	newNode->setMeshComponent(meshComponent);
+	m_engineContext->getScene()->getRoot()->addChild(newNode);
+	m_engineContext->getScene()->deselectAllNodes();
+	m_engineContext->getScene()->selectNode(newNode);
+	m_engineContext->getScene()->update();
+
+	_getPreviewNode()->getMeshComponent()->setPrimaryMesh(shared_ptr<Mesh>());
+}
+
+shared_ptr<SceneNode> GLWidget::_getPreviewNode()
+{
+	shared_ptr<SceneNode> previewNode = m_engineContext->getScene()->getPreviewNode();
+	if (!previewNode)
+	{
+		previewNode = shared_ptr<SceneNode>(new SceneNode(Scene::getNextId()));
+		m_engineContext->getScene()->setPreviewNode(previewNode);
+	}
+	if (!previewNode->getTransformComponent())
+	{
+		previewNode->setTransformComponent(shared_ptr<TransformComponent>(new TransformComponent()));
+	}
+	if (!previewNode->getRenderComponent())
+	{
+		previewNode->setRenderComponent(shared_ptr<StaticObjectRenderComponent>(new StaticObjectRenderComponent()));
+	}
+	shared_ptr<MeshComponent> meshComp = previewNode->getMeshComponent();
+	if (!meshComp)
+	{
+		meshComp = shared_ptr<MeshComponent>(new MeshComponent(m_engineContext->getJobManager()));
+		previewNode->setMeshComponent(meshComp);
+		meshComp->enableTangents(false);
+	}
+	return previewNode;
 }

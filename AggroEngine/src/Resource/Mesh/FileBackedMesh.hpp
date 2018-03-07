@@ -12,7 +12,6 @@
 * since: 2018-01-14
 **/
 class FileBackedMesh : public Mesh
-	, public boost::basic_lockable_adapter<recursive_mutex>
 {
 private:
 	shared_ptr<Resources> m_resources;

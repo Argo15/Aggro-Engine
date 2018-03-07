@@ -41,7 +41,7 @@ class TextureBuildOptions
 {
 public:
 private:
-	shared_ptr<Image> m_pImage;
+	shared_ptr<ImageUC> m_pImage;
 	Target m_target;
 	Filter m_magFilter;
 	Filter m_minFilter;
@@ -52,9 +52,9 @@ private:
 	bool m_enableDepthCompare;
 
 public:
-	TextureBuildOptions(shared_ptr<Image> pImage);
+	TextureBuildOptions(shared_ptr<ImageUC> pImage);
 
-	shared_ptr<Image> getImage();
+	shared_ptr<ImageUC> getImage();
 
 	TextureBuildOptions *setTarget(Target target);
 	TextureBuildOptions *setFilter(Filter name);

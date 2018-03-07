@@ -163,9 +163,9 @@ void TransformWidget::_refresh(TransformComponent *transform)
 {
 	if (m_currentNode)
 	{
-		glm::vec3 translate = *transform->getTranslate();
+		glm::vec3 translate = transform->getTranslate();
 		glm::vec3 rotate = transform->getRotateEuler() * 180.f / 3.14159f;
-		glm::vec3 scale = *transform->getScale();
+		glm::vec3 scale = transform->getScale();
 		if (translate != m_lastTranslate || rotate != m_lastRotate || scale != m_lastScale)
 		{
 			boost::lock_guard<boost::mutex> guard(m_textLock);

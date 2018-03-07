@@ -7,6 +7,7 @@
 #include "Listener.hpp"
 #include "TransformHook.hpp"
 #include "MeshCache.hpp"
+#include "Selection.hpp"
 using namespace std;
 
 class TransformHook;
@@ -28,6 +29,7 @@ private:
 	Listener<shared_ptr<SceneNode>> m_selectionChangeListeners;
 
 	shared_ptr<SceneNode> m_selectedNode;
+	shared_ptr<SceneNode> m_previewNode;
 
 	static int s_nextId;
 
@@ -76,4 +78,9 @@ public:
 
 	void addBaseMaterial(shared_ptr<SceneNode> node);
 	boost::unordered_map<int, shared_ptr<SceneNode>> &getBaseMaterials();
+
+	void setPreviewNode(shared_ptr<SceneNode> node);
+	shared_ptr<SceneNode> getPreviewNode();
+
+	void update(shared_ptr<Selection> selection, shared_ptr<MouseState> mouse, shared_ptr<EngineContext> context);
 };

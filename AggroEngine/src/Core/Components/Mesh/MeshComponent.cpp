@@ -82,6 +82,10 @@ void MeshComponent::generateMeshes()
 	{
 		m_modifiedPrimaryMesh = m_primaryMesh;
 		m_jobs->add(shared_ptr<Job>(new Job([this]() {
+			if (!m_modifiedPrimaryMesh)
+			{
+				return;
+			}
 			switch (m_axisAlign)
 			{
 				case AxisAlign::CENTER: m_modifiedPrimaryMesh = alignCenter->apply(m_modifiedPrimaryMesh); break;

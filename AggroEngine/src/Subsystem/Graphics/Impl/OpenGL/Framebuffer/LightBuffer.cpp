@@ -18,7 +18,7 @@ LightBuffer::LightBuffer(OpenGL43Graphics *graphics, int width, int height)
 	glGenFramebuffers(1, &m_buffer);
 	glBindFramebuffer(GL_FRAMEBUFFER, m_buffer);
 
-	shared_ptr<Image> fboImage((new Image(width, height, boost::shared_array<unsigned char>(0)))
+	shared_ptr<ImageUC> fboImage((new ImageUC(width, height, mem::shared_array<unsigned char>(0)))
 		->setImageFormat(ImageFormat::RGBA)
 	);
 	fboImage->setImageType(ImageType::FLOAT_TYPE);
@@ -46,7 +46,7 @@ LightBuffer::LightBuffer(OpenGL43Graphics *graphics, int width, int height)
 	glBindTexture(GL_TEXTURE_2D, 0);
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
-	m_noLightTexture = graphics->createTexture(shared_ptr<Image>(new RGBImage(1, 1, glm::vec3(1.f, 1.f, 1.f))));
+	m_noLightTexture = graphics->createTexture(shared_ptr<ImageUC>(new RGBImage(1, 1, glm::vec3(1.f, 1.f, 1.f))));
 	m_screenVBO = graphics->createVertexBuffer(shared_ptr<Mesh>(new Screen(-1, 0, 0, 1, 1)));
 }
 
@@ -56,14 +56,6 @@ void LightBuffer::drawToBuffer(RenderOptions &renderOptions,
 	shared_ptr<TextureHandle> glowTex,
 	shared_ptr<ShadowMapBuffer> shadowMap)
 {
-	shared_ptr<DirectLight> directLight = renderOptions.getDirectLight();
-	if (!directLight || !normalTex)
-	{
-		m_texture = m_noLightTexture;
-		return;
-	}
-	m_texture = m_lightTexture;
-
 	boost::lock_guard<OpenGL43Graphics> guard(*m_graphics);
 
 	bindFrameBuffer();
@@ -76,6 +68,14 @@ void LightBuffer::drawToBuffer(RenderOptions &renderOptions,
 	glViewport(0, 0, m_width, getHeight());
 	glLineWidth(1);
 	glEnable(GL_DEPTH_TEST);
+
+	shared_ptr<DirectLight> directLight = renderOptions.getDirectLight();
+	if (!directLight || !normalTex)
+	{
+		m_texture = m_noLightTexture;
+		return;
+	}
+	m_texture = m_lightTexture;
 
 	glBindFragDataLocation(m_glslProgram->getHandle(), 0, "lightBuffer");
 	glBindFragDataLocation(m_glslProgram->getHandle(), 1, "glowBuffer");

@@ -100,9 +100,9 @@ glm::mat4 TransformComponent::getTransform()
 	return m_translateMat * glm::toMat4(m_rotateMat) * m_scaleMat;
 }
 
-glm::vec3 *TransformComponent::getTranslate()
+glm::vec3 TransformComponent::getTranslate()
 {
-	return &m_translate;
+	return m_translate;
 }
 
 glm::vec3 TransformComponent::getRotateEuler()
@@ -115,9 +115,9 @@ glm::mat4 TransformComponent::getRotate()
 	return glm::toMat4(m_rotateMat);
 }
 
-glm::vec3 *TransformComponent::getScale()
+glm::vec3 TransformComponent::getScale()
 {
-	return &m_scale;
+	return m_scale;
 }
 
 void TransformComponent::addChangeListener(void *ns, std::function<void(TransformComponent *)> listener)

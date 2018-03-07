@@ -25,7 +25,7 @@ shared_ptr<TextureHandle> TextureCache::getTexture(int imageId)
 	{
 		m_jobManager->add(shared_ptr<Job>(new Job([this, imageId, imagePath]()
 		{
-			shared_ptr<Image> image(m_imageImporter->importImage(imagePath));
+			shared_ptr<ImageUC> image(m_imageImporter->importImage(imagePath));
 			m_jobManager->addGraphicsJob(shared_ptr<Job>(new Job([this, image, imageId]()
 			{
 				shared_ptr<TextureBuildOptions> texOptions(new TextureBuildOptions(image));

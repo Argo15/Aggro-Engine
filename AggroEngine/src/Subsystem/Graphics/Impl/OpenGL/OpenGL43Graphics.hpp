@@ -11,6 +11,7 @@ class OpenGL43Graphics;
 #include "Graphics.hpp"
 #include "Locks.hpp"
 #include "ShadowMapBuffer.hpp"
+#include "MemoryUtil.hpp"
 
 /**
  * OpenGL graphics that only guarentees support for OpenGL 4.3 or above.
@@ -43,7 +44,7 @@ public:
 	void deleteVertexBuffer(shared_ptr<VertexBufferHandle> nHandle);
 	
 	shared_ptr<TextureHandle> createTexture();
-	shared_ptr<TextureHandle> createTexture(shared_ptr<Image> image);
+	shared_ptr<TextureHandle> createTexture(shared_ptr<ImageUC> image);
 	shared_ptr<TextureHandle> createTexture(shared_ptr<TextureBuildOptions> pTexOptions);
 	void deleteTexture(shared_ptr<TextureHandle> textureHandle);
 
@@ -58,9 +59,11 @@ public:
 
 	ShaderStore getShaderStore();
 
-	shared_ptr<Image> getRenderImage(RenderOptions::RenderTarget target);
-	shared_ptr<Image> getRenderImage(int x, int y, int width, int height, RenderOptions::RenderTarget target);
-	boost::shared_array<unsigned short> getRenderImagePixel(int x, int y, RenderOptions::RenderTarget target);
+	shared_ptr<ImageUS> getRenderImage(RenderOptions::RenderTarget target);
+	shared_ptr<ImageUS> getRenderImage(int x, int y, int width, int height, RenderOptions::RenderTarget target);
+	shared_ptr<ImageF> getRenderImageF(int x, int y, int width, int height, RenderOptions::RenderTarget target);
+	shared_ptr<unsigned short> getRenderImagePixel(int x, int y, RenderOptions::RenderTarget target);
+	shared_ptr<float> getRenderImagePixelF(int x, int y, RenderOptions::RenderTarget target);
 
 	int getFrameBufferWidth();
 	int getFrameBufferHeight();

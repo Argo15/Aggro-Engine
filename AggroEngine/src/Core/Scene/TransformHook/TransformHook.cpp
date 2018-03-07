@@ -19,7 +19,7 @@ void TransformHook::_initialize(shared_ptr<Graphics> graphics, shared_ptr<Scene>
 		m_renderData[i] = shared_ptr<RenderData>(new RenderData());
 		m_renderData[i]->setDrawMode(DrawMode::LINES);
 		m_renderData[i]->setVertexBufferHandle(graphics->createVertexBuffer(getMesh(axis[i])));
-		m_texture[i] = graphics->createTexture(shared_ptr<Image>(new RGBImage(1, 1, axis[i])));
+		m_texture[i] = graphics->createTexture(shared_ptr<ImageUC>(new RGBImage(1, 1, axis[i])));
 		shared_ptr<Material> mat(new Material(glm::vec3(1.0)));
 		mat->setTexture(m_texture[i]);
 		m_renderData[i]->setMaterial(mat);
@@ -27,7 +27,7 @@ void TransformHook::_initialize(shared_ptr<Graphics> graphics, shared_ptr<Scene>
 		m_renderData[i]->setDepthTestEnabled(false);
 		m_renderData[i]->setId(Scene::getNextId());
 	}
-	m_texture[3] = graphics->createTexture(shared_ptr<Image>(new RGBImage(1, 1, glm::vec3(1.0f, 1.0f, 0))));
+	m_texture[3] = graphics->createTexture(shared_ptr<ImageUC>(new RGBImage(1, 1, glm::vec3(1.0f, 1.0f, 0))));
 }
 
 void TransformHook::render(shared_ptr<Graphics> graphics, shared_ptr<Scene> scene)

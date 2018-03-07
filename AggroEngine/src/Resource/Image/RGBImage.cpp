@@ -1,6 +1,6 @@
 #include "RGBImage.hpp"
 
-boost::shared_array<unsigned char> RGBImage::_getData(unsigned int nWidth, unsigned int nHeight, glm::vec3 color)
+shared_ptr<unsigned char> RGBImage::_getData(unsigned int nWidth, unsigned int nHeight, glm::vec3 color)
 {
 	nWidth = roundUpToNextPowerOfTwo(nWidth); // we want a pow2 texture
 	nHeight = roundUpToNextPowerOfTwo(nHeight);
@@ -12,7 +12,7 @@ boost::shared_array<unsigned char> RGBImage::_getData(unsigned int nWidth, unsig
 		pTexture[i + 1] = (unsigned char)255 * color[1];
 		pTexture[i + 2] = (unsigned char)255 * color[2];
 	}
-	return boost::shared_array<unsigned char>(pTexture);
+	return mem::shared_array<unsigned char>(pTexture);
 }
 
 RGBImage::RGBImage(unsigned int nWidth, unsigned int nHeight, glm::vec3 color)

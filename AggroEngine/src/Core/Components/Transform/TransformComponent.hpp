@@ -29,10 +29,10 @@ public:
 
 	glm::mat4 getTransform();
 
-	glm::vec3 *getTranslate();
+	glm::vec3 getTranslate();
 	glm::vec3 getRotateEuler();
 	glm::mat4 getRotate();
-	glm::vec3 *getScale();
+	glm::vec3 getScale();
 
 	void translate(const glm::vec3 &translate);
 	void rotate(float angle, const glm::vec3 &axis);

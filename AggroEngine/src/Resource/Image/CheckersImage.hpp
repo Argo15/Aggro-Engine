@@ -3,10 +3,10 @@
 #include "Image.hpp"
 #include "MathUtil.hpp"
 
-class CheckersImage : public Image
+class CheckersImage : public ImageUC
 {
 private:
-	boost::shared_array<unsigned char> getData(int nWidth, int nHeight);
+	shared_ptr<unsigned char> getData(int nWidth, int nHeight);
 
 public:
 	CheckersImage(int nWidth, int nHeight);

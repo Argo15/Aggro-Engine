@@ -19,6 +19,12 @@ Mesh::Mesh(int meshId, int nSizeOfVerticies, int nSizeOfIndicies, shared_ptr<flo
 {
 }
 
+Mesh::~Mesh()
+{
+	this->lock();
+	this->unlock();
+}
+
 bool Mesh::resolve()
 {
 	return true;
@@ -124,6 +130,7 @@ shared_ptr<int> Mesh::getIndicies()
 
 shared_ptr<MeshMetaData> Mesh::getMetaData()
 {
+	boost::lock_guard<Mesh> guard(*this);
 	if (!m_metaData)
 	{
 		m_metaData = shared_ptr<MeshMetaData>(new MeshMetaData(this));

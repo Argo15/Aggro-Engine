@@ -46,7 +46,7 @@ void DirectLightRenderComponent::render(shared_ptr<GraphicsContext> context, glm
 
 		shared_ptr<Material> mat(new Material(glm::vec3(1.0)));
 		mat->setTexture(context->getGraphics()->createTexture(
-			shared_ptr<Image>(new RGBImage(1, 1, glm::vec3(0.75, 0.75, 0.25)))));
+			shared_ptr<ImageUC>(new RGBImage(1, 1, glm::vec3(0.75, 0.75, 0.25)))));
 		m_lineRenderData->setMaterial(mat);
 
 		m_lineRenderData->setDrawMode(DrawMode::LINES);

@@ -9,5 +9,5 @@ private:
 public:
 	FreeImageImporter();
 
-	shared_ptr<Image> importImage(string sFilename);
+	shared_ptr<ImageUC> importImage(string sFilename);
 };

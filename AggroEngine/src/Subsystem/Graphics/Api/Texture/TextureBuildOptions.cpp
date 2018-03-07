@@ -1,6 +1,6 @@
 #include "TextureBuildOptions.hpp"
 
-TextureBuildOptions::TextureBuildOptions(shared_ptr<Image> pImage)
+TextureBuildOptions::TextureBuildOptions(shared_ptr<ImageUC> pImage)
 	: m_pImage(pImage)
 	, m_target(Target::TEXTURE_2D)
 	, m_magFilter(Filter::LINEAR)
@@ -13,7 +13,7 @@ TextureBuildOptions::TextureBuildOptions(shared_ptr<Image> pImage)
 {
 }
 
-shared_ptr<Image> TextureBuildOptions::getImage()
+shared_ptr<ImageUC> TextureBuildOptions::getImage()
 {
 	return m_pImage;
 }

@@ -27,7 +27,10 @@ void Renderer::renderScene(shared_ptr<Scene> scene, shared_ptr<RenderOptions> re
 	{
 		scene->getTransformHook()->render(m_graphicsContext->getGraphics(), scene); // Render transformer
 	}
-	_renderSceneNodeRecursive(scene->getRoot(), glm::mat4(1.0), scene->getCamera()->getViewMatrix(), renderOptions); // Render scene
+	// Render scene
+	_renderSceneNodeRecursive(scene->getRoot(), glm::mat4(1.0), scene->getCamera()->getViewMatrix(), renderOptions);
+	// Render mesh preview
+	_renderSceneNodeRecursive(scene->getPreviewNode(), glm::mat4(1.0), scene->getCamera()->getViewMatrix(), renderOptions);
 
 	// set scene options
 	renderOptions->setProjectionMatrix(scene->getCamera()->getProjMatrix());

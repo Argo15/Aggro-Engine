@@ -34,7 +34,7 @@ public:
 
 	// Textures
 	virtual shared_ptr<TextureHandle> createTexture() = 0;
-	virtual shared_ptr<TextureHandle> createTexture(shared_ptr<Image> image) = 0;
+	virtual shared_ptr<TextureHandle> createTexture(shared_ptr<ImageUC> image) = 0;
 	virtual shared_ptr<TextureHandle> createTexture(shared_ptr<TextureBuildOptions> pTexOptions) = 0;
 	virtual void deleteTexture(shared_ptr<TextureHandle> textureHandle) = 0;
 
@@ -50,9 +50,11 @@ public:
 	virtual void clearDepthAndColor() = 0;
 
 	// Downloaders
-	virtual shared_ptr<Image> getRenderImage(RenderOptions::RenderTarget target) = 0;
-	virtual shared_ptr<Image> getRenderImage(int x, int y, int width, int height, RenderOptions::RenderTarget target) = 0;
-	virtual boost::shared_array<unsigned short> getRenderImagePixel(int x, int y, RenderOptions::RenderTarget target) = 0;
+	virtual shared_ptr<ImageUS> getRenderImage(RenderOptions::RenderTarget target) = 0;
+	virtual shared_ptr<ImageUS> getRenderImage(int x, int y, int width, int height, RenderOptions::RenderTarget target) = 0;
+	virtual shared_ptr<ImageF> getRenderImageF(int x, int y, int width, int height, RenderOptions::RenderTarget target) = 0;
+	virtual shared_ptr<unsigned short> getRenderImagePixel(int x, int y, RenderOptions::RenderTarget target) = 0;
+	virtual shared_ptr<float> getRenderImagePixelF(int x, int y, RenderOptions::RenderTarget target) = 0;
 
 	virtual int getFrameBufferWidth() = 0;
 	virtual int getFrameBufferHeight() = 0;

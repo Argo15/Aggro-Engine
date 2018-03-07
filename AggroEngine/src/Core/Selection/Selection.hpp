@@ -9,7 +9,8 @@ class Selection
 {
 private:
 	unsigned int m_size;
-	shared_ptr<Image> m_selectedArea;
+	shared_ptr<ImageUS> m_selectedArea;
+	float m_depthVal;
 
 public:
 	Selection(unsigned int m_size = 19);
@@ -18,7 +19,8 @@ public:
 
 	unsigned int getSelectionAsId();
 	unsigned int getSelectionAsId(unsigned int x, unsigned int y);
-	boost::shared_array<unsigned short> getSelectionAsColor();
-	boost::shared_array<unsigned short> getSelectionAsColor(unsigned int x, unsigned int y);
+	shared_ptr<unsigned short> getSelectionAsColor();
+	shared_ptr<unsigned short> getSelectionAsColor(unsigned int x, unsigned int y);
 	unsigned int getSize();
+	float getDepthVal();
 };
