@@ -49,6 +49,7 @@ private:
 
 public:
 	MeshComponent(shared_ptr<JobManager> jobs);
+	~MeshComponent();
 
 	shared_ptr<Chunk> serialize(shared_ptr<Resources> resources);
 	static shared_ptr<MeshComponent> deserialize(Chunk * const byteChunk, shared_ptr<Resources> resources, shared_ptr<MeshCache> cache, shared_ptr<JobManager> jobs);

@@ -71,6 +71,12 @@ void ByteAccumulator::add(Chunk *chunk)
 	m_byteItems.push_back(ByteItem(*chunk->getNumBytes(), chunk->getByteData().get()));
 }
 
+void ByteAccumulator::add(shared_ptr<Chunk> chunk)
+{
+	m_chunkPtrs.push_back(chunk);
+	add(chunk.get());
+}
+
 void ByteAccumulator::add(string *str)
 {
 	ByteAccumulator bytes = ByteAccumulator();

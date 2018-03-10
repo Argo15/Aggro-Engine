@@ -1,5 +1,6 @@
 #include "TransformComponent.hpp"
 #include "Locks.hpp"
+#include "MatrixDecompose.hpp"
 
 TransformComponent::TransformComponent()
 	: m_rotateMat(glm::mat4(1.0))
@@ -130,4 +131,11 @@ void TransformComponent::removeChangeListener(void *ns)
 {
 	boost::lock_guard<TransformComponent> guard(*this);
 	m_changeListeners.remove(ns);
+}
+
+void TransformComponent::setLookAt(glm::vec3 &eye, glm::vec3 &center, glm::vec3 &up)
+{
+	MatrixDecompose mat(glm::lookAt(eye, center, up));
+	setTranslate(eye);
+	setRotate(mat.getOriginalRotate());
 }

@@ -98,8 +98,7 @@ void MainWindow::newFile()
 {
 	m_lastSaveFile = shared_ptr<string>();
 	shared_ptr<Scene> scene(new Scene(
-		shared_ptr<SceneNode>(new SceneNode(Scene::getNextId())),
-		shared_ptr<Camera>(new Camera())
+		shared_ptr<SceneNode>(new SceneNode(Scene::getNextId()))
 	));
 	m_context->setScene(scene);
 }

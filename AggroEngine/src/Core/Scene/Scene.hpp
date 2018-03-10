@@ -22,7 +22,7 @@ class Scene
 {
 private:
 	shared_ptr<SceneNode> m_root;
-	shared_ptr<Camera> m_camera;
+	shared_ptr<SceneNode> m_camera;
 	shared_ptr<TransformHook> m_transformHook;
 	boost::unordered_map<int, shared_ptr<SceneNode>> m_baseMaterials;
 	Listener<Scene*> m_updateListeners;
@@ -41,20 +41,22 @@ private:
 
 public:
 	Scene();
-	Scene(shared_ptr<SceneNode> root, shared_ptr<Camera> camera);
+	Scene(shared_ptr<SceneNode> root);
 
 	// Serialization
 	shared_ptr<Chunk> serialize(shared_ptr<Resources> resources);
 	static shared_ptr<Scene> deserialize(Chunk * const byteChunk, shared_ptr<EngineContext> context);
 
 	shared_ptr<SceneNode> getRoot();
+
+	shared_ptr<SceneNode> getCameraNode();
 	shared_ptr<Camera> getCamera();
 
 	void setTransformHook(shared_ptr<TransformHook> transformHook);
 	shared_ptr<TransformHook> getTransformHook();
 
 	void setRoot(shared_ptr<SceneNode> root);
-	void setCamera(shared_ptr<Camera> camera);
+	void setCamera(shared_ptr<SceneNode> camera);
 
 	void addUpdateListener(std::function<void(Scene*)> listener);
 	void update();

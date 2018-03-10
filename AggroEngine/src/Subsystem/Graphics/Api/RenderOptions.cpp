@@ -44,6 +44,15 @@ RenderOptions &RenderOptions::setFrustrum(shared_ptr<Frustrum> frustrum)
 	return *this;
 }
 
+RenderOptions &RenderOptions::setCamera(shared_ptr<Camera> camera)
+{
+	m_m4ProjectionMatrix = camera->getProjMatrix();
+	m_m4ViewMatrix = camera->getViewMatrix();
+	m_v4Viewport = camera->getViewport();
+	m_frustrum = camera->getFrustrum();
+	return *this;
+}
+
 const glm::mat4 &RenderOptions::getProjectionMatrix()
 {
 	return m_m4ProjectionMatrix;

@@ -7,12 +7,13 @@ FreeRoamCameraController::FreeRoamCameraController()
 {
 }
 
-void FreeRoamCameraController::handleKeyboardInput(shared_ptr<Camera> camera, KeyboardState &keyboard, float nSpeed)
+void FreeRoamCameraController::handleKeyboardInput(shared_ptr<SceneNode> cameraNode, KeyboardState &keyboard, float nSpeed)
 {
-	if (!camera)
+	if (!cameraNode || !cameraNode->getCameraComponent() || !cameraNode->getTransformComponent())
 	{
 		return;
 	}
+	shared_ptr<Camera> camera = cameraNode->getCamera();
 	boost::lock_guard<CameraController> guard(*this);
 
 	glm::vec3 v3Right(camera->getRightDir());
@@ -51,23 +52,24 @@ void FreeRoamCameraController::handleKeyboardInput(shared_ptr<Camera> camera, Ke
 
 	if (v3Translate != glm::vec3(0))
 	{
-		camera->translate(v3Translate);
+		cameraNode->getTransformComponent()->translate(v3Translate);
 	}
 }
 
-void FreeRoamCameraController::handleMouseInput(shared_ptr<Camera> camera, MouseState &mouse, float nSpeed)
+void FreeRoamCameraController::handleMouseInput(shared_ptr<SceneNode> cameraNode, MouseState &mouse, float nSpeed)
 {
-	if (!camera)
+	if (!cameraNode || !cameraNode->getCameraComponent() || !cameraNode->getTransformComponent())
 	{
 		return;
 	}
+	shared_ptr<Camera> camera = cameraNode->getCamera();
 	boost::lock_guard<CameraController> guard(*this);
 	if (mouse.getButtonPressed(Qt::RightButton))
 	{
 		if (mouse.getDeltaY() != 0 || mouse.getDeltaX() != 0)
 		{
-			camera->rotate(nSpeed*-1.2f*mouse.getDeltaY(), camera->getRightDir()); // Rotate up / down
-			camera->rotate(nSpeed*-2.0f*mouse.getDeltaX(), glm::vec3(0.f, 1.f, 0.f)); // Rotate left / right
+			cameraNode->getTransformComponent()->rotate(nSpeed*-1.2f*mouse.getDeltaY(), camera->getRightDir()); // Rotate up / down
+			cameraNode->getTransformComponent()->rotate(nSpeed*-2.0f*mouse.getDeltaX(), glm::vec3(0.f, 1.f, 0.f)); // Rotate left / right
 		}
 	}
 }

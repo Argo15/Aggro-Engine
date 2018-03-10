@@ -19,10 +19,8 @@ SpriteRenderComponent::SpriteRenderComponent()
 
 shared_ptr<Chunk> SpriteRenderComponent::serialize(shared_ptr<Resources> resources)
 {
-	ByteAccumulator bytes;
-	shared_ptr<Chunk> chunk(new Chunk(ChunkType::SPRITE_RENDER_COMPONENT, bytes.getNumBytes(), bytes.collect()));
-	bytes = ByteAccumulator();
-	bytes.add(chunk.get());
+	ByteAccumulator bytes = ByteAccumulator();
+	bytes.add(shared_ptr<Chunk>(new Chunk(ChunkType::SPRITE_RENDER_COMPONENT, bytes.getNumBytes(), bytes.collect())));
 	return shared_ptr<Chunk>(new Chunk(ChunkType::RENDER_COMPONENT, bytes.getNumBytes(), bytes.collect()));
 }
 

@@ -33,10 +33,7 @@ void Renderer::renderScene(shared_ptr<Scene> scene, shared_ptr<RenderOptions> re
 	_renderSceneNodeRecursive(scene->getPreviewNode(), glm::mat4(1.0), scene->getCamera()->getViewMatrix(), renderOptions);
 
 	// set scene options
-	renderOptions->setProjectionMatrix(scene->getCamera()->getProjMatrix());
-	renderOptions->setViewMatrix(scene->getCamera()->getViewMatrix());
-	renderOptions->setViewport(scene->getCamera()->getViewport());
-	renderOptions->setFrustrum(scene->getCamera()->getFrustrum());
+	renderOptions->setCamera(scene->getCamera());
 
 	// execute
 	m_graphicsContext->getGraphics()->executeRender(*(renderOptions.get()));

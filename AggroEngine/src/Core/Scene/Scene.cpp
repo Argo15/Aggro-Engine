@@ -7,9 +7,8 @@ Scene::Scene()
 {
 }
 
-Scene::Scene(shared_ptr<SceneNode> root, shared_ptr<Camera> camera)
+Scene::Scene(shared_ptr<SceneNode> root)
 	: m_root(root)
-	, m_camera(camera)
 	, m_transformHook()
 	, m_previewNode(new SceneNode(getNextId()))
 {
@@ -17,10 +16,8 @@ Scene::Scene(shared_ptr<SceneNode> root, shared_ptr<Camera> camera)
 
 Scene::Scene(Chunk * const byteChunk, shared_ptr<EngineContext> context)
 	: m_transformHook()
-	, m_camera(new Camera())
 	, m_previewNode(new SceneNode(getNextId()))
 {
-	m_camera = shared_ptr<Camera>(new Camera());
 	ByteParser parser = ByteParser(*byteChunk->getNumBytes(), byteChunk->getByteData().get());
 	boost::unordered_map<int, shared_ptr<SceneNode>> baseMaterials;
 	while (boost::optional<Chunk> nextChunk = parser.parseChunk())
@@ -40,9 +37,21 @@ Scene::Scene(Chunk * const byteChunk, shared_ptr<EngineContext> context)
 		{
 			m_root = SceneNode::deserialize(&*nextChunk, context, baseMaterials);
 		}
-		else if (*nextChunk->getType() == ChunkType::CAMERA)
+		else if (*nextChunk->getType() == ChunkType::ROOT_NODE)
 		{
-			m_camera = Camera::deserialize(nextChunk.get_ptr());
+			ByteParser nodeParser(*nextChunk);
+			if (boost::optional<Chunk> nodeChunk = nodeParser.parseChunk())
+			{
+				m_root = SceneNode::deserialize(&*nodeChunk, context, baseMaterials);
+			}
+		}
+		else if (*nextChunk->getType() == ChunkType::CAMERA_NODE)
+		{
+			ByteParser nodeParser(*nextChunk);
+			if (boost::optional<Chunk> nodeChunk = nodeParser.parseChunk())
+			{
+				m_camera = SceneNode::deserialize(&*nodeChunk, context, baseMaterials);
+			}
 		}
 	}
 }
@@ -52,23 +61,26 @@ shared_ptr<Chunk> Scene::serialize(shared_ptr<Resources> resources)
 	ByteAccumulator bytes;
 
 	// Base Materials
-	shared_ptr<Chunk> matChunk;
-	vector<shared_ptr<Chunk>> matChunks;
 	for (int matId : m_baseMaterials | boost::adaptors::map_keys)
 	{
 		ByteAccumulator matBytes;
 		matBytes.add(&matId);
-		shared_ptr<Chunk> mateNodeChunk = m_baseMaterials[matId]->serialize(resources);
-		matBytes.add(mateNodeChunk.get());
-		matChunk = shared_ptr<Chunk>(new Chunk(ChunkType::BASE_MATERIAL, matBytes.getNumBytes(), matBytes.collect()));
-		matChunks.push_back(matChunk);
-		bytes.add(matChunk.get());
+		matBytes.add(m_baseMaterials[matId]->serialize(resources));
+		bytes.add(shared_ptr<Chunk>(new Chunk(ChunkType::BASE_MATERIAL, matBytes.getNumBytes(), matBytes.collect())));
 	}
 
-	shared_ptr<Chunk> rootChunk = m_root->serialize(resources);
-	shared_ptr<Chunk> cameraChunk = m_camera->serialize();
-	bytes.add(rootChunk.get());
-	bytes.add(cameraChunk.get());
+	// Root node
+	ByteAccumulator rootBytes;
+	rootBytes.add(m_root->serialize(resources));
+	bytes.add(shared_ptr<Chunk>(new Chunk(ChunkType::ROOT_NODE, rootBytes.getNumBytes(), rootBytes.collect())));
+
+	// Camera Node
+	if (m_camera)
+	{
+		ByteAccumulator cameraBytes;
+		cameraBytes.add(m_camera->serialize(resources));
+		bytes.add(shared_ptr<Chunk>(new Chunk(ChunkType::CAMERA_NODE, cameraBytes.getNumBytes(), cameraBytes.collect())));
+	}
 
 	return shared_ptr<Chunk>(new Chunk(ChunkType::SCENE, bytes.getNumBytes(), bytes.collect()));
 }
@@ -88,9 +100,34 @@ shared_ptr<SceneNode> Scene::getRoot()
 	return m_root;
 }
 
+shared_ptr<SceneNode> Scene::getCameraNode()
+{
+	shared_ptr<SceneNode> node = m_camera;
+	if (!m_camera)
+	{
+		m_camera = shared_ptr<SceneNode>(new SceneNode(getNextId()));
+	}
+	shared_ptr<CameraComponent> camera = m_camera->getCameraComponent();
+	if (!camera)
+	{
+		camera = shared_ptr<CameraComponent>(new CameraComponent());
+		m_camera->setCameraComponent(camera);
+	}
+	if (!m_camera->getTransformComponent())
+	{
+		shared_ptr<TransformComponent> transform(new TransformComponent());
+		transform->translate(glm::vec3(4.f, 4.f, 4.f));
+		transform->rotate(-0.61f, glm::vec3(1, 0, 0));
+		transform->rotate(0.79f, glm::vec3(0, 1, 0));
+		m_camera->setTransformComponent(transform);
+		update();
+	}
+	return m_camera;
+}
+
 shared_ptr<Camera> Scene::getCamera()
 {
-	return m_camera;
+	return getCameraNode()->getCamera();
 }
 
 void Scene::setTransformHook(shared_ptr<TransformHook> transformHook)
@@ -108,9 +145,10 @@ void Scene::setRoot(shared_ptr<SceneNode> root)
 	m_root = root;
 }
 
-void Scene::setCamera(shared_ptr<Camera> camera)
+void Scene::setCamera(shared_ptr<SceneNode> camera)
 {
 	m_camera = camera;
+	update();
 }
 
 void Scene::addUpdateListener(std::function<void(Scene*)> listener)

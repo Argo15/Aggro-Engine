@@ -8,6 +8,12 @@ JobManager::JobManager()
 	m_jobQueue = vector<queue<shared_ptr<Job>>>(3, queue<shared_ptr<Job>>());
 }
 
+JobManager::~JobManager()
+{
+	lock();
+	unlock();
+}
+
 
 void JobManager::run(Job *job)
 {

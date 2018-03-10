@@ -13,7 +13,7 @@ private:
 	shared_ptr<EngineContext> m_engineContext;
 	shared_ptr<GraphicsContext> m_graphicsContext;
 	shared_ptr<Mesh> m_mesh;
-	shared_ptr<Camera> m_camera;
+	shared_ptr<SceneNode> m_camera;
 	shared_ptr<RenderData> m_renderData;
 
 	bool m_initialized;

@@ -1,6 +1,5 @@
 #pragma once
 
-#include "TransformComponent.hpp"
 #include "Matrix.hpp"
 #include "Frustrum.hpp"
 #include <memory>
@@ -15,46 +14,33 @@ using namespace std;
 class Camera
 {
 private:
-	glm::vec3 m_v3EyePos;
-	glm::vec3 m_v3LookDir;
-	glm::vec3 m_v3UpDir;
-	glm::vec3 m_v3RightDir;
 	glm::mat4 m_m4ViewMatrix;
 	glm::mat4 m_m4ProjMatrix;
 	glm::vec4 m_v4Viewport;
-	float m_fov;
-	float m_aspectRatio;
-	float m_zNear;
-	float m_zFar;
-
-	shared_ptr<TransformComponent> m_transformComponent;
-
-	void updateViewMatrix();
-
-	Camera(Chunk * const byteChunk);
+	glm::vec3 m_eyePos;
+	glm::vec3 m_lookDir;
+	glm::vec3 m_upDir;
+	glm::vec3 m_rightDir;
+	shared_ptr<Frustrum> m_frustrum;
 
 public:
 	Camera();
-
-	// Serialization
-	shared_ptr<Chunk> serialize();
-	static shared_ptr<Camera> deserialize(Chunk * const byteChunk);
-
-	void translate(const glm::vec3 &translate);
-	void rotate(float angle, const glm::vec3 &axis);
-	void scale(const glm::vec3 &scale);
 	
-	void setProjection(float fov, float aspectRatio, float zNear, float zFar);
-	void setLookAt(glm::vec3 &eye, glm::vec3 &center, glm::vec3 &up);
-	void setViewport(glm::vec4 &viewport);
+	Camera *setViewMatrix(glm::mat4 &viewMatrix);
+	Camera *setProjMatrix(glm::mat4 &projMatrix);
+	Camera *setViewport(glm::vec4 &viewport);
+	Camera *setEyePos(glm::vec3 &eyePos);
+	Camera *setLookDir(glm::vec3 &lookDir);
+	Camera *setUpDir(glm::vec3 &upDir);
+	Camera *setRightDir(glm::vec3 &rightDir);
+	Camera *setFrustrum(shared_ptr<Frustrum> frustrum);
 
-	glm::mat4 &getViewMatrix();
-	glm::mat4 &getProjMatrix();
-	glm::vec3 &getEyePos();
-	glm::vec3 &getLookDir();
-	glm::vec3 &getUpDir();
-	glm::vec3 &getRightDir();
-	glm::vec4 &getViewport();
-
+	glm::mat4 getViewMatrix();
+	glm::mat4 getProjMatrix();
+	glm::vec4 getViewport();
+	glm::vec3 getEyePos();
+	glm::vec3 getLookDir();
+	glm::vec3 getUpDir();
+	glm::vec3 getRightDir();
 	shared_ptr<Frustrum> getFrustrum();
 };

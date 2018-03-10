@@ -18,6 +18,12 @@ MeshComponent::MeshComponent(shared_ptr<JobManager> jobs)
 {
 }
 
+MeshComponent::~MeshComponent()
+{
+	lock();
+	unlock();
+}
+
 MeshComponent::MeshComponent(Chunk * const byteChunk, 
 							 shared_ptr<Resources> resources, 
 							 shared_ptr<MeshCache> cache, 
@@ -29,15 +35,17 @@ MeshComponent::MeshComponent(Chunk * const byteChunk,
 	ByteParser bytes = ByteParser(*byteChunk);
 	string path = bytes.parseString().get_value_or("");
 	m_genNormalLines = bytes.parseBool().get_value_or(false);
+	m_axisAlign = (AxisAlign)bytes.parseInt().get_value_or(0);
+
+
 	if (path != "")
 	{
 		int id = resources->getIdForPath(path);
-		cache->getMesh(id)->onReady([this](auto newMesh) {
+		cache->getMesh(id)->onReady([this, jobs](auto newMesh) {
 			m_primaryMesh = newMesh;
 			generateMeshes();
 		});
 	}
-	m_axisAlign = (AxisAlign) bytes.parseInt().get_value_or(0);
 }
 
 shared_ptr<Chunk> MeshComponent::serialize(shared_ptr<Resources> resources)
@@ -78,6 +86,7 @@ void MeshComponent::removeChangeListener(void *ns)
 
 void MeshComponent::generateMeshes()
 {
+	boost::lock_guard<MeshComponent> guard(*this);
 	if (m_primaryMesh)
 	{
 		m_modifiedPrimaryMesh = m_primaryMesh;

@@ -3,6 +3,7 @@
 #include "Matrix.hpp"
 #include "DirectLight.hpp"
 #include "Frustrum.hpp"
+#include "Camera.hpp"
 #include <memory>
 using namespace std;
 
@@ -40,6 +41,7 @@ public:
 	RenderOptions &setViewMatrix(glm::mat4 &m4View);
 	RenderOptions &setViewport(glm::vec4 &m4Viewport);
 	RenderOptions &setFrustrum(shared_ptr<Frustrum> frustrum);
+	RenderOptions &setCamera(shared_ptr<Camera> camera);
 
 	const glm::mat4 &getProjectionMatrix();
 	const glm::mat4 &getViewMatrix();

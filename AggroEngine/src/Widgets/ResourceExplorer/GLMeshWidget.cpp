@@ -6,10 +6,14 @@
 GLMeshWidget::GLMeshWidget(QString &path, shared_ptr<EngineContext> context, QWidget *parent)
 	: QGLWidget()
 	, m_engineContext(context)
-	, m_camera(new Camera())
+	, m_camera(new SceneNode(-1))
 	, m_initialized(false)
 {
 	m_graphicsContext = shared_ptr<GraphicsContext>(new GraphicsContext(context->getJobManager(), context->getResources()));
+
+	shared_ptr<CameraComponent> camera = m_camera->getCameraComponent();
+	m_camera->setCameraComponent(shared_ptr<CameraComponent>(new CameraComponent()));
+	m_camera->setTransformComponent(shared_ptr<TransformComponent>(new TransformComponent()));
 
 	QString relativePath = path.mid(QDir::current().path().length() + 1);
 	int meshId = context->getResources()->getIdForPath(relativePath.toStdString());
@@ -18,7 +22,7 @@ GLMeshWidget::GLMeshWidget(QString &path, shared_ptr<EngineContext> context, QWi
 		auto metaData = m_mesh->getMetaData();
 		float scale = 0.8 * sqrt(pow(metaData->getXLength(), 2) + pow(metaData->getYLength(), 2) + pow(metaData->getZLength(), 2));
 		glm::vec3 offset(0, 0.3 * scale, scale);
-		m_camera->setLookAt(metaData->getCenter() + offset, metaData->getCenter(), glm::vec3(0, 1, 0));
+		m_camera->getTransformComponent()->setLookAt(metaData->getCenter() + offset, metaData->getCenter(), glm::vec3(0, 1, 0));
 		if (m_initialized)
 		{
 			this->update();
@@ -47,8 +51,8 @@ void GLMeshWidget::resizeGL(int width, int height)
 {
 	if (height > 0)
 	{
-		m_camera->setViewport(glm::vec4(0, 0, width, height));
-		m_camera->setProjection(45.f, (float)width / (float)height, 0.01f, 100.f);
+		m_camera->getCameraComponent()->setViewport(glm::vec4(0, 0, width, height));
+		m_camera->getCameraComponent()->setProjection(45.f, (float)width / (float)height, 0.01f, 100.f);
 	}
 }
 
@@ -57,10 +61,7 @@ void GLMeshWidget::paintGL()
 	m_graphicsContext->getGraphics()->clearDepthAndColor();
 
 	shared_ptr<RenderOptions> renderOptions(new RenderOptions());
-	renderOptions->setProjectionMatrix(m_camera->getProjMatrix());
-	renderOptions->setViewMatrix(m_camera->getViewMatrix());
-	renderOptions->setViewport(m_camera->getViewport());
-	renderOptions->setFrustrum(m_camera->getFrustrum());
+	renderOptions->setCamera(m_camera->getCamera());
 	renderOptions->setRenderTarget(RenderOptions::RenderTarget::SHADED);
 
 	shared_ptr<DirectLight> light(new DirectLight(glm::vec3(-0.5f, -1.f, -1.5f), glm::vec3(1), 50));

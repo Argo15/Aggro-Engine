@@ -29,6 +29,7 @@ class ByteAccumulator
 private:
 	int m_numBytes;
 	vector<ByteItem> m_byteItems;
+	vector<shared_ptr<Chunk>> m_chunkPtrs; 
 
 public:
 	ByteAccumulator();
@@ -43,6 +44,7 @@ public:
 	void add(const double *value);
 	void add(const int numBytes, const void *pBytes);
 	void add(Chunk *chunk);
+	void add(shared_ptr<Chunk> chunk);
 	void add(string *str);
 	void add(glm::mat4 *mat);
 	void add(glm::vec3 *vec);

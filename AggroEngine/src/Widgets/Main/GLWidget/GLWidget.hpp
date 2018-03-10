@@ -34,7 +34,7 @@ private:
 	int m_maxFps;
 	int m_millisPerFrame;
 
-	shared_ptr<Job> _setupCameraUpdateJob(shared_ptr<Camera> camera);
+	shared_ptr<Job> _setupCameraUpdateJob(shared_ptr<SceneNode> camera);
 	void _dropTexture(QDropEvent *event);
 	void _dropMesh(QDropEvent *event);
 	shared_ptr<SceneNode> _getPreviewNode();

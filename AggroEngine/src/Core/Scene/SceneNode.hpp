@@ -10,6 +10,7 @@
 #include "Listener.hpp"
 #include "Chunk.hpp"
 #include "EngineContext.hpp"
+#include "CameraComponent.hpp"
 using namespace std;
 
 class RenderComponent;
@@ -38,6 +39,7 @@ private:
 	shared_ptr<DirectLightComponent> m_directLightComponent;
 	shared_ptr<MaterialComponent> m_materialComponent;
 	shared_ptr<MeshComponent> m_meshComponent;
+	shared_ptr<CameraComponent> m_cameraComponent;
 
 	Listener<SceneNode *> m_changeListeners;
 	Listener<SceneNode *> m_deletedListeners;
@@ -102,4 +104,9 @@ public:
 	bool hasMeshComponent();
 	void setMeshComponent(shared_ptr<MeshComponent> meshComponent);
 	shared_ptr<MeshComponent> getMeshComponent();
+
+	bool hasCameraComponent();
+	void setCameraComponent(shared_ptr<CameraComponent> cameraComponent);
+	shared_ptr<CameraComponent> getCameraComponent();
+	shared_ptr<Camera> getCamera();
 };

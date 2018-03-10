@@ -45,12 +45,12 @@ void GLWidget::initializeGL()
 	shared_ptr<Scene> scene = m_engineContext->getScene();
 	scene->update(); // notify listners
 
-	m_cameraUpdateJob = _setupCameraUpdateJob(scene->getCamera());
+	m_cameraUpdateJob = _setupCameraUpdateJob(scene->getCameraNode());
 
 	m_engineContext->addNewSceneListener([this](auto scene) { 
 		this->resizeGL(width(), height());
 		m_cameraUpdateJob->stop();
-		m_cameraUpdateJob = _setupCameraUpdateJob(scene->getCamera());
+		m_cameraUpdateJob = _setupCameraUpdateJob(scene->getCameraNode());
 	});
 
 	setAutoBufferSwap(false);
@@ -58,7 +58,7 @@ void GLWidget::initializeGL()
 
 void GLWidget::resizeGL(int width, int height)
 {
-	shared_ptr<Camera> camera = m_engineContext->getScene()->getCamera();
+	shared_ptr<CameraComponent> camera = m_engineContext->getScene()->getCameraNode()->getCameraComponent();
 	camera->setViewport(glm::vec4(0, 0, width, height));
 	camera->setProjection(45.f, (float)width / (float)height, 0.01f, 100.f);
 }
@@ -132,7 +132,7 @@ void GLWidget::wheelEvent(QWheelEvent *event)
 	m_mouse->setScroll(m_mouse->getScroll() + event->delta());
 }
 
-shared_ptr<Job> GLWidget::_setupCameraUpdateJob(shared_ptr<Camera> camera)
+shared_ptr<Job> GLWidget::_setupCameraUpdateJob(shared_ptr<SceneNode> camera)
 {
 	shared_ptr<Job> newJob = shared_ptr<Job>(new CameraUpdateJob(
 		camera,

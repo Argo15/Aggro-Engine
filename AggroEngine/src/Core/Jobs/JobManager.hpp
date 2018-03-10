@@ -20,6 +20,7 @@ private:
 
 public:
 	JobManager();
+	~JobManager();
 
 	void run(Job *job);
 	void add(shared_ptr<Job> job, JobPriority priority = MEDIUM);

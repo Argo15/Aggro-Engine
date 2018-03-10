@@ -68,57 +68,47 @@ SceneNode::SceneNode(Chunk * const byteChunk, shared_ptr<EngineContext> context,
 		{
 			m_meshComponent = MeshComponent::deserialize(nextChunk.get_ptr(), context->getResources(), context->getMeshCache(), context->getJobManager());
 		}
+		else if (*nextChunk->getType() == ChunkType::CAMERA_COMPONENT)
+		{
+			m_cameraComponent = CameraComponent::deserialize(nextChunk.get_ptr());
+		}
 	}
 }
 
 shared_ptr<Chunk> SceneNode::serialize(shared_ptr<Resources> resources)
 {
-	// To keep shared_ptr in scope
-	shared_ptr<Chunk> chunk;
-	vector<shared_ptr<Chunk>> chunks; 
-
 	ByteAccumulator bytes;
 
 	ByteAccumulator primitiveBytes;
 	primitiveBytes.add(&m_name);
 	primitiveBytes.add(&m_isBaseMaterialNode);
-	bytes.add(new Chunk(ChunkType::PRIMITIVES, primitiveBytes.getNumBytes(), primitiveBytes.collect()));
+	bytes.add(shared_ptr<Chunk>(new Chunk(ChunkType::PRIMITIVES, primitiveBytes.getNumBytes(), primitiveBytes.collect())));
 
 	for (auto & child : *m_children)
 	{
-		chunk = child->serialize(resources);
-		chunks.push_back(chunk);
-		bytes.add(chunk.get());
+		bytes.add(child->serialize(resources));
 	}
 
 	if (m_transformComponent)
 	{
-		chunk = m_transformComponent->serialize();
-		chunks.push_back(chunk);
-		bytes.add(chunk.get());
+		bytes.add(m_transformComponent->serialize());
 	}
 
 	if (m_renderComponent)
 	{
-		chunk = m_renderComponent->serialize(resources);
-		chunks.push_back(chunk);
-		bytes.add(chunk.get());
+		bytes.add(m_renderComponent->serialize(resources));
 	}
 
 	if (m_directLightComponent)
 	{
-		chunk = m_directLightComponent->serialize();
-		chunks.push_back(chunk);
-		bytes.add(chunk.get());
+		bytes.add(m_directLightComponent->serialize());
 	}
 
 	if (m_materialComponent)
 	{
 		if (this == m_materialComponent->getOwner() || m_materialComponent->getOwner() == nullptr)
 		{
-			chunk = m_materialComponent->serialize(resources);
-			chunks.push_back(chunk);
-			bytes.add(chunk.get());
+			bytes.add(m_materialComponent->serialize(resources));
 		}
 		else
 		{
@@ -131,9 +121,12 @@ shared_ptr<Chunk> SceneNode::serialize(shared_ptr<Resources> resources)
 
 	if (m_meshComponent)
 	{
-		chunk = m_meshComponent->serialize(resources);
-		chunks.push_back(chunk);
-		bytes.add(chunk.get());
+		bytes.add(m_meshComponent->serialize(resources));
+	}
+
+	if (m_cameraComponent)
+	{
+		bytes.add(m_cameraComponent->serialize());
 	}
 
 	return shared_ptr<Chunk>(new Chunk(ChunkType::SCENE_NODE, bytes.getNumBytes(), bytes.collect()));
@@ -406,4 +399,29 @@ void SceneNode::setMeshComponent(shared_ptr<MeshComponent> meshComponent)
 shared_ptr<MeshComponent> SceneNode::getMeshComponent()
 {
 	return m_meshComponent;
+}
+
+bool SceneNode::hasCameraComponent()
+{
+	return m_cameraComponent != nullptr;
+}
+
+void SceneNode::setCameraComponent(shared_ptr<CameraComponent> cameraComponent)
+{
+	m_cameraComponent = cameraComponent;
+	notifyChanged();
+}
+
+shared_ptr<CameraComponent> SceneNode::getCameraComponent()
+{
+	return m_cameraComponent;
+}
+
+shared_ptr<Camera> SceneNode::getCamera()
+{
+	if (m_cameraComponent && m_transformComponent)
+	{
+		return m_cameraComponent->getCamera(m_transformComponent);
+	}
+	return shared_ptr<Camera>();
 }

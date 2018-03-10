@@ -45,4 +45,6 @@ public:
 
 	void addChangeListener(void *ns, std::function<void(TransformComponent *)> listener);
 	void removeChangeListener(void *ns);
+
+	void setLookAt(glm::vec3 &eye, glm::vec3 &center, glm::vec3 &up);
 };
