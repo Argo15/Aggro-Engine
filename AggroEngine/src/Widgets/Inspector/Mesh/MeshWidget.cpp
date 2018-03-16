@@ -3,13 +3,13 @@
 #include <QDir>
 #include <QFileDialog>
 
-MeshWidget::MeshWidget(QWidget *parent, shared_ptr<Resources> resources, shared_ptr<MeshCache> meshCache)
+MeshWidget::MeshWidget(QWidget *parent, shared_ptr<EngineContext> context)
 	: m_meshEdit(new QLineEdit(""))
 	, m_triangleCountLbl(new QLabel(""))
 	, m_alignCombo(new QComboBox())
 	, m_normalLineChk(new QCheckBox("enabled"))
-	, m_resources(resources)
-	, m_meshCache(meshCache)
+	, m_resources(context->getResources())
+	, m_meshCache(context->getMeshCache())
 {
 	QHBoxLayout *mainLayout = new QHBoxLayout;
 	QVBoxLayout *leftLayout = new QVBoxLayout;
@@ -69,7 +69,7 @@ MeshWidget::MeshWidget(QWidget *parent, shared_ptr<Resources> resources, shared_
 void MeshWidget::_refresh(SceneNode *newNode)
 {
 	boost::lock_guard<MeshWidget> guard(*this);
-	if (!newNode->hasMeshComponent() || newNode->hasDirectLightComponent())
+	if (!newNode->hasMeshComponent() || newNode->hasDirectLightComponent() || newNode->hasCameraComponent())
 	{
 		this->hide();
 		return;

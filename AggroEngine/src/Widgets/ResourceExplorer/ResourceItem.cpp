@@ -39,7 +39,8 @@ ResourceItem::ResourceItem(GLResourceWidget *parent, QModelIndex idx, QWidget *i
 				QImage qimage(image->getData().get(), image->getWidth(), image->getHeight(), QImage::Format_RGBA8888);
 				if (!qimage.isNull())
 				{
-					qimage = qimage.scaled(QSize(100, 100));
+					qimage = qimage.scaled(QSize(100, 100), Qt::KeepAspectRatio);
+					qimage = qimage.mirrored();
 					pixmap = QPixmap::fromImage(qimage);
 					loaded = true;
 				}

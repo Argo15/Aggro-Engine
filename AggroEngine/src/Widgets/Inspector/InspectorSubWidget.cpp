@@ -25,3 +25,8 @@ void InspectorSubWidget::refresh(shared_ptr<SceneNode> newNode)
 		hide();
 	}
 }
+
+shared_ptr<SceneNode> InspectorSubWidget::getCurrentNode()
+{
+	return m_currentNode;
+}

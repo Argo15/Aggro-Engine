@@ -21,6 +21,8 @@ private:
 	QWidget *m_widget;
 	QVBoxLayout *m_layout;
 
+	void _addListeners(Scene *scene, shared_ptr<InspectorSubWidget> transformWidget);
+
 public:
 	InspectorWidget(shared_ptr<EngineContext> context, QWidget *parent = nullptr);
 

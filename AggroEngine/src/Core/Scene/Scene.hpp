@@ -27,6 +27,7 @@ private:
 	boost::unordered_map<int, shared_ptr<SceneNode>> m_baseMaterials;
 	Listener<Scene*> m_updateListeners;
 	Listener<shared_ptr<SceneNode>> m_selectionChangeListeners;
+	Listener<shared_ptr<SceneNode>> m_cameraChangeListeners;
 
 	shared_ptr<SceneNode> m_selectedNode;
 	shared_ptr<SceneNode> m_previewNode;
@@ -72,6 +73,7 @@ public:
 	shared_ptr<SceneNode> getNodeById(unsigned int id);
 
 	void addSelectionChangeListener(std::function<void(shared_ptr<SceneNode>)> listener);
+	void addCameraChangeListener(std::function<void(shared_ptr<SceneNode>)> listener);
 
 	void deleteNode(shared_ptr<SceneNode> node);
 	void deleteSelectedNode();

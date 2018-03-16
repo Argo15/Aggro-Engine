@@ -1,6 +1,6 @@
 #include "TransformWidget.hpp"
 
-TransformWidget::TransformWidget(QWidget *parent)
+TransformWidget::TransformWidget(QWidget *parent, shared_ptr<EngineContext> context)
 	: InspectorSubWidget(parent)
 	, m_transXEdit(shared_ptr<QLineEdit>(new QLineEdit("0")))
 	, m_transYEdit(shared_ptr<QLineEdit>(new QLineEdit("0")))
@@ -14,6 +14,7 @@ TransformWidget::TransformWidget(QWidget *parent)
 	, m_scaleZEdit(shared_ptr<QLineEdit>(new QLineEdit("1")))
 	, m_lastTranslate(glm::vec3(0))
 	, m_lastScale(glm::vec3(1.0f))
+	, m_context(context)
 {
 	QHBoxLayout *mainLayout = new QHBoxLayout;
 		QVBoxLayout *leftLayout = new QVBoxLayout;
@@ -135,7 +136,8 @@ void TransformWidget::_onTransformChange(QString newValue)
 void TransformWidget::_refresh(SceneNode *newNode)
 {
 	boost::lock_guard<TransformWidget> guard(*this);
-	if (!newNode->hasTransformComponent())
+	if (!newNode->hasTransformComponent() || 
+		(newNode->hasCameraComponent() && newNode->getCameraComponent()->isActive()))
 	{
 		this->hide();
 		return;
@@ -161,6 +163,7 @@ void TransformWidget::_refresh(SceneNode *newNode)
 
 void TransformWidget::_refresh(TransformComponent *transform)
 {
+	boost::lock_guard<TransformWidget> guard(*this);
 	if (m_currentNode)
 	{
 		glm::vec3 translate = transform->getTranslate();

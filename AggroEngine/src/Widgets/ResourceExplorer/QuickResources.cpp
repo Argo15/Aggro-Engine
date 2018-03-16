@@ -10,8 +10,8 @@ QuickResources::QuickResources(GLResourceWidget *resourceWidget)
 		addItem(QString::fromStdString(path));
 	}
 
-	connect(this, &QuickResources::currentTextChanged, [resourceWidget](auto selected) {
-		QString dir = QDir::current().path() + "/Resources/" + selected;
+	connect(this, &QuickResources::itemDoubleClicked, [resourceWidget](auto item) {
+		QString dir = QDir::current().path() + "/Resources/" + item->text();
 		resourceWidget->getDirModel().setRootPath(dir);
 	});
 }

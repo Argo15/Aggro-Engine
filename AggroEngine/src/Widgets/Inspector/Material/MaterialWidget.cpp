@@ -2,31 +2,31 @@
 #include <QDir>
 #include <QFileDialog>
 
-MaterialWidget::MaterialWidget(QWidget *parent, shared_ptr<Resources> resources)
+MaterialWidget::MaterialWidget(QWidget *parent, shared_ptr<EngineContext> context)
 	: InspectorSubWidget(parent)
 	, m_colorREdit(new QLineEdit("0"))
 	, m_colorGEdit(new QLineEdit("0"))
 	, m_colorBEdit(new QLineEdit("0"))
-	, m_textureEdit(new TextureLineEdit(resources, [this](auto material, int id) { material->setTextureImageId(id); }))
+	, m_textureEdit(new TextureLineEdit(context->getResources(), [this](auto material, int id) { material->setTextureImageId(id); }))
 	, m_texScaleUEdit(new QLineEdit(""))
 	, m_texScaleVEdit(new QLineEdit(""))
 	, m_texOffsetUEdit(new QLineEdit(""))
 	, m_texOffsetVEdit(new QLineEdit(""))
 	, m_texRotateSlider(new QSlider(Qt::Horizontal))
-	, m_normalEdit(new TextureLineEdit(resources, [this](auto material, int id) { material->setNormalImageId(id); }))
-	, m_alphaEdit(new TextureLineEdit(resources, [this](auto material, int id) { material->setAlphaImageId(id); }))
+	, m_normalEdit(new TextureLineEdit(context->getResources(), [this](auto material, int id) { material->setNormalImageId(id); }))
+	, m_alphaEdit(new TextureLineEdit(context->getResources(), [this](auto material, int id) { material->setAlphaImageId(id); }))
 	, m_specIntensitySlider(new QSlider(Qt::Horizontal))
 	, m_specShineSlider(new QSlider(Qt::Horizontal))
-	, m_specMapEdit(new TextureLineEdit(resources, [this](auto material, int id) { material->setSpecularImageId(id); }))
+	, m_specMapEdit(new TextureLineEdit(context->getResources(), [this](auto material, int id) { material->setSpecularImageId(id); }))
 	, m_emissionREdit(new QLineEdit("0"))
 	, m_emissionGEdit(new QLineEdit("0"))
 	, m_emissionBEdit(new QLineEdit("0"))
-	, m_emissionMapEdit(new TextureLineEdit(resources, [this](auto material, int id) { 
+	, m_emissionMapEdit(new TextureLineEdit(context->getResources(), [this](auto material, int id) {
 		material->setEmissionImageId(id);
 		material->setEmission(glm::vec3(1.0));
 		_refresh(material);
 	}))
-	, m_resources(resources)
+	, m_resources(context->getResources())
 {
 	QHBoxLayout *mainLayout = new QHBoxLayout;
 	QVBoxLayout *leftLayout = new QVBoxLayout;
@@ -349,7 +349,8 @@ void MaterialWidget::_refresh(SceneNode *newNode)
 	boost::lock_guard<MaterialWidget> guard(*this);
 	if (!newNode->hasMaterialComponent() || 
 		newNode->hasDirectLightComponent() || 
-		newNode->getMaterialComponent()->getOwner() != newNode)
+		newNode->getMaterialComponent()->getOwner() != newNode ||
+		newNode->hasCameraComponent())
 	{
 		this->hide();
 		return;

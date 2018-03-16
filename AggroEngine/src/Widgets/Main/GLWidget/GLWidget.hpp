@@ -39,6 +39,9 @@ private:
 	void _dropMesh(QDropEvent *event);
 	shared_ptr<SceneNode> _getPreviewNode();
 
+	void _refreshScene(Scene *scene);
+	void _refreshCamera(shared_ptr<SceneNode> camera);
+
 public:
 	GLWidget(shared_ptr<EngineContext> context, QWidget *parent = 0);
 

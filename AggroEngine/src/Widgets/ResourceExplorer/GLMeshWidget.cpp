@@ -12,7 +12,7 @@ GLMeshWidget::GLMeshWidget(QString &path, shared_ptr<EngineContext> context, QWi
 	m_graphicsContext = shared_ptr<GraphicsContext>(new GraphicsContext(context->getJobManager(), context->getResources()));
 
 	shared_ptr<CameraComponent> camera = m_camera->getCameraComponent();
-	m_camera->setCameraComponent(shared_ptr<CameraComponent>(new CameraComponent()));
+	m_camera->setCameraComponent(shared_ptr<CameraComponent>(new CameraComponent(context->getScene().get())));
 	m_camera->setTransformComponent(shared_ptr<TransformComponent>(new TransformComponent()));
 
 	QString relativePath = path.mid(QDir::current().path().length() + 1);

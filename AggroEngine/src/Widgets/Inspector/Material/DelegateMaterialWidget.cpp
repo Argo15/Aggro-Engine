@@ -1,6 +1,6 @@
 #include "DelegateMaterialWidget.hpp"
 
-DelegateMaterialWidget::DelegateMaterialWidget(InspectorWidget *parent, shared_ptr<Scene> scene)
+DelegateMaterialWidget::DelegateMaterialWidget(InspectorWidget *parent, shared_ptr<EngineContext> context)
 	: InspectorSubWidget(parent)
 	, m_editBaseBtn(new QPushButton("Edit Base Material"))
 	, m_copyBaseBtn(new QPushButton("Copy Base Material"))
@@ -17,11 +17,11 @@ DelegateMaterialWidget::DelegateMaterialWidget(InspectorWidget *parent, shared_p
 	m_layout->addWidget(lbl);
 	m_layout->addLayout(mainLayout);
 
-	connect(m_editBaseBtn.get(), &QPushButton::pressed, this, [this, parent, scene]() {
+	connect(m_editBaseBtn.get(), &QPushButton::pressed, this, [this, parent, context]() {
 		if (m_currentNode)
 		{
-			scene->selectNodeById(m_currentNode->getMaterialComponent()->getOwner()->getId());
-			parent->refresh(scene->getSelectedNode());
+			context->getScene()->selectNodeById(m_currentNode->getMaterialComponent()->getOwner()->getId());
+			parent->refresh(context->getScene()->getSelectedNode());
 		}
 	});
 

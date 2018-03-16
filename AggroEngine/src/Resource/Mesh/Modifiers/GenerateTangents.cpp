@@ -12,7 +12,7 @@ GenerateTangents::GenerateTangents()
 
 shared_ptr<Mesh> GenerateTangents::apply(shared_ptr<Mesh> &sourceMesh)
 {
-	if (!sourceMesh)
+	if (!sourceMesh || sourceMesh->getSizeOfVerticies() == 0)
 	{
 		return shared_ptr<Mesh>();
 	}

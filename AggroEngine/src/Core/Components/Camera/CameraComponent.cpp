@@ -5,12 +5,26 @@ static glm::vec4 baseLookDir(0.f, 0.f, -1.f, 0.f);
 static glm::vec4 baseUpDir(0.f, 1.f, 0.f, 0.f);
 static glm::vec4 baseRightDir(1.f, 0.f, 0.f, 0.f);
 
-CameraComponent::CameraComponent()
+CameraComponent::CameraComponent(Scene *scene)
 	: m_v4Viewport(glm::vec4(0, 0, 1000, 1000))
+	, m_scene(scene)
+	, m_isActive(false)
 {
 }
 
-CameraComponent::CameraComponent(Chunk * const byteChunk)
+CameraComponent::CameraComponent(shared_ptr<CameraComponent> copy, Scene *scene)
+	: m_v4Viewport(copy->m_v4Viewport)
+	, m_scene(scene)
+	, m_fov(copy->m_fov)
+	, m_aspectRatio(copy->m_aspectRatio)
+	, m_zNear(copy->m_zNear)
+	, m_zFar(copy->m_zFar)
+	, m_isActive(false)
+{
+}
+
+CameraComponent::CameraComponent(Chunk * const byteChunk, Scene *scene)
+	: m_scene(scene)
 {
 	ByteParser parser = ByteParser(*byteChunk->getNumBytes(), byteChunk->getByteData().get());
 	m_v4Viewport = parser.parseVec4().get_value_or(glm::vec4(0));
@@ -31,14 +45,14 @@ shared_ptr<Chunk> CameraComponent::serialize()
 	return shared_ptr<Chunk>(new Chunk(ChunkType::CAMERA_COMPONENT, bytes.getNumBytes(), bytes.collect()));
 }
 
-shared_ptr<CameraComponent> CameraComponent::deserialize(Chunk * const byteChunk)
+shared_ptr<CameraComponent> CameraComponent::deserialize(Chunk * const byteChunk, Scene *scene)
 {
 	if (*byteChunk->getType() != ChunkType::CAMERA_COMPONENT)
 	{
 		return shared_ptr<CameraComponent>();
 	}
 
-	return shared_ptr<CameraComponent>(new CameraComponent(byteChunk));
+	return shared_ptr<CameraComponent>(new CameraComponent(byteChunk, scene));
 }
 
 void CameraComponent::setProjection(float fov, float aspectRatio, float zNear, float zFar)
@@ -57,6 +71,11 @@ void CameraComponent::setViewport(glm::vec4 &viewport)
 glm::vec4 &CameraComponent::getViewport()
 {
 	return m_v4Viewport;
+}
+
+bool CameraComponent::isActive()
+{
+	return m_scene != nullptr && m_scene->getCameraNode()->getCameraComponent().get() == this;
 }
 
 shared_ptr<Camera> CameraComponent::getCamera(shared_ptr<TransformComponent> transformComponent)
@@ -78,4 +97,21 @@ shared_ptr<Camera> CameraComponent::getCamera(shared_ptr<TransformComponent> tra
 	camera->setUpDir(upDir);
 	camera->setRightDir(rightDir);
 	return camera;
+}
+
+void CameraComponent::addChangeListener(void *ns, std::function<void(CameraComponent *)> listener)
+{
+	boost::lock_guard<CameraComponent> guard(*this);
+	m_changeListeners.add(ns, listener);
+}
+
+void CameraComponent::removeChangeListener(void *ns)
+{
+	boost::lock_guard<CameraComponent> guard(*this);
+	m_changeListeners.remove(ns);
+}
+
+void CameraComponent::notify()
+{
+	m_changeListeners.notify(this);
 }

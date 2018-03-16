@@ -24,6 +24,7 @@ private:
 	glm::vec3 m_lastTranslate;
 	glm::vec3 m_lastRotate;
 	glm::vec3 m_lastScale;
+	shared_ptr<EngineContext> m_context;
 
 protected:
 	virtual void _refresh(SceneNode *newNode);
@@ -31,5 +32,5 @@ protected:
 	void _onTransformChange(QString newValue);
 
 public:
-	TransformWidget(QWidget *parent = nullptr);
+	TransformWidget(QWidget *parent, shared_ptr<EngineContext> context);
 };

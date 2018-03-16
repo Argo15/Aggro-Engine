@@ -17,7 +17,7 @@ SceneNode::SceneNode(unsigned int id, SceneNode *parent)
 	setName("Object");
 }
 
-SceneNode::SceneNode(Chunk * const byteChunk, shared_ptr<EngineContext> context, boost::unordered_map<int, shared_ptr<SceneNode>> baseMaterials)
+SceneNode::SceneNode(Chunk * const byteChunk, shared_ptr<EngineContext> context, boost::unordered_map<int, shared_ptr<SceneNode>> baseMaterials, Scene *scene)
 	: m_parent(nullptr)
 	, m_children(shared_ptr<vector<shared_ptr<SceneNode>>>(new vector<shared_ptr<SceneNode>>()))
 	, m_isSelected(false)
@@ -37,7 +37,7 @@ SceneNode::SceneNode(Chunk * const byteChunk, shared_ptr<EngineContext> context,
 		}
 		else if (*nextChunk->getType() == ChunkType::SCENE_NODE)
 		{
-			addChild(SceneNode::deserialize(nextChunk.get_ptr(), context, baseMaterials));
+			addChild(SceneNode::deserialize(nextChunk.get_ptr(), context, baseMaterials, scene));
 		}
 		else if (*nextChunk->getType() == ChunkType::TRANSFORM_COMPONENT)
 		{
@@ -70,7 +70,7 @@ SceneNode::SceneNode(Chunk * const byteChunk, shared_ptr<EngineContext> context,
 		}
 		else if (*nextChunk->getType() == ChunkType::CAMERA_COMPONENT)
 		{
-			m_cameraComponent = CameraComponent::deserialize(nextChunk.get_ptr());
+			m_cameraComponent = CameraComponent::deserialize(nextChunk.get_ptr(), scene);
 		}
 	}
 }
@@ -132,14 +132,14 @@ shared_ptr<Chunk> SceneNode::serialize(shared_ptr<Resources> resources)
 	return shared_ptr<Chunk>(new Chunk(ChunkType::SCENE_NODE, bytes.getNumBytes(), bytes.collect()));
 }
 
-shared_ptr<SceneNode> SceneNode::deserialize(Chunk * const byteChunk, shared_ptr<EngineContext> context, boost::unordered_map<int, shared_ptr<SceneNode>> baseMaterials)
+shared_ptr<SceneNode> SceneNode::deserialize(Chunk * const byteChunk, shared_ptr<EngineContext> context, boost::unordered_map<int, shared_ptr<SceneNode>> baseMaterials, Scene *scene)
 {
 	if (*byteChunk->getType() != ChunkType::SCENE_NODE)
 	{
 		return shared_ptr<SceneNode>();
 	}
 
-	return shared_ptr<SceneNode>(new SceneNode(byteChunk, context, baseMaterials));
+	return shared_ptr<SceneNode>(new SceneNode(byteChunk, context, baseMaterials, scene));
 }
 
 shared_ptr<vector<shared_ptr<SceneNode>>> SceneNode::getChildren()

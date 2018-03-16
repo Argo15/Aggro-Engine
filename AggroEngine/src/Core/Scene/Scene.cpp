@@ -12,6 +12,7 @@ Scene::Scene(shared_ptr<SceneNode> root)
 	, m_transformHook()
 	, m_previewNode(new SceneNode(getNextId()))
 {
+	getCameraNode();
 }
 
 Scene::Scene(Chunk * const byteChunk, shared_ptr<EngineContext> context)
@@ -28,21 +29,21 @@ Scene::Scene(Chunk * const byteChunk, shared_ptr<EngineContext> context)
 			int matId = matParser.parseInt().get_value_or(-1);
 			if (boost::optional<Chunk> matChunk = matParser.parseChunk())
 			{
-				shared_ptr<SceneNode> matNode = SceneNode::deserialize(&*matChunk, context, baseMaterials);
+				shared_ptr<SceneNode> matNode = SceneNode::deserialize(&*matChunk, context, baseMaterials, this);
 				addBaseMaterial(matNode);
 				baseMaterials[matId] = matNode;
 			}
 		}
 		else if (*nextChunk->getType() == ChunkType::SCENE_NODE)
 		{
-			m_root = SceneNode::deserialize(&*nextChunk, context, baseMaterials);
+			m_root = SceneNode::deserialize(&*nextChunk, context, baseMaterials, this);
 		}
 		else if (*nextChunk->getType() == ChunkType::ROOT_NODE)
 		{
 			ByteParser nodeParser(*nextChunk);
 			if (boost::optional<Chunk> nodeChunk = nodeParser.parseChunk())
 			{
-				m_root = SceneNode::deserialize(&*nodeChunk, context, baseMaterials);
+				m_root = SceneNode::deserialize(&*nodeChunk, context, baseMaterials, this);
 			}
 		}
 		else if (*nextChunk->getType() == ChunkType::CAMERA_NODE)
@@ -50,7 +51,7 @@ Scene::Scene(Chunk * const byteChunk, shared_ptr<EngineContext> context)
 			ByteParser nodeParser(*nextChunk);
 			if (boost::optional<Chunk> nodeChunk = nodeParser.parseChunk())
 			{
-				m_camera = SceneNode::deserialize(&*nodeChunk, context, baseMaterials);
+				m_camera = SceneNode::deserialize(&*nodeChunk, context, baseMaterials, this);
 			}
 		}
 	}
@@ -103,14 +104,16 @@ shared_ptr<SceneNode> Scene::getRoot()
 shared_ptr<SceneNode> Scene::getCameraNode()
 {
 	shared_ptr<SceneNode> node = m_camera;
+	bool newCamera = false;
 	if (!m_camera)
 	{
 		m_camera = shared_ptr<SceneNode>(new SceneNode(getNextId()));
+		newCamera = true;
 	}
 	shared_ptr<CameraComponent> camera = m_camera->getCameraComponent();
 	if (!camera)
 	{
-		camera = shared_ptr<CameraComponent>(new CameraComponent());
+		camera = shared_ptr<CameraComponent>(new CameraComponent(this));
 		m_camera->setCameraComponent(camera);
 	}
 	if (!m_camera->getTransformComponent())
@@ -121,6 +124,10 @@ shared_ptr<SceneNode> Scene::getCameraNode()
 		transform->rotate(0.79f, glm::vec3(0, 1, 0));
 		m_camera->setTransformComponent(transform);
 		update();
+	}
+	if (newCamera)
+	{
+		m_cameraChangeListeners.notify(m_camera);
 	}
 	return m_camera;
 }
@@ -147,8 +154,18 @@ void Scene::setRoot(shared_ptr<SceneNode> root)
 
 void Scene::setCamera(shared_ptr<SceneNode> camera)
 {
+	shared_ptr<CameraComponent> prevCamera = m_camera ? m_camera->getCameraComponent() : shared_ptr<CameraComponent>();
 	m_camera = camera;
+	if (prevCamera)
+	{
+		prevCamera->notify();
+	}
+	if (m_camera && m_camera->hasCameraComponent())
+	{
+		m_camera->getCameraComponent()->notify();
+	}
 	update();
+	m_cameraChangeListeners.notify(m_camera);
 }
 
 void Scene::addUpdateListener(std::function<void(Scene*)> listener)
@@ -164,6 +181,10 @@ void Scene::update()
 void Scene::applyToAllNodes(std::function<void(SceneNode*)> func)
 {
 	_applyToNodeRecursive(m_root, func);
+	if (m_camera)
+	{
+		func(m_camera.get());
+	}
 }
 
 void Scene::_applyToNodeRecursive(shared_ptr<SceneNode> node, std::function<void(SceneNode*)> func)
@@ -255,6 +276,11 @@ shared_ptr<SceneNode> Scene::getNodeById(unsigned int id)
 void Scene::addSelectionChangeListener(std::function<void(shared_ptr<SceneNode>)> listener)
 {
 	m_selectionChangeListeners.add(listener);
+}
+
+void Scene::addCameraChangeListener(std::function<void(shared_ptr<SceneNode>)> listener)
+{
+	m_cameraChangeListeners.add(listener);
 }
 
 void Scene::deleteNode(shared_ptr<SceneNode> node)

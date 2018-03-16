@@ -51,5 +51,5 @@ protected:
 	QPushButton *_addTexSelect(QHBoxLayout *layout, shared_ptr<QLineEdit> lineEdit);
 
 public:
-	MaterialWidget(QWidget *parent, shared_ptr<Resources> resources);
+	MaterialWidget(QWidget *parent, shared_ptr<EngineContext> context);
 };

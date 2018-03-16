@@ -28,5 +28,5 @@ protected:
 	void _onNormalLineCheck(int state);
 
 public:
-	MeshWidget(QWidget *parent, shared_ptr<Resources> resources, shared_ptr<MeshCache> meshCache);
+	MeshWidget(QWidget *parent, shared_ptr<EngineContext> context);
 };

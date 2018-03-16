@@ -1,5 +1,6 @@
 #include "RenderComponent.hpp"
 #include "DirectLightRenderComponent.hpp"
+#include "CameraRenderComponent.hpp"
 
 RenderComponent::RenderComponent()
 	: Component()
@@ -27,6 +28,10 @@ shared_ptr<RenderComponent> RenderComponent::deserialize(Chunk * const byteChunk
 		else if (*subChunk->getType() == ChunkType::DIRECT_LIGHT_RENDER_COMPONENT)
 		{
 			return DirectLightRenderComponent::deserialize(&*subChunk, resources);
+		}
+		else if (*subChunk->getType() == ChunkType::CAMERA_RENDER_COMPONENT)
+		{
+			return CameraRenderComponent::deserialize(&*subChunk, resources);
 		}
 	}
 	return shared_ptr<RenderComponent>();

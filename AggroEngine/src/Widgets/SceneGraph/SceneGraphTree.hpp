@@ -45,6 +45,7 @@ private:
 
 	shared_ptr<MaterialComponent> _addMaterial(string name = "New Material");
 	shared_ptr<SceneNode> _addMeshNode(string name, string path);
+	shared_ptr<SceneNode> _addSpriteNode(string name, string path);
 
 public:
 	SceneGraphTree(shared_ptr<EngineContext> context, QWidget *parent);

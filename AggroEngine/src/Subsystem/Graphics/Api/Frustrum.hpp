@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Matrix.hpp"
+#include "MemoryUtil.hpp"
 
 /**
 * Frustrum volume information
@@ -11,14 +12,15 @@
 class Frustrum
 {
 private:
-	glm::vec3 m_eyePos;
-	glm::vec3 m_lookDir;
-	glm::vec3 m_upDir;
-	glm::vec3 m_rightDir;
-	float m_fov;
-	float m_aspectRatio;
-	float m_zNear; 
-	float m_zFar;
+	const glm::vec3 m_eyePos;
+	const glm::vec3 m_lookDir;
+	const glm::vec3 m_upDir;
+	const glm::vec3 m_rightDir;
+	const float m_fov;
+	const float m_aspectRatio;
+	const float m_zNear;
+	const float m_zFar;
+	shared_ptr<glm::vec3> m_corners;
 
 public:
 	Frustrum(glm::vec3 eyePos, glm::vec3 lookDir, glm::vec3 upDir, glm::vec3 rightDir, 
@@ -32,4 +34,8 @@ public:
 	float getAspectRatio();
 	float getZNear();
 	float getZFar();
+
+	shared_ptr<glm::vec3> getCorners();
+
+	bool isSame(shared_ptr<Frustrum> other);
 };

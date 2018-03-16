@@ -17,4 +17,6 @@ public:
 	InspectorSubWidget(QWidget *parent = nullptr);
 
 	void refresh(shared_ptr<SceneNode> newNode);
+
+	shared_ptr<SceneNode> getCurrentNode();
 };

@@ -4,6 +4,8 @@
 Mesh::Mesh(int meshId)
 	: m_meshId(meshId)
 	, m_drawMode(DrawMode::TRIANGLES)
+	, m_nSizeOfVertices(0)
+	, m_nSizeOfIndices(0)
 {
 }
 

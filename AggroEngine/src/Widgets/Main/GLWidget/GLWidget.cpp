@@ -48,19 +48,23 @@ void GLWidget::initializeGL()
 	m_cameraUpdateJob = _setupCameraUpdateJob(scene->getCameraNode());
 
 	m_engineContext->addNewSceneListener([this](auto scene) { 
-		this->resizeGL(width(), height());
-		m_cameraUpdateJob->stop();
-		m_cameraUpdateJob = _setupCameraUpdateJob(scene->getCameraNode());
+		_refreshScene(scene); 
+		scene->addCameraChangeListener([this](auto camera) { _refreshCamera(camera); });
 	});
+	scene->addCameraChangeListener([this](auto camera) { _refreshCamera(camera); });
 
 	setAutoBufferSwap(false);
 }
 
 void GLWidget::resizeGL(int width, int height)
 {
-	shared_ptr<CameraComponent> camera = m_engineContext->getScene()->getCameraNode()->getCameraComponent();
-	camera->setViewport(glm::vec4(0, 0, width, height));
-	camera->setProjection(45.f, (float)width / (float)height, 0.01f, 100.f);
+	m_engineContext->getScene()->applyToAllNodes([width, height](auto node) {
+		if (node->getCameraComponent())
+		{
+			node->getCameraComponent()->setViewport(glm::vec4(0, 0, width, height));
+			node->getCameraComponent()->setProjection(45.f, (float)width / (float)height, 0.01f, 100.f);
+		}
+	});
 }
 
 void GLWidget::paintGL()
@@ -130,6 +134,21 @@ void GLWidget::mouseMoveEvent(QMouseEvent *event)
 void GLWidget::wheelEvent(QWheelEvent *event)
 {
 	m_mouse->setScroll(m_mouse->getScroll() + event->delta());
+}
+
+void GLWidget::_refreshScene(Scene *scene)
+{
+	this->resizeGL(width(), height());
+	_refreshCamera(scene->getCameraNode());
+}
+
+void GLWidget::_refreshCamera(shared_ptr<SceneNode> camera)
+{
+	if (m_cameraUpdateJob)
+	{
+		m_cameraUpdateJob->stop();
+	}
+	m_cameraUpdateJob = _setupCameraUpdateJob(camera);
 }
 
 shared_ptr<Job> GLWidget::_setupCameraUpdateJob(shared_ptr<SceneNode> camera)

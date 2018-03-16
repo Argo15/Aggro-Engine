@@ -12,6 +12,16 @@ TransformComponent::TransformComponent()
 
 }
 
+TransformComponent::TransformComponent(shared_ptr<TransformComponent> copy)
+	: m_rotateMat(copy->m_rotateMat)
+	, m_translateMat(copy->m_translateMat)
+	, m_scaleMat(copy->m_scaleMat)
+	, m_translate(copy->m_translate)
+	, m_scale(copy->m_scale)
+{
+
+}
+
 TransformComponent::TransformComponent(Chunk * const byteChunk)
 {
 	ByteParser parser = ByteParser(*byteChunk->getNumBytes(), byteChunk->getByteData().get());

@@ -5,17 +5,19 @@
 #include "InspectorWidget.hpp"
 #include "Locks.hpp"
 
-class DelegateMaterialWidget : public InspectorSubWidget,
+class CameraWidget : public InspectorSubWidget,
 	public boost::basic_lockable_adapter<recursive_mutex>
 {
 private:
-	shared_ptr<QPushButton> m_editBaseBtn;
-	shared_ptr<QPushButton> m_copyBaseBtn;
+	shared_ptr<QPushButton> m_setCurrent;
+	shared_ptr<QPushButton> m_leaveCamera;
 	boost::mutex m_lock;
+
+	void _refresh(CameraComponent *camera);
 
 protected:
 	virtual void _refresh(SceneNode *newNode);
 
 public:
-	DelegateMaterialWidget(InspectorWidget *parent, shared_ptr<EngineContext> context);
+	CameraWidget(InspectorWidget *parent, shared_ptr<EngineContext> context);
 };

@@ -6,6 +6,7 @@
 #include "AddMaterialWidget.hpp"
 #include "DelegateMaterialWidget.hpp"
 #include "MeshWidget.hpp"
+#include "CameraWidget.hpp"
 #include <QLabel>
 
 InspectorWidget::InspectorWidget(shared_ptr<EngineContext> context, QWidget *parent)
@@ -13,13 +14,15 @@ InspectorWidget::InspectorWidget(shared_ptr<EngineContext> context, QWidget *par
 	, m_context(context)
 {
 	m_layout = new QVBoxLayout();
+	shared_ptr<InspectorSubWidget> transformWidget(new TransformWidget(this, context));
 	m_widgets.push_back(shared_ptr<InspectorSubWidget>(new HeaderWidget(this)));
-	m_widgets.push_back(shared_ptr<InspectorSubWidget>(new TransformWidget(this)));
-	m_widgets.push_back(shared_ptr<InspectorSubWidget>(new MeshWidget(this, context->getResources(), context->getMeshCache())));
+	m_widgets.push_back(shared_ptr<InspectorSubWidget>(transformWidget));
+	m_widgets.push_back(shared_ptr<InspectorSubWidget>(new MeshWidget(this, context)));
 	m_widgets.push_back(shared_ptr<InspectorSubWidget>(new DirectLightWidget(this)));
-	m_widgets.push_back(shared_ptr<InspectorSubWidget>(new MaterialWidget(this, context->getResources())));
+	m_widgets.push_back(shared_ptr<InspectorSubWidget>(new MaterialWidget(this, context)));
 	m_widgets.push_back(shared_ptr<InspectorSubWidget>(new AddMaterialWidget(this)));
-	m_widgets.push_back(shared_ptr<InspectorSubWidget>(new DelegateMaterialWidget(this, context->getScene())));
+	m_widgets.push_back(shared_ptr<InspectorSubWidget>(new DelegateMaterialWidget(this, context)));
+	m_widgets.push_back(shared_ptr<InspectorSubWidget>(new CameraWidget(this, context)));
 	for (auto widget : m_widgets)
 	{
 		m_layout->addWidget(widget.get());
@@ -28,10 +31,11 @@ InspectorWidget::InspectorWidget(shared_ptr<EngineContext> context, QWidget *par
 	m_layout->addStretch();
 
 	refresh(m_context->getScene()->getSelectedNode());
-	m_context->getScene()->addSelectionChangeListener([this](auto node) {refresh(node);});
-	m_context->addNewSceneListener([this](auto scene) {
-		scene->addSelectionChangeListener([this](auto node) {refresh(node); });
+	m_context->addNewSceneListener([this, transformWidget](auto scene) {
+		_addListeners(scene, transformWidget);
 	});
+	_addListeners(m_context->getScene().get(), transformWidget);
+
 
 	setLayout(m_layout);
 	this->show();
@@ -44,3 +48,15 @@ void InspectorWidget::refresh(shared_ptr<SceneNode> node)
 		widget->refresh(node);
 	}
 }
+
+void InspectorWidget::_addListeners(Scene *scene, shared_ptr<InspectorSubWidget> transformWidget)
+{
+	scene->addSelectionChangeListener([this](auto node) {refresh(node); });
+	scene->addCameraChangeListener([transformWidget](auto camera) {
+		if (transformWidget->getCurrentNode() == camera)
+		{
+			transformWidget->hide();
+		}
+	});
+}
+

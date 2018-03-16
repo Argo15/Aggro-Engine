@@ -16,6 +16,7 @@ using namespace std;
 class RenderComponent;
 class MaterialComponent;
 class EngineContext;
+class CameraComponent;
 
 /**
 * Node of the scene graph. Transforms apply to children nodes
@@ -44,14 +45,14 @@ private:
 	Listener<SceneNode *> m_changeListeners;
 	Listener<SceneNode *> m_deletedListeners;
 
-	SceneNode(Chunk * const byteChunk, shared_ptr<EngineContext> context, boost::unordered_map<int, shared_ptr<SceneNode>> baseMaterials);
+	SceneNode(Chunk * const byteChunk, shared_ptr<EngineContext> context, boost::unordered_map<int, shared_ptr<SceneNode>> baseMaterials, Scene *scene);
 
 public:
 	SceneNode(unsigned int m_id, SceneNode *parent = nullptr);
 
 	// Serialization
 	shared_ptr<Chunk> serialize(shared_ptr<Resources> resources);
-	static shared_ptr<SceneNode> deserialize(Chunk * const byteChunk, shared_ptr<EngineContext> context, boost::unordered_map<int, shared_ptr<SceneNode>> baseMaterials);
+	static shared_ptr<SceneNode> deserialize(Chunk * const byteChunk, shared_ptr<EngineContext> context, boost::unordered_map<int, shared_ptr<SceneNode>> baseMaterials, Scene *scene);
 
 	shared_ptr<vector<shared_ptr<SceneNode>>> getChildren();
 	void setSelected(bool selected);

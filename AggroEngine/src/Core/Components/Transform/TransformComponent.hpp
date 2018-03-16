@@ -22,6 +22,7 @@ private:
 
 public:
 	TransformComponent();
+	TransformComponent(shared_ptr<TransformComponent> copy);
 
 	// Serialization
 	shared_ptr<Chunk> serialize();
