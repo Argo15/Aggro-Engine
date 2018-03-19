@@ -18,6 +18,7 @@ private:
 	shared_ptr<QLabel> m_triangleCountLbl;
 	shared_ptr<QComboBox> m_alignCombo;
 	shared_ptr<QCheckBox> m_normalLineChk;
+	shared_ptr<QCheckBox> m_boundingBoxChk;
 	shared_ptr<Resources> m_resources;
 	shared_ptr<MeshCache> m_meshCache;
 
@@ -26,6 +27,7 @@ protected:
 	void _refresh(MeshComponent *mesh);
 	void _onMeshSelect();
 	void _onNormalLineCheck(int state);
+	void _onBoundingBoxCheck(int state);
 
 public:
 	MeshWidget(QWidget *parent, shared_ptr<EngineContext> context);

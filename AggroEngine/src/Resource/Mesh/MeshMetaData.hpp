@@ -1,7 +1,9 @@
 #pragma once
 
+#include <memory>
 #include "Mesh.hpp"
 #include "Matrix.hpp"
+using namespace std;
 
 class Mesh;
 
@@ -13,6 +15,7 @@ private:
 	float m_xLength;
 	float m_yLength;
 	float m_zLength;
+	shared_ptr<glm::vec3> m_corners;
 
 public:
 	MeshMetaData(Mesh *mesh);
@@ -22,4 +25,6 @@ public:
 	float getXLength();
 	float getYLength();
 	float getZLength();
+
+	shared_ptr<glm::vec3> getCorners();
 };

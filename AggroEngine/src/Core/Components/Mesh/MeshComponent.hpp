@@ -41,6 +41,9 @@ private:
 
 	AxisAlign m_axisAlign;
 
+	bool m_genBoundingBox;
+	shared_ptr<Mesh> m_boundingBox;
+
 	vector<shared_ptr<Mesh>> m_modifiedMeshes;
 
 	Listener<MeshComponent *> m_changeListeners;
@@ -69,6 +72,9 @@ public:
 
 	void setAxisAlign(AxisAlign align);
 	AxisAlign getAxisAlign();
+
+	void enableBoundingBox(bool enabled, bool generate = false);
+	bool isBoundingBoxEnabled();
 
 	void setPrimaryMesh(shared_ptr<Mesh> mesh);
 	shared_ptr<Mesh> getPrimaryMesh();

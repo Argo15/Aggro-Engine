@@ -484,6 +484,12 @@
     <ClCompile Include="src\Widgets\Inspector\Camera\CameraWidget.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\Resource\Mesh\Modifiers\BoundingBoxMod.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Resource\Mesh\Dev\BoundingBoxMesh.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Resource\Image\CheckersImage.hpp">
@@ -872,6 +878,12 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\Widgets\Inspector\Camera\CameraWidget.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Resource\Mesh\Modifiers\BoundingBoxMod.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Resource\Mesh\Dev\BoundingBoxMesh.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

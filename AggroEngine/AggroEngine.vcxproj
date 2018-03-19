@@ -143,6 +143,7 @@
     <ClCompile Include="src\Core\Scene\TransformHook\ScaleHook.cpp" />
     <ClCompile Include="src\Core\Scene\TransformHook\TranslateHook.cpp" />
     <ClCompile Include="src\Resource\Mesh\Cache\CachedMeshHandler.cpp" />
+    <ClCompile Include="src\Resource\Mesh\Dev\BoundingBoxMesh.cpp" />
     <ClCompile Include="src\Resource\Mesh\Dev\CircleMesh.cpp" />
     <ClCompile Include="src\Resource\Mesh\Dev\DirectLightMesh.cpp" />
     <ClCompile Include="src\Resource\Mesh\Dev\FrustrumMesh.cpp" />
@@ -152,6 +153,7 @@
     <ClCompile Include="src\Resource\Mesh\MeshMetaData.cpp" />
     <ClCompile Include="src\Resource\Mesh\Modifiers\AlignBottom.cpp" />
     <ClCompile Include="src\Resource\Mesh\Modifiers\AlignCenter.cpp" />
+    <ClCompile Include="src\Resource\Mesh\Modifiers\BoundingBoxMod.cpp" />
     <ClCompile Include="src\Resource\Mesh\Modifiers\GenerateNormalLines.cpp" />
     <ClCompile Include="src\Resource\Mesh\Modifiers\GenerateTangents.cpp" />
     <ClCompile Include="src\Resource\Resources.cpp" />
@@ -271,6 +273,7 @@
     <ClInclude Include="src\Core\Scene\TransformHook\CircleHook.hpp" />
     <ClInclude Include="src\Core\Scene\TransformHook\RotateHook.hpp" />
     <ClInclude Include="src\Resource\Mesh\Cache\CachedMeshHandler.hpp" />
+    <ClInclude Include="src\Resource\Mesh\Dev\BoundingBoxMesh.hpp" />
     <ClInclude Include="src\Resource\Mesh\Dev\CircleMesh.hpp" />
     <ClInclude Include="src\Resource\Mesh\Dev\DirectLightMesh.hpp" />
     <ClInclude Include="src\Resource\Mesh\Dev\FrustrumMesh.hpp" />
@@ -280,6 +283,7 @@
     <ClInclude Include="src\Resource\Mesh\MeshMetaData.hpp" />
     <ClInclude Include="src\Resource\Mesh\Modifiers\AlignBottom.hpp" />
     <ClInclude Include="src\Resource\Mesh\Modifiers\AlignCenter.hpp" />
+    <ClInclude Include="src\Resource\Mesh\Modifiers\BoundingBoxMod.hpp" />
     <ClInclude Include="src\Resource\Mesh\Modifiers\GenerateNormalLines.hpp" />
     <ClInclude Include="src\Resource\Mesh\Modifiers\GenerateTangents.hpp" />
     <ClInclude Include="src\Resource\Mesh\Modifiers\MeshModifier.hpp" />

@@ -3,17 +3,20 @@
 #include "GenerateTangents.hpp"
 #include "AlignCenter.hpp"
 #include "AlignBottom.hpp"
+#include "BoundingBoxMod.hpp"
 
 static shared_ptr<MeshModifier> normalLineGen(new GenerateNormalLines());
 static shared_ptr<MeshModifier> tangentGen(new GenerateTangents());
 static shared_ptr<MeshModifier> alignCenter(new AlignCenter());
 static shared_ptr<MeshModifier> alignBottom(new AlignBottom());
+static shared_ptr<MeshModifier> boundingBoxGen(new BoundingBoxMod());
 
 MeshComponent::MeshComponent(shared_ptr<JobManager> jobs)
 	: m_jobs(jobs)
 	, m_primaryMesh()
 	, m_genTangents(true)
 	, m_genNormalLines(false)
+	, m_genBoundingBox(false)
 	, m_axisAlign(NONE)
 {
 }
@@ -36,7 +39,7 @@ MeshComponent::MeshComponent(Chunk * const byteChunk,
 	string path = bytes.parseString().get_value_or("");
 	m_genNormalLines = bytes.parseBool().get_value_or(false);
 	m_axisAlign = (AxisAlign)bytes.parseInt().get_value_or(0);
-
+	m_genBoundingBox = bytes.parseBool().get_value_or(false);
 
 	if (path != "")
 	{
@@ -56,6 +59,7 @@ shared_ptr<Chunk> MeshComponent::serialize(shared_ptr<Resources> resources)
 	bytes.add(&m_genNormalLines);
 	int axis = (int) m_axisAlign;
 	bytes.add(&axis);
+	bytes.add(&m_genBoundingBox);
 	return shared_ptr<Chunk>(new Chunk(ChunkType::MESH_COMPONENT, bytes.getNumBytes(), bytes.collect()));
 }
 
@@ -105,7 +109,14 @@ void MeshComponent::generateMeshes()
 			{
 				m_modifiedPrimaryMesh = tangentGen->apply(m_modifiedPrimaryMesh);
 			}
-			generateNormalLines();
+			if (m_genNormalLines && !m_normalLines)
+			{
+				m_normalLines = normalLineGen->apply(m_modifiedPrimaryMesh);
+			}
+			if (m_genBoundingBox && !m_boundingBox)
+			{
+				m_boundingBox = boundingBoxGen->apply(m_modifiedPrimaryMesh);
+			}
 			refresh();
 		})), JobPriority::HIGH);
 	}
@@ -122,6 +133,10 @@ void MeshComponent::refresh()
 		{
 			m_modifiedMeshes.push_back(m_normalLines);
 		}
+		if (m_genBoundingBox)
+		{
+			m_modifiedMeshes.push_back(m_boundingBox);
+		}
 	}
 }
 
@@ -137,11 +152,6 @@ void MeshComponent::enableTangents(bool enabled, bool generate)
 bool MeshComponent::isTangentsEnabled()
 {
 	return m_genTangents;
-}
-
-void MeshComponent::generateNormalLines()
-{
-	m_normalLines = m_genNormalLines ? normalLineGen->apply(m_modifiedPrimaryMesh) : shared_ptr<Mesh>();
 }
 
 void MeshComponent::enableNormalLines(bool enabled, bool generate)
@@ -173,6 +183,25 @@ MeshComponent::AxisAlign MeshComponent::getAxisAlign()
 {
 	return m_axisAlign;
 }
+
+void MeshComponent::enableBoundingBox(bool enabled, bool generate)
+{
+	m_genBoundingBox = enabled;
+	if (generate)
+	{
+		generateMeshes();
+	}
+	if (!enabled)
+	{
+		refresh();
+	}
+}
+
+bool MeshComponent::isBoundingBoxEnabled()
+{
+	return m_genBoundingBox;
+}
+
 
 void MeshComponent::setPrimaryMesh(shared_ptr<Mesh> mesh)
 {
