@@ -157,12 +157,13 @@
     <ClCompile Include="src\Resource\Mesh\Modifiers\GenerateNormalLines.cpp" />
     <ClCompile Include="src\Resource\Mesh\Modifiers\GenerateTangents.cpp" />
     <ClCompile Include="src\Resource\Resources.cpp" />
-    <ClCompile Include="src\Subsystem\Graphics\Api\Frustrum.cpp" />
+    <ClCompile Include="src\Subsystem\Graphics\Api\PerspectiveFrustrum.cpp" />
     <ClCompile Include="src\Subsystem\Graphics\Api\GraphicsInitOptions.cpp" />
     <ClCompile Include="src\Subsystem\Graphics\Api\Lighting\DirectLight.cpp" />
     <ClCompile Include="src\Subsystem\Graphics\Api\Material\Material.cpp" />
     <ClCompile Include="src\Subsystem\Graphics\Api\RenderData.cpp" />
     <ClCompile Include="src\Subsystem\Graphics\Api\RenderOptions.cpp" />
+    <ClCompile Include="src\Subsystem\Graphics\Api\ShadowMapFrustrum.cpp" />
     <ClCompile Include="src\Subsystem\Graphics\Api\Texture\DefaultTextureHandle.cpp" />
     <ClCompile Include="src\Core\Graphics\Texture\LoadableTextureHandle.cpp" />
     <ClCompile Include="src\Subsystem\Graphics\Api\Texture\TextureBuildOptions.cpp" />
@@ -291,6 +292,8 @@
     <ClInclude Include="src\Subsystem\Graphics\Api\GraphicsInitOptions.hpp" />
     <ClInclude Include="src\Subsystem\Graphics\Api\Lighting\DirectLight.hpp" />
     <ClInclude Include="src\Subsystem\Graphics\Api\Material\Material.hpp" />
+    <ClInclude Include="src\Subsystem\Graphics\Api\PerspectiveFrustrum.hpp" />
+    <ClInclude Include="src\Subsystem\Graphics\Api\ShadowMapFrustrum.hpp" />
     <ClInclude Include="src\Subsystem\Graphics\Impl\OpenGL\Framebuffer\ShadedBuffer.hpp" />
     <ClInclude Include="src\Subsystem\Graphics\Impl\OpenGL\Framebuffer\LightBuffer.hpp" />
     <ClInclude Include="src\Subsystem\Graphics\Impl\OpenGL\Framebuffer\ShadowMapBuffer.hpp" />

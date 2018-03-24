@@ -9,6 +9,8 @@ RenderData::RenderData()
 	, m_depthTestEnabled(true)
 	, m_lightingEnabled(true)
 	, m_shadowsEnabled(true)
+	, m_occlusionSize(0)
+	, m_cullingEnabled(true)
 {
 }
 
@@ -20,6 +22,8 @@ RenderData::RenderData(shared_ptr<VertexBufferHandle> pVertexBufferHandle)
 	, m_depthTestEnabled(true)
 	, m_lightingEnabled(true)
 	, m_shadowsEnabled(true)
+	, m_occlusionSize(0)
+	, m_cullingEnabled(true)
 {
 }
 
@@ -31,6 +35,8 @@ RenderData::RenderData(shared_ptr<VertexBufferHandle> pVertexBufferHandle, DrawM
 	, m_depthTestEnabled(true)
 	, m_lightingEnabled(true)
 	, m_shadowsEnabled(true)
+	, m_occlusionSize(0)
+	, m_cullingEnabled(true)
 {
 }
 
@@ -125,4 +131,30 @@ void RenderData::setShadowsEnabled(bool enabled)
 bool RenderData::isShadowsEnabled()
 {
 	return m_shadowsEnabled;
+}
+
+void RenderData::setOcclusionPoints(shared_ptr<glm::vec3> points, int size)
+{
+	m_occlusionPoints = points;
+	m_occlusionSize = size;
+}
+
+shared_ptr<glm::vec3> RenderData::getOcclusionPoints()
+{
+	return m_occlusionPoints;
+}
+
+int RenderData::getOcclusionSize()
+{
+	return m_occlusionSize;
+}
+
+void RenderData::disableCulling()
+{
+	m_cullingEnabled = false;
+}
+
+bool RenderData::isCullingEnabled()
+{
+	return m_cullingEnabled;
 }

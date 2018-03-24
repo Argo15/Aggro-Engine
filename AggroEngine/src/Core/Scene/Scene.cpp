@@ -374,3 +374,14 @@ void Scene::update(shared_ptr<Selection> selection, shared_ptr<MouseState> mouse
 		}
 	}
 }
+
+shared_ptr<PerspectiveFrustrum> Scene::getOverrideFrustrum()
+{
+	if (m_selectedNode && m_selectedNode->hasCameraComponent() && 
+		m_selectedNode->getCameraComponent()->shouldOverrideFrustrum())
+	{
+		return m_selectedNode->getCameraComponent()->getCamera(
+			m_selectedNode->getTransformComponent())->getFrustrum();
+	}
+	return shared_ptr<PerspectiveFrustrum>();
+}

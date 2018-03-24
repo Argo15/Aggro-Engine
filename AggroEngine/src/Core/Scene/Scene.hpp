@@ -87,4 +87,6 @@ public:
 	shared_ptr<SceneNode> getPreviewNode();
 
 	void update(shared_ptr<Selection> selection, shared_ptr<MouseState> mouse, shared_ptr<EngineContext> context);
+
+	shared_ptr<PerspectiveFrustrum> getOverrideFrustrum();
 };

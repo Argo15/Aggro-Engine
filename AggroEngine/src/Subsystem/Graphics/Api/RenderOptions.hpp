@@ -2,7 +2,7 @@
 
 #include "Matrix.hpp"
 #include "DirectLight.hpp"
-#include "Frustrum.hpp"
+#include "PerspectiveFrustrum.hpp"
 #include "Camera.hpp"
 #include <memory>
 using namespace std;
@@ -26,7 +26,7 @@ private:
 	glm::mat4 m_m4ViewMatrix;  // Camera position/orientation
 	glm::vec4 m_v4Viewport; // Dimensions of window
 
-	shared_ptr<Frustrum> m_frustrum;
+	shared_ptr<PerspectiveFrustrum> m_frustrum;
 
 	RenderTarget m_renderTarget;
 
@@ -40,13 +40,13 @@ public:
 	RenderOptions &setProjectionMatrix(glm::mat4 &m4Projection);
 	RenderOptions &setViewMatrix(glm::mat4 &m4View);
 	RenderOptions &setViewport(glm::vec4 &m4Viewport);
-	RenderOptions &setFrustrum(shared_ptr<Frustrum> frustrum);
+	RenderOptions &setFrustrum(shared_ptr<PerspectiveFrustrum> frustrum);
 	RenderOptions &setCamera(shared_ptr<Camera> camera);
 
 	const glm::mat4 &getProjectionMatrix();
 	const glm::mat4 &getViewMatrix();
 	const glm::vec4 &getViewport();
-	const shared_ptr<Frustrum> &getFrustrum();
+	const shared_ptr<PerspectiveFrustrum> getFrustrum();
 
 	void setRenderTarget(RenderTarget target);
 	RenderTarget getRenderTarget();

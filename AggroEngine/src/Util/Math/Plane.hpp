@@ -12,7 +12,9 @@ private:
 	glm::vec3 m_normal;
 
 public:
+	Plane();
 	Plane(glm::vec3 center, glm::vec3 normal);
 
 	const boost::optional<glm::vec3> intersect(const Line& line) const;
+	const float distance(const glm::vec3& point) const;
 };

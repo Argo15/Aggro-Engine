@@ -28,7 +28,7 @@ Camera *Camera::setViewport(glm::vec4 &viewport)
 	return this;
 }
 
-Camera *Camera::setFrustrum(shared_ptr<Frustrum> frustrum)
+Camera *Camera::setFrustrum(shared_ptr<PerspectiveFrustrum> frustrum)
 {
 	m_frustrum = frustrum;
 	return this;
@@ -93,7 +93,7 @@ glm::vec3 Camera::getRightDir()
 	return m_rightDir;
 }
 
-shared_ptr<Frustrum> Camera::getFrustrum()
+shared_ptr<PerspectiveFrustrum> Camera::getFrustrum()
 {
 	return m_frustrum;
 }

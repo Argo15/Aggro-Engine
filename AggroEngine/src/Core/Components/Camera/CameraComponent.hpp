@@ -21,6 +21,7 @@ private:
 	float m_zFar;
 	bool m_isActive;
 	Scene *m_scene;
+	bool m_overrideFrustrum;
 	Listener<CameraComponent *> m_changeListeners;
 
 	CameraComponent(Chunk * const byteChunk, Scene *scene);
@@ -43,4 +44,7 @@ public:
 	void notify();
 
 	shared_ptr<Camera> getCamera(shared_ptr<TransformComponent> transformComponent);
+
+	void setOverrideFrustrum(bool enabled);
+	bool shouldOverrideFrustrum();
 };

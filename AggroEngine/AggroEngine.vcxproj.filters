@@ -403,9 +403,6 @@
     <ClCompile Include="src\Widgets\Inspector\Material\DelegateMaterialWidget.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\Subsystem\Graphics\Api\Frustrum.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="src\Subsystem\Graphics\Impl\OpenGL\Framebuffer\ShadowMapBuffer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -488,6 +485,12 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\Resource\Mesh\Dev\BoundingBoxMesh.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Subsystem\Graphics\Api\PerspectiveFrustrum.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Subsystem\Graphics\Api\ShadowMapFrustrum.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -884,6 +887,12 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\Resource\Mesh\Dev\BoundingBoxMesh.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Subsystem\Graphics\Api\PerspectiveFrustrum.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Subsystem\Graphics\Api\ShadowMapFrustrum.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

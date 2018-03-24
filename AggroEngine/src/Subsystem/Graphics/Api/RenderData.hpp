@@ -26,6 +26,9 @@ private:
 	bool m_depthTestEnabled;
 	bool m_lightingEnabled;
 	bool m_shadowsEnabled;
+	shared_ptr<glm::vec3> m_occlusionPoints;
+	int m_occlusionSize;
+	bool m_cullingEnabled;
 
 public:
 	RenderData();
@@ -57,4 +60,11 @@ public:
 
 	void setShadowsEnabled(bool enabled);
 	bool isShadowsEnabled();
+
+	void setOcclusionPoints(shared_ptr<glm::vec3> points, int size);
+	shared_ptr<glm::vec3> getOcclusionPoints();
+	int getOcclusionSize();
+
+	void disableCulling();
+	bool isCullingEnabled();
 };

@@ -1,5 +1,9 @@
 #include "Plane.hpp"
 
+Plane::Plane()
+{
+}
+
 Plane::Plane(glm::vec3 center, glm::vec3 normal)
 	: m_center(center)
 	, m_normal(glm::normalize(normal))
@@ -21,4 +25,10 @@ const boost::optional<glm::vec3> Plane::intersect(const Line& line) const
 		}
 	}
 	return boost::optional<glm::vec3>();
+}
+
+const float Plane::distance(const glm::vec3& point) const
+{
+	glm::vec3 pointVector = point - m_center;
+	return glm::dot(pointVector, m_normal);
 }

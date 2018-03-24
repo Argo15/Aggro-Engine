@@ -38,7 +38,7 @@ RenderOptions &RenderOptions::setViewport(glm::vec4 &m4Viewport)
 	return *this;
 }
 
-RenderOptions &RenderOptions::setFrustrum(shared_ptr<Frustrum> frustrum)
+RenderOptions &RenderOptions::setFrustrum(shared_ptr<PerspectiveFrustrum> frustrum)
 {
 	m_frustrum = frustrum;
 	return *this;
@@ -68,7 +68,7 @@ const glm::vec4 &RenderOptions::getViewport()
 	return m_v4Viewport;
 }
 
-const shared_ptr<Frustrum> &RenderOptions::getFrustrum()
+const shared_ptr<PerspectiveFrustrum> RenderOptions::getFrustrum()
 {
 	return m_frustrum;
 }

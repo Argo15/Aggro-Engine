@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Matrix.hpp"
-#include "Frustrum.hpp"
+#include "PerspectiveFrustrum.hpp"
 #include <memory>
 using namespace std;
 
@@ -21,7 +21,7 @@ private:
 	glm::vec3 m_lookDir;
 	glm::vec3 m_upDir;
 	glm::vec3 m_rightDir;
-	shared_ptr<Frustrum> m_frustrum;
+	shared_ptr<PerspectiveFrustrum> m_frustrum;
 
 public:
 	Camera();
@@ -33,7 +33,7 @@ public:
 	Camera *setLookDir(glm::vec3 &lookDir);
 	Camera *setUpDir(glm::vec3 &upDir);
 	Camera *setRightDir(glm::vec3 &rightDir);
-	Camera *setFrustrum(shared_ptr<Frustrum> frustrum);
+	Camera *setFrustrum(shared_ptr<PerspectiveFrustrum> frustrum);
 
 	glm::mat4 getViewMatrix();
 	glm::mat4 getProjMatrix();
@@ -42,5 +42,5 @@ public:
 	glm::vec3 getLookDir();
 	glm::vec3 getUpDir();
 	glm::vec3 getRightDir();
-	shared_ptr<Frustrum> getFrustrum();
+	shared_ptr<PerspectiveFrustrum> getFrustrum();
 };

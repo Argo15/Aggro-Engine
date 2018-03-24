@@ -89,6 +89,7 @@ void GBuffer::drawToBuffer(RenderOptions renderOptions, std::queue<shared_ptr<Re
 	int currentLineWidth = 1;
 	bool isDepthDisabled = false;
 	shared_ptr<RenderData> disabledDepthObject; // needs to be rendered at the end
+	const shared_ptr<Frustrum> frustrum = renderOptions.getFrustrum();
 
 	glBindFragDataLocation(m_glslProgram->getHandle(), 0, "normalBuffer");
 	glBindFragDataLocation(m_glslProgram->getHandle(), 1, "albedoBuffer");
@@ -117,6 +118,18 @@ void GBuffer::drawToBuffer(RenderOptions renderOptions, std::queue<shared_ptr<Re
 				disabledDepthObject = renderData;
 			}
 			continue;
+		}
+
+		if (renderData->isCullingEnabled() && renderData->getOcclusionPoints())
+		{
+			FrustrumCulling culling = frustrum->getCulling(
+				renderData->getOcclusionPoints(), 
+				renderData->getOcclusionSize(),
+				renderData->getModelMatrix());
+			if (culling == OUTSIDE)
+			{
+				continue;
+			}
 		}
 
 		if (renderData->getVertexBufferHandle())

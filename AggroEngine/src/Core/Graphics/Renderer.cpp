@@ -34,6 +34,11 @@ void Renderer::renderScene(shared_ptr<Scene> scene, shared_ptr<RenderOptions> re
 
 	// set scene options
 	renderOptions->setCamera(scene->getCamera());
+	shared_ptr<PerspectiveFrustrum> overrideFrustrum = scene->getOverrideFrustrum();
+	if (overrideFrustrum)
+	{
+		renderOptions->setFrustrum(overrideFrustrum);
+	}
 
 	// execute
 	m_graphicsContext->getGraphics()->executeRender(*(renderOptions.get()));

@@ -1,5 +1,6 @@
 #include "CameraComponent.hpp"
 #include "MatrixDecompose.hpp"
+#include "PerspectiveFrustrum.hpp"
 
 static glm::vec4 baseLookDir(0.f, 0.f, -1.f, 0.f);
 static glm::vec4 baseUpDir(0.f, 1.f, 0.f, 0.f);
@@ -9,6 +10,7 @@ CameraComponent::CameraComponent(Scene *scene)
 	: m_v4Viewport(glm::vec4(0, 0, 1000, 1000))
 	, m_scene(scene)
 	, m_isActive(false)
+	, m_overrideFrustrum(false)
 {
 }
 
@@ -20,6 +22,7 @@ CameraComponent::CameraComponent(shared_ptr<CameraComponent> copy, Scene *scene)
 	, m_zNear(copy->m_zNear)
 	, m_zFar(copy->m_zFar)
 	, m_isActive(false)
+	, m_overrideFrustrum(false)
 {
 }
 
@@ -32,6 +35,7 @@ CameraComponent::CameraComponent(Chunk * const byteChunk, Scene *scene)
 	m_aspectRatio = parser.parseFloat().get_value_or(2.f);
 	m_zNear = parser.parseFloat().get_value_or(0.01f);
 	m_zFar = parser.parseFloat().get_value_or(100.f);
+	m_overrideFrustrum = parser.parseBool().get_value_or(false);
 }
 
 shared_ptr<Chunk> CameraComponent::serialize()
@@ -42,6 +46,7 @@ shared_ptr<Chunk> CameraComponent::serialize()
 	bytes.add(&m_aspectRatio);
 	bytes.add(&m_zNear);
 	bytes.add(&m_zFar);
+	bytes.add(&m_overrideFrustrum);
 	return shared_ptr<Chunk>(new Chunk(ChunkType::CAMERA_COMPONENT, bytes.getNumBytes(), bytes.collect()));
 }
 
@@ -87,11 +92,12 @@ shared_ptr<Camera> CameraComponent::getCamera(shared_ptr<TransformComponent> tra
 	glm::vec3 upDir = glm::vec3(transform * baseUpDir);
 	glm::vec3 rightDir = glm::vec3(transform * baseRightDir);
 
-	camera->setFrustrum(shared_ptr<Frustrum>(new Frustrum(eyePos, lookDir, upDir, rightDir,
-														  m_fov, m_aspectRatio, m_zNear, m_zFar)));
-	camera->setViewport(m_v4Viewport);
 	camera->setViewMatrix(glm::lookAt(eyePos, eyePos + lookDir, upDir));
 	camera->setProjMatrix(glm::perspective(m_fov, m_aspectRatio, m_zNear, m_zFar));
+	camera->setFrustrum(shared_ptr<PerspectiveFrustrum>(new PerspectiveFrustrum(eyePos, lookDir, upDir, rightDir,
+														  m_fov, m_aspectRatio, m_zNear, m_zFar, 
+														  camera->getViewMatrix())));
+	camera->setViewport(m_v4Viewport);
 	camera->setEyePos(eyePos);
 	camera->setLookDir(lookDir);
 	camera->setUpDir(upDir);
@@ -114,4 +120,14 @@ void CameraComponent::removeChangeListener(void *ns)
 void CameraComponent::notify()
 {
 	m_changeListeners.notify(this);
+}
+
+void CameraComponent::setOverrideFrustrum(bool enabled)
+{
+	m_overrideFrustrum = enabled;
+}
+
+bool CameraComponent::shouldOverrideFrustrum()
+{
+	return m_overrideFrustrum;
 }

@@ -75,8 +75,13 @@ void StaticObjectRenderComponent::_renderMesh(shared_ptr<Mesh> mesh,
 			{
 				renderData->setMaterial(node->getMaterialComponent()->getMaterial(context->getTextureCache()));
 			}
+			if (node->isSelected())
+			{
+				renderData->disableCulling();
+			}
 		}
 		renderData->setDrawMode(mesh->getDrawMode());
+		renderData->setOcclusionPoints(mesh->getMetaData()->getCorners(), 8);
 		context->getGraphics()->stageRender(renderData);
 	}
 }

@@ -2,6 +2,7 @@
 
 #include <QLabel>
 #include <QPushButton>
+#include <QCheckBox>
 #include "InspectorWidget.hpp"
 #include "Locks.hpp"
 
@@ -11,6 +12,7 @@ class CameraWidget : public InspectorSubWidget,
 private:
 	shared_ptr<QPushButton> m_setCurrent;
 	shared_ptr<QPushButton> m_leaveCamera;
+	shared_ptr<QCheckBox> m_overrideFrustrumChk;
 	boost::mutex m_lock;
 
 	void _refresh(CameraComponent *camera);

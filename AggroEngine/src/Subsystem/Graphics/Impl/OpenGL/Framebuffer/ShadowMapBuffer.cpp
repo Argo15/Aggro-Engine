@@ -1,5 +1,6 @@
 #include "ShadowMapBuffer.hpp"
 #include "Config.hpp"
+#include "ShadowMapFrustrum.hpp"
 
 ShadowMapBuffer::ShadowMapBuffer(OpenGL43Graphics *graphics, int defaultSize)
 	: FrameBufferObject(defaultSize, defaultSize)
@@ -60,6 +61,9 @@ void ShadowMapBuffer::drawToBuffer(RenderOptions renderOptions, std::queue<share
 {
 	boost::lock_guard<OpenGL43Graphics> guard(*m_graphics);
 
+	shared_ptr<PerspectiveFrustrum> frustrum = renderOptions.getFrustrum();
+	float frustrumLength = frustrum->getZFar() - frustrum->getZNear();
+
 	for (int i = 0; i < 4; i++)
 	{
 		glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, m_shadowBuffer[i]);
@@ -75,33 +79,50 @@ void ShadowMapBuffer::drawToBuffer(RenderOptions renderOptions, std::queue<share
 		int currentLineWidth = 1;
 
 		shared_ptr<DirectLight> light = renderOptions.getDirectLight();
-		if (light)
+		if (!light)
 		{
-			glm::vec3 lightDir = light->getDirection();
-			glm::vec3 lightUp = light->getDirection() == glm::vec3(0, -1.0f, 0) ? glm::vec3(1.0f) : glm::vec3(0, 1.0f, 0);
-			shared_ptr<Frustrum> frustrum = renderOptions.getFrustrum();
-			float frustrumLength = frustrum->getZFar() - frustrum->getZNear();
-
-			float slicePctStart = m_slices[i];
-			float slicePctEnd = m_slices[i + 1];
-			float centerPct = (slicePctStart + slicePctEnd) / 2.0f;
-
-			glm::vec3 center = frustrum->getEyePos() + frustrum->getLookDir() * (frustrum->getZNear() + frustrumLength * centerPct);
-			glm::mat4 lightViewMat = glm::lookAt(center + lightDir * -250.0f, center, lightUp);
-
-			_getProjectionMat(i, slicePctStart, slicePctEnd, lightViewMat, renderOptions);
+			m_glslProgram->disable();
+			unbindFrameBuffer();
+			glPopAttrib();
+			continue;
 		}
+
+		glm::vec3 lightDir = light->getDirection();
+		glm::vec3 lightUp = light->getDirection() == glm::vec3(0, -1.0f, 0) ? glm::vec3(1.0f) : glm::vec3(0, 1.0f, 0);
+
+		float slicePctStart = m_slices[i];
+		float slicePctEnd = m_slices[i + 1];
+		float centerPct = (slicePctStart + slicePctEnd) / 2.0f;
+
+		glm::vec3 center = frustrum->getEyePos() + frustrum->getLookDir() * (frustrum->getZNear() + frustrumLength * centerPct);
+		glm::mat4 lightViewMat = glm::lookAt(center + lightDir * -250.0f, center, lightUp);
+
+		_getProjectionMat(i, slicePctStart, slicePctEnd, lightViewMat, renderOptions);
+
+		ShadowMapFrustrum lightFrustrum(m_viewProj[i]);
 
 		glBindFragDataLocation(m_glslProgram->getHandle(), 0, "testBuffer");
 		glBindAttribLocation(m_glslProgram->getHandle(), 0, "v_vertex");
 		std::queue<shared_ptr<RenderData>> copyRenderQueue(renderQueue);
-		while (!copyRenderQueue.empty() && light)
+		while (!copyRenderQueue.empty())
 		{
 			shared_ptr<RenderData> renderData = copyRenderQueue.front();
 			copyRenderQueue.pop();
 
 			if (renderData->getVertexBufferHandle() && renderData->isDepthTestEnabled() && renderData->isShadowsEnabled())
 			{
+				if (renderData->isCullingEnabled() && renderData->getOcclusionPoints())
+				{
+					FrustrumCulling culling = lightFrustrum.getCulling(
+						renderData->getOcclusionPoints(),
+						renderData->getOcclusionSize(),
+						renderData->getModelMatrix());
+					if (culling == OUTSIDE)
+					{
+						continue;
+					}
+				}
+
 				glm::mat4 mvpMatrix = m_viewProj[i] * renderData->getModelMatrix();
 				m_glslProgram->sendUniform("modelViewProjectionMatrix", glm::value_ptr(mvpMatrix), false, 4);
 
@@ -127,7 +148,7 @@ void ShadowMapBuffer::drawToBuffer(RenderOptions renderOptions, std::queue<share
 
 void ShadowMapBuffer::_getProjectionMat(int slice, float slicePctStart, float slicePctEnd, glm::mat4 &lightViewMat, RenderOptions &renderOptions)
 {
-	shared_ptr<Frustrum> frustrum = renderOptions.getFrustrum();
+	shared_ptr<PerspectiveFrustrum> frustrum = renderOptions.getFrustrum();
 	float frustrumLength = frustrum->getZFar() - frustrum->getZNear();
 
 	float nearDistance = frustrum->getZNear() + slicePctStart * frustrumLength;
