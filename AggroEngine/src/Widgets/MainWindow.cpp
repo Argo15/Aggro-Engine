@@ -14,6 +14,9 @@
 #include "FileWriter.hpp"
 #include "ResourceExplorer.hpp"
 #include "QuickResources.hpp"
+#include "FPSWidget.hpp"
+#include "MemoryWidget.hpp"
+#include "ProfilingWidget.hpp"
 
 MainWindow::MainWindow()
 	: m_context(shared_ptr<EngineContext>(new EngineContext()))
@@ -48,11 +51,25 @@ MainWindow::MainWindow()
 
 	QDockWidget *bottomLeftWidget = new QDockWidget();
 	QWidget *quickResourcesWidget = new QuickResources(resourceWidget->getWidget().get());
-	quickResourcesWidget->setFixedWidth(255);
 	bottomLeftWidget->setWidget(quickResourcesWidget);
 	bottomLeftWidget->setWindowTitle(QString::fromStdString("Quick Resources"));
 	addDockWidget(Qt::BottomDockWidgetArea, bottomLeftWidget);
 	addDockWidget(Qt::BottomDockWidgetArea, bottomWidget);
+	
+	// Performance widgets
+	QDockWidget *memoryDockWidget = new QDockWidget("Memory");
+	memoryDockWidget->setWidget(new MemoryWidget());
+	QDockWidget *profilingDockWidget = new QDockWidget("Profiling");
+	profilingDockWidget->setWidget(new ProfilingWidget());
+	QDockWidget *fpsDockWidget = new QDockWidget("FPS");
+	fpsDockWidget->setWidget(new FPSWidget());
+	addDockWidget(Qt::BottomDockWidgetArea, profilingDockWidget);
+	addDockWidget(Qt::BottomDockWidgetArea, memoryDockWidget);
+	addDockWidget(Qt::BottomDockWidgetArea, fpsDockWidget);
+	tabifyDockWidget(profilingDockWidget, memoryDockWidget);
+	tabifyDockWidget(profilingDockWidget, fpsDockWidget);
+	resizeDocks({ bottomLeftWidget, bottomWidget, fpsDockWidget }, 
+				{ 255, 1175, 450 }, Qt::Horizontal);
 }
 
 void MainWindow::timerEvent(QTimerEvent *event)

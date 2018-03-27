@@ -5,6 +5,7 @@
 #include "Config.hpp"
 #include "CameraUpdateJob.hpp"
 #include "LineMesh.hpp"
+#include "PerfStats.hpp"
 
 const shared_ptr<Mesh> previewMesh = shared_ptr<Mesh>(new LineMesh(-1, glm::vec3(0), glm::vec3(0, 1.0, 0)));
 
@@ -78,6 +79,7 @@ void GLWidget::paintGL()
 		m_graphicsClock->resetTimer();
 		m_renderer->renderScene(m_engineContext->getScene(), m_engineContext->getRenderOptions());
 		swapBuffers();
+		gPerfStats->recordFrame();
 		m_selection->updateSelection(m_mouse, m_graphicsContext->getGraphics());
 		m_mouseController->handleMouseInput(m_mouse, m_engineContext, m_selection);
 		m_engineContext->getScene()->update(m_selection, m_mouse, m_engineContext);
