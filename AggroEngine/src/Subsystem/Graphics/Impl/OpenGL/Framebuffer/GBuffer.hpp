@@ -14,6 +14,8 @@ private:
 	shared_ptr<TextureHandle> m_albedoTex;
 	shared_ptr<TextureHandle> m_selectionTex;
 	shared_ptr<TextureHandle> m_glowTex;
+	shared_ptr<TextureHandle> m_whiteTexture;
+	shared_ptr<VertexBufferHandle> m_screenVBO;
 	OpenGL43Graphics *m_graphics;
 
 public:

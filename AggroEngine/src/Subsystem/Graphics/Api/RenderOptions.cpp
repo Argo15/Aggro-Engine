@@ -53,6 +53,12 @@ RenderOptions &RenderOptions::setCamera(shared_ptr<Camera> camera)
 	return *this;
 }
 
+RenderOptions &RenderOptions::setDefaultFrameBufferId(int id)
+{
+	m_defaultFrameBufferId = id;
+	return *this;
+}
+
 const glm::mat4 &RenderOptions::getProjectionMatrix()
 {
 	return m_m4ProjectionMatrix;
@@ -96,4 +102,9 @@ void RenderOptions::addDirectLight(shared_ptr<DirectLight> directLight)
 shared_ptr<DirectLight> RenderOptions::getDirectLight()
 {
 	return m_directLight;
+}
+
+int RenderOptions::getDefaultFrameBufferId()
+{
+	return m_defaultFrameBufferId;
 }

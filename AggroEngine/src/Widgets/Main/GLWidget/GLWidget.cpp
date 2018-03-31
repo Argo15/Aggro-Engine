@@ -1,6 +1,7 @@
 #include "GLWidget.hpp"
 #include <QDrag>
 #include <QMimeData>
+#include <QOpenGLContext>
 #include "StaticObjectRenderComponent.hpp"
 #include "Config.hpp"
 #include "CameraUpdateJob.hpp"
@@ -10,7 +11,7 @@
 const shared_ptr<Mesh> previewMesh = shared_ptr<Mesh>(new LineMesh(-1, glm::vec3(0), glm::vec3(0, 1.0, 0)));
 
 GLWidget::GLWidget(shared_ptr<EngineContext> context, QWidget *parent)
-	: QGLWidget(parent)
+	: QOpenGLWidget(parent)
 	, m_keyboard(new KeyboardState())
 	, m_mouse(new MouseState())
 	, m_mouseController(new MouseController())
@@ -25,20 +26,15 @@ GLWidget::GLWidget(shared_ptr<EngineContext> context, QWidget *parent)
 	setFocusPolicy(Qt::StrongFocus);
 	setMouseTracking(true);
 	const Properties& props = gConfig->getProperties();
-	QGLFormat format;
-	if (!props.getBooleanProperty("graphics.vsync_enabled"))
-	{
-		format.setSwapInterval(0);
-	}
 	m_maxFps = props.getIntProperty("graphics.max_fps");
 	m_millisPerFrame = 1000 / m_maxFps;
-	setFormat(format);
 	setAcceptDrops(true);
 }
 
 void GLWidget::initializeGL()
 {
-	glewInit();
+	glewExperimental = true;
+	glewInit(); 
 
 	m_graphicsContext->getGraphics()->init(shared_ptr<GraphicsInitOptions>(new GraphicsInitOptions()));
 	m_renderer->init();
@@ -53,8 +49,6 @@ void GLWidget::initializeGL()
 		scene->addCameraChangeListener([this](auto camera) { _refreshCamera(camera); });
 	});
 	scene->addCameraChangeListener([this](auto camera) { _refreshCamera(camera); });
-
-	setAutoBufferSwap(false);
 }
 
 void GLWidget::resizeGL(int width, int height)
@@ -72,13 +66,14 @@ void GLWidget::paintGL()
 {
 	m_engineContext->getJobManager()->tick();
 	shared_ptr<Job> graphicsJob;
+	shared_ptr<RenderOptions> renderOptions = m_engineContext->getRenderOptions();
+	renderOptions->setDefaultFrameBufferId(defaultFramebufferObject());
 
 	// If enough time has passed, render a new frame
 	if (m_graphicsClock->getTimerMillis() >= m_millisPerFrame)
 	{
 		m_graphicsClock->resetTimer();
-		m_renderer->renderScene(m_engineContext->getScene(), m_engineContext->getRenderOptions());
-		swapBuffers();
+		m_renderer->renderScene(m_engineContext->getScene(), renderOptions);
 		gPerfStats->recordFrame();
 		m_selection->updateSelection(m_mouse, m_graphicsContext->getGraphics());
 		m_mouseController->handleMouseInput(m_mouse, m_engineContext, m_selection);
@@ -97,6 +92,8 @@ void GLWidget::paintGL()
 	{
 		graphicsJob->runInThread();
 	}
+
+	m_graphicsContext->getGraphics()->drawScreen(*renderOptions);
 }
 
 shared_ptr<GraphicsContext> GLWidget::getGraphicsContext()

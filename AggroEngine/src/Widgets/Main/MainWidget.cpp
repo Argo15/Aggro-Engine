@@ -1,12 +1,13 @@
 #include "MainWidget.hpp"
 #include "Toolbar.hpp"
+#include "GLMeshWidget.hpp"
 #include <QBoxLayout>
 #include <QComboBox>
 
 MainWidget::MainWidget(shared_ptr<EngineContext> context, QWidget *parent)
 	: QWidget(parent)
 	, m_context(context)
-	, m_glWidget(shared_ptr<GLWidget>(new GLWidget(m_context, this)))
+	, m_glWidget(shared_ptr<GLWidget>(new GLWidget(m_context)))
 {
 	QVBoxLayout *layout = new QVBoxLayout;
 

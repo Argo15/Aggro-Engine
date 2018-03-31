@@ -105,6 +105,7 @@ SceneGraphTree::SceneGraphTree(shared_ptr<EngineContext> context, QWidget *paren
 	setMouseTracking(true);
 	setAcceptDrops(true);
 	setWidget(m_treeWidget.get());
+	refresh(context->getScene().get());
 }
 
 void SceneGraphTree::refresh(Scene* scene)

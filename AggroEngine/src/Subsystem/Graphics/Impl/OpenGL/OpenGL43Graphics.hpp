@@ -30,6 +30,8 @@ private:
 	shared_ptr<LightBuffer> m_lightBuffer;
 	shared_ptr<ShadedBuffer> m_shadedBuffer;
 	shared_ptr<Viewport> m_viewport;
+	shared_ptr<GLSLProgram> m_screenProgram;
+	shared_ptr<VertexBufferHandle> m_screenVBO;
 
 	void _drawScreen(RenderOptions &renderOptions, float nX1, float nY1, float nX2, float nY2);
 	shared_ptr<TextureHandle> _getRenderTargetTexture(RenderOptions::RenderTarget target);
@@ -50,12 +52,13 @@ public:
 
 	void stageRender(shared_ptr<RenderData> pRenderData);
 	void executeRender(RenderOptions &renderOptions);
+	void drawScreen(RenderOptions &renderOptions);
 
 	void setViewport(int nX, int nY, int nWidth, int nHeight);
 	shared_ptr<Viewport> getViewport();
-	void clearColor();
-	void clearDepth();
-	void clearDepthAndColor();
+	void clearColor(int frameBufferId);
+	void clearDepth(int frameBufferId);
+	void clearDepthAndColor(int frameBufferId);
 
 	ShaderStore getShaderStore();
 

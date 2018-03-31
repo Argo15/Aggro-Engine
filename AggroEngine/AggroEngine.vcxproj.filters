@@ -59,6 +59,9 @@
     <CustomBuild Include="src\Widgets\ResourceExplorer\ResourceExplorer.hpp">
       <Filter>Header Files</Filter>
     </CustomBuild>
+    <CustomBuild Include="src\Widgets\ResourceExplorer\GLMeshWidget.hpp">
+      <Filter>Header Files</Filter>
+    </CustomBuild>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Widgets\MainWindow.cpp">
@@ -335,9 +338,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\Subsystem\Graphics\Impl\OpenGL\Textures\Texture.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Subsystem\Graphics\Impl\OpenGL\Textures\WhiteTexture.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\Subsystem\Graphics\Impl\OpenGL\OpenGL43Graphics.cpp">
@@ -757,9 +757,6 @@
     <ClInclude Include="src\Subsystem\Graphics\Impl\OpenGL\Textures\Texture.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\Subsystem\Graphics\Impl\OpenGL\Textures\WhiteTexture.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="src\Subsystem\Graphics\Impl\OpenGL\OpenGL43Graphics.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -871,9 +868,6 @@
     <ClInclude Include="src\Widgets\ResourceExplorer\QuickResources.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\Widgets\ResourceExplorer\GLMeshWidget.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="src\Widgets\ResourceExplorer\FileTypes.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -928,5 +922,7 @@
     <None Include="Resources\Shaders\f_dlight.glsl" />
     <None Include="Resources\Shaders\v_final.glsl" />
     <None Include="Resources\Shaders\f_final.glsl" />
+    <None Include="Resources\Shaders\v_screen.glsl" />
+    <None Include="Resources\Shaders\f_screen.glsl" />
   </ItemGroup>
 </Project>

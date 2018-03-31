@@ -1,10 +1,11 @@
 #include "GLMeshWidget.hpp"
 #include "CubeMesh.hpp"
 #include "Config.hpp"
+#include <QOpenGLContext>
 #include <QDir>
 
 GLMeshWidget::GLMeshWidget(QString &path, shared_ptr<EngineContext> context, QWidget *parent)
-	: QGLWidget()
+	: QOpenGLWidget(parent)
 	, m_engineContext(context)
 	, m_camera(new SceneNode(-1))
 	, m_initialized(false)
@@ -31,12 +32,6 @@ GLMeshWidget::GLMeshWidget(QString &path, shared_ptr<EngineContext> context, QWi
 
 	setFixedWidth(100);
 	setFixedHeight(100);
-
-	QGLFormat format;
-	format.setSwapInterval(0);
-	setFormat(format);
-	
-	setAutoBufferSwap(false);
 }
 
 void GLMeshWidget::initializeGL()
@@ -58,11 +53,10 @@ void GLMeshWidget::resizeGL(int width, int height)
 
 void GLMeshWidget::paintGL()
 {
-	m_graphicsContext->getGraphics()->clearDepthAndColor();
-
 	shared_ptr<RenderOptions> renderOptions(new RenderOptions());
 	renderOptions->setCamera(m_camera->getCamera());
 	renderOptions->setRenderTarget(RenderOptions::RenderTarget::SHADED);
+	renderOptions->setDefaultFrameBufferId(defaultFramebufferObject());	
 
 	shared_ptr<DirectLight> light(new DirectLight(glm::vec3(-0.5f, -1.f, -1.5f), glm::vec3(1), 50));
 	renderOptions->addDirectLight(light);
@@ -76,8 +70,9 @@ void GLMeshWidget::paintGL()
 
 	if (m_renderData)
 	{
+		m_graphicsContext->getGraphics()->clearDepthAndColor(defaultFramebufferObject());
 		m_graphicsContext->getGraphics()->stageRender(m_renderData);
-		m_graphicsContext->getGraphics()->executeRender(*(renderOptions.get()));
-		swapBuffers();
+		m_graphicsContext->getGraphics()->executeRender(*renderOptions);
+		m_graphicsContext->getGraphics()->drawScreen(*renderOptions);
 	}
 }

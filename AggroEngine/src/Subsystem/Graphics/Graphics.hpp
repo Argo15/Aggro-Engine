@@ -41,13 +41,14 @@ public:
 	// Rendering
 	virtual void stageRender(shared_ptr<RenderData> pRenderData) = 0;
 	virtual void executeRender(RenderOptions &renderOptions) = 0;
+	virtual void drawScreen(RenderOptions &renderOptions) = 0;
 
 	// Window
 	virtual void setViewport(int nX, int nY, int nWidth, int nHeight) = 0;
 	virtual shared_ptr<Viewport> getViewport() = 0;
-	virtual void clearColor() = 0;
-	virtual void clearDepth() = 0;
-	virtual void clearDepthAndColor() = 0;
+	virtual void clearColor(int frameBufferId) = 0;
+	virtual void clearDepth(int frameBufferId) = 0;
+	virtual void clearDepthAndColor(int frameBufferId) = 0;
 
 	// Downloaders
 	virtual shared_ptr<ImageUS> getRenderImage(RenderOptions::RenderTarget target) = 0;

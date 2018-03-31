@@ -2,7 +2,8 @@
 
 #define GLEW_STATIC
 #include <GL/glew.h>
-#include <QtOpenGL/QGLWidget>
+#include <QOpenGLWidget>
+#include <QOpenGLFunctions>
 #include <QKeyEvent>
 #include <QDragEnterEvent>
 #include <QDragLeaveEvent>
@@ -17,7 +18,7 @@
 #include "Clock.hpp"
 #include "Selection.hpp"
 
-class GLWidget : public QGLWidget
+class GLWidget : public QOpenGLWidget
 {
 	Q_OBJECT
 
@@ -48,9 +49,9 @@ public:
 	shared_ptr<GraphicsContext> getGraphicsContext();
 
 protected:
-	void initializeGL();
-	void resizeGL(int width, int height);
-	void paintGL();
+	void initializeGL() override;
+	void resizeGL(int width, int height) override;
+	void paintGL() override;
 	void keyPressEvent(QKeyEvent *event);
 	void keyReleaseEvent(QKeyEvent *event);
 	void mousePressEvent(QMouseEvent *event);

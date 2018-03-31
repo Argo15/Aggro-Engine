@@ -25,12 +25,10 @@ private:
 	glm::mat4 m_m4ProjectionMatrix; // Ortho or perspective
 	glm::mat4 m_m4ViewMatrix;  // Camera position/orientation
 	glm::vec4 m_v4Viewport; // Dimensions of window
-
 	shared_ptr<PerspectiveFrustrum> m_frustrum;
-
 	RenderTarget m_renderTarget;
-
 	shared_ptr<DirectLight> m_directLight;
+	int m_defaultFrameBufferId;
 
 public:
 	RenderOptions();
@@ -42,6 +40,7 @@ public:
 	RenderOptions &setViewport(glm::vec4 &m4Viewport);
 	RenderOptions &setFrustrum(shared_ptr<PerspectiveFrustrum> frustrum);
 	RenderOptions &setCamera(shared_ptr<Camera> camera);
+	RenderOptions &setDefaultFrameBufferId(int id);
 
 	const glm::mat4 &getProjectionMatrix();
 	const glm::mat4 &getViewMatrix();
@@ -54,4 +53,6 @@ public:
 	bool hasDirectLight();
 	void addDirectLight(shared_ptr<DirectLight> directLight);
 	shared_ptr<DirectLight> getDirectLight();
+
+	int getDefaultFrameBufferId();
 };

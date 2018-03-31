@@ -1,8 +1,8 @@
 #include "GBuffer.hpp"
-#include "WhiteTexture.hpp"
+#include "Texture.hpp"
 #include "Locks.hpp"
+#include "RGBImage.hpp"
 
-static unique_ptr<WhiteTexture> devTexture;
 static glm::vec3 defaultColor(1.0);
 static glm::vec3 defaultEmission(0);
 
@@ -16,7 +16,7 @@ GBuffer::GBuffer(OpenGL43Graphics *graphics, int width, int height)
 	m_glslProgram = graphics->getShaderStore().getShader("Resources/Shaders/v_GBuffer.glsl", "Resources/Shaders/f_GBuffer.glsl");
 
 	glEnable(GL_TEXTURE_2D);
-
+	
 	glGenFramebuffers(1, &m_buffer);
 	glBindFramebuffer(GL_FRAMEBUFFER, m_buffer);
 
@@ -69,7 +69,7 @@ GBuffer::GBuffer(OpenGL43Graphics *graphics, int width, int height)
 	glBindTexture(GL_TEXTURE_2D, 0);
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
-	devTexture = unique_ptr<WhiteTexture>(new WhiteTexture(1, 1, 255));
+	m_whiteTexture = graphics->createTexture(shared_ptr<ImageUC>(new RGBImage(1, 1, glm::vec3(1.f, 1.f, 1.f))));
 }
 
 void GBuffer::drawToBuffer(RenderOptions renderOptions, std::queue<shared_ptr<RenderData>> &renderQueue)
@@ -147,13 +147,13 @@ void GBuffer::drawToBuffer(RenderOptions renderOptions, std::queue<shared_ptr<Re
 			if (material)
 			{
 				m_glslProgram->sendUniform("material.color", material->getColor());
-				m_glslProgram->sendUniform("material.tex", material->getTextureOpt().get_value_or(devTexture->getHandle()), texId++);
-				m_glslProgram->sendUniform("material.alpha", material->getAlphaOpt().get_value_or(devTexture->getHandle()), texId++);
+				m_glslProgram->sendUniform("material.tex", material->getTextureOpt().get_value_or(m_whiteTexture), texId++);
+				m_glslProgram->sendUniform("material.alpha", material->getAlphaOpt().get_value_or(m_whiteTexture), texId++);
 				m_glslProgram->sendUniform("material.specIntensity", material->getSpecIntensity());
 				m_glslProgram->sendUniform("material.shininess", (float)material->getShininess());
-				m_glslProgram->sendUniform("material.specMap", material->getSpecularOpt().get_value_or(devTexture->getHandle()), texId++);
+				m_glslProgram->sendUniform("material.specMap", material->getSpecularOpt().get_value_or(m_whiteTexture), texId++);
 				m_glslProgram->sendUniform("material.emission", material->getEmission());
-				m_glslProgram->sendUniform("material.emissionMap", material->getEmissionMapOpt().get_value_or(devTexture->getHandle()), texId++);
+				m_glslProgram->sendUniform("material.emissionMap", material->getEmissionMapOpt().get_value_or(m_whiteTexture), texId++);
 				boost::optional<shared_ptr<TextureHandle>> normalMap = material->getNormalMapOpt();
 				if (normalMap)
 				{
@@ -175,13 +175,13 @@ void GBuffer::drawToBuffer(RenderOptions renderOptions, std::queue<shared_ptr<Re
 			else
 			{
 				m_glslProgram->sendUniform("material.color", defaultColor);
-				m_glslProgram->sendUniform("material.tex", devTexture->getHandle(), texId++);
-				m_glslProgram->sendUniform("material.alpha", devTexture->getHandle(), texId++);
+				m_glslProgram->sendUniform("material.tex", m_whiteTexture, texId++);
+				m_glslProgram->sendUniform("material.alpha", m_whiteTexture, texId++);
 				m_glslProgram->sendUniform("material.specIntensity", 0.f);
 				m_glslProgram->sendUniform("material.shininess", 0.f);
-				m_glslProgram->sendUniform("material.specMap", devTexture->getHandle(), texId++);
+				m_glslProgram->sendUniform("material.specMap", m_whiteTexture, texId++);
 				m_glslProgram->sendUniform("material.emission", defaultEmission);
-				m_glslProgram->sendUniform("material.emissionMap", devTexture->getHandle(), texId++);
+				m_glslProgram->sendUniform("material.emissionMap", m_whiteTexture, texId++);
 				m_glslProgram->sendUniform("material.hasNormals", false);
 			}
 			m_glslProgram->sendUniform("textureMatrix", glm::value_ptr(textureMatrix), false, 4);

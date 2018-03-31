@@ -21,7 +21,7 @@ void Renderer::init()
 void Renderer::renderScene(shared_ptr<Scene> scene, shared_ptr<RenderOptions> renderOptions)
 {
 	renderOptions->clear();
-	m_graphicsContext->getGraphics()->clearDepthAndColor(); // clear
+	m_graphicsContext->getGraphics()->clearDepthAndColor(renderOptions->getDefaultFrameBufferId()); // clear
 	m_graphicsContext->getGraphics()->stageRender(m_gridRenderData); // Render grid
 	if (scene->getTransformHook())
 	{

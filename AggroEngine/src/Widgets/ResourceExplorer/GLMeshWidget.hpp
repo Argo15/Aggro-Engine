@@ -1,13 +1,14 @@
 #pragma once
 
+#define GLEW_STATIC
 #include "EngineContext.hpp"
 #include "GraphicsContext.hpp"
 #include "Camera.hpp"
 #include "RenderData.hpp"
-#include <QGLWidget>
+#include <QOpenGLWidget>
 #include <QWidget>
 
-class GLMeshWidget : public QGLWidget
+class GLMeshWidget : public QOpenGLWidget
 {
 private:
 	shared_ptr<EngineContext> m_engineContext;
@@ -19,10 +20,10 @@ private:
 	bool m_initialized;
 
 public:
-	GLMeshWidget(QString &path, shared_ptr<EngineContext> context, QWidget *parent);
+	GLMeshWidget(QString &path, shared_ptr<EngineContext> context, QWidget *parent = 0);
 
 protected:
-	void initializeGL();
-	void resizeGL(int width, int height);
-	void paintGL();
+	void initializeGL() override;
+	void resizeGL(int width, int height) override;
+	void paintGL() override;
 };

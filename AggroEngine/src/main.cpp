@@ -3,7 +3,8 @@
 #include "MainWindow.hpp"
 #include "Config.hpp"
 
-int main(int argc, char* argv[]) {
+int main(int argc, char* argv[]) 
+{
 	std::unique_ptr<QCoreApplication> app(new QApplication(argc, argv));
 
 	const Properties& props = gConfig->getProperties();

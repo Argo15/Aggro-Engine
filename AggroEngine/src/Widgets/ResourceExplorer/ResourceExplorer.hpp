@@ -9,7 +9,6 @@ class ResourceExplorer : public QWidget
 	Q_OBJECT
 
 private:
-	shared_ptr<EngineContext> m_context;
 	shared_ptr<GLResourceWidget> m_resourceWidget;
 
 public:

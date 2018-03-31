@@ -1,10 +1,11 @@
 #include "OpenGL43Graphics.hpp"
-#include "Textures/WhiteTexture.hpp"
 #include "DefaultTextureHandle.hpp"
 #include "DefaultVertexBufferHandle.hpp"
 #include "Grid.hpp"
 #include "Config.hpp"
 #include "Locks.hpp"
+#include "RGBImage.hpp"
+#include "Screen.hpp"
 #include <iostream>
 
 #define BUFFER_OFFSET(i) ((char *)NULL + (i))
@@ -35,6 +36,8 @@ void OpenGL43Graphics::init(shared_ptr<GraphicsInitOptions> options)
 	m_lightBuffer = shared_ptr<LightBuffer>(new LightBuffer(this, options->getBufferWidth(), options->getBufferHeight()));
 	m_shadedBuffer = shared_ptr<ShadedBuffer>(new ShadedBuffer(this, options->getBufferWidth(), options->getBufferHeight()));
 	m_viewport = shared_ptr<Viewport>(new Viewport());
+	m_screenVBO = createVertexBuffer(shared_ptr<Mesh>(new Screen(-1, 0, 0, 1, 1)));
+	m_screenProgram = getShaderStore().getShader("Resources/Shaders/v_screen.glsl", "Resources/Shaders/f_screen.glsl");
 }
 
 shared_ptr<VertexBufferHandle> OpenGL43Graphics::createVertexBuffer(shared_ptr<Mesh> mesh)
@@ -70,8 +73,8 @@ void OpenGL43Graphics::deleteVertexBuffer(shared_ptr<VertexBufferHandle> nVertex
 shared_ptr<TextureHandle> OpenGL43Graphics::createTexture()
 {
 	boost::lock_guard<OpenGL43Graphics> guard(*this);
-	WhiteTexture texture(1,1);
-	return texture.getHandle();
+	return createTexture(shared_ptr<ImageUC>(new RGBImage(1, 1, glm::vec3(1.f, 1.f, 1.f))));
+
 }
 
 shared_ptr<TextureHandle> OpenGL43Graphics::createTexture(shared_ptr<ImageUC> image)
@@ -127,7 +130,11 @@ void OpenGL43Graphics::executeRender(RenderOptions &renderOptions)
 	m_gBuffer->drawToBuffer(renderOptions, renderQueue);
 	m_lightBuffer->drawToBuffer(renderOptions, m_gBuffer->getNormalTex(), m_gBuffer->getDepthTex(), m_gBuffer->getGlowTex(), m_shadowBuffer);
 	m_shadedBuffer->drawToBuffer(renderOptions, m_gBuffer->getAlbedoTex(), m_lightBuffer->getTexture(), m_lightBuffer->getGlowTex());
-	_drawScreen(renderOptions, 0.0, 0.0, 1.0, 1.0);
+}
+
+void OpenGL43Graphics::drawScreen(RenderOptions &renderOptions)
+{
+	return _drawScreen(renderOptions, 0.0, 0.0, 1.0, 1.0);
 }
 
 void OpenGL43Graphics::setViewport(int nX, int nY, int nWidth, int nHeight)
@@ -142,22 +149,25 @@ shared_ptr<Viewport> OpenGL43Graphics::getViewport()
 	return m_viewport;
 }
 
-void OpenGL43Graphics::clearColor()
+void OpenGL43Graphics::clearColor(int frameBufferId)
 {
 	boost::lock_guard<OpenGL43Graphics> guard(*this);
+	glBindFramebuffer(GL_FRAMEBUFFER, frameBufferId);
 	glClearColor(0.3f, 0.3f, 0.3f, 0);
 	glClear(GL_COLOR_BUFFER_BIT);
 }
 
-void OpenGL43Graphics::clearDepth()
+void OpenGL43Graphics::clearDepth(int frameBufferId)
 {
 	boost::lock_guard<OpenGL43Graphics> guard(*this);
+	glBindFramebuffer(GL_FRAMEBUFFER, frameBufferId);
 	glClear(GL_DEPTH_BUFFER_BIT);
 }
 
-void OpenGL43Graphics::clearDepthAndColor()
+void OpenGL43Graphics::clearDepthAndColor(int frameBufferId)
 {
 	boost::lock_guard<OpenGL43Graphics> guard(*this);
+	glBindFramebuffer(GL_FRAMEBUFFER, frameBufferId);
 	glClearColor(0.3f, 0.3f, 0.3f, 0);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 }
@@ -169,11 +179,12 @@ ShaderStore OpenGL43Graphics::getShaderStore()
 
 void OpenGL43Graphics::_drawScreen(RenderOptions &renderOptions, float nX1, float nY1, float nX2, float nY2)
 {
-	clearDepth();
 	boost::lock_guard<OpenGL43Graphics> guard(*this);
 
-	glm::vec4 viewport = renderOptions.getViewport();
-	setViewport(viewport[0], viewport[1], viewport[2], viewport[3]);
+	glBindFramebuffer(GL_FRAMEBUFFER, renderOptions.getDefaultFrameBufferId());
+	clearDepth(renderOptions.getDefaultFrameBufferId());
+	glClearColor(1.0, 0, 0, 0);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	glDisable(GL_LIGHTING);
 	for (int i = 31; i >= 0; i--)
@@ -183,22 +194,38 @@ void OpenGL43Graphics::_drawScreen(RenderOptions &renderOptions, float nX1, floa
 	}
 	glEnable(GL_TEXTURE_2D);
 
-	glMatrixMode(GL_PROJECTION);
-	glLoadIdentity();
-	gluOrtho2D(0, 1.0, 0, 1.0);
-	glMatrixMode(GL_MODELVIEW);
-	glLoadIdentity();
+	m_screenProgram->use();
+	glPushAttrib(GL_VIEWPORT_BIT);
+	glm::vec4 viewport = renderOptions.getViewport();
+	setViewport(viewport[0], viewport[1], viewport[2], viewport[3]);
+	glEnable(GL_DEPTH_TEST);
 
-	glActiveTexture(GL_TEXTURE0);
-	glBindTexture(GL_TEXTURE_2D, _getRenderTargetTexture(renderOptions.getRenderTarget())->get());
-	glColor3f(1.0f, 1.0f, 1.0f);
+	glBindAttribLocation(m_screenProgram->getHandle(), 0, "v_vertex");
+	glBindAttribLocation(m_screenProgram->getHandle(), 1, "v_texcoord");
+	m_screenProgram->sendUniform("texture", _getRenderTargetTexture(renderOptions.getRenderTarget()), 0);
 
-	glBegin(GL_QUADS);
-		glTexCoord2f(0, 0);		 glVertex2f(nX1, nY1);
-		glTexCoord2f(1.0f, 0);	 glVertex2f(nX2, nY1);
-		glTexCoord2f(1.0f, 1.0f); glVertex2f(nX2, nY2);
-		glTexCoord2f(0, 1.0f);	 glVertex2f(nX1, nY2);
-	glEnd();
+	glm::mat4 mvpMatrix = glm::ortho(0, 1, 0, 1);
+	m_screenProgram->sendUniform("modelViewProjectionMatrix", glm::value_ptr(mvpMatrix), false, 4);
+
+	glBindBuffer(GL_ARRAY_BUFFER, m_screenVBO->getVertexHandle());
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_screenVBO->getIndexHandle());
+
+	glEnableVertexAttribArray(0);
+	glEnableVertexAttribArray(1);
+	glEnableVertexAttribArray(2);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, 0);
+	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(m_screenVBO->getSizeOfVerticies()));
+	glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(m_screenVBO->getSizeOfVerticies() * 5 / 3));
+	glDrawElements(GL_TRIANGLES, m_screenVBO->getSizeOfIndicies(), GL_UNSIGNED_INT, 0);
+
+	glDisableVertexAttribArray(0);
+	glDisableVertexAttribArray(1);
+	glDisableVertexAttribArray(1);
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+	Texture::unbind();
+	m_screenProgram->disable();
+	glPopAttrib();
 }
 
 shared_ptr<TextureHandle> OpenGL43Graphics::_getRenderTargetTexture(RenderOptions::RenderTarget target)

@@ -7,6 +7,7 @@
 #include <QDir>
 #include <QFileDialog>
 #include <QScrollArea>
+#include <QSurfaceFormat>
 #include "SceneGraphTree.hpp"
 #include "InspectorWidget.hpp"
 #include "StringUtil.hpp"
@@ -19,10 +20,15 @@
 #include "ProfilingWidget.hpp"
 
 MainWindow::MainWindow()
-	: m_context(shared_ptr<EngineContext>(new EngineContext()))
-	, m_mainWidget(shared_ptr<MainWidget>(new MainWidget(m_context, this)))
+	: QMainWindow()
+	, m_context(shared_ptr<EngineContext>(new EngineContext()))
 	, m_lastSaveFile()
 {
+	QSurfaceFormat format;
+	format.setSwapInterval(0);
+	QSurfaceFormat::setDefaultFormat(format);
+	m_mainWidget = shared_ptr<MainWidget>(new MainWidget(m_context, this));
+
 	m_context->setScene(_loadDefaultScene());
 	setCentralWidget(m_mainWidget.get());
 
@@ -43,7 +49,7 @@ MainWindow::MainWindow()
 	rightWidget->setWindowTitle(QString::fromStdString("Inspector"));
 	addDockWidget(Qt::RightDockWidgetArea, rightWidget);
 
-	QDockWidget *bottomWidget = new QDockWidget();
+	QDockWidget *bottomWidget = new QDockWidget(this);
 	bottomWidget->setMinimumHeight(365);
 	ResourceExplorer *resourceWidget = new ResourceExplorer(m_context, bottomWidget);
 	bottomWidget->setWidget(resourceWidget);
