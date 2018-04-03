@@ -7,7 +7,7 @@ int main(int argc, char* argv[])
 {
 	std::unique_ptr<QCoreApplication> app(new QApplication(argc, argv));
 
-	const Properties& props = gConfig->getProperties();
+	const Properties& props = Config::instance().getProperties();
 	vector<int> nDimensions = props.getIntArrayProperty("window_options.dimensions");
 	
 	MainWindow mainWindow;

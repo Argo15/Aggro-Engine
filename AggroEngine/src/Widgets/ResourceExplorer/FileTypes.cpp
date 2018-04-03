@@ -10,10 +10,10 @@ FileTypes::FileTypes()
 
 FileType FileTypes::fromPath(QString &path)
 {
-	vector<string> imgExtensions = gConfig->getProperties().getStringArrayProperty("engine.tex_extensions");
+	vector<string> imgExtensions = Config::instance().getProperties().getStringArrayProperty("engine.tex_extensions");
 	std::copy(imgExtensions.begin(), imgExtensions.end(),
 		std::inserter(m_supportedImages, m_supportedImages.end()));
-	vector<string> meshExtensions = gConfig->getProperties().getStringArrayProperty("engine.mesh_extensions");
+	vector<string> meshExtensions = Config::instance().getProperties().getStringArrayProperty("engine.mesh_extensions");
 	std::copy(meshExtensions.begin(), meshExtensions.end(),
 		std::inserter(m_supportedMeshes, m_supportedMeshes.end()));
 	if (path.contains("."))

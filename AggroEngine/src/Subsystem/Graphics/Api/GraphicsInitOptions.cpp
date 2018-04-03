@@ -3,7 +3,7 @@
 
 GraphicsInitOptions::GraphicsInitOptions()
 {
-	const Properties& props = gConfig->getProperties();
+	const Properties& props = Config::instance().getProperties();
 	vector<int> nDimensions = props.getIntArrayProperty("graphics.resolution");
 	m_bufferWidth = nDimensions[0];
 	m_bufferHeight = nDimensions[1];

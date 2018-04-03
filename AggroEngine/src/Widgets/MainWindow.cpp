@@ -34,7 +34,7 @@ MainWindow::MainWindow()
 
 	createMenus();
 
-	const Properties& props = gConfig->getProperties();
+	const Properties& props = Config::instance().getProperties();
 	m_maxFps = props.getIntProperty("graphics.max_fps");
 	startTimer(1, Qt::PreciseTimer);
 
@@ -68,7 +68,8 @@ MainWindow::MainWindow()
 	QDockWidget *profilingDockWidget = new QDockWidget("Profiling");
 	profilingDockWidget->setWidget(new ProfilingWidget());
 	QDockWidget *fpsDockWidget = new QDockWidget("FPS");
-	fpsDockWidget->setWidget(new FPSWidget());
+	fpsDockWidget->setWidget(new FPSWidget(fpsDockWidget));
+	fpsDockWidget->setContentsMargins(0, 0, 0, 0);
 	addDockWidget(Qt::BottomDockWidgetArea, profilingDockWidget);
 	addDockWidget(Qt::BottomDockWidgetArea, memoryDockWidget);
 	addDockWidget(Qt::BottomDockWidgetArea, fpsDockWidget);

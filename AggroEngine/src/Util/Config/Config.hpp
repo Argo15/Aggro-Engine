@@ -22,6 +22,10 @@ public:
 	~Config() {}
 
 	const Properties &getProperties() const;
-};
 
-static const shared_ptr<Config> gConfig = shared_ptr<Config>(new Config("Config/config.json"));
+	static Config& instance()
+	{
+		static Config INSTANCE("Config/config.json");
+		return INSTANCE;
+	}
+};

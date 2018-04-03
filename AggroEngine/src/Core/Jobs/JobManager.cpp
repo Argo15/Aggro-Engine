@@ -4,7 +4,7 @@
 JobManager::JobManager()
 	: m_graphicsJobs()
 {
-	m_numThreads = gConfig->getProperties().getIntProperty("engine.worker_threads");
+	m_numThreads = Config::instance().getProperties().getIntProperty("engine.worker_threads");
 	m_jobQueue = vector<queue<shared_ptr<Job>>>(3, queue<shared_ptr<Job>>());
 }
 

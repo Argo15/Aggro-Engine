@@ -25,7 +25,7 @@ GLWidget::GLWidget(shared_ptr<EngineContext> context, QWidget *parent)
 
 	setFocusPolicy(Qt::StrongFocus);
 	setMouseTracking(true);
-	const Properties& props = gConfig->getProperties();
+	const Properties& props = Config::instance().getProperties();
 	m_maxFps = props.getIntProperty("graphics.max_fps");
 	m_millisPerFrame = 1000 / m_maxFps;
 	setAcceptDrops(true);
@@ -74,7 +74,7 @@ void GLWidget::paintGL()
 	{
 		m_graphicsClock->resetTimer();
 		m_renderer->renderScene(m_engineContext->getScene(), renderOptions);
-		gPerfStats->recordFrame();
+		PerfStats::instance().recordFrame();
 		m_selection->updateSelection(m_mouse, m_graphicsContext->getGraphics());
 		m_mouseController->handleMouseInput(m_mouse, m_engineContext, m_selection);
 		m_engineContext->getScene()->update(m_selection, m_mouse, m_engineContext);

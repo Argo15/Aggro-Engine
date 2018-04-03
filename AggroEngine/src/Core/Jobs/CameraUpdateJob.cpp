@@ -5,7 +5,7 @@ CameraUpdateJob::CameraUpdateJob(shared_ptr<SceneNode> cameraNode,
 	shared_ptr<CameraController> cameraController,
 	shared_ptr<KeyboardState> keyboard,
 	shared_ptr<MouseState> mouse)
-	: TickingJob(gConfig->getProperties().getIntProperty("engine.camera_fps"))
+	: TickingJob(Config::instance().getProperties().getIntProperty("engine.camera_fps"))
 	, m_cameraNode(cameraNode)
 	, m_cameraController(cameraController)
 	, m_keyboard(keyboard)

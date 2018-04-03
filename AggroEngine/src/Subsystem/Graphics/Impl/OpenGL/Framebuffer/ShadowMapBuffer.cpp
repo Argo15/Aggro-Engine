@@ -5,7 +5,7 @@
 ShadowMapBuffer::ShadowMapBuffer(OpenGL43Graphics *graphics, int defaultSize)
 	: FrameBufferObject(defaultSize, defaultSize)
 {
-	const Properties& props = gConfig->getProperties();
+	const Properties& props = Config::instance().getProperties();
 	m_size = props.getIntProperty("graphics.shadowRes", defaultSize);
 	m_width = m_size;
 	m_height = m_size;

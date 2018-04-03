@@ -4,7 +4,7 @@
 QuickResources::QuickResources(GLResourceWidget *resourceWidget)
 	: QListWidget()
 {
-	vector<string> quickPaths = gConfig->getProperties().getStringArrayProperty("engine.quick_resources");
+	vector<string> quickPaths = Config::instance().getProperties().getStringArrayProperty("engine.quick_resources");
 	for (auto path : quickPaths)
 	{
 		addItem(QString::fromStdString(path));
