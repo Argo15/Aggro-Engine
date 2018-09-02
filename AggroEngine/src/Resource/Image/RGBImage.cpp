@@ -12,7 +12,7 @@ shared_ptr<unsigned char> RGBImage::_getData(unsigned int nWidth, unsigned int n
 		pTexture[i + 1] = (unsigned char)255 * color[1];
 		pTexture[i + 2] = (unsigned char)255 * color[2];
 	}
-	return mem::shared_array<unsigned char>(pTexture);
+	return mem::shared_array<unsigned char>(pTexture, nTextureSize, "Image");
 }
 
 RGBImage::RGBImage(unsigned int nWidth, unsigned int nHeight, glm::vec3 color)

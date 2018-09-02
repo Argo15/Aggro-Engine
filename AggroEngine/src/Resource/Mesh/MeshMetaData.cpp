@@ -34,7 +34,7 @@ MeshMetaData::MeshMetaData(Mesh *mesh)
 	pCorners[5] = glm::vec3(vMax.x, vMin.y, vMax.z);
 	pCorners[6] = glm::vec3(vMax.x, vMax.y, vMin.z);
 	pCorners[7] = glm::vec3(vMax.x, vMax.y, vMax.z);
-	m_corners = mem::shared_array(pCorners);
+	m_corners = mem::shared_array(pCorners, 8, "Mesh");
 }
 
 int MeshMetaData::getNumTriangles()

@@ -64,7 +64,7 @@ MainWindow::MainWindow()
 	
 	// Performance widgets
 	QDockWidget *memoryDockWidget = new QDockWidget("Memory");
-	memoryDockWidget->setWidget(new MemoryWidget());
+	memoryDockWidget->setWidget(new MemoryWidget(memoryDockWidget));
 	QDockWidget *profilingDockWidget = new QDockWidget("Profiling");
 	profilingDockWidget->setWidget(new ProfilingWidget());
 	QDockWidget *fpsDockWidget = new QDockWidget("FPS");
@@ -75,6 +75,7 @@ MainWindow::MainWindow()
 	addDockWidget(Qt::BottomDockWidgetArea, fpsDockWidget);
 	tabifyDockWidget(profilingDockWidget, memoryDockWidget);
 	tabifyDockWidget(profilingDockWidget, fpsDockWidget);
+	memoryDockWidget->raise();
 	resizeDocks({ bottomLeftWidget, bottomWidget, fpsDockWidget }, 
 				{ 255, 1175, 450 }, Qt::Horizontal);
 }

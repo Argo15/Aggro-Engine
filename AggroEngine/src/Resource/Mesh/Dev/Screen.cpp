@@ -35,7 +35,7 @@ shared_ptr<float> Screen::_getVertices()
 	arr[9] = 0;
 	arr[10] = m_height;
 	arr[11] = 0;
-	return mem::shared_array(arr);
+	return mem::shared_array(arr, 12, "Mesh");
 }
 
 shared_ptr<float> Screen::_getTexCoords()
@@ -53,7 +53,7 @@ shared_ptr<float> Screen::_getTexCoords()
 	// 0, 1
 	arr[6] = 0;
 	arr[7] = 1.0f;
-	return mem::shared_array(arr);
+	return mem::shared_array(arr, 8, "Mesh");
 }
 
 shared_ptr<float> Screen::_getNormals()
@@ -63,7 +63,7 @@ shared_ptr<float> Screen::_getNormals()
 	{
 		arr[i] = 0.f;
 	}
-	return mem::shared_array(arr);
+	return mem::shared_array(arr, 12, "Mesh");
 }
 
 shared_ptr<int> Screen::_getIndices()
@@ -75,5 +75,5 @@ shared_ptr<int> Screen::_getIndices()
 	arr[3] = 0; // 0, 0
 	arr[4] = 2; // 1, 1
 	arr[5] = 3; // 0, 1
-	return mem::shared_array(arr);
+	return mem::shared_array(arr, 6, "Mesh");
 }

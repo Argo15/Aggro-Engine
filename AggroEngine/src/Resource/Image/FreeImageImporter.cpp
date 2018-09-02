@@ -77,13 +77,12 @@ shared_ptr<ImageUC> FreeImageImporter::importImage(string sFilename)
 		bits[i * 4 + 2] = bVal;
 	}
 
+	function<void(unsigned char *)> cleanupFunction = [imagen](unsigned char* a) { FreeImage_Unload(imagen); };
+
 	return shared_ptr<ImageUC>((
 		new ImageUC(
-			width, height, 
-			shared_ptr<unsigned char>(bits, [imagen](unsigned char* a)
-			{ 
-				FreeImage_Unload(imagen);
-			}))
+			width, height, mem::shared_array<unsigned char>(bits, width*height*4, "Image", 
+				boost::optional<function<void(unsigned char *)>>(cleanupFunction)))
 		)->setImageFormat(ImageFormat::RGBA)
 	);
 }

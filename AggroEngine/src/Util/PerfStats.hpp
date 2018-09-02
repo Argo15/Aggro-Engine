@@ -7,6 +7,7 @@
 #include "Locks.hpp"
 #include "Listener.hpp"
 #include "boost/date_time/posix_time/posix_time.hpp"
+#include <boost/unordered_map.hpp>
 using namespace boost::posix_time;
 
 /**
@@ -24,6 +25,9 @@ private:
 	int m_fpsTicksTracked;
 	std::deque<int> m_fpsTicks;
 	Listener<std::deque<int> *> m_fpsListeners;
+	boost::unordered_map<string, long> m_bytesAllocated;
+	Listener<boost::unordered_map<string, long> *> m_memoryListeners;
+	bool m_alertMemoryListeners;
 
 public:
 	PerfStats();
@@ -32,6 +36,10 @@ public:
 	int getFPS();
 	std::deque<int> getFPSTicks();
 	void addFPSListener(function<void(std::deque<int> *)> func);
+
+	void addBytesAllocated(string name, long bytes);
+	boost::unordered_map<string, long> &getBytesAllocated();
+	void addMemoryListener(function<void(boost::unordered_map<string, long> *)> func);
 
 	static PerfStats& instance()
 	{

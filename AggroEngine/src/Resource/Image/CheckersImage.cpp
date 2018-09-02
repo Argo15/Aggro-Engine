@@ -23,7 +23,7 @@ shared_ptr<unsigned char> CheckersImage::getData(int nWidth, int nHeight)
 			pTexture[i+2]=(unsigned char)128;
 		}
 	}
-	return mem::shared_array(pTexture);
+	return mem::shared_array(pTexture, nTextureSize, "Image");
 }
 
 CheckersImage::CheckersImage(int nWidth, int nHeight) 

@@ -62,6 +62,9 @@
     <CustomBuild Include="src\Widgets\ResourceExplorer\GLMeshWidget.hpp">
       <Filter>Header Files</Filter>
     </CustomBuild>
+    <CustomBuild Include="src\Widgets\Performance\MemoryWidget.hpp">
+      <Filter>Header Files</Filter>
+    </CustomBuild>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Widgets\MainWindow.cpp">
@@ -905,9 +908,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\Widgets\Performance\FPSWidget.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Widgets\Performance\MemoryWidget.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\Widgets\Performance\ProfilingWidget.hpp">

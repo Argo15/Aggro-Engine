@@ -36,7 +36,7 @@ shared_ptr<float> DirectLightMesh::_getVertices()
 		arr[6 + 6 * i + 4] = -4.0;
 		arr[6 + 6 * i + 5] = 0.5 * y;
 	}
-	return mem::shared_array(arr);
+	return mem::shared_array(arr, s_numVerts * 3, "Mesh");
 }
 
 shared_ptr<float> DirectLightMesh::_getTexCoords()
@@ -46,7 +46,7 @@ shared_ptr<float> DirectLightMesh::_getTexCoords()
 	{
 		arr[i] = 0.f;
 	}
-	return mem::shared_array(arr);
+	return mem::shared_array(arr, s_numVerts * 3, "Mesh");
 }
 
 shared_ptr<float> DirectLightMesh::_getNormals()
@@ -56,7 +56,7 @@ shared_ptr<float> DirectLightMesh::_getNormals()
 	{
 		arr[i] = 0.f;
 	}
-	return mem::shared_array(arr);
+	return mem::shared_array(arr, s_numVerts * 3, "Mesh");
 }
 
 shared_ptr<int> DirectLightMesh::_getIndices()
@@ -66,5 +66,5 @@ shared_ptr<int> DirectLightMesh::_getIndices()
 	{
 		arr[i] = i;
 	}
-	return mem::shared_array(arr);
+	return mem::shared_array(arr, s_numVerts * 3, "Mesh");
 }

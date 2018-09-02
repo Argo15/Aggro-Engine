@@ -119,7 +119,7 @@ public:
 		T *pixel = new T[numComponents];
 		memcpy(pixel, m_npData.get() + idxStart, pixelSize);
 
-		shared_ptr<T> ret = mem::shared_array<T>(pixel);
+		shared_ptr<T> ret = mem::shared_array<T>(pixel, numComponents, "Image");
 
 		return ret;
 	}

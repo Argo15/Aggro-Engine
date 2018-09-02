@@ -35,7 +35,7 @@ PerspectiveFrustrum::PerspectiveFrustrum(
 	corners[5] = farCenter - (farHeight / 2) * up + (farWidth / 2) * right;
 	corners[6] = farCenter + (farHeight / 2) * up - (farWidth / 2) * right;
 	corners[7] = farCenter - (farHeight / 2) * up - (farWidth / 2) * right;
-	m_corners = mem::shared_array(corners);
+	m_corners = mem::shared_array(corners, 8, "Other");
 
 	Plane *planes = new Plane[6];
 	planes[0] = Plane(nearCenter, -look); // near
@@ -52,7 +52,7 @@ PerspectiveFrustrum::PerspectiveFrustrum(
 	planes[5] = Plane(corners[1], glm::cross( // bottom
 		glm::normalize(corners[7] - corners[1]),
 		glm::normalize(corners[5] - corners[1])));
-	m_planes = mem::shared_array(planes);
+	m_planes = mem::shared_array(planes, 6, "Other");
 }
 
 glm::vec3 PerspectiveFrustrum::getEyePos()

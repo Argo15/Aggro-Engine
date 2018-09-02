@@ -31,7 +31,7 @@ shared_ptr<Chunk> FileWriter::readFile(string filename)
 		char *byteData = new char[numBytes];
 		file.read(byteData, numBytes);
 		file.close();
-		return shared_ptr<Chunk>(new Chunk(chunkType, numBytes, mem::shared_array(byteData)));
+		return shared_ptr<Chunk>(new Chunk(chunkType, numBytes, mem::shared_array(byteData, numBytes, "Serializer")));
 	}
 	return shared_ptr<Chunk>();
 }

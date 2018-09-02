@@ -12,7 +12,7 @@ VertexBufferData::VertexBufferData(int nSizeOfVerticies)
 	{
 		nTmpIndicies[i] = i;
 	}
-	m_nIndicies = mem::shared_array(nTmpIndicies);
+	m_nIndicies = mem::shared_array(nTmpIndicies, nNumIndicies, "Mesh");
 }
 
 VertexBufferData::VertexBufferData(int nSizeOfVerticies, int nSizeOfIndicies)

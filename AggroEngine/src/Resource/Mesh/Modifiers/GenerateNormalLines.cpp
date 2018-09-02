@@ -72,10 +72,10 @@ shared_ptr<Mesh> GenerateNormalLines::apply(shared_ptr<Mesh> &sourceMesh)
 			indicies[numIndexInts * i + x] = numIndexInts * i + x;
 		}
 	}
-	shared_ptr<float> pVertices = mem::shared_array(verticies);
-	shared_ptr<float> pTexCoords = mem::shared_array(texCoords);
-	shared_ptr<float> pNormals = mem::shared_array(normals);
-	shared_ptr<int> pIndices = mem::shared_array(indicies);
+	shared_ptr<float> pVertices = mem::shared_array(verticies, numVertFloats * numNormals, "Mesh");
+	shared_ptr<float> pTexCoords = mem::shared_array(texCoords, numTexFloats * numNormals, "Mesh");
+	shared_ptr<float> pNormals = mem::shared_array(normals, numVertFloats * numNormals, "Mesh");
+	shared_ptr<int> pIndices = mem::shared_array(indicies, numIndexInts * numNormals, "Mesh");
 	return shared_ptr<Mesh>(new Mesh(
 		-1, 
 		numVertFloats * numNormals * sizeof(float),

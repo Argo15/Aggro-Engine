@@ -3,6 +3,7 @@
 
 PerfStats::PerfStats()
 	: m_frameTimestamps()
+	, m_alertMemoryListeners(false)
 {
 	m_startTime = microsec_clock::local_time();
 	m_lastFPSTick = m_startTime;
@@ -36,6 +37,12 @@ void PerfStats::recordFrame()
 		}
 		m_fpsListeners.notify(&m_fpsTicks);
 	}
+
+	if (m_alertMemoryListeners)
+	{
+		m_memoryListeners.notify(&m_bytesAllocated);
+		m_alertMemoryListeners = false;
+	}
 }
 
 int PerfStats::getFPS()
@@ -54,4 +61,25 @@ void PerfStats::addFPSListener(function<void(std::deque<int> *)> func)
 {
 	boost::lock_guard<PerfStats> guard(*this);
 	m_fpsListeners.add(func);
+}
+
+void PerfStats::addBytesAllocated(string name, long bytes)
+{
+	if (m_bytesAllocated.find(name) == m_bytesAllocated.end())
+	{
+		m_bytesAllocated[name] = 0;
+	}
+	m_bytesAllocated[name] += bytes;
+	m_alertMemoryListeners = m_alertMemoryListeners || bytes > 104857 || bytes < -104857; // only on 0.1MB increase
+}
+
+boost::unordered_map<string, long> &PerfStats::getBytesAllocated()
+{
+	return m_bytesAllocated;
+}
+
+void PerfStats::addMemoryListener(function<void(boost::unordered_map<string, long> *)> func)
+{
+	boost::lock_guard<PerfStats> guard(*this);
+	m_memoryListeners.add(func);
 }

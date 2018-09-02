@@ -25,7 +25,7 @@ shared_ptr<float> BoundingBoxMesh::_getVertices()
 		arr[3 * i + 1] = m_corners.get()[i].y;
 		arr[3 * i + 2] = m_corners.get()[i].z;
 	}
-	return mem::shared_array(arr);
+	return mem::shared_array(arr, 3 * s_numVerts, "Mesh");
 }
 
 shared_ptr<float> BoundingBoxMesh::_getTexCoords()
@@ -35,7 +35,7 @@ shared_ptr<float> BoundingBoxMesh::_getTexCoords()
 	{
 		arr[i] = 0.f;
 	}
-	return mem::shared_array(arr);
+	return mem::shared_array(arr, 3 * s_numVerts, "Mesh");
 }
 
 shared_ptr<float> BoundingBoxMesh::_getNormals()
@@ -45,7 +45,7 @@ shared_ptr<float> BoundingBoxMesh::_getNormals()
 	{
 		arr[i] = 0.f;
 	}
-	return mem::shared_array(arr);
+	return mem::shared_array(arr, 3 * s_numVerts, "Mesh");
 }
 
 shared_ptr<int> BoundingBoxMesh::_getIndices()
@@ -78,5 +78,5 @@ shared_ptr<int> BoundingBoxMesh::_getIndices()
 	arr[21] = 5;
 	arr[22] = 7;
 	arr[23] = 6;
-	return mem::shared_array(arr);
+	return mem::shared_array(arr, 24, "Mesh");
 }

@@ -43,7 +43,6 @@ FPSWidget::FPSWidget(QDockWidget *parent)
 
 	m_chartView->setRenderHint(QPainter::Antialiasing);
 	layout->addWidget(m_chartView);
-	setContentsMargins(0, 0, 0, 0);
 
 	setLayout(layout);
 }

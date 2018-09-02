@@ -24,7 +24,7 @@ shared_ptr<float> LineMesh::_getVertices()
 	arr[3] = m_p2[0];
 	arr[4] = m_p2[1];
 	arr[5] = m_p2[2];
-	return mem::shared_array(arr);
+	return mem::shared_array(arr, 6, "Mesh");
 }
 
 shared_ptr<float> LineMesh::_getTexCoords()
@@ -34,7 +34,7 @@ shared_ptr<float> LineMesh::_getTexCoords()
 	{
 		arr[i] = 0.f;
 	}
-	return mem::shared_array(arr);
+	return mem::shared_array(arr, 6, "Mesh");
 }
 
 shared_ptr<float> LineMesh::_getNormals()
@@ -44,7 +44,7 @@ shared_ptr<float> LineMesh::_getNormals()
 	{
 		arr[i] = 0.f;
 	}
-	return mem::shared_array(arr);
+	return mem::shared_array(arr, 6, "Mesh");
 }
 
 shared_ptr<int> LineMesh::_getIndices()
@@ -52,5 +52,5 @@ shared_ptr<int> LineMesh::_getIndices()
 	int *arr = new int[2];
 	arr[0] = 0;
 	arr[1] = 1;
-	return mem::shared_array(arr);
+	return mem::shared_array(arr, 6, "Mesh");
 }

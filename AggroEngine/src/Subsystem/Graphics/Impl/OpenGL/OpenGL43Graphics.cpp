@@ -276,7 +276,7 @@ shared_ptr<ImageUS> OpenGL43Graphics::getRenderImage(int x, int y, int width, in
 	glReadPixels(x, y, width, height, GL_RGBA, GL_UNSIGNED_SHORT, pixels);
 	m_gBuffer->unbindFrameBuffer();
 
-	return shared_ptr<ImageUS>((new ImageUS(width, height, mem::shared_array<unsigned short>(pixels)))
+	return shared_ptr<ImageUS>((new ImageUS(width, height, mem::shared_array<unsigned short>(pixels, width * height * 4, "GL_Graphics")))
 		->setImageFormat(ImageFormat::RGBA)
 		->setImageType(ImageType::UNSIGNED_SHORT)
 		);
@@ -298,7 +298,7 @@ shared_ptr<ImageF> OpenGL43Graphics::getRenderImageF(int x, int y, int width, in
 	glReadPixels(x, y, width, height, GL_DEPTH_COMPONENT, GL_FLOAT, pixels);
 	m_gBuffer->unbindFrameBuffer();
 
-	return shared_ptr<ImageF>((new ImageF(width, height, mem::shared_array<float>(pixels)))
+	return shared_ptr<ImageF>((new ImageF(width, height, mem::shared_array<float>(pixels, size, "GL_Graphics")))
 		->setImageFormat(ImageFormat::DEPTH_COMPONENT)
 		->setImageType(ImageType::FLOAT_TYPE)
 		);

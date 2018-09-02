@@ -23,7 +23,7 @@ ShadowMapBuffer::ShadowMapBuffer(OpenGL43Graphics *graphics, int defaultSize)
 
 	for (int i = 0; i < 4; i++)
 	{
-		shared_ptr<ImageUC> fboImage((new ImageUC(m_width, m_height, mem::shared_array<unsigned char>(0)))
+		shared_ptr<ImageUC> fboImage((new ImageUC(m_width, m_height, mem::shared_array<unsigned char>(0, 0, "GL_Graphics")))
 			->setImageFormat(ImageFormat::RGBA)
 		);
 		shared_ptr<TextureBuildOptions> texOptions(new TextureBuildOptions(fboImage));

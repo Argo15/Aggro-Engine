@@ -27,7 +27,7 @@ shared_ptr<float> FrustrumMesh::_getVertices()
 		arr[3 * i + 1] = corners.get()[i].y;
 		arr[3 * i + 2] = corners.get()[i].z;
 	}
-	return mem::shared_array(arr);
+	return mem::shared_array(arr, s_numVerts * 3, "Mesh");
 }
 
 shared_ptr<float> FrustrumMesh::_getTexCoords()
@@ -37,7 +37,7 @@ shared_ptr<float> FrustrumMesh::_getTexCoords()
 	{
 		arr[i] = 0.f;
 	}
-	return mem::shared_array(arr);
+	return mem::shared_array(arr, s_numVerts * 3, "Mesh");
 }
 
 shared_ptr<float> FrustrumMesh::_getNormals()
@@ -47,7 +47,7 @@ shared_ptr<float> FrustrumMesh::_getNormals()
 	{
 		arr[i] = 0.f;
 	}
-	return mem::shared_array(arr);
+	return mem::shared_array(arr, s_numVerts * 3, "Mesh");
 }
 
 shared_ptr<int> FrustrumMesh::_getIndices()
@@ -80,5 +80,5 @@ shared_ptr<int> FrustrumMesh::_getIndices()
 	arr[21] = 6;
 	arr[22] = 3;
 	arr[23] = 7;
-	return mem::shared_array(arr);
+	return mem::shared_array(arr, s_numIdx, "Mesh");
 }

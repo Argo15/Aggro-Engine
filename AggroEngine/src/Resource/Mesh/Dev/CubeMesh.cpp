@@ -128,7 +128,7 @@ shared_ptr<float> CubeMesh::_getVertices()
 	{
 		pVerts[i] = verts[i];
 	}
-	return mem::shared_array(pVerts);
+	return mem::shared_array(pVerts, length, "Mesh");
 }
 
 shared_ptr<float> CubeMesh::_getTexCoords()
@@ -139,7 +139,7 @@ shared_ptr<float> CubeMesh::_getTexCoords()
 	{
 		pTex[i] = texcoords[i];
 	}
-	return mem::shared_array(pTex);
+	return mem::shared_array(pTex, length, "Mesh");
 }
 
 shared_ptr<float> CubeMesh::_getNormals()
@@ -150,7 +150,7 @@ shared_ptr<float> CubeMesh::_getNormals()
 	{
 		pNorms[i] = normals[i];
 	}
-	return mem::shared_array(pNorms);
+	return mem::shared_array(pNorms, length, "Mesh");
 }
 
 shared_ptr<int> CubeMesh::_getIndices()
@@ -161,7 +161,7 @@ shared_ptr<int> CubeMesh::_getIndices()
 	{
 		pIdx[i] = idxs[i];
 	}
-	return mem::shared_array(pIdx);
+	return mem::shared_array(pIdx, length, "Mesh");
 }
 
 CubeMesh::CubeMesh(int meshId)

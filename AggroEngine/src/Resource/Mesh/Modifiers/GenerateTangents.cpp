@@ -130,7 +130,7 @@ shared_ptr<Mesh> GenerateTangents::apply(shared_ptr<Mesh> &sourceMesh)
 		bitangents[3 * i + 1] = bitangent.y;
 		bitangents[3 * i + 2] = bitangent.z;
 	}
-	newMesh->setTangents(mem::shared_array(tangents));
-	newMesh->setBitangents(mem::shared_array(bitangents));
+	newMesh->setTangents(mem::shared_array(tangents, 3 * numNormals, "Mesh"));
+	newMesh->setBitangents(mem::shared_array(bitangents, 3 * numNormals, "Mesh"));
 	return newMesh;
 }

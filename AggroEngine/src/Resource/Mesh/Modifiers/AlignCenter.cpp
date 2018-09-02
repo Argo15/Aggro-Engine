@@ -29,7 +29,7 @@ shared_ptr<Mesh> AlignCenter::apply(shared_ptr<Mesh> &sourceMesh)
 		-1,
 		sourceMesh->getSizeOfVerticies(),
 		sourceMesh->getSizeOfIndicies(),
-		mem::shared_array(newVerts),
+		mem::shared_array(newVerts, 3 * numVerts, "Mesh"),
 		sourceMesh->getTexCoords(),
 		sourceMesh->getNormals(),
 		sourceMesh->getIndicies(),

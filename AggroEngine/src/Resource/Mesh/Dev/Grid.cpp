@@ -46,7 +46,7 @@ shared_ptr<float> Grid::_getVertices()
 {
 	float *arr = new float[m_verticies.size()];
 	std::copy(m_verticies.begin(), m_verticies.end(), arr);
-	return mem::shared_array(arr);
+	return mem::shared_array(arr, m_verticies.size(), "Mesh");
 }
 
 // Inits to 0
@@ -58,7 +58,7 @@ shared_ptr<float> Grid::_getTexCoords()
 	{
 		arr[i] = 0.f;
 	}
-	return mem::shared_array(arr);
+	return mem::shared_array(arr, size, "Mesh");
 }
 
 // Inits to 0
@@ -69,14 +69,14 @@ shared_ptr<float> Grid::_getNormals()
 	{
 		arr[i] = 0.f;
 	}
-	return mem::shared_array(arr);
+	return mem::shared_array(arr, m_verticies.size(), "Mesh");
 }
 
 shared_ptr<int> Grid::_getIndices()
 {
 	int *arr = new int[m_indicies.size()];
 	std::copy(m_indicies.begin(), m_indicies.end(), arr);
-	return mem::shared_array(arr);
+	return mem::shared_array(arr, m_verticies.size(), "Mesh");
 }
 
 Grid::Grid(int meshId, int size)

@@ -47,7 +47,13 @@ shared_ptr<Mesh> AssimpMeshImporter::importMesh(int meshId, string sFilename)
 			indices[i*3+2] = scene->mMeshes[0]->mFaces[i].mIndices[2];
 		}
 		importer.FreeScene();
-		return shared_ptr<Mesh>(new Mesh(meshId, sizeof(float)*nNumVerts*3, sizeof(int)*nNumFaces*3, mem::shared_array(verts), mem::shared_array(texcoords), mem::shared_array(normals), mem::shared_array(indices)));
+		return shared_ptr<Mesh>(new Mesh(meshId, 
+			sizeof(float)*nNumVerts*3, 
+			sizeof(int)*nNumFaces*3, 
+			mem::shared_array(verts, nNumVerts * 3, "Mesh"),
+			mem::shared_array(texcoords, nNumVerts * 2, "Mesh"),
+			mem::shared_array(normals, nNumVerts * 3, "Mesh"),
+			mem::shared_array(indices, nNumFaces * 3, "Mesh")));
 	}
 
 	cout << "Failed importing " << sFilename << " no scene found." << endl;

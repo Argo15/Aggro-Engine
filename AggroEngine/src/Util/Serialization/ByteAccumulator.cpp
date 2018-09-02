@@ -83,7 +83,7 @@ void ByteAccumulator::add(string *str)
 	int len = strlen(str->c_str());
 	char *cstr = new char[len];
 	std::strcpy(cstr, str->c_str());
-	add(new Chunk(ChunkType::STRING, len, mem::shared_array(cstr)));
+	add(new Chunk(ChunkType::STRING, len, mem::shared_array(cstr, len, "Serializer")));
 }
 
 void ByteAccumulator::add(glm::mat4 *mat)
@@ -118,5 +118,5 @@ shared_ptr<char> ByteAccumulator::collect()
 		memcpy(data + curIdx, item.m_bytePtr, item.m_numBytes);
 		curIdx += item.m_numBytes;
 	}
-	return mem::shared_array(data);
+	return mem::shared_array(data, m_numBytes, "Serializer");
 }

@@ -135,7 +135,7 @@ boost::optional<Chunk> ByteParser::parseChunk()
 		{
 			if (boost::optional<char *> bytes = parseBytes(*numBytes))
 			{
-				return boost::optional<Chunk>(Chunk((ChunkType)type.get(), *numBytes, mem::shared_array(*bytes)));
+				return boost::optional<Chunk>(Chunk((ChunkType)type.get(), *numBytes, mem::shared_array(*bytes, *numBytes, "Serializer")));
 			}
 		}
 		return boost::optional<Chunk>(Chunk((ChunkType)type.get(), 0, shared_ptr<char>()));
