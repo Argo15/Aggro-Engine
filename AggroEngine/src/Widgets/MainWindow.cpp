@@ -65,8 +65,13 @@ MainWindow::MainWindow()
 	// Performance widgets
 	QDockWidget *memoryDockWidget = new QDockWidget("Memory");
 	memoryDockWidget->setWidget(new MemoryWidget(memoryDockWidget));
-	QDockWidget *profilingDockWidget = new QDockWidget("Profiling");
-	profilingDockWidget->setWidget(new ProfilingWidget());
+	QDockWidget *profilingDockWidget = new QDockWidget("CPU Profiling");
+	QScrollArea *profilingScrollArea = new QScrollArea(profilingDockWidget);
+	profilingScrollArea->setWidget(new ProfilingWidget(profilingDockWidget));
+	profilingScrollArea->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+	profilingScrollArea->setVerticalScrollBarPolicy(Qt::ScrollBarAsNeeded);
+	profilingScrollArea->setWidgetResizable(true);
+	profilingDockWidget->setWidget(profilingScrollArea);
 	QDockWidget *fpsDockWidget = new QDockWidget("FPS");
 	fpsDockWidget->setWidget(new FPSWidget(fpsDockWidget));
 	fpsDockWidget->setContentsMargins(0, 0, 0, 0);
@@ -75,7 +80,6 @@ MainWindow::MainWindow()
 	addDockWidget(Qt::BottomDockWidgetArea, fpsDockWidget);
 	tabifyDockWidget(profilingDockWidget, memoryDockWidget);
 	tabifyDockWidget(profilingDockWidget, fpsDockWidget);
-	memoryDockWidget->raise();
 	resizeDocks({ bottomLeftWidget, bottomWidget, fpsDockWidget }, 
 				{ 255, 1175, 450 }, Qt::Horizontal);
 }

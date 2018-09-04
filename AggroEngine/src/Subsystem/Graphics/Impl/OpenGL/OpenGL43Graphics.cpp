@@ -3,6 +3,7 @@
 #include "DefaultVertexBufferHandle.hpp"
 #include "Grid.hpp"
 #include "Config.hpp"
+#include "PerfStats.hpp"
 #include "Locks.hpp"
 #include "RGBImage.hpp"
 #include "Screen.hpp"
@@ -126,6 +127,7 @@ void OpenGL43Graphics::stageRender(shared_ptr<RenderData> pRenderData)
 
 void OpenGL43Graphics::executeRender(RenderOptions &renderOptions)
 {
+	auto tracker = PerfStats::instance().trackTime("executeRender");
 	m_shadowBuffer->drawToBuffer(renderOptions, renderQueue);
 	m_gBuffer->drawToBuffer(renderOptions, renderQueue);
 	m_lightBuffer->drawToBuffer(renderOptions, m_gBuffer->getNormalTex(), m_gBuffer->getDepthTex(), m_gBuffer->getGlowTex(), m_shadowBuffer);

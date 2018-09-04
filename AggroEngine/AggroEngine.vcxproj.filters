@@ -496,9 +496,6 @@
     <ClCompile Include="src\Subsystem\Graphics\Api\ShadowMapFrustrum.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\Util\PerfStats.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="src\Widgets\Performance\FPSWidget.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -506,6 +503,15 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\Widgets\Performance\ProfilingWidget.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Util\Profiling\PerfStats.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Util\Profiling\ProfilingData.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Util\Profiling\TimeTracker.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -904,13 +910,19 @@
     <ClInclude Include="src\Subsystem\Graphics\Api\ShadowMapFrustrum.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\Util\PerfStats.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="src\Widgets\Performance\FPSWidget.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\Widgets\Performance\ProfilingWidget.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Util\Profiling\PerfStats.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Util\Profiling\ProfilingData.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Util\Profiling\TimeTracker.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

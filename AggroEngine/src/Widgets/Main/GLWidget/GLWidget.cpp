@@ -64,6 +64,7 @@ void GLWidget::resizeGL(int width, int height)
 
 void GLWidget::paintGL()
 {
+	auto methodTracker = PerfStats::instance().trackTime("paintGL");
 	m_engineContext->getJobManager()->tick();
 	shared_ptr<Job> graphicsJob;
 	shared_ptr<RenderOptions> renderOptions = m_engineContext->getRenderOptions();
@@ -82,6 +83,7 @@ void GLWidget::paintGL()
 		// Process at least one graphics job
 		if (graphicsJob = m_engineContext->getJobManager()->nextGraphicsJob())
 		{
+			auto tracker = PerfStats::instance().trackTime("Graphics Job");
 			graphicsJob->runInThread(); 
 		}
 	}
@@ -90,6 +92,7 @@ void GLWidget::paintGL()
 	while (m_graphicsClock->getTimerMillis() + 1 < m_millisPerFrame &&
 			(graphicsJob = m_engineContext->getJobManager()->nextGraphicsJob()))
 	{
+		auto tracker = PerfStats::instance().trackTime("Graphics Job");
 		graphicsJob->runInThread();
 	}
 

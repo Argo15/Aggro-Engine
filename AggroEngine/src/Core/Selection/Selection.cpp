@@ -1,4 +1,5 @@
 #include "Selection.hpp"
+#include "PerfStats.hpp"
 #include <algorithm>
 
 Selection::Selection(unsigned int size)
@@ -10,6 +11,7 @@ Selection::Selection(unsigned int size)
 
 void Selection::updateSelection(shared_ptr<MouseState> mouse, shared_ptr<Graphics> graphics)
 {
+	auto tracker = PerfStats::instance().trackTime("updateSelection");
 	float percentX = (float)mouse->getPosX() / (float)graphics->getViewport()->getWidth();
 	float percentY = (float)mouse->getPosY() / (float)graphics->getViewport()->getHeight();
 	unsigned int imgX = std::max<unsigned int>(0, percentX * graphics->getFrameBufferWidth() - (m_size / 2));

@@ -99,6 +99,7 @@ void MeshComponent::generateMeshes()
 			{
 				return;
 			}
+			auto tracker = PerfStats::instance().trackTime("generateMeshes");
 			switch (m_axisAlign)
 			{
 				case AxisAlign::CENTER: m_modifiedPrimaryMesh = alignCenter->apply(m_modifiedPrimaryMesh); break;

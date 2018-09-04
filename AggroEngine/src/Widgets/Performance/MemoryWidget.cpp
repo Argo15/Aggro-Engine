@@ -37,13 +37,6 @@ MemoryWidget::MemoryWidget(QDockWidget *parent)
 	layout->addWidget(chartView);
 	setLayout(layout);
 
-	connect(parent, &QDockWidget::visibilityChanged, this, [this](auto visible) {
-		if (visible)
-		{
-			_onUpdate(PerfStats::instance().getBytesAllocated());
-		}
-	});
-
 	PerfStats::instance().addMemoryListener([this](auto map) { _onUpdate(*map); });
 }
 

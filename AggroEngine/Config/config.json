@@ -20,7 +20,8 @@
     "mesh_extensions": [ "obj" ],
     "quick_resources": [ "Mesh/Engine", "Textures/Walls", "Textures/Engine", "Textures/Normals", "Textures/Test" ],
     "performance": {
-      "fps_ticks_tracked":  120
+      "fps_ticks_tracked":  120,
+      "profiler_enabled": true
     }
   }
 }
