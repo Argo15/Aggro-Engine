@@ -129,7 +129,7 @@ boost::optional<Chunk> ByteParser::parseChunk()
 {
 	boost::optional<int> type = parseInt();
 	boost::optional<int> numBytes = parseInt();
-	if (type )
+	if (type)
 	{
 		if (numBytes)
 		{

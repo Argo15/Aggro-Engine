@@ -13,6 +13,7 @@ SceneNode::SceneNode(unsigned int id, SceneNode *parent)
 	, m_changeListeners()
 	, m_deletedListeners()
 	, m_id(id)
+	, m_filename("")
 {
 	setName("Object");
 }
@@ -34,6 +35,14 @@ SceneNode::SceneNode(Chunk * const byteChunk, shared_ptr<EngineContext> context,
 			m_id = Scene::getNextId();
 			setName(primitives.parseString().get_value_or("unknown"));
 			m_isBaseMaterialNode = primitives.parseBool().get_value_or(false);
+			m_filename = primitives.parseString().get_value_or("");
+			if (m_filename != "")
+			{
+				int resourceId = context->getResources()->getIdForPath(m_filename);
+				context->getSceneNodeCache()->getSceneNode(resourceId)->onReady([this](auto node) {
+					resolveFileBackedData(node);
+				});
+			}
 		}
 		else if (*nextChunk->getType() == ChunkType::SCENE_NODE)
 		{
@@ -82,6 +91,7 @@ shared_ptr<Chunk> SceneNode::serialize(shared_ptr<Resources> resources)
 	ByteAccumulator primitiveBytes;
 	primitiveBytes.add(&m_name);
 	primitiveBytes.add(&m_isBaseMaterialNode);
+	primitiveBytes.add(&m_filename);
 	bytes.add(shared_ptr<Chunk>(new Chunk(ChunkType::PRIMITIVES, primitiveBytes.getNumBytes(), primitiveBytes.collect())));
 
 	for (auto & child : *m_children)
@@ -142,6 +152,15 @@ shared_ptr<SceneNode> SceneNode::deserialize(Chunk * const byteChunk, shared_ptr
 	return shared_ptr<SceneNode>(new SceneNode(byteChunk, context, baseMaterials, scene));
 }
 
+void SceneNode::resolveFileBackedData(shared_ptr<SceneNode> fileBackedSceneNode)
+{
+	if (m_meshComponent && fileBackedSceneNode && fileBackedSceneNode->getMeshComponent())
+	{
+		m_meshComponent->setPrimaryMesh(fileBackedSceneNode->getMeshComponent()->getPrimaryMesh());
+	}
+}
+
+
 shared_ptr<vector<shared_ptr<SceneNode>>> SceneNode::getChildren()
 {
 	return m_children;
@@ -198,9 +217,19 @@ string SceneNode::getName()
 	return m_name;
 }
 
+void SceneNode::setFilename(string filename)
+{
+	m_filename = filename;
+}
+
 unsigned int SceneNode::getId()
 {
 	return m_id;
+}
+
+string SceneNode::getFilename()
+{
+	return m_filename;
 }
 
 void SceneNode::setParent(SceneNode *parent)

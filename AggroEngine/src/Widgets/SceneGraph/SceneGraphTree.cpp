@@ -33,7 +33,7 @@ SceneGraphTree::SceneGraphTree(shared_ptr<EngineContext> context, QWidget *paren
 		QDir workingDirectory = QDir::current();
 		QString filename = QFileDialog::getOpenFileName(this, tr("Add Object From File"), workingDirectory.path() + "/Resources/Mesh");
 		string name = filename.split("/").last().split(".").first().toStdString();
-		_addMeshNode(name, workingDirectory.relativeFilePath(filename).toStdString());
+		_addSceneNodeFromFile(name, workingDirectory.relativeFilePath(filename).toStdString());
 	});
 
 	QAction *addSpriteAction = new QAction(tr("Add Sprite"), this);
@@ -351,6 +351,24 @@ shared_ptr<SceneNode> SceneGraphTree::_addSpriteNode(string name, string path)
 	newNode->setMeshComponent(meshComponent);
 	_addNewNode(newNode);
 	return newNode;
+}
+
+void SceneGraphTree::_addSceneNodeFromFile(string name, string path)
+{
+	int resourceId = m_context->getResources()->getIdForPath(path);
+	auto sceneNode = m_context->getSceneNodeCache()->waitForSceneNode(resourceId);
+	if (!sceneNode)
+	{
+		return;
+	}
+	// Rather than pointing to the cached scene node, we will perform a deep duplication the data.
+	// Easiest way to do that is to use the serializer
+	shared_ptr<Chunk> nodeChunk = sceneNode->serialize(m_context->getResources());
+	shared_ptr<SceneNode> newNode = SceneNode::deserialize(nodeChunk.get(), m_context, m_context->getScene()->getBaseMaterials(), m_context->getScene().get());
+	newNode->resolveFileBackedData(sceneNode);
+	newNode->setName(name);
+	newNode->setFilename(path);
+	_addNewNode(newNode);
 }
 
 shared_ptr<MaterialComponent> SceneGraphTree::_addMaterial(string name)

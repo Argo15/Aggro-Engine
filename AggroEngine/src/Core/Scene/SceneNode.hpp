@@ -33,6 +33,7 @@ private:
 	string m_name;
 	unsigned int m_id;
 	bool m_isBaseMaterialNode;
+	string m_filename;
 
 	// Components
 	shared_ptr<TransformComponent> m_transformComponent;
@@ -54,15 +55,21 @@ public:
 	shared_ptr<Chunk> serialize(shared_ptr<Resources> resources);
 	static shared_ptr<SceneNode> deserialize(Chunk * const byteChunk, shared_ptr<EngineContext> context, boost::unordered_map<int, shared_ptr<SceneNode>> baseMaterials, Scene *scene);
 
+	// Some data, such as mesh data, is loaded from a file, to allow for moving in and out of memory.
+	// This method will take the a scene node from a file and merge it with the scene node.
+	void resolveFileBackedData(shared_ptr<SceneNode> fileBackedSceneNode);
+
 	shared_ptr<vector<shared_ptr<SceneNode>>> getChildren();
 	void setSelected(bool selected);
 	bool isSelected();
 	string getName();
 	unsigned int getId();
+	string getFilename();
 
 	void addChild(shared_ptr<SceneNode> child);
 	void setName(string name);
 	void setParent(SceneNode *parent);
+	void setFilename(string filename);
 
 	SceneNode *getParent();
 

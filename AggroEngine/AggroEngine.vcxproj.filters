@@ -514,6 +514,15 @@
     <ClCompile Include="src\Util\Profiling\TimeTracker.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\Resource\SceneNode\Cache\CachedSceneNodeHandler.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Resource\SceneNode\Cache\SceneNodeCache.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Resource\SceneNode\AssimpSceneNodeImporter.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Resource\Image\CheckersImage.hpp">
@@ -923,6 +932,18 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\Util\Profiling\TimeTracker.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Resource\SceneNode\Cache\CachedSceneNodeHandler.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Resource\SceneNode\Cache\SceneNodeCache.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Resource\SceneNode\SceneNodeImporter.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Resource\SceneNode\AssimpSceneNodeImporter.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

@@ -6,6 +6,7 @@ EngineContext::EngineContext()
 	, m_renderOptions(new RenderOptions())
 	, m_resources(new Resources())
 	, m_meshCache(new MeshCache(m_jobManager, m_resources))
+	, m_sceneNodeCache(new SceneNodeCache(m_jobManager, m_resources))
 	, m_newSceneListeners()
 {
 }
@@ -33,6 +34,11 @@ shared_ptr<Resources> EngineContext::getResources()
 shared_ptr<MeshCache> EngineContext::getMeshCache()
 {
 	return m_meshCache;
+}
+
+shared_ptr<SceneNodeCache> EngineContext::getSceneNodeCache()
+{
+	return m_sceneNodeCache;
 }
 
 void EngineContext::setScene(shared_ptr<Scene> scene)

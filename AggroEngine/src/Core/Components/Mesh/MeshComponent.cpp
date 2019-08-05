@@ -54,7 +54,7 @@ MeshComponent::MeshComponent(Chunk * const byteChunk,
 shared_ptr<Chunk> MeshComponent::serialize(shared_ptr<Resources> resources)
 {
 	ByteAccumulator bytes = ByteAccumulator();
-	string path = resources->getPathForId(m_primaryMesh->getId()).get_value_or("");
+	string path = m_primaryMesh ? resources->getPathForId(m_primaryMesh->getId()).get_value_or("") : "";
 	bytes.add(&path);
 	bytes.add(&m_genNormalLines);
 	int axis = (int) m_axisAlign;

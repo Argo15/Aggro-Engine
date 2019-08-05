@@ -7,6 +7,7 @@
 #include "DelegateMaterialWidget.hpp"
 #include "MeshWidget.hpp"
 #include "CameraWidget.hpp"
+#include <QThread>
 #include <QLabel>
 
 InspectorWidget::InspectorWidget(shared_ptr<EngineContext> context, QWidget *parent)
@@ -45,7 +46,11 @@ void InspectorWidget::refresh(shared_ptr<SceneNode> node)
 {
 	for (auto widget : m_widgets)
 	{
-		widget->refresh(node);
+		// Qt has a rule that only the thread that created the widget can sendEvent
+		if (widget->thread() == QThread::currentThread())
+		{
+			widget->refresh(node);
+		}
 	}
 }
 
