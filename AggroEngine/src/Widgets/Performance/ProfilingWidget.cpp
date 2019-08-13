@@ -62,14 +62,14 @@ void ProfilingWidget::_onUpdate(boost::unordered_map<string, shared_ptr<Profilin
 			// update existing categories
 			int idx = m_axis->categories().indexOf(category);
 			m_avgBarSet->replace(idx, profilingData->getAverageTime() / 1000.0);
-			m_maxBarSet->replace(idx, profilingData->getMaxTime() / 1000.0);
+			//m_maxBarSet->replace(idx, profilingData->getMaxTime() / 1000.0);
 		}
 		else
 		{
 			// add new categories
 			m_axis->append(QString::fromStdString(cat));
 			*m_avgBarSet << profilingData->getAverageTime() / 1000.0;
-			*m_maxBarSet << profilingData->getMaxTime() / 1000.0;
+			//*m_maxBarSet << profilingData->getMaxTime() / 1000.0;
 		}
 		maxTime = max(maxTime, profilingData->getAverageTime() / 1000.0);
 	}

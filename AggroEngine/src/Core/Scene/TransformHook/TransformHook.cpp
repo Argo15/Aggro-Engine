@@ -58,6 +58,7 @@ void TransformHook::render(shared_ptr<Graphics> graphics, shared_ptr<Scene> scen
 
 bool TransformHook::updateSelection(shared_ptr<MouseState> mouse, shared_ptr<EngineContext> context, shared_ptr<Selection> selection)
 {
+	auto tracker = PerfStats::instance().trackTime("TransformHook::updateSelection");
 	if (!m_renderData[0])
 	{
 		return false;

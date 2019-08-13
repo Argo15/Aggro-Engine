@@ -20,25 +20,27 @@ void Renderer::init()
 
 void Renderer::renderScene(shared_ptr<Scene> scene, shared_ptr<RenderOptions> renderOptions)
 {
-	auto tracker = PerfStats::instance().trackTime("renderScene");
-	renderOptions->clear();
-	m_graphicsContext->getGraphics()->clearDepthAndColor(renderOptions->getDefaultFrameBufferId()); // clear
-	m_graphicsContext->getGraphics()->stageRender(m_gridRenderData); // Render grid
-	if (scene->getTransformHook())
 	{
-		scene->getTransformHook()->render(m_graphicsContext->getGraphics(), scene); // Render transformer
-	}
-	// Render scene
-	_renderSceneNodeRecursive(scene->getRoot(), glm::mat4(1.0), scene->getCamera()->getViewMatrix(), renderOptions);
-	// Render mesh preview
-	_renderSceneNodeRecursive(scene->getPreviewNode(), glm::mat4(1.0), scene->getCamera()->getViewMatrix(), renderOptions);
+		auto tracker = PerfStats::instance().trackTime("renderScene");
+		renderOptions->clear();
+		m_graphicsContext->getGraphics()->clearDepthAndColor(renderOptions->getDefaultFrameBufferId()); // clear
+		m_graphicsContext->getGraphics()->stageRender(m_gridRenderData); // Render grid
+		if (scene->getTransformHook())
+		{
+			scene->getTransformHook()->render(m_graphicsContext->getGraphics(), scene); // Render transformer
+		}
+		// Render scene
+		_renderSceneNodeRecursive(scene->getRoot(), glm::mat4(1.0), scene->getCamera()->getViewMatrix(), renderOptions);
+		// Render mesh preview
+		_renderSceneNodeRecursive(scene->getPreviewNode(), glm::mat4(1.0), scene->getCamera()->getViewMatrix(), renderOptions);
 
-	// set scene options
-	renderOptions->setCamera(scene->getCamera());
-	shared_ptr<PerspectiveFrustrum> overrideFrustrum = scene->getOverrideFrustrum();
-	if (overrideFrustrum)
-	{
-		renderOptions->setFrustrum(overrideFrustrum);
+		// set scene options
+		renderOptions->setCamera(scene->getCamera());
+		shared_ptr<PerspectiveFrustrum> overrideFrustrum = scene->getOverrideFrustrum();
+		if (overrideFrustrum)
+		{
+			renderOptions->setFrustrum(overrideFrustrum);
+		}
 	}
 
 	// execute

@@ -18,6 +18,7 @@ bool ShadowMapFrustrum::isSame(shared_ptr<Frustrum> other)
 
 FrustrumCulling ShadowMapFrustrum::getCulling(shared_ptr<glm::vec3> points, int size, glm::mat4 &modelMatrix)
 {
+	glm::mat4 modelView = m_viewProjMat * modelMatrix;
 	bool allOutsideTests[6];
 	for (int i = 0; i < 6; i++)
 	{
@@ -25,7 +26,7 @@ FrustrumCulling ShadowMapFrustrum::getCulling(shared_ptr<glm::vec3> points, int 
 	}
 	for (int i = 0; i < size; i++)
 	{
-		glm::vec4 point = m_viewProjMat * modelMatrix * glm::vec4(points.get()[i], 1);
+		glm::vec4 point = modelView * glm::vec4(points.get()[i], 1);
 		allOutsideTests[0] = allOutsideTests[0] && point.x < -1;
 		allOutsideTests[1] = allOutsideTests[1] && point.x > 1;
 		allOutsideTests[2] = allOutsideTests[2] && point.y < -1;

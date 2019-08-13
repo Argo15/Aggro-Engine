@@ -90,6 +90,7 @@ void GBuffer::drawToBuffer(RenderOptions renderOptions, std::queue<shared_ptr<Re
 	bool isDepthDisabled = false;
 	shared_ptr<RenderData> disabledDepthObject; // needs to be rendered at the end
 	const shared_ptr<Frustrum> frustrum = renderOptions.getFrustrum();
+	glm::mat4 viewProj = renderOptions.getProjectionMatrix() * renderOptions.getViewMatrix();
 
 	glBindFragDataLocation(m_glslProgram->getHandle(), 0, "normalBuffer");
 	glBindFragDataLocation(m_glslProgram->getHandle(), 1, "albedoBuffer");
@@ -104,7 +105,6 @@ void GBuffer::drawToBuffer(RenderOptions renderOptions, std::queue<shared_ptr<Re
 	{
 		shared_ptr<RenderData> renderData = renderQueue.front();
 		renderQueue.pop();
-
 		if (renderData == disabledDepthObject)
 		{
 			glDisable(GL_DEPTH_TEST);
@@ -134,7 +134,7 @@ void GBuffer::drawToBuffer(RenderOptions renderOptions, std::queue<shared_ptr<Re
 
 		if (renderData->getVertexBufferHandle())
 		{
-			glm::mat4 mvpMatrix = renderOptions.getProjectionMatrix()*renderOptions.getViewMatrix()*renderData->getModelMatrix();
+			glm::mat4 mvpMatrix = viewProj * renderData->getModelMatrix();
 			m_glslProgram->sendUniform("modelViewProjectionMatrix", glm::value_ptr(mvpMatrix), false, 4);
 			glm::mat3 normalMatrix = glm::mat3(renderData->getModelMatrix());
 			m_glslProgram->sendUniform("normalMatrix", glm::value_ptr(normalMatrix), false, 3);

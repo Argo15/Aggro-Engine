@@ -86,7 +86,7 @@ void GLWidget::paintGL()
 		{
 			auto tracker = PerfStats::instance().trackTime("Graphics Job");
 			graphicsJob->runInThread();
-			if (numJobs++ >= 10)
+			if (numJobs++ >= 5)
 			{
 				break;
 			}

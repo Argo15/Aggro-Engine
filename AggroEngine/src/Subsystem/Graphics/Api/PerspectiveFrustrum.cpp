@@ -119,13 +119,19 @@ bool PerspectiveFrustrum::isSame(shared_ptr<Frustrum> other)
 
 FrustrumCulling PerspectiveFrustrum::getCulling(shared_ptr<glm::vec3> points, int size, glm::mat4 &modelMatrix)
 {
+	glm::mat4 modelView = m_viewMatrix * modelMatrix;
+	glm::vec3 *mvPoints = new glm::vec3[size];
+	for (int i = 0; i < size; i++)
+	{
+		mvPoints[i] = glm::vec3(modelView * glm::vec4(points.get()[i], 1.0));
+	}
+
 	for (int j = 0; j < 6; j++)
 	{
 		bool allOutside = true;
 		for (int i = 0; i < size; i++)
 		{
-			glm::vec3 point = glm::vec3(m_viewMatrix * modelMatrix * glm::vec4(points.get()[i], 1.0));
-			allOutside = allOutside && m_planes.get()[j].distance(point) > 0;
+			allOutside = allOutside && m_planes.get()[j].distance(mvPoints[i]) > 0;
 		}
 		if (allOutside)
 		{

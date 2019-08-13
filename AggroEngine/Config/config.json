@@ -9,7 +9,7 @@
   "graphics": {
     "resolution": [ 1920, 1080 ],
     "vsync_enabled": false,
-    "max_fps": 120,
+    "max_fps": 60,
     "shadowRes": 2048,
     "shadowSlices":  [0.1, 0.3, 0.6]
   },
