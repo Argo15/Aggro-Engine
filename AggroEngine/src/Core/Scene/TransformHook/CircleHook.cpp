@@ -12,7 +12,9 @@ CircleHook::CircleHook()
 void CircleHook::updateTransform(shared_ptr<SceneNode> node, const Line &lookLine, const glm::vec3 &axis)
 {
 	// Get selection plane
-	MatrixDecompose worldMat(node->getWorldTransform());
+	// TODO this does not work for objects not aligned with the center. Need to fix
+	MatrixDecompose worldMat(_getAxisCenter(node));
+	MatrixDecompose objMat(glm::translate(node->getObjectTransform(), node->getMeshCenter()));
 	const glm::vec3 selectionDir = worldMat.getRotate() * axis;
 	const Plane selectionPlane(worldMat.getTranslate(), selectionDir);
 
@@ -23,7 +25,7 @@ void CircleHook::updateTransform(shared_ptr<SceneNode> node, const Line &lookLin
 		return;
 	}
 	const glm::mat4 relativeSpaceTransform = glm::inverse(node->getParentTransform());
-	const glm::vec3 newPosInRelativeSpace = (glm::vec3) (relativeSpaceTransform * glm::vec4(*newPos, 1.0)) - node->getTransformComponent()->getTranslate();
+	const glm::vec3 newPosInRelativeSpace = (glm::vec3) (relativeSpaceTransform * glm::vec4(*newPos, 1.0)) - objMat.getTranslate();
 
 	if (m_lastPos)
 	{
@@ -35,7 +37,7 @@ void CircleHook::updateTransform(shared_ptr<SceneNode> node, const Line &lookLin
 		if (angle > 0.01 && lastVec != newVec)
 		{
 			glm::vec3 rotAxis = glm::normalize(glm::cross(lastVec, newVec));
-			updateTransform(node->getTransformComponent(), rotAxis, angle);
+			updateTransform(node, rotAxis, angle);
 		}
 	}
 	m_lastPos = shared_ptr<glm::vec3>(new glm::vec3(newPosInRelativeSpace));

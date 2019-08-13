@@ -5,7 +5,7 @@
 class RotateHook : public CircleHook
 {
 protected:
-	void updateTransform(shared_ptr<TransformComponent> transform, const glm::vec3 &selectorDir, const float amount);
+	void updateTransform(shared_ptr<SceneNode> node, const glm::vec3 &selectorDir, const float amount);
 
 public:
 	RotateHook();

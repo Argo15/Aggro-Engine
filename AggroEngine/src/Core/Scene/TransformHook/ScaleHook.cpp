@@ -5,9 +5,9 @@ ScaleHook::ScaleHook()
 {
 }
 
-void ScaleHook::updateTransform(shared_ptr<TransformComponent> transform, glm::vec3 &diff, const glm::vec3 &selectorDir)
+void ScaleHook::updateTransform(shared_ptr<SceneNode> node, glm::vec3 &diff, const glm::vec3 &selectorDir)
 {
-	transform->scale(glm::vec3(1.0) + diff);
+	node->getTransformComponent()->scale(glm::vec3(1.0) + diff);
 }
 
 glm::mat4 ScaleHook::getRelativeTransform(shared_ptr<SceneNode> node)

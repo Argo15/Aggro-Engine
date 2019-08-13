@@ -10,7 +10,7 @@ LineHook::LineHook()
 void LineHook::updateTransform(shared_ptr<SceneNode> selectedNode, const Line &lookLine, const glm::vec3 &axis)
 {
 	// Get selected line
-	MatrixDecompose worldMat(selectedNode->getWorldTransform());
+	MatrixDecompose worldMat(_getAxisCenter(selectedNode));
 	const glm::vec3 selectionDir = worldMat.getRotate() * axis;
 	const Line selectionLine(worldMat.getTranslate(), selectionDir);
 
@@ -23,7 +23,7 @@ void LineHook::updateTransform(shared_ptr<SceneNode> selectedNode, const Line &l
 		glm::vec3 diff = newPosInRelativeSpace - *m_lastPos;
 		if (glm::length(diff) > 0)
 		{
-			updateTransform(selectedNode->getTransformComponent(), diff, selectionDir);
+			updateTransform(selectedNode, diff, selectionDir);
 		}
 	}
 	m_lastPos = shared_ptr<glm::vec3>(new glm::vec3(newPosInRelativeSpace));

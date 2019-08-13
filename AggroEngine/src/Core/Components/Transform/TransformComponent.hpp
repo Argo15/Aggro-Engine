@@ -36,7 +36,7 @@ public:
 	glm::vec3 getScale();
 
 	void translate(const glm::vec3 &translate);
-	void rotate(float angle, const glm::vec3 &axis);
+	void rotate(float angle, const glm::vec3 &axis, const glm::vec3 &center = glm::vec3(0));
 	void scale(const glm::vec3 &scale);
 
 	void setTranslate(glm::vec3 translate);

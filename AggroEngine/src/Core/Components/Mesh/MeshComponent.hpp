@@ -84,4 +84,6 @@ public:
 
 	bool hasMesh();
 	bool modsReady(shared_ptr<VertexBufferCache> vbos);
+
+	glm::vec3 getMeshCenter();
 };

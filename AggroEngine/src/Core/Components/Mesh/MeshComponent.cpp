@@ -242,3 +242,12 @@ bool MeshComponent::modsReady(shared_ptr<VertexBufferCache> vbos)
 	shared_ptr<VertexBufferHandle> vbo = vbos->getVertexBuffer(m_modifiedMeshes[0]);
 	return vbo && vbo->isLoaded();
 }
+
+glm::vec3 MeshComponent::getMeshCenter()
+{
+	if (!m_modifiedPrimaryMesh)
+	{
+		return glm::vec3(0);
+	}
+	return m_modifiedPrimaryMesh->getMetaData()->getCenter();
+}

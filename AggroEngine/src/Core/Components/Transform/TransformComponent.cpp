@@ -61,10 +61,18 @@ void TransformComponent::translate(const glm::vec3 &translate)
 	m_changeListeners.notify(this);
 }
 
-void TransformComponent::rotate(float angle, const glm::vec3 &axis)
+void TransformComponent::rotate(float angle, const glm::vec3 &axis, const glm::vec3 &center)
 {
 	boost::lock_guard<TransformComponent> guard(*this);
+
+	// Goal is to ensure the center is the same after rotation
+	glm::vec3 curCenter = getTransform() * glm::vec4(center, 1);
+
 	m_rotateMat = glm::angleAxis(angle, glm::normalize(axis)) * m_rotateMat;
+
+	glm::vec3 rotatedCenter = getTransform() * glm::vec4(center, 1);
+	translate(glm::vec3(curCenter - rotatedCenter));
+
 	m_changeListeners.notify(this);
 }
 

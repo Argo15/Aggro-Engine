@@ -36,13 +36,6 @@ SceneNode::SceneNode(Chunk * const byteChunk, shared_ptr<EngineContext> context,
 			setName(primitives.parseString().get_value_or("unknown"));
 			m_isBaseMaterialNode = primitives.parseBool().get_value_or(false);
 			m_filename = primitives.parseString().get_value_or("");
-			if (m_filename != "")
-			{
-				int resourceId = context->getResources()->getIdForPath(m_filename);
-				context->getSceneNodeCache()->getSceneNode(resourceId)->onReady([this](auto node) {
-					resolveFileBackedData(node);
-				});
-			}
 		}
 		else if (*nextChunk->getType() == ChunkType::SCENE_NODE)
 		{
@@ -81,6 +74,13 @@ SceneNode::SceneNode(Chunk * const byteChunk, shared_ptr<EngineContext> context,
 		{
 			m_cameraComponent = CameraComponent::deserialize(nextChunk.get_ptr(), scene);
 		}
+	}
+	if (m_filename != "")
+	{
+		int resourceId = context->getResources()->getIdForPath(m_filename);
+		context->getSceneNodeCache()->getSceneNode(resourceId)->onReady([this](auto node) {
+			resolveFileBackedData(node);
+		});
 	}
 }
 
@@ -154,9 +154,29 @@ shared_ptr<SceneNode> SceneNode::deserialize(Chunk * const byteChunk, shared_ptr
 
 void SceneNode::resolveFileBackedData(shared_ptr<SceneNode> fileBackedSceneNode)
 {
-	if (m_meshComponent && fileBackedSceneNode && fileBackedSceneNode->getMeshComponent())
+	if (!fileBackedSceneNode)
+	{
+		return;
+	}
+	if (m_meshComponent && fileBackedSceneNode->getMeshComponent())
 	{
 		m_meshComponent->setPrimaryMesh(fileBackedSceneNode->getMeshComponent()->getPrimaryMesh());
+	}
+	if (!m_children)
+	{
+		return;
+	}
+	boost::unordered_map<string, shared_ptr<SceneNode>> childNameToChild;
+	for (shared_ptr<SceneNode> child : *m_children)
+	{
+		childNameToChild[child->getName()] = child;
+	}
+	for (shared_ptr<SceneNode> child : *fileBackedSceneNode->getChildren())
+	{
+		if (childNameToChild.find(child->getName()) != childNameToChild.end())
+		{
+			childNameToChild[child->getName()]->resolveFileBackedData(child);
+		}
 	}
 }
 
@@ -273,9 +293,9 @@ void SceneNode::removeChild(shared_ptr<SceneNode> child)
 	m_children->erase(remove(m_children->begin(), m_children->end(), child), m_children->end());
 }
 
-glm::mat4 SceneNode::getWorldTransform()
+glm::mat4 SceneNode::getWorldTransform(glm::vec3 objCenter)
 {
-	glm::mat4 tansform = getObjectTransform();
+	glm::mat4 tansform = glm::translate(getObjectTransform(), objCenter);
 	if (m_parent)
 	{
 		return m_parent->getWorldTransform() * tansform;
@@ -338,6 +358,15 @@ glm::mat4 SceneNode::getOrthogonalObjectTransform()
 	glm::vec4 translate = glm::vec4(m_transformComponent->getTranslate(), 1.0f);
 	rotate[3] = translate;
 	return rotate;
+}
+
+glm::vec3 SceneNode::getMeshCenter()
+{
+	if (!m_meshComponent)
+	{
+		return glm::vec3(0);
+	}
+	return m_meshComponent->getMeshCenter();
 }
 
 bool SceneNode::hasTransformComponent()

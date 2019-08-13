@@ -5,7 +5,7 @@ RotateHook::RotateHook()
 {
 }
 
-void RotateHook::updateTransform(shared_ptr<TransformComponent> transform, const glm::vec3 &selectorDir, const float amount)
+void RotateHook::updateTransform(shared_ptr<SceneNode> node, const glm::vec3 &selectorDir, const float amount)
 {
-	transform->rotate(amount, selectorDir);
+	node->getTransformComponent()->rotate(amount, selectorDir, node->getMeshCenter());
 }

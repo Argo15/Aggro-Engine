@@ -31,6 +31,8 @@ private:
 protected:
 	shared_ptr<glm::vec3> m_lastPos;
 
+	glm::mat4 _getAxisCenter(shared_ptr<SceneNode> selectedNode);
+
 	virtual void updateTransform(shared_ptr<SceneNode> selectedNode, const Line &lookLine, const glm::vec3 &axis) = 0;
 	virtual shared_ptr<Mesh> getMesh(glm::vec3 axis) = 0;
 

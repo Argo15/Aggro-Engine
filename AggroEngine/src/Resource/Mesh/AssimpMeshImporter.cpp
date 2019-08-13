@@ -53,7 +53,8 @@ shared_ptr<Mesh> AssimpMeshImporter::importMesh(int meshId, string sFilename)
 			mem::shared_array(verts, nNumVerts * 3, "Mesh"),
 			mem::shared_array(texcoords, nNumVerts * 2, "Mesh"),
 			mem::shared_array(normals, nNumVerts * 3, "Mesh"),
-			mem::shared_array(indices, nNumFaces * 3, "Mesh")));
+			mem::shared_array(indices, nNumFaces * 3, "Mesh"),
+			DrawMode::TRIANGLES));
 	}
 
 	cout << "Failed importing " << sFilename << " no scene found." << endl;

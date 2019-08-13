@@ -46,7 +46,7 @@ private:
 	shared_ptr<MaterialComponent> _addMaterial(string name = "New Material");
 	shared_ptr<SceneNode> _addMeshNode(string name, string path);
 	shared_ptr<SceneNode> _addSpriteNode(string name, string path);
-	void _addSceneNodeFromFile(string name, string path);
+	void _addSceneNodeFromFile(string path);
 
 
 public:

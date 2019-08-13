@@ -32,8 +32,7 @@ SceneGraphTree::SceneGraphTree(shared_ptr<EngineContext> context, QWidget *paren
 	connect(addFromFileAction, &QAction::triggered, this, [this, context]() {
 		QDir workingDirectory = QDir::current();
 		QString filename = QFileDialog::getOpenFileName(this, tr("Add Object From File"), workingDirectory.path() + "/Resources/Mesh");
-		string name = filename.split("/").last().split(".").first().toStdString();
-		_addSceneNodeFromFile(name, workingDirectory.relativeFilePath(filename).toStdString());
+		_addSceneNodeFromFile(workingDirectory.relativeFilePath(filename).toStdString());
 	});
 
 	QAction *addSpriteAction = new QAction(tr("Add Sprite"), this);
@@ -353,7 +352,7 @@ shared_ptr<SceneNode> SceneGraphTree::_addSpriteNode(string name, string path)
 	return newNode;
 }
 
-void SceneGraphTree::_addSceneNodeFromFile(string name, string path)
+void SceneGraphTree::_addSceneNodeFromFile(string path)
 {
 	int resourceId = m_context->getResources()->getIdForPath(path);
 	auto sceneNode = m_context->getSceneNodeCache()->waitForSceneNode(resourceId);
@@ -365,9 +364,6 @@ void SceneGraphTree::_addSceneNodeFromFile(string name, string path)
 	// Easiest way to do that is to use the serializer
 	shared_ptr<Chunk> nodeChunk = sceneNode->serialize(m_context->getResources());
 	shared_ptr<SceneNode> newNode = SceneNode::deserialize(nodeChunk.get(), m_context, m_context->getScene()->getBaseMaterials(), m_context->getScene().get());
-	newNode->resolveFileBackedData(sceneNode);
-	newNode->setName(name);
-	newNode->setFilename(path);
 	_addNewNode(newNode);
 }
 

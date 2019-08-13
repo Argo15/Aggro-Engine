@@ -42,7 +42,7 @@ void TransformHook::render(shared_ptr<Graphics> graphics, shared_ptr<Scene> scen
 
 	if (selectedNode && selectedNode->hasTransformComponent())
 	{
-		MatrixDecompose transformMat(selectedNode->getWorldTransform());
+		MatrixDecompose transformMat(_getAxisCenter(selectedNode));
 		shared_ptr<Camera> camera = scene->getCamera();
 		glm::vec3 lookDir = glm::normalize(transformMat.getTranslate() - camera->getEyePos());
 		transformMat.setTranslate(camera->getEyePos() + (12.f * lookDir));
@@ -146,4 +146,9 @@ unsigned int TransformHook::_getSelectedIndex(shared_ptr<Selection> selection)
 void TransformHook::deselect()
 {
 	m_selectedIdx = -1;
+}
+
+glm::mat4 TransformHook::_getAxisCenter(shared_ptr<SceneNode> selectedNode)
+{
+	return selectedNode->getWorldTransform(selectedNode->getMeshCenter());
 }

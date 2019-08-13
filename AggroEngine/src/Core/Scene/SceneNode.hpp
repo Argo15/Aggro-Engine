@@ -83,12 +83,13 @@ public:
 	void removeChild(shared_ptr<SceneNode> child);
 
 	glm::vec3 getWorldTranslate();
-	glm::mat4 getWorldTransform();
+	glm::mat4 getWorldTransform(glm::vec3 objCenter = glm::vec3(0));
 	glm::mat4 getOrthogonalWorldTransform();
 	glm::mat4 getParentTransform();
 	glm::mat4 getOrthogonalParentTransform();
 	glm::mat4 getObjectTransform();
 	glm::mat4 getOrthogonalObjectTransform();
+	glm::vec3 getMeshCenter();
 
 	//Components
 	bool hasTransformComponent();

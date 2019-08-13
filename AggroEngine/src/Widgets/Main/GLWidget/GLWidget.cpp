@@ -80,11 +80,16 @@ void GLWidget::paintGL()
 		m_mouseController->handleMouseInput(m_mouse, m_engineContext, m_selection);
 		m_engineContext->getScene()->update(m_selection, m_mouse, m_engineContext);
 
-		// Process at least one graphics job
-		if (graphicsJob = m_engineContext->getJobManager()->nextGraphicsJob())
+		// Process a few graphics jobs no matter what
+		int numJobs = 0;
+		while (graphicsJob = m_engineContext->getJobManager()->nextGraphicsJob())
 		{
 			auto tracker = PerfStats::instance().trackTime("Graphics Job");
-			graphicsJob->runInThread(); 
+			graphicsJob->runInThread();
+			if (numJobs++ >= 10)
+			{
+				break;
+			}
 		}
 	}
 
