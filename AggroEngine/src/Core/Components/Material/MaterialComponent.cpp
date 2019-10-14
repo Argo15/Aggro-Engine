@@ -11,10 +11,11 @@ MaterialComponent::MaterialComponent(SceneNode *owner)
 	, m_texOffsetV(0)
 	, m_texRotate(0)
 	, m_emissionColor(0)
+	, m_name("")
 {
 }
 
-MaterialComponent::MaterialComponent(SceneNode *owner, shared_ptr<MaterialComponent> copy)
+MaterialComponent::MaterialComponent(SceneNode *owner, MaterialComponent *copy)
 	: m_owner(owner)
 	, m_color(copy->m_color)
 	, m_textureImageId(copy->m_textureImageId)
@@ -29,6 +30,7 @@ MaterialComponent::MaterialComponent(SceneNode *owner, shared_ptr<MaterialCompon
 	, m_texRotate(copy->m_texRotate)
 	, m_emissionColor(copy->m_emissionColor)
 	, m_normalImageId(copy->m_normalImageId)
+	, m_name(copy->m_name)
 {
 }
 
@@ -71,6 +73,7 @@ MaterialComponent::MaterialComponent(Chunk * const byteChunk, SceneNode *owner, 
 	{
 		m_normalImageId = boost::optional<int>(resources->getIdForPath(normalPath));
 	}
+	m_name = parser.parseString().get_value_or("");
 }
 
 shared_ptr<Chunk> MaterialComponent::serialize(shared_ptr<Resources> resources)
@@ -115,6 +118,7 @@ shared_ptr<Chunk> MaterialComponent::serialize(shared_ptr<Resources> resources)
 		normalName = resources->getPathForId(m_normalImageId.get()).get_value_or("");
 	}
 	bytes.add(&normalName);
+	bytes.add(&m_name);
 	return shared_ptr<Chunk>(new Chunk(ChunkType::MATERIAL_COMPONENT, bytes.getNumBytes(), bytes.collect()));
 }
 
@@ -371,4 +375,14 @@ void MaterialComponent::removeNormalMap()
 {
 	m_normalImageId = boost::optional<int>();
 	m_changeListeners.notify(this);
+}
+
+void MaterialComponent::setName(string name)
+{
+	m_name = name;
+}
+
+string MaterialComponent::getName()
+{
+	return m_name;
 }

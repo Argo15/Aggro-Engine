@@ -3,7 +3,7 @@
 #include "SceneNode.hpp"
 
 SceneNodeCache::SceneNodeCache(shared_ptr<JobManager> jobManager, shared_ptr<Resources> resources)
-	: m_sceneNodeImporter(new AssimpSceneNodeImporter(jobManager))
+	: m_sceneNodeImporter(new AssimpSceneNodeImporter(jobManager, resources))
 	, m_jobManager(jobManager)
 	, m_resources(resources)
 	, m_idToSceneNode()

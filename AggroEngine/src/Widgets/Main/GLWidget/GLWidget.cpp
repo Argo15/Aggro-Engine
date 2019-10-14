@@ -254,7 +254,7 @@ void GLWidget::_dropTexture(QDropEvent *event)
 		{
 			if (material)
 			{
-				material = shared_ptr<MaterialComponent>(new MaterialComponent(dropNode.get(), material));
+				material = shared_ptr<MaterialComponent>(new MaterialComponent(dropNode.get(), material.get()));
 			}
 			else
 			{

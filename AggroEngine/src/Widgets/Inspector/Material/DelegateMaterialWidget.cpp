@@ -28,7 +28,7 @@ DelegateMaterialWidget::DelegateMaterialWidget(InspectorWidget *parent, shared_p
 	connect(m_copyBaseBtn.get(), &QPushButton::pressed, this, [this, parent]() {
 		if (m_currentNode)
 		{
-			shared_ptr<MaterialComponent> newMat(new MaterialComponent(m_currentNode.get(), m_currentNode->getMaterialComponent()));
+			shared_ptr<MaterialComponent> newMat(new MaterialComponent(m_currentNode.get(), m_currentNode->getMaterialComponent().get()));
 			m_currentNode->setMaterialComponent(newMat);
 			parent->refresh(m_currentNode);
 		}

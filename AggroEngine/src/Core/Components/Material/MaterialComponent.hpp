@@ -36,14 +36,15 @@ private:
 	glm::vec3 m_emissionColor;
 	boost::optional<int> m_emissionImageId;
 	boost::optional<int> m_normalImageId;
+	string m_name;
 
 	Listener<MaterialComponent *> m_changeListeners;
 
 	MaterialComponent(Chunk * const byteChunk, SceneNode *owner, shared_ptr<Resources> resources);
 
 public:
-	MaterialComponent(SceneNode *m_owner);
-	MaterialComponent(SceneNode *m_owner, shared_ptr<MaterialComponent> copy);
+	MaterialComponent(SceneNode *m_owner = nullptr);
+	MaterialComponent(SceneNode *m_owner, MaterialComponent *copy);
 
 	// Serialization
 	shared_ptr<Chunk> serialize(shared_ptr<Resources> resources);
@@ -98,4 +99,7 @@ public:
 	void setNormalImageId(int textureImageId);
 	boost::optional<int> getNormalImageId();
 	void removeNormalMap();
+
+	void setName(string name);
+	string getName();
 };
