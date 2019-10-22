@@ -76,7 +76,7 @@ void GBuffer::drawToBuffer(RenderOptions renderOptions, std::queue<shared_ptr<Re
 {
 	boost::lock_guard<OpenGL43Graphics> guard(*m_graphics);
 
-	bindFrameBuffer();
+	bindFrameBufferWriteOnly();
 	m_glslProgram->use();
 	GLenum mrt[] = { GL_COLOR_ATTACHMENT0_EXT, GL_COLOR_ATTACHMENT1_EXT, GL_COLOR_ATTACHMENT2_EXT, GL_COLOR_ATTACHMENT3_EXT };
 	glDrawBuffers(4, mrt);
@@ -101,6 +101,9 @@ void GBuffer::drawToBuffer(RenderOptions renderOptions, std::queue<shared_ptr<Re
 	glBindAttribLocation(m_glslProgram->getHandle(), 2, "v_normal");
 	glBindAttribLocation(m_glslProgram->getHandle(), 3, "v_tangent");
 	glBindAttribLocation(m_glslProgram->getHandle(), 4, "v_bitangent");
+	glEnableVertexAttribArray(0);
+	glEnableVertexAttribArray(1);
+	glEnableVertexAttribArray(2);
 	while (!renderQueue.empty())
 	{
 		shared_ptr<RenderData> renderData = renderQueue.front();
@@ -206,9 +209,6 @@ void GBuffer::drawToBuffer(RenderOptions renderOptions, std::queue<shared_ptr<Re
 			glBindBuffer(GL_ARRAY_BUFFER, vboHandle->getVertexHandle());
 			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, vboHandle->getIndexHandle());
 
-			glEnableVertexAttribArray(0);
-			glEnableVertexAttribArray(1);
-			glEnableVertexAttribArray(2);
 			if (vboHandle->hasTangents())
 			{
 				glEnableVertexAttribArray(3);
@@ -225,23 +225,23 @@ void GBuffer::drawToBuffer(RenderOptions renderOptions, std::queue<shared_ptr<Re
 			}
 			glDrawElements((GLenum)(renderData->getDrawMode()), vboHandle->getSizeOfIndicies(), GL_UNSIGNED_INT, 0);
 
-			glDisableVertexAttribArray(0);
-			glDisableVertexAttribArray(1);
-			glDisableVertexAttribArray(2);
 			if (vboHandle->hasTangents())
 			{
 				glDisableVertexAttribArray(3);
 				glDisableVertexAttribArray(4);
 			}
-			glBindBuffer(GL_ARRAY_BUFFER, 0);
-			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 
 			Texture::unbind();
 		}
 	}
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+	glDisableVertexAttribArray(0);
+	glDisableVertexAttribArray(1);
+	glDisableVertexAttribArray(2);
 	m_glslProgram->disable();
-	unbindFrameBuffer();
 	glPopAttrib();
+	unbindFrameBufferWriteOnly();
 }
 
 void GBuffer::bindDepthTex() 

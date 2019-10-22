@@ -7,6 +7,7 @@
 #include "Locks.hpp"
 #include "RGBImage.hpp"
 #include "Screen.hpp"
+#include "Debug/DebugCallback.hpp"
 #include <iostream>
 
 #define BUFFER_OFFSET(i) ((char *)NULL + (i))
@@ -22,6 +23,8 @@ OpenGL43Graphics::~OpenGL43Graphics()
 void OpenGL43Graphics::init(shared_ptr<GraphicsInitOptions> options)
 {
 	this->lock();
+	glEnable(GL_DEBUG_OUTPUT);
+	glDebugMessageCallback((GLDEBUGPROC)_debugCallback, 0);
 	glShadeModel(GL_SMOOTH);
 	glClearDepth(1.0f);
 	glEnable(GL_DEPTH_TEST);
@@ -40,6 +43,7 @@ void OpenGL43Graphics::init(shared_ptr<GraphicsInitOptions> options)
 	m_screenVBO = createVertexBuffer(shared_ptr<Mesh>(new Screen(-1, 0, 0, 1, 1)));
 	m_screenProgram = getShaderStore().getShader("Resources/Shaders/v_screen.glsl", "Resources/Shaders/f_screen.glsl");
 }
+
 
 shared_ptr<VertexBufferHandle> OpenGL43Graphics::createVertexBuffer(shared_ptr<Mesh> mesh)
 {
@@ -183,7 +187,7 @@ void OpenGL43Graphics::_drawScreen(RenderOptions &renderOptions, float nX1, floa
 {
 	boost::lock_guard<OpenGL43Graphics> guard(*this);
 
-	glBindFramebuffer(GL_FRAMEBUFFER, renderOptions.getDefaultFrameBufferId());
+	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, renderOptions.getDefaultFrameBufferId());
 	clearDepth(renderOptions.getDefaultFrameBufferId());
 	glClearColor(1.0, 0, 0, 0);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -271,12 +275,12 @@ shared_ptr<ImageUS> OpenGL43Graphics::getRenderImage(int x, int y, int width, in
 	}
 	boost::lock_guard<OpenGL43Graphics> guard(*this);
 
-	m_gBuffer->bindFrameBuffer();
+	m_gBuffer->bindFrameBufferReadOnly();
 	unsigned short *pixels = new unsigned short[width * height * 4];
 
 	glReadBuffer(m_gBuffer->getSelectionColorAttachment());
 	glReadPixels(x, y, width, height, GL_RGBA, GL_UNSIGNED_SHORT, pixels);
-	m_gBuffer->unbindFrameBuffer();
+	m_gBuffer->unbindFrameBufferReadOnly();
 
 	return shared_ptr<ImageUS>((new ImageUS(width, height, mem::shared_array<unsigned short>(pixels, width * height * 4, "GL_Graphics")))
 		->setImageFormat(ImageFormat::RGBA)
@@ -292,13 +296,13 @@ shared_ptr<ImageF> OpenGL43Graphics::getRenderImageF(int x, int y, int width, in
 	}
 	boost::lock_guard<OpenGL43Graphics> guard(*this);
 
-	m_gBuffer->bindFrameBuffer();
+	m_gBuffer->bindFrameBufferReadOnly();
 	int size = width * height;
 	float *pixels = new float[size];
 
-	glReadBuffer(GL_DEPTH_ATTACHMENT);
+	glReadBuffer(GL_NONE);
 	glReadPixels(x, y, width, height, GL_DEPTH_COMPONENT, GL_FLOAT, pixels);
-	m_gBuffer->unbindFrameBuffer();
+	m_gBuffer->unbindFrameBufferReadOnly();
 
 	return shared_ptr<ImageF>((new ImageF(width, height, mem::shared_array<float>(pixels, size, "GL_Graphics")))
 		->setImageFormat(ImageFormat::DEPTH_COMPONENT)

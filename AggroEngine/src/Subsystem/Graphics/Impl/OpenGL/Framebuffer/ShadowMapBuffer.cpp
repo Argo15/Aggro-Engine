@@ -66,7 +66,7 @@ void ShadowMapBuffer::drawToBuffer(RenderOptions renderOptions, std::queue<share
 
 	for (int i = 0; i < 4; i++)
 	{
-		glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, m_shadowBuffer[i]);
+		glBindFramebuffer(GL_DRAW_FRAMEBUFFER, m_shadowBuffer[i]);
 		m_glslProgram->use();
 		GLenum mrt[] = { GL_COLOR_ATTACHMENT0 };
 		glDrawBuffers(1, mrt);
@@ -82,7 +82,7 @@ void ShadowMapBuffer::drawToBuffer(RenderOptions renderOptions, std::queue<share
 		if (!light)
 		{
 			m_glslProgram->disable();
-			unbindFrameBuffer();
+			unbindFrameBufferWriteOnly();
 			glPopAttrib();
 			continue;
 		}
@@ -104,6 +104,8 @@ void ShadowMapBuffer::drawToBuffer(RenderOptions renderOptions, std::queue<share
 		glBindFragDataLocation(m_glslProgram->getHandle(), 0, "testBuffer");
 		glBindAttribLocation(m_glslProgram->getHandle(), 0, "v_vertex");
 		std::queue<shared_ptr<RenderData>> copyRenderQueue(renderQueue);
+		glEnableVertexAttribArray(0);
+
 		while (!copyRenderQueue.empty())
 		{
 			shared_ptr<RenderData> renderData = copyRenderQueue.front();
@@ -129,19 +131,15 @@ void ShadowMapBuffer::drawToBuffer(RenderOptions renderOptions, std::queue<share
 				shared_ptr<VertexBufferHandle> vboHandle = renderData->getVertexBufferHandle();
 				glBindBuffer(GL_ARRAY_BUFFER, vboHandle->getVertexHandle());
 				glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, vboHandle->getIndexHandle());
-
-				glEnableVertexAttribArray(0);
-
 				glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, 0);
 				glDrawElements((GLenum)(renderData->getDrawMode()), vboHandle->getSizeOfIndicies(), GL_UNSIGNED_INT, 0);
-
-				glDisableVertexAttribArray(0);
-				glBindBuffer(GL_ARRAY_BUFFER, 0);
-				glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 			}
 		}
+		glDisableVertexAttribArray(0);
+		glBindBuffer(GL_ARRAY_BUFFER, 0);
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+		unbindFrameBufferWriteOnly();
 		m_glslProgram->disable();
-		unbindFrameBuffer();
 		glPopAttrib();
 	}
 }

@@ -73,10 +73,13 @@ void GLWidget::paintGL()
 	// If enough time has passed, render a new frame
 	if (m_graphicsClock->getTimerMillis() >= m_millisPerFrame)
 	{
+		// This flushes GL calls due to glReadPixels, so use the already finished scene
+		// TODO: do asyncronously using pixel buffer objects
+		m_selection->updateSelection(m_mouse, m_graphicsContext->getGraphics());
+
 		m_graphicsClock->resetTimer();
 		m_renderer->renderScene(m_engineContext->getScene(), renderOptions);
 		PerfStats::instance().recordFrame();
-		m_selection->updateSelection(m_mouse, m_graphicsContext->getGraphics());
 		m_mouseController->handleMouseInput(m_mouse, m_engineContext, m_selection);
 		m_engineContext->getScene()->update(m_selection, m_mouse, m_engineContext);
 

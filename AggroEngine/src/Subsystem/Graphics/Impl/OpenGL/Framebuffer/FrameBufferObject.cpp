@@ -6,14 +6,34 @@ FrameBufferObject::FrameBufferObject(int width, int height)
 	m_height = height;
 }
 
-void FrameBufferObject::bindFrameBuffer()
+void FrameBufferObject::bindFrameBufferRW()
 {
-	glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, m_buffer);
+	glBindFramebuffer(GL_FRAMEBUFFER, m_buffer);
 }
 
-void FrameBufferObject::unbindFrameBuffer()
+void FrameBufferObject::bindFrameBufferReadOnly()
 {
-	glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, 0);
+	glBindFramebuffer(GL_READ_FRAMEBUFFER, m_buffer);
+}
+
+void FrameBufferObject::bindFrameBufferWriteOnly()
+{
+	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, m_buffer);
+}
+
+void FrameBufferObject::unbindFrameBufferRW()
+{
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+}
+
+void FrameBufferObject::unbindFrameBufferReadOnly()
+{
+	glBindFramebuffer(GL_READ_FRAMEBUFFER, 0);
+}
+
+void FrameBufferObject::unbindFrameBufferWriteOnly()
+{
+	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
 }
 
 void FrameBufferObject::bindTexture()

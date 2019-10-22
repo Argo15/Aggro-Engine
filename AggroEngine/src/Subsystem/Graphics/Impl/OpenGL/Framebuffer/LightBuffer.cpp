@@ -58,7 +58,7 @@ void LightBuffer::drawToBuffer(RenderOptions &renderOptions,
 {
 	boost::lock_guard<OpenGL43Graphics> guard(*m_graphics);
 
-	bindFrameBuffer();
+	bindFrameBufferWriteOnly();
 	m_glslProgram->use();
 	GLenum mrt[] = { GL_COLOR_ATTACHMENT0_EXT, GL_COLOR_ATTACHMENT1_EXT };
 	glDrawBuffers(2, mrt);
@@ -132,7 +132,7 @@ void LightBuffer::drawToBuffer(RenderOptions &renderOptions,
 	Texture::unbind();
 
 	m_glslProgram->disable();
-	unbindFrameBuffer();
+	unbindFrameBufferWriteOnly();
 	glPopAttrib();
 }
 

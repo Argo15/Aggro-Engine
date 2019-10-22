@@ -18,8 +18,12 @@ protected:
 public:
 	FrameBufferObject(int width, int height);
 
-	void bindFrameBuffer();
-	void unbindFrameBuffer();
+	void bindFrameBufferRW();
+	void bindFrameBufferReadOnly();
+	void bindFrameBufferWriteOnly();
+	void unbindFrameBufferRW();
+	void unbindFrameBufferReadOnly();
+	void unbindFrameBufferWriteOnly();
 
 	void bindTexture();
 

@@ -49,7 +49,7 @@ void ShadedBuffer::drawToBuffer(RenderOptions &renderOptions, shared_ptr<Texture
 {
 	boost::lock_guard<OpenGL43Graphics> guard(*m_graphics);
 
-	bindFrameBuffer();
+	bindFrameBufferWriteOnly();
 	m_glslProgram->use();
 	GLenum mrt[] = { GL_COLOR_ATTACHMENT0_EXT };
 	glDrawBuffers(1, mrt);
@@ -92,6 +92,6 @@ void ShadedBuffer::drawToBuffer(RenderOptions &renderOptions, shared_ptr<Texture
 	Texture::unbind();
 
 	m_glslProgram->disable();
-	unbindFrameBuffer();
+	unbindFrameBufferWriteOnly();
 	glPopAttrib();
 }

@@ -946,6 +946,9 @@
     <ClInclude Include="src\Resource\SceneNode\AssimpSceneNodeImporter.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="src\Subsystem\Graphics\Impl\OpenGL\Debug\DebugCallback.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="ClassDiagram.cd" />

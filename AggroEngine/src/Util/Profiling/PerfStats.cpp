@@ -6,7 +6,7 @@ PerfStats::PerfStats()
 	, m_alertMemoryListeners(false)
 	, m_profilerEnabled(false)
 {
-	m_startTime = microsec_clock::local_time();
+	m_startTime = microsec_clock::universal_time();
 	m_lastFPSTick = m_startTime;
 	m_fpsTicksTracked = -1;
 	m_fpsTicksTracked = Config::instance().getProperties().getIntProperty("engine.performance.fps_ticks_tracked", 240);
@@ -18,7 +18,7 @@ void PerfStats::recordFrame()
 {
 	boost::lock_guard<PerfStats> guard(*this);
 
-	ptime curTime = microsec_clock::local_time();
+	ptime curTime = microsec_clock::universal_time();
 	long timestamp = (curTime - m_startTime).total_microseconds();
 	m_frameTimestamps.push(timestamp);
 

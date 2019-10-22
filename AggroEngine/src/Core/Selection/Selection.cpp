@@ -32,6 +32,10 @@ unsigned int Selection::getSelectionAsId()
 unsigned int Selection::getSelectionAsId(unsigned int x, unsigned int y)
 {
 	shared_ptr<unsigned short> selectedPixel = getSelectionAsColor(x, y);
+	if (!selectedPixel)
+	{
+		return -1;
+	}
 	unsigned short r = selectedPixel.get()[0] / 256;
 	unsigned short g = selectedPixel.get()[1] / 256;
 	unsigned short b = selectedPixel.get()[2] / 256;
@@ -45,6 +49,10 @@ shared_ptr<unsigned short> Selection::getSelectionAsColor()
 
 shared_ptr<unsigned short> Selection::getSelectionAsColor(unsigned int x, unsigned int y)
 {
+	if (!m_selectedArea)
+	{
+		return shared_ptr<unsigned short>();
+	}
 	return m_selectedArea->getPixel(std::min<unsigned int>(m_size - 1, x), std::min<unsigned int>(m_size - 1, y));
 }
 
