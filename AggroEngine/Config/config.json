@@ -9,13 +9,13 @@
   "graphics": {
     "resolution": [ 1920, 1080 ],
     "vsync_enabled": false,
-    "max_fps": 60,
+    "max_fps": 120,
     "shadowRes": 2048,
     "shadowSlices":  [0.1, 0.3, 0.6]
   },
   "engine": {
     "camera_fps": 300,
-    "worker_threads": 15,
+    "worker_threads": 7,
     "tex_extensions": [ "tga", "png", "jpg" ],
     "mesh_extensions": [ "obj" ],
     "quick_resources": [ "Mesh/Engine", "Textures/Walls", "Textures/Engine", "Textures/Normals", "Textures/Test" ],

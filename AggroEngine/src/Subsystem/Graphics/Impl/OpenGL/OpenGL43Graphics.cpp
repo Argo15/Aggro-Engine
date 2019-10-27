@@ -50,8 +50,10 @@ shared_ptr<VertexBufferHandle> OpenGL43Graphics::createVertexBuffer(shared_ptr<M
 	boost::lock_guard<OpenGL43Graphics> guard(*this);
 	GLuint nVertexHandle;
 	glGenBuffers(1, &nVertexHandle);
-	glBindBuffer(GL_ARRAY_BUFFER_ARB, nVertexHandle);
-	glBufferData(GL_ARRAY_BUFFER,mesh->getSizeOfVerticies()*14/3, NULL,GL_STATIC_DRAW); // 14/3 for 3 vert, 2 tex, 3 norm, 3 tan, 3 bitan
+	glBindBuffer(GL_ARRAY_BUFFER, nVertexHandle);
+	// size = 14 for 3 vert, 2 tex, 3 norm, 3 tan, 3 bitan
+	int bufferSize = mesh->hasTangents() ? mesh->getSizeOfVerticies() * 14 / 3 : mesh->getSizeOfVerticies() * 8 / 3;
+	glBufferData(GL_ARRAY_BUFFER,mesh->getSizeOfVerticies()*14/3,NULL,GL_STATIC_DRAW);
 	glBufferSubData(GL_ARRAY_BUFFER,0,mesh->getSizeOfVerticies(),mesh->getVerticies().get());
 	glBufferSubData(GL_ARRAY_BUFFER,mesh->getSizeOfVerticies(),mesh->getSizeOfVerticies()*2/3,mesh->getTexCoords().get());
 	glBufferSubData(GL_ARRAY_BUFFER,mesh->getSizeOfVerticies()*5/3,mesh->getSizeOfVerticies(),mesh->getNormals().get());

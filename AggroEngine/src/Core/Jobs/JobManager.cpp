@@ -1,8 +1,10 @@
 #include "JobManager.hpp"
 #include "Config.hpp"
+#include "PerfStats.hpp"
 
 JobManager::JobManager()
 	: m_graphicsJobs()
+	, m_runningJobs(0)
 {
 	m_numThreads = Config::instance().getProperties().getIntProperty("engine.worker_threads");
 	m_jobQueue = vector<queue<shared_ptr<Job>>>(3, queue<shared_ptr<Job>>());
@@ -48,22 +50,9 @@ shared_ptr<Job> JobManager::nextGraphicsJob()
 void JobManager::tick()
 {
 	boost::lock_guard<JobManager> guard(*this);
-	// Remove any finished jobs
-	for (vector<shared_ptr<Job>>::iterator it = m_runningJobs.begin(); it != m_runningJobs.end();)
+	while (m_runningJobs < m_numThreads)
 	{
-		if (it->get()->getThread()->timed_join(boost::posix_time::microseconds(0)))
-		{
-			it = m_runningJobs.erase(it);
-		}
-		else
-		{
-			++it;
-		}
-	}
-
-	// Start new jobs
-	while (m_runningJobs.size() < m_numThreads)
-	{
+		// Start new jobs if there is few enough running
 		shared_ptr<Job> nextJob;
 		if (m_jobQueue[JobPriority::HIGH].size() > 0)
 		{
@@ -82,10 +71,14 @@ void JobManager::tick()
 		}
 		else
 		{
-			break;
+			return;
 		}
 
-		m_runningJobs.push_back(nextJob);
-		nextJob->run();
+		m_runningJobs++;
+		nextJob->run([this, nextJob]() {
+			// callback after job ends
+			boost::lock_guard<JobManager> guard(*this);
+			m_runningJobs--;
+		});
 	}
 }

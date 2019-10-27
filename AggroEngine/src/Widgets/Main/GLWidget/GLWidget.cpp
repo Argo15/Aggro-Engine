@@ -70,38 +70,29 @@ void GLWidget::paintGL()
 	shared_ptr<RenderOptions> renderOptions = m_engineContext->getRenderOptions();
 	renderOptions->setDefaultFrameBufferId(defaultFramebufferObject());
 
+	// Process any jobs that require opengl (uploading images, VBOs, etc)
+	int numGraphicsJobs = 0;
+	do
+	{
+		auto tracker = PerfStats::instance().trackTime("Graphics Job");
+		if (!(graphicsJob = m_engineContext->getJobManager()->nextGraphicsJob()))
+		{
+			break;
+		}
+		graphicsJob->runInThread();
+		numGraphicsJobs++;
+	}
+	while (m_graphicsClock->getTimerMillis() < m_millisPerFrame || numGraphicsJobs < 500);
+
 	// If enough time has passed, render a new frame
 	if (m_graphicsClock->getTimerMillis() >= m_millisPerFrame)
 	{
-		// This flushes GL calls due to glReadPixels, so use the already finished scene
-		// TODO: do asyncronously using pixel buffer objects
-		m_selection->updateSelection(m_mouse, m_graphicsContext->getGraphics());
-
 		m_graphicsClock->resetTimer();
 		m_renderer->renderScene(m_engineContext->getScene(), renderOptions);
 		PerfStats::instance().recordFrame();
+		m_selection->updateSelection(m_mouse, m_graphicsContext->getGraphics());
 		m_mouseController->handleMouseInput(m_mouse, m_engineContext, m_selection);
 		m_engineContext->getScene()->update(m_selection, m_mouse, m_engineContext);
-
-		// Process a few graphics jobs no matter what
-		int numJobs = 0;
-		while (graphicsJob = m_engineContext->getJobManager()->nextGraphicsJob())
-		{
-			auto tracker = PerfStats::instance().trackTime("Graphics Job");
-			graphicsJob->runInThread();
-			if (numJobs++ >= 5)
-			{
-				break;
-			}
-		}
-	}
-
-	// Process any jobs that require opengl (uploading images, VBOs, etc)
-	while (m_graphicsClock->getTimerMillis() + 1 < m_millisPerFrame &&
-			(graphicsJob = m_engineContext->getJobManager()->nextGraphicsJob()))
-	{
-		auto tracker = PerfStats::instance().trackTime("Graphics Job");
-		graphicsJob->runInThread();
 	}
 
 	m_graphicsContext->getGraphics()->drawScreen(*renderOptions);

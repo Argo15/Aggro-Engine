@@ -11,13 +11,16 @@ private:
 protected:
 	shared_ptr<boost::thread> m_thread;
 	function<void()> m_function;
+	bool m_override;
 
 public:
 	Job();
-	Job(function<void()> function);
+	Job(function<void()> function, bool ovride = true);
 
 	void run();
+	void run(function<void()> callback);
 	void runInThread();
-	shared_ptr<boost::thread> getThread();
 	virtual void stop();
+
+	bool overrid() { return m_override; }
 };

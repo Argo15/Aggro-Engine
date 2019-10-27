@@ -94,7 +94,7 @@ void MeshComponent::generateMeshes()
 	if (m_primaryMesh)
 	{
 		m_modifiedPrimaryMesh = m_primaryMesh;
-		m_jobs->add(shared_ptr<Job>(new Job([this]() {
+		shared_ptr<Job> genJob = shared_ptr<Job>(new Job([this]() {
 			if (!m_modifiedPrimaryMesh)
 			{
 				return;
@@ -119,7 +119,8 @@ void MeshComponent::generateMeshes()
 				m_boundingBox = boundingBoxGen->apply(m_modifiedPrimaryMesh);
 			}
 			refresh();
-		})), JobPriority::HIGH);
+		}));
+		m_jobs->add(genJob, JobPriority::MEDIUM);
 	}
 }
 

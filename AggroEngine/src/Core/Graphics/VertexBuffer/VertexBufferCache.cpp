@@ -97,10 +97,12 @@ void VertexBufferCache::finishLoading(shared_ptr<Mesh> mesh, shared_ptr<VertexBu
 
 void VertexBufferCache::failLoading(int meshId)
 {
+	cout << "Failed To load mesh " << meshId;
 	m_loadingVbos.erase(meshId);
 }
 
 void VertexBufferCache::failLoading(shared_ptr<Mesh> mesh)
 {
+	cout << "Failed To load mesh " << mesh->getId();
 	m_loadingSingleVbos.erase(mesh);
 }

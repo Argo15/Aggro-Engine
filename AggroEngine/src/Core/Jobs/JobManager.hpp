@@ -14,8 +14,8 @@ class JobManager : public boost::basic_lockable_adapter<recursive_mutex>
 {
 private:
 	int m_numThreads;
+	int m_runningJobs;
 	vector<queue<shared_ptr<Job>>> m_jobQueue;
-	vector<shared_ptr<Job>> m_runningJobs;
 	queue<shared_ptr<Job>> m_graphicsJobs;
 
 public:
