@@ -34,10 +34,6 @@ GBuffer::GBuffer(OpenGL43Graphics *graphics, int width, int height)
 	m_normalTex = graphics->createTexture(texOptions);
 	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, m_normalTex->get(), 0);
 
-	// Generate selection
-	m_selectionTex = graphics->createTexture(texOptions);
-	glFramebufferTexture2D(GL_FRAMEBUFFER, getSelectionColorAttachment(), GL_TEXTURE_2D, m_selectionTex->get(), 0);
-
 	// Generate 8 bit-per-component here
 	texOptions->setInternalFormat(InternalFormat::RGBA8);
 
@@ -50,9 +46,14 @@ GBuffer::GBuffer(OpenGL43Graphics *graphics, int width, int height)
 	m_glowTex = graphics->createTexture(texOptions);
 	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT3, GL_TEXTURE_2D, m_glowTex->get(), 0);
 
+	// Generate selection
+	fboImage->setImageType(ImageType::UNSIGNED_BYTE);
+	m_selectionTex = graphics->createTexture(texOptions);
+	glFramebufferTexture2D(GL_FRAMEBUFFER, getSelectionColorAttachment(), GL_TEXTURE_2D, m_selectionTex->get(), 0);
+
 	// Generate depth texture
 	fboImage->setImageFormat(ImageFormat::DEPTH_COMPONENT);
-	texOptions->setInternalFormat(InternalFormat::DEPTH_COMPONENT32);
+	texOptions->setInternalFormat(InternalFormat::DEPTH_COMPONENT24);
 	m_depthTex = graphics->createTexture(texOptions);
 	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, m_depthTex->get(), 0);
 
@@ -72,7 +73,7 @@ GBuffer::GBuffer(OpenGL43Graphics *graphics, int width, int height)
 	m_whiteTexture = graphics->createTexture(shared_ptr<ImageUC>(new RGBImage(1, 1, glm::vec3(1.f, 1.f, 1.f))));
 }
 
-void GBuffer::drawToBuffer(RenderOptions renderOptions, std::queue<shared_ptr<RenderData>> &renderQueue)
+void GBuffer::drawToBuffer(RenderOptions renderOptions, std::queue<shared_ptr<RenderData>> &renderQueue, shared_ptr<BufferSyncContext> syncContext)
 {
 	boost::lock_guard<OpenGL43Graphics> guard(*m_graphics);
 
@@ -108,6 +109,13 @@ void GBuffer::drawToBuffer(RenderOptions renderOptions, std::queue<shared_ptr<Re
 	{
 		shared_ptr<RenderData> renderData = renderQueue.front();
 		renderQueue.pop();
+
+		shared_ptr<VertexBufferHandle> vboHandle = renderData->getVertexBufferHandle();
+		if (vboHandle && !syncContext->checkAndClearSync(vboHandle->getVertexHandle()))
+		{
+			continue;
+		}
+
 		if (renderData == disabledDepthObject)
 		{
 			glDisable(GL_DEPTH_TEST);
@@ -135,7 +143,7 @@ void GBuffer::drawToBuffer(RenderOptions renderOptions, std::queue<shared_ptr<Re
 			}
 		}
 
-		if (renderData->getVertexBufferHandle())
+		if (vboHandle)
 		{
 			glm::mat4 mvpMatrix = viewProj * renderData->getModelMatrix();
 			m_glslProgram->sendUniform("modelViewProjectionMatrix", glm::value_ptr(mvpMatrix), false, 4);
@@ -203,7 +211,6 @@ void GBuffer::drawToBuffer(RenderOptions renderOptions, std::queue<shared_ptr<Re
 				glLineWidth(currentLineWidth);
 			}
 
-			shared_ptr<VertexBufferHandle> vboHandle = renderData->getVertexBufferHandle();
 			m_glslProgram->sendUniform("hasTangents", vboHandle->hasTangents());
 
 			glBindBuffer(GL_ARRAY_BUFFER, vboHandle->getVertexHandle());

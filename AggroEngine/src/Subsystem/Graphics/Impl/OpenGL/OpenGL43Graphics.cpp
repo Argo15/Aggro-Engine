@@ -7,7 +7,7 @@
 #include "Locks.hpp"
 #include "RGBImage.hpp"
 #include "Screen.hpp"
-#include "Debug/DebugCallback.hpp"
+#include "GLDebug/DebugCallback.hpp"
 #include <iostream>
 
 #define BUFFER_OFFSET(i) ((char *)NULL + (i))
@@ -34,6 +34,7 @@ void OpenGL43Graphics::init(shared_ptr<GraphicsInitOptions> options)
 	glEnable(GL_CULL_FACE);
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	m_syncContext = shared_ptr<BufferSyncContext>(new BufferSyncContext());
 	this->unlock();
 	m_shadowBuffer = shared_ptr<ShadowMapBuffer>(new ShadowMapBuffer(this, options->getShadowSize()));
 	m_gBuffer = shared_ptr<GBuffer>(new GBuffer(this, options->getBufferWidth(), options->getBufferHeight()));
@@ -42,6 +43,7 @@ void OpenGL43Graphics::init(shared_ptr<GraphicsInitOptions> options)
 	m_viewport = shared_ptr<Viewport>(new Viewport());
 	m_screenVBO = createVertexBuffer(shared_ptr<Mesh>(new Screen(-1, 0, 0, 1, 1)));
 	m_screenProgram = getShaderStore().getShader("Resources/Shaders/v_screen.glsl", "Resources/Shaders/f_screen.glsl");
+	m_pixelBuffers = shared_ptr<PixelBufferCache>(new PixelBufferCache(options));
 }
 
 
@@ -67,6 +69,7 @@ shared_ptr<VertexBufferHandle> OpenGL43Graphics::createVertexBuffer(shared_ptr<M
 	glGenBuffers(1, &nIndexHandle);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, nIndexHandle);
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, mesh->getSizeOfIndicies(), mesh->getIndicies().get(), GL_STATIC_DRAW);
+	m_syncContext->addSync(nVertexHandle, glFenceSync(GL_SYNC_GPU_COMMANDS_COMPLETE, 0));
 	return shared_ptr<VertexBufferHandle>(new DefaultVertexBufferHandle(nVertexHandle, mesh->getSizeOfVerticies(), nIndexHandle, mesh->getSizeOfIndicies(), mesh->hasTangents()));
 }
 
@@ -91,6 +94,12 @@ shared_ptr<TextureHandle> OpenGL43Graphics::createTexture(shared_ptr<ImageUC> im
 
 shared_ptr<TextureHandle> OpenGL43Graphics::createTexture(shared_ptr<TextureBuildOptions> pTexOptions)
 {
+	// TODO this method is slow, better to 
+	// 1. glMapBuffer a PBO, 
+	// 2. write data to memory map in a second thread
+	// 3. flush PBO (through glUnmapBuffer)
+	// 4. create texture from PBO
+	// 5. wait for sync
 	boost::lock_guard<OpenGL43Graphics> guard(*this);
 	shared_ptr<ImageUC> pImage = pTexOptions->getImage();
 	GLuint m_nHandle;
@@ -134,8 +143,9 @@ void OpenGL43Graphics::stageRender(shared_ptr<RenderData> pRenderData)
 void OpenGL43Graphics::executeRender(RenderOptions &renderOptions)
 {
 	auto tracker = PerfStats::instance().trackTime("executeRender");
-	m_shadowBuffer->drawToBuffer(renderOptions, renderQueue);
-	m_gBuffer->drawToBuffer(renderOptions, renderQueue);
+	m_shadowBuffer->drawToBuffer(renderOptions, renderQueue, m_syncContext);
+	m_gBuffer->drawToBuffer(renderOptions, renderQueue, m_syncContext);
+	m_pixelBuffers->writeSelectionBuffer(m_gBuffer);
 	m_lightBuffer->drawToBuffer(renderOptions, m_gBuffer->getNormalTex(), m_gBuffer->getDepthTex(), m_gBuffer->getGlowTex(), m_shadowBuffer);
 	m_shadedBuffer->drawToBuffer(renderOptions, m_gBuffer->getAlbedoTex(), m_lightBuffer->getTexture(), m_lightBuffer->getGlowTex());
 }
@@ -262,40 +272,16 @@ shared_ptr<TextureHandle> OpenGL43Graphics::_getRenderTargetTexture(RenderOption
 	return m_gBuffer->getAlbedoTex();
 }
 
-shared_ptr<ImageUS> OpenGL43Graphics::getRenderImage(RenderOptions::RenderTarget target)
+shared_ptr<ImageUC> OpenGL43Graphics::getSelectionImage(int x, int y, int width, int height)
 {
-	int width = m_gBuffer->getWidth();
-	int height = m_gBuffer->getHeight();
-	return getRenderImage(0, 0, width, height, target);
-}
-
-shared_ptr<ImageUS> OpenGL43Graphics::getRenderImage(int x, int y, int width, int height, RenderOptions::RenderTarget target)
-{
-	if (target != RenderOptions::SELECTION)
-	{
-		return shared_ptr<ImageUS>();
-	}
 	boost::lock_guard<OpenGL43Graphics> guard(*this);
-
-	m_gBuffer->bindFrameBufferReadOnly();
-	unsigned short *pixels = new unsigned short[width * height * 4];
-
-	glReadBuffer(m_gBuffer->getSelectionColorAttachment());
-	glReadPixels(x, y, width, height, GL_RGBA, GL_UNSIGNED_SHORT, pixels);
-	m_gBuffer->unbindFrameBufferReadOnly();
-
-	return shared_ptr<ImageUS>((new ImageUS(width, height, mem::shared_array<unsigned short>(pixels, width * height * 4, "GL_Graphics")))
-		->setImageFormat(ImageFormat::RGBA)
-		->setImageType(ImageType::UNSIGNED_SHORT)
-		);
+	return m_pixelBuffers->getSelectionImage(x, y, width, height);
 }
 
-shared_ptr<ImageF> OpenGL43Graphics::getRenderImageF(int x, int y, int width, int height, RenderOptions::RenderTarget target)
+shared_ptr<ImageF> OpenGL43Graphics::getDepthImage(int x, int y, int width, int height)
 {
-	if (target != RenderOptions::DEPTH)
-	{
-		return shared_ptr<ImageF>();
-	}
+	// This will flush the command pipeline, and PBOs can't fix it, use only when necessary
+	// TODO: do a raycast to get depth
 	boost::lock_guard<OpenGL43Graphics> guard(*this);
 
 	m_gBuffer->bindFrameBufferReadOnly();
@@ -312,19 +298,19 @@ shared_ptr<ImageF> OpenGL43Graphics::getRenderImageF(int x, int y, int width, in
 		);
 }
 
-shared_ptr<unsigned short> OpenGL43Graphics::getRenderImagePixel(int x, int y, RenderOptions::RenderTarget target)
+shared_ptr<unsigned char> OpenGL43Graphics::getSelectionImagePixel(int x, int y)
 {
-	shared_ptr<ImageUS> image = getRenderImage(x, y, 1, 1, target);
+	shared_ptr<ImageUC> image = getSelectionImage(x, y, 1, 1);
 	if (image)
 	{
 		return image->getPixel(0, 0);
 	}
-	return shared_ptr<unsigned short>();
+	return shared_ptr<unsigned char>();
 }
 
-shared_ptr<float> OpenGL43Graphics::getRenderImagePixelF(int x, int y, RenderOptions::RenderTarget target)
+shared_ptr<float> OpenGL43Graphics::getDepthImagePixel(int x, int y)
 {
-	shared_ptr<ImageF> image = getRenderImageF(x, y, 1, 1, target);
+	shared_ptr<ImageF> image = getDepthImage(x, y, 1, 1);
 	if (image)
 	{
 		return image->getPixel(0, 0);

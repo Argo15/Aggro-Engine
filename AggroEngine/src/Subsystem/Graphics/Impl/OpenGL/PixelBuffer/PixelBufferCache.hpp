@@ -3,11 +3,12 @@
 #include <string>
 #include <memory>
 #include <boost/unordered_map.hpp>
-#include "Graphics.hpp"
+#include "GraphicsInitOptions.hpp"
+#include "GBuffer.hpp"
 using namespace std;
 
 /**
-* Manages pixel buffer object. When a new size is requested, a new PBO is generated.
+* Manages pixel buffer objects.
 *
 * author: wcrane
 * since: 2016-08-28
@@ -15,10 +16,15 @@ using namespace std;
 class PixelBufferCache
 {
 private:
-	boost::unordered_map<string, GLuint> m_sizeToPBO;
+	GLuint *m_selectionPBOs;
+	GLsizei m_width;
+	GLsizei m_height;
+	int m_curIndex;
+	int m_numBuffs;
 
 public:
-	PixelBufferCache();
+	PixelBufferCache(shared_ptr<GraphicsInitOptions> options);
 
-	GLuint getPixelBuffer(int size, string ns = "");
+	void writeSelectionBuffer(shared_ptr<GBuffer> gBuffer);
+	shared_ptr<ImageUC> getSelectionImage(int x, int y, int width, int height);
 };

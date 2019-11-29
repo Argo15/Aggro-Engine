@@ -104,6 +104,11 @@ public:
 
 	shared_ptr<T> getPixel(int x, int y)
 	{
+		if (x >= m_nWidth || y >= m_nHeight)
+		{
+			return shared_ptr<T>();
+		}
+
 		int componentSize = sizeof(T);
 		int numComponents;
 		int pixelSize;

@@ -9,7 +9,7 @@ class Selection
 {
 private:
 	unsigned int m_size;
-	shared_ptr<ImageUS> m_selectedArea;
+	shared_ptr<ImageUC> m_selectedArea;
 	float m_depthVal;
 
 public:
@@ -19,8 +19,8 @@ public:
 
 	unsigned int getSelectionAsId();
 	unsigned int getSelectionAsId(unsigned int x, unsigned int y);
-	shared_ptr<unsigned short> getSelectionAsColor();
-	shared_ptr<unsigned short> getSelectionAsColor(unsigned int x, unsigned int y);
+	shared_ptr<unsigned char> getSelectionAsColor();
+	shared_ptr<unsigned char> getSelectionAsColor(unsigned int x, unsigned int y);
 	unsigned int getSize();
-	float getDepthVal();
+	float getDepthVal(shared_ptr<MouseState> mouse, shared_ptr<Graphics> graphics);
 };

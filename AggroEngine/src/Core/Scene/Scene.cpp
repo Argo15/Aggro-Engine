@@ -351,11 +351,12 @@ shared_ptr<SceneNode> Scene::getPreviewNode()
 	return m_previewNode;
 }
 
-void Scene::update(shared_ptr<Selection> selection, shared_ptr<MouseState> mouse, shared_ptr<EngineContext> context)
+void Scene::update(shared_ptr<Selection> selection, shared_ptr<MouseState> mouse, shared_ptr<EngineContext> context, shared_ptr<Graphics> graphics)
 {
-	if (m_previewNode && m_previewNode->getTransformComponent())
+	shared_ptr<MeshComponent> meshComponent = m_previewNode->getMeshComponent();
+	if (m_previewNode && m_previewNode->getTransformComponent() && meshComponent && meshComponent->hasMesh())
 	{
-		const float hyperDepth = selection->getDepthVal();
+		const float hyperDepth = selection->getDepthVal(mouse, graphics);
 		if (hyperDepth < 1)
 		{
 			const glm::mat4 projMat = context->getRenderOptions()->getProjectionMatrix();

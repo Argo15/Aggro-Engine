@@ -1,5 +1,4 @@
 #include "Job.hpp"
-#include "PerfStats.hpp"
 #include <QtConcurrent>
 
 Job::Job()
@@ -20,9 +19,7 @@ void Job::run()
 void Job::run(function<void()> callback)
 {
 	QtConcurrent::run([this, callback]() {
-		auto tracker = PerfStats::instance().trackTime("Job::run");
 		m_function();
-		auto tracker1 = PerfStats::instance().trackTime("Job::callback");
 		callback();
 	});
 }

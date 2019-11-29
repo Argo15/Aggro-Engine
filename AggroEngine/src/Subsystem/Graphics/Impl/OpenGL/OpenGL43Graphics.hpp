@@ -12,6 +12,10 @@ class OpenGL43Graphics;
 #include "Locks.hpp"
 #include "ShadowMapBuffer.hpp"
 #include "MemoryUtil.hpp"
+#include "Sync/BufferSyncContext.hpp"
+#include "PixelBuffer/PixelBufferCache.hpp"
+
+class PixelBufferCache;
 
 /**
  * OpenGL graphics that only guarentees support for OpenGL 4.3 or above.
@@ -32,6 +36,8 @@ private:
 	shared_ptr<Viewport> m_viewport;
 	shared_ptr<GLSLProgram> m_screenProgram;
 	shared_ptr<VertexBufferHandle> m_screenVBO;
+	shared_ptr<BufferSyncContext> m_syncContext;
+	shared_ptr<PixelBufferCache> m_pixelBuffers;
 
 	void _drawScreen(RenderOptions &renderOptions, float nX1, float nY1, float nX2, float nY2);
 	shared_ptr<TextureHandle> _getRenderTargetTexture(RenderOptions::RenderTarget target);
@@ -62,11 +68,10 @@ public:
 
 	ShaderStore getShaderStore();
 
-	shared_ptr<ImageUS> getRenderImage(RenderOptions::RenderTarget target);
-	shared_ptr<ImageUS> getRenderImage(int x, int y, int width, int height, RenderOptions::RenderTarget target);
-	shared_ptr<ImageF> getRenderImageF(int x, int y, int width, int height, RenderOptions::RenderTarget target);
-	shared_ptr<unsigned short> getRenderImagePixel(int x, int y, RenderOptions::RenderTarget target);
-	shared_ptr<float> getRenderImagePixelF(int x, int y, RenderOptions::RenderTarget target);
+	shared_ptr<ImageUC> getSelectionImage(int x, int y, int width, int height);
+	shared_ptr<ImageF> getDepthImage(int x, int y, int width, int height);
+	shared_ptr<unsigned char> getSelectionImagePixel(int x, int y);
+	shared_ptr<float> getDepthImagePixel(int x, int y);
 
 	int getFrameBufferWidth();
 	int getFrameBufferHeight();

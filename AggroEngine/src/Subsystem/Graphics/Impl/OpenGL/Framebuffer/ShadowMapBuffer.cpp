@@ -57,7 +57,7 @@ ShadowMapBuffer::ShadowMapBuffer(OpenGL43Graphics *graphics, int defaultSize)
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 
-void ShadowMapBuffer::drawToBuffer(RenderOptions renderOptions, std::queue<shared_ptr<RenderData>> &renderQueue)
+void ShadowMapBuffer::drawToBuffer(RenderOptions renderOptions, std::queue<shared_ptr<RenderData>> &renderQueue, shared_ptr<BufferSyncContext> syncContext)
 {
 	boost::lock_guard<OpenGL43Graphics> guard(*m_graphics);
 
@@ -111,7 +111,13 @@ void ShadowMapBuffer::drawToBuffer(RenderOptions renderOptions, std::queue<share
 			shared_ptr<RenderData> renderData = copyRenderQueue.front();
 			copyRenderQueue.pop();
 
-			if (renderData->getVertexBufferHandle() && renderData->isDepthTestEnabled() && renderData->isShadowsEnabled())
+			shared_ptr<VertexBufferHandle> vboHandle = renderData->getVertexBufferHandle();
+			if (!syncContext->checkAndClearSync(vboHandle->getVertexHandle()))
+			{
+				continue;
+			}
+
+			if (vboHandle && renderData->isDepthTestEnabled() && renderData->isShadowsEnabled())
 			{
 				if (renderData->isCullingEnabled() && renderData->getOcclusionPoints())
 				{
@@ -128,7 +134,6 @@ void ShadowMapBuffer::drawToBuffer(RenderOptions renderOptions, std::queue<share
 				glm::mat4 mvpMatrix = m_viewProj[i] * renderData->getModelMatrix();
 				m_glslProgram->sendUniform("modelViewProjectionMatrix", glm::value_ptr(mvpMatrix), false, 4);
 
-				shared_ptr<VertexBufferHandle> vboHandle = renderData->getVertexBufferHandle();
 				glBindBuffer(GL_ARRAY_BUFFER, vboHandle->getVertexHandle());
 				glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, vboHandle->getIndexHandle());
 				glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, 0);

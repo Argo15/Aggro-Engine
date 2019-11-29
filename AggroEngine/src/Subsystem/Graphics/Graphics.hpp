@@ -51,11 +51,10 @@ public:
 	virtual void clearDepthAndColor(int frameBufferId) = 0;
 
 	// Downloaders
-	virtual shared_ptr<ImageUS> getRenderImage(RenderOptions::RenderTarget target) = 0;
-	virtual shared_ptr<ImageUS> getRenderImage(int x, int y, int width, int height, RenderOptions::RenderTarget target) = 0;
-	virtual shared_ptr<ImageF> getRenderImageF(int x, int y, int width, int height, RenderOptions::RenderTarget target) = 0;
-	virtual shared_ptr<unsigned short> getRenderImagePixel(int x, int y, RenderOptions::RenderTarget target) = 0;
-	virtual shared_ptr<float> getRenderImagePixelF(int x, int y, RenderOptions::RenderTarget target) = 0;
+	virtual shared_ptr<ImageUC> getSelectionImage(int x, int y, int width, int height) = 0;
+	virtual shared_ptr<ImageF> getDepthImage(int x, int y, int width, int height) = 0;
+	virtual shared_ptr<unsigned char> getSelectionImagePixel(int x, int y) = 0;
+	virtual shared_ptr<float> getDepthImagePixel(int x, int y) = 0;
 
 	virtual int getFrameBufferWidth() = 0;
 	virtual int getFrameBufferHeight() = 0;

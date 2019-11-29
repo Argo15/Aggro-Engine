@@ -92,7 +92,7 @@ void GLWidget::paintGL()
 		PerfStats::instance().recordFrame();
 		m_selection->updateSelection(m_mouse, m_graphicsContext->getGraphics());
 		m_mouseController->handleMouseInput(m_mouse, m_engineContext, m_selection);
-		m_engineContext->getScene()->update(m_selection, m_mouse, m_engineContext);
+		m_engineContext->getScene()->update(m_selection, m_mouse, m_engineContext, m_graphicsContext->getGraphics());
 	}
 
 	m_graphicsContext->getGraphics()->drawScreen(*renderOptions);

@@ -5,6 +5,7 @@ class ShadowMapBuffer;
 
 #include "FrameBufferObject.hpp"
 #include "OpenGL43Graphics.hpp"
+#include "Sync/BufferSyncContext.hpp"
 
 /**
 * Renders the scene from the lights perspective, 
@@ -30,7 +31,7 @@ private:
 public:
 	ShadowMapBuffer(OpenGL43Graphics *graphics, int defaultSize);
 
-	void drawToBuffer(RenderOptions renderOptions, std::queue<shared_ptr<RenderData>> &renderQueue);
+	void drawToBuffer(RenderOptions renderOptions, std::queue<shared_ptr<RenderData>> &renderQueue, shared_ptr<BufferSyncContext> syncContext);
 
 	void bindShadowTex(int slice);
 	shared_ptr<TextureHandle> getShadowTex(int slice);
