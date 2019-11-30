@@ -27,7 +27,7 @@ class OpenGL43Graphics : public Graphics,
 	public boost::basic_lockable_adapter<recursive_mutex>
 {
 private:
-	std::queue<shared_ptr<RenderData>> renderQueue;
+	std::queue<shared_ptr<RenderData>> m_renderQueue;
 	ShaderStore m_shaderStore;
 	shared_ptr<ShadowMapBuffer> m_shadowBuffer;
 	shared_ptr<GBuffer> m_gBuffer;
@@ -54,6 +54,7 @@ public:
 	shared_ptr<TextureHandle> createTexture();
 	shared_ptr<TextureHandle> createTexture(shared_ptr<ImageUC> image);
 	shared_ptr<TextureHandle> createTexture(shared_ptr<TextureBuildOptions> pTexOptions);
+	shared_ptr<TextureHandle> createTextureAsync(shared_ptr<TextureBuildOptions> texOptions);
 	void deleteTexture(shared_ptr<TextureHandle> textureHandle);
 
 	void stageRender(shared_ptr<RenderData> pRenderData);

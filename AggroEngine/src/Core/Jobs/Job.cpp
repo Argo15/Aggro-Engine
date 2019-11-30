@@ -5,9 +5,8 @@ Job::Job()
 {
 }
 
-Job::Job(const function<void()> function, bool ovride)
+Job::Job(const function<void()> function)
 	: m_function(function)
-	, m_override(ovride)
 {
 }
 

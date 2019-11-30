@@ -73,6 +73,7 @@ void LightBuffer::drawToBuffer(RenderOptions &renderOptions,
 	if (!directLight || !normalTex)
 	{
 		m_texture = m_noLightTexture;
+		glPopAttrib();
 		return;
 	}
 	m_texture = m_lightTexture;

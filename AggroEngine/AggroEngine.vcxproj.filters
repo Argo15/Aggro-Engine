@@ -526,6 +526,9 @@
     <ClCompile Include="src\Subsystem\Graphics\Impl\OpenGL\Sync\BufferSyncContext.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\Subsystem\Graphics\Api\Texture\AsyncTextureHandle.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Resource\Image\CheckersImage.hpp">
@@ -953,6 +956,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\Subsystem\Graphics\Impl\OpenGL\GLDebug\DebugCallback.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Subsystem\Graphics\Api\Texture\AsyncTextureHandle.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

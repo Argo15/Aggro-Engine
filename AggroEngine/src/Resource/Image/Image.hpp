@@ -109,16 +109,8 @@ public:
 			return shared_ptr<T>();
 		}
 
-		int componentSize = sizeof(T);
-		int numComponents;
-		int pixelSize;
-		switch (m_format)
-		{
-		case DEPTH_COMPONENT: numComponents = 1; break;
-		case RGB: numComponents = 3; break;
-		default: numComponents = 4;
-		}
-		pixelSize = componentSize * numComponents;
+		int numComponents = getNumComponents();
+		int pixelSize = sizeof(T) * numComponents;
 		int idxStart = (y * m_nWidth * numComponents) + (x * numComponents);
 
 		T *pixel = new T[numComponents];
@@ -127,6 +119,21 @@ public:
 		shared_ptr<T> ret = mem::shared_array<T>(pixel, numComponents, "Image");
 
 		return ret;
+	}
+
+	int getSize()
+	{
+		return m_nWidth * m_nHeight * sizeof(T) * getNumComponents();
+	}
+
+	int getNumComponents()
+	{
+		switch (m_format)
+		{
+		case DEPTH_COMPONENT: return 1;
+		case RGB: return 3;
+		default: return 4;
+		}
 	}
 };
 

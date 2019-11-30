@@ -24,5 +24,5 @@ unsigned int LoadableTextureHandle::get()
 
 bool LoadableTextureHandle::isLoaded()
 {
-	return m_delegate != nullptr;
+	return m_delegate != nullptr && m_delegate->isLoaded();
 }

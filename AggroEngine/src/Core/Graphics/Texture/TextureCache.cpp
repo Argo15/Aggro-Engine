@@ -29,7 +29,7 @@ shared_ptr<TextureHandle> TextureCache::getTexture(int imageId)
 			m_jobManager->addGraphicsJob(shared_ptr<Job>(new Job([this, image, imageId]()
 			{
 				shared_ptr<TextureBuildOptions> texOptions(new TextureBuildOptions(image));
-				shared_ptr<TextureHandle> newTex(m_graphics->createTexture(texOptions));
+				shared_ptr<TextureHandle> newTex(m_graphics->createTextureAsync(texOptions));
 				finishLoading(imageId, newTex);
 			})));
 		})));

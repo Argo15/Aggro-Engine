@@ -75,3 +75,76 @@ shared_ptr<ImageUC> PixelBufferCache::getSelectionImage(int x, int y, int width,
 	glBindBuffer(GL_PIXEL_PACK_BUFFER, 0);
 	return shared_ptr<ImageUC>();
 }
+
+shared_ptr<TextureHandle> PixelBufferCache::uploadTexturePixels(shared_ptr<TextureBuildOptions> texOptions)
+{
+	shared_ptr<ImageUC> pImage = texOptions->getImage();
+	GLuint texture;
+	GLuint texPBO;
+	glGenTextures(1, &texture);
+	glGenBuffers(1, &texPBO);
+
+	auto image = texOptions->getImage();
+
+	glBindBuffer(GL_PIXEL_UNPACK_BUFFER, texPBO);
+	glBufferData(GL_PIXEL_UNPACK_BUFFER, image->getSize(), 0, GL_STREAM_DRAW);
+	GLubyte* ptr = (GLubyte*)glMapBuffer(GL_PIXEL_UNPACK_BUFFER, GL_WRITE_ONLY);
+	if (ptr)
+	{
+		memcpy(ptr, image->getData().get(), image->getSize());
+		glUnmapBuffer(GL_PIXEL_UNPACK_BUFFER);
+	}
+	glBindBuffer(GL_PIXEL_UNPACK_BUFFER, 0);
+
+	m_texOptions[texture] = texOptions;
+	m_texHandles[texture] = shared_ptr<AsyncTextureHandle>(new AsyncTextureHandle(texture));
+	m_texToPBO[texture] = texPBO;
+	return m_texHandles[texture];
+}
+
+void PixelBufferCache::resolveTextures(shared_ptr<BufferSyncContext> syncContext)
+{
+	for (auto it = m_texHandles.begin(); it != m_texHandles.end();)
+	{
+		GLuint texture = it->first;
+		shared_ptr<AsyncTextureHandle> texHandle = it->second;
+		if (!texHandle->isPixelDataReady())
+		{
+			it++;
+			continue;
+		}
+		shared_ptr<TextureBuildOptions> texOptions = m_texOptions[texture];
+		GLuint texPBO = m_texToPBO[texture];
+		shared_ptr<ImageUC> image = texOptions->getImage();
+
+		GLenum target = texOptions->getTarget();
+		glBindTexture(target, texture);
+		glTexParameteri(target, GL_TEXTURE_MAG_FILTER, texOptions->getMagFilter());
+		glTexParameteri(target, GL_TEXTURE_MIN_FILTER, texOptions->getMinFilter());
+		glTexParameteri(target, GL_TEXTURE_WRAP_S, texOptions->getWrapS());
+		glTexParameteri(target, GL_TEXTURE_WRAP_T, texOptions->getWrapT());
+
+		glBindBuffer(GL_PIXEL_UNPACK_BUFFER, texPBO);
+		glTexImage2D(target, 0, texOptions->getInternalFormat(), image->getWidth(), image->getHeight(), 0, image->getFormat(), image->getImageType(), 0);
+		glBindBuffer(GL_PIXEL_UNPACK_BUFFER, 0);
+
+		if (texOptions->isGenMipmaps())
+		{
+			glGenerateMipmap(target);
+		}
+
+		if (texOptions->isDepthCompareEnabled())
+		{
+			glTexParameteri(target, GL_TEXTURE_COMPARE_MODE, GL_COMPARE_R_TO_TEXTURE);
+			glTexParameteri(target, GL_DEPTH_TEXTURE_MODE, GL_INTENSITY);
+			glTexParameteri(target, GL_TEXTURE_COMPARE_FUNC, GL_LESS);
+		}
+
+		syncContext->addSync(texture, glFenceSync(GL_SYNC_GPU_COMMANDS_COMPLETE, 0));
+
+		it = m_texHandles.erase(it);
+		m_texOptions.erase(texture);
+		m_texToPBO.erase(texture);
+		texHandle->setLoaded();
+	}
+}

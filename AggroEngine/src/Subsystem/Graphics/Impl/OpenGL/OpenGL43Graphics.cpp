@@ -94,12 +94,6 @@ shared_ptr<TextureHandle> OpenGL43Graphics::createTexture(shared_ptr<ImageUC> im
 
 shared_ptr<TextureHandle> OpenGL43Graphics::createTexture(shared_ptr<TextureBuildOptions> pTexOptions)
 {
-	// TODO this method is slow, better to 
-	// 1. glMapBuffer a PBO, 
-	// 2. write data to memory map in a second thread
-	// 3. flush PBO (through glUnmapBuffer)
-	// 4. create texture from PBO
-	// 5. wait for sync
 	boost::lock_guard<OpenGL43Graphics> guard(*this);
 	shared_ptr<ImageUC> pImage = pTexOptions->getImage();
 	GLuint m_nHandle;
@@ -126,6 +120,12 @@ shared_ptr<TextureHandle> OpenGL43Graphics::createTexture(shared_ptr<TextureBuil
 	}
  	return shared_ptr<TextureHandle>(new DefaultTextureHandle(m_nHandle));
 }
+
+shared_ptr<TextureHandle> OpenGL43Graphics::createTextureAsync(shared_ptr<TextureBuildOptions> texOptions)
+{
+	boost::lock_guard<OpenGL43Graphics> guard(*this);
+	return m_pixelBuffers->uploadTexturePixels(texOptions);
+}
 	
 void OpenGL43Graphics::deleteTexture(shared_ptr<TextureHandle> textureHandle)
 {
@@ -137,17 +137,19 @@ void OpenGL43Graphics::deleteTexture(shared_ptr<TextureHandle> textureHandle)
 void OpenGL43Graphics::stageRender(shared_ptr<RenderData> pRenderData)
 {
 	boost::lock_guard<OpenGL43Graphics> guard(*this);
-	renderQueue.push(pRenderData);
+	m_renderQueue.push(pRenderData);
 }
 
 void OpenGL43Graphics::executeRender(RenderOptions &renderOptions)
 {
 	auto tracker = PerfStats::instance().trackTime("executeRender");
-	m_shadowBuffer->drawToBuffer(renderOptions, renderQueue, m_syncContext);
-	m_gBuffer->drawToBuffer(renderOptions, renderQueue, m_syncContext);
+	m_pixelBuffers->resolveTextures(m_syncContext);
+	m_shadowBuffer->drawToBuffer(renderOptions, m_renderQueue, m_syncContext);
+	m_gBuffer->drawToBuffer(renderOptions, m_renderQueue, m_syncContext);
 	m_pixelBuffers->writeSelectionBuffer(m_gBuffer);
 	m_lightBuffer->drawToBuffer(renderOptions, m_gBuffer->getNormalTex(), m_gBuffer->getDepthTex(), m_gBuffer->getGlowTex(), m_shadowBuffer);
 	m_shadedBuffer->drawToBuffer(renderOptions, m_gBuffer->getAlbedoTex(), m_lightBuffer->getTexture(), m_lightBuffer->getGlowTex());
+	m_renderQueue = std::queue<shared_ptr<RenderData>>();
 }
 
 void OpenGL43Graphics::drawScreen(RenderOptions &renderOptions)

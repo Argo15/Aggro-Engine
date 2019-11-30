@@ -155,7 +155,7 @@ void GBuffer::drawToBuffer(RenderOptions renderOptions, std::queue<shared_ptr<Re
 			glm::mat4 textureMatrix = glm::mat4(1.0);
 			shared_ptr<Material> material = renderData->getMaterial();
 			int texId = 0;
-			if (material)
+			if (material && syncContext->checkAndClearSync(material->getTextureOpt().get_value_or(m_whiteTexture)->get()))
 			{
 				m_glslProgram->sendUniform("material.color", material->getColor());
 				m_glslProgram->sendUniform("material.tex", material->getTextureOpt().get_value_or(m_whiteTexture), texId++);

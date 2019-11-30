@@ -36,6 +36,7 @@ public:
 	virtual shared_ptr<TextureHandle> createTexture() = 0;
 	virtual shared_ptr<TextureHandle> createTexture(shared_ptr<ImageUC> image) = 0;
 	virtual shared_ptr<TextureHandle> createTexture(shared_ptr<TextureBuildOptions> pTexOptions) = 0;
+	virtual shared_ptr<TextureHandle> createTextureAsync(shared_ptr<TextureBuildOptions> texOptions) = 0;
 	virtual void deleteTexture(shared_ptr<TextureHandle> textureHandle) = 0;
 
 	// Rendering
