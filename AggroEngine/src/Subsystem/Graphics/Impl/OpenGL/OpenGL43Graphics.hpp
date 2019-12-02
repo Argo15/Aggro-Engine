@@ -27,7 +27,7 @@ class OpenGL43Graphics : public Graphics,
 	public boost::basic_lockable_adapter<recursive_mutex>
 {
 private:
-	std::queue<shared_ptr<RenderData>> m_renderQueue;
+	std::deque<shared_ptr<RenderData>> m_renderQueue;
 	ShaderStore m_shaderStore;
 	shared_ptr<ShadowMapBuffer> m_shadowBuffer;
 	shared_ptr<GBuffer> m_gBuffer;

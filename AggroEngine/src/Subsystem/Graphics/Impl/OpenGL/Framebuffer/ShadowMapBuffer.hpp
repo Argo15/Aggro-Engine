@@ -31,7 +31,7 @@ private:
 public:
 	ShadowMapBuffer(OpenGL43Graphics *graphics, int defaultSize);
 
-	void drawToBuffer(RenderOptions renderOptions, std::queue<shared_ptr<RenderData>> &renderQueue, shared_ptr<BufferSyncContext> syncContext);
+	void drawToBuffer(RenderOptions renderOptions, std::deque<shared_ptr<RenderData>> &renderQueue, shared_ptr<BufferSyncContext> syncContext);
 
 	void bindShadowTex(int slice);
 	shared_ptr<TextureHandle> getShadowTex(int slice);

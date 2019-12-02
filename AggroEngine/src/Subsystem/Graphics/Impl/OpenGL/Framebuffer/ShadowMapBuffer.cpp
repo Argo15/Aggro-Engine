@@ -2,6 +2,15 @@
 #include "Config.hpp"
 #include "ShadowMapFrustrum.hpp"
 
+// How frequently to update each shadowmap
+static const char s_frames[4][16] { 
+	{1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0},
+	{0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0},
+	{0,0,0,1,0,0,0,0,0,0,0,1,0,0,0,0},
+	{0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,1}
+};
+static char s_currentFrame = -1;
+
 ShadowMapBuffer::ShadowMapBuffer(OpenGL43Graphics *graphics, int defaultSize)
 	: FrameBufferObject(defaultSize, defaultSize)
 {
@@ -57,7 +66,7 @@ ShadowMapBuffer::ShadowMapBuffer(OpenGL43Graphics *graphics, int defaultSize)
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 
-void ShadowMapBuffer::drawToBuffer(RenderOptions renderOptions, std::queue<shared_ptr<RenderData>> &renderQueue, shared_ptr<BufferSyncContext> syncContext)
+void ShadowMapBuffer::drawToBuffer(RenderOptions renderOptions, std::deque<shared_ptr<RenderData>> &renderQueue, shared_ptr<BufferSyncContext> syncContext)
 {
 	boost::lock_guard<OpenGL43Graphics> guard(*m_graphics);
 
@@ -66,6 +75,11 @@ void ShadowMapBuffer::drawToBuffer(RenderOptions renderOptions, std::queue<share
 
 	for (int i = 0; i < 4; i++)
 	{
+		if (s_frames[i][s_currentFrame] == 0)
+		{
+			continue;
+		}
+
 		glBindFramebuffer(GL_DRAW_FRAMEBUFFER, m_shadowBuffer[i]);
 		m_glslProgram->use();
 		GLenum mrt[] = { GL_COLOR_ATTACHMENT0 };
@@ -103,13 +117,11 @@ void ShadowMapBuffer::drawToBuffer(RenderOptions renderOptions, std::queue<share
 
 		glBindFragDataLocation(m_glslProgram->getHandle(), 0, "testBuffer");
 		glBindAttribLocation(m_glslProgram->getHandle(), 0, "v_vertex");
-		std::queue<shared_ptr<RenderData>> copyRenderQueue(renderQueue);
 		glEnableVertexAttribArray(0);
 
-		while (!copyRenderQueue.empty())
+		for (auto it = renderQueue.begin(); it != renderQueue.end(); ++it)
 		{
-			shared_ptr<RenderData> renderData = copyRenderQueue.front();
-			copyRenderQueue.pop();
+			shared_ptr<RenderData> renderData = *it;
 
 			shared_ptr<VertexBufferHandle> vboHandle = renderData->getVertexBufferHandle();
 			if (!syncContext->checkAndClearSync(vboHandle->getVertexHandle()))
@@ -147,6 +159,8 @@ void ShadowMapBuffer::drawToBuffer(RenderOptions renderOptions, std::queue<share
 		m_glslProgram->disable();
 		glPopAttrib();
 	}
+
+	s_currentFrame = (s_currentFrame + 1) % 16;
 }
 
 void ShadowMapBuffer::_getProjectionMat(int slice, float slicePctStart, float slicePctEnd, glm::mat4 &lightViewMat, RenderOptions &renderOptions)

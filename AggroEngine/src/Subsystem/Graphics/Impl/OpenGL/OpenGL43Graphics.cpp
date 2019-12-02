@@ -137,19 +137,19 @@ void OpenGL43Graphics::deleteTexture(shared_ptr<TextureHandle> textureHandle)
 void OpenGL43Graphics::stageRender(shared_ptr<RenderData> pRenderData)
 {
 	boost::lock_guard<OpenGL43Graphics> guard(*this);
-	m_renderQueue.push(pRenderData);
+	m_renderQueue.push_back(pRenderData);
 }
 
 void OpenGL43Graphics::executeRender(RenderOptions &renderOptions)
 {
-	auto tracker = PerfStats::instance().trackTime("executeRender");
+	auto tracker = PerfStats::instance().trackTime("GL executeRender");
 	m_pixelBuffers->resolveTextures(m_syncContext);
 	m_shadowBuffer->drawToBuffer(renderOptions, m_renderQueue, m_syncContext);
 	m_gBuffer->drawToBuffer(renderOptions, m_renderQueue, m_syncContext);
 	m_pixelBuffers->writeSelectionBuffer(m_gBuffer);
 	m_lightBuffer->drawToBuffer(renderOptions, m_gBuffer->getNormalTex(), m_gBuffer->getDepthTex(), m_gBuffer->getGlowTex(), m_shadowBuffer);
 	m_shadedBuffer->drawToBuffer(renderOptions, m_gBuffer->getAlbedoTex(), m_lightBuffer->getTexture(), m_lightBuffer->getGlowTex());
-	m_renderQueue = std::queue<shared_ptr<RenderData>>();
+	m_renderQueue = std::deque<shared_ptr<RenderData>>();
 }
 
 void OpenGL43Graphics::drawScreen(RenderOptions &renderOptions)

@@ -21,7 +21,7 @@ void Renderer::init()
 void Renderer::renderScene(shared_ptr<Scene> scene, shared_ptr<RenderOptions> renderOptions)
 {
 	{
-		auto tracker = PerfStats::instance().trackTime("renderScene");
+		auto tracker = PerfStats::instance().trackTime("Renderer.renderScene");
 		renderOptions->clear();
 		m_graphicsContext->getGraphics()->clearDepthAndColor(renderOptions->getDefaultFrameBufferId()); // clear
 		m_graphicsContext->getGraphics()->stageRender(m_gridRenderData); // Render grid
@@ -48,7 +48,7 @@ void Renderer::renderScene(shared_ptr<Scene> scene, shared_ptr<RenderOptions> re
 }
 
 
-void Renderer::_renderSceneNodeRecursive(shared_ptr<SceneNode> node, glm::mat4 transform, glm::mat4 viewMat, shared_ptr<RenderOptions> renderOptions)
+void Renderer::_renderSceneNodeRecursive(shared_ptr<SceneNode> node, glm::mat4 &transform, glm::mat4 &viewMat, shared_ptr<RenderOptions> renderOptions)
 {
 	glm::mat4 curTransform = transform;
 	if (node->hasTransformComponent())

@@ -68,6 +68,7 @@ void FPSWidget::_onUpdate(std::deque<int> *fpsTicks)
 		{
 			minFps = min(minFps, (int)(*fpsTicks)[j]);
 		}
+		m_chart->setTitle(QString("FPS ") + QString::number(minFps));
 		m_fpsMinLines->append(i, minFps);
 	}
 }

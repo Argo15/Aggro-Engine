@@ -22,7 +22,7 @@ private:
 public:
 	GBuffer(OpenGL43Graphics *graphics, int width, int height);
 
-	void drawToBuffer(RenderOptions renderOptions, std::queue<shared_ptr<RenderData>> &renderQueue, shared_ptr<BufferSyncContext> syncContext);
+	void drawToBuffer(RenderOptions renderOptions, std::deque<shared_ptr<RenderData>> &renderQueue, shared_ptr<BufferSyncContext> syncContext);
 
 	void bindDepthTex();
 	void bindNormalTex();

@@ -73,7 +73,7 @@ GBuffer::GBuffer(OpenGL43Graphics *graphics, int width, int height)
 	m_whiteTexture = graphics->createTexture(shared_ptr<ImageUC>(new RGBImage(1, 1, glm::vec3(1.f, 1.f, 1.f))));
 }
 
-void GBuffer::drawToBuffer(RenderOptions renderOptions, std::queue<shared_ptr<RenderData>> &renderQueue, shared_ptr<BufferSyncContext> syncContext)
+void GBuffer::drawToBuffer(RenderOptions renderOptions, std::deque<shared_ptr<RenderData>> &renderQueue, shared_ptr<BufferSyncContext> syncContext)
 {
 	boost::lock_guard<OpenGL43Graphics> guard(*m_graphics);
 
@@ -108,7 +108,7 @@ void GBuffer::drawToBuffer(RenderOptions renderOptions, std::queue<shared_ptr<Re
 	while (!renderQueue.empty())
 	{
 		shared_ptr<RenderData> renderData = renderQueue.front();
-		renderQueue.pop();
+		renderQueue.pop_front();
 
 		shared_ptr<VertexBufferHandle> vboHandle = renderData->getVertexBufferHandle();
 		if (vboHandle && !syncContext->checkAndClearSync(vboHandle->getVertexHandle()))
@@ -123,7 +123,7 @@ void GBuffer::drawToBuffer(RenderOptions renderOptions, std::queue<shared_ptr<Re
 		}
 		else if (!isDepthDisabled && !renderData->isDepthTestEnabled())
 		{
-			renderQueue.push(renderData);
+			renderQueue.push_back(renderData);
 			if (!disabledDepthObject)
 			{
 				disabledDepthObject = renderData;

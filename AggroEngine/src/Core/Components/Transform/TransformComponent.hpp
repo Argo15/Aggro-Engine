@@ -15,8 +15,11 @@ private:
 	glm::mat4 m_scaleMat;
 	glm::vec3 m_translate;
 	glm::vec3 m_scale;
+	glm::mat4 m_fullTransform;
 
 	Listener<TransformComponent *> m_changeListeners;
+
+	void _refresh();
 
 	TransformComponent(Chunk * const byteChunk);
 
