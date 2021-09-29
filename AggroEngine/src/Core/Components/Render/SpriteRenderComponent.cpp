@@ -34,7 +34,7 @@ shared_ptr<RenderComponent> SpriteRenderComponent::deserialize(Chunk * const byt
 	return shared_ptr<SpriteRenderComponent>(new SpriteRenderComponent(byteChunk, resources));
 }
 
-void SpriteRenderComponent::render(shared_ptr<GraphicsContext> context, glm::mat4 &m4Transform, glm::mat4 &m4ViewMat, shared_ptr<SceneNode> node)
+void SpriteRenderComponent::render(shared_ptr<GraphicsContext> context, glm::mat4 &m4Transform, glm::mat4 &m4ViewMat)
 {
 	// Undo camera rotation
 	glm::mat4 invCamera = glm::inverse(m4ViewMat);
@@ -46,5 +46,10 @@ void SpriteRenderComponent::render(shared_ptr<GraphicsContext> context, glm::mat
 		glm::toMat4(invCameraDecompose.getRotate()
 	), objectDecompose.getScale());
 
-	StaticObjectRenderComponent::render(context, cameraUndo, m4ViewMat, node);
+	StaticObjectRenderComponent::render(context, cameraUndo, m4ViewMat);
+}
+
+void SpriteRenderComponent::onSceneNodeDeleted(SceneNode *node)
+{
+	StaticObjectRenderComponent::onSceneNodeDeleted(node);
 }

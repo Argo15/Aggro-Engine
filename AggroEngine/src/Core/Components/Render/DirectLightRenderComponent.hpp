@@ -11,7 +11,7 @@
 class DirectLightRenderComponent : public SpriteRenderComponent
 {
 private:
-	shared_ptr<RenderData> m_lineRenderData;
+	shared_ptr<RenderHandle> m_lineRenderHandle;
 
 	DirectLightRenderComponent(Chunk * const byteChunk, shared_ptr<Resources> resources);
 
@@ -25,5 +25,7 @@ public:
 	virtual shared_ptr<Chunk> serialize(shared_ptr<Resources> resources);
 	static shared_ptr<RenderComponent> deserialize(Chunk * const byteChunk, shared_ptr<Resources> resources);
 
-	virtual void render(shared_ptr<GraphicsContext> context, glm::mat4& m4Transform, glm::mat4 &m4ViewMat, shared_ptr<SceneNode> node);
+	virtual void render(shared_ptr<GraphicsContext> context, glm::mat4& m4Transform, glm::mat4 &m4ViewMat);
+
+	virtual void onSceneNodeDeleted(SceneNode *node);
 };

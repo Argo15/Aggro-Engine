@@ -4,6 +4,7 @@
 
 RenderComponent::RenderComponent()
 	: Component()
+	, m_sceneNode(nullptr)
 {
 }
 
@@ -35,4 +36,10 @@ shared_ptr<RenderComponent> RenderComponent::deserialize(Chunk * const byteChunk
 		}
 	}
 	return shared_ptr<RenderComponent>();
+}
+
+void RenderComponent::setSceneNode(SceneNode *node)
+{
+	m_sceneNode = node;
+	m_sceneNode->addDeletedListener(this, [this](auto node) { this->onSceneNodeDeleted(node); });
 }

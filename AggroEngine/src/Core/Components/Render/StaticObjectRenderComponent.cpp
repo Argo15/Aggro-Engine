@@ -33,9 +33,9 @@ shared_ptr<RenderComponent> StaticObjectRenderComponent::deserialize(
 	return shared_ptr<StaticObjectRenderComponent>(new StaticObjectRenderComponent(byteChunk, resources));
 }
 
-void StaticObjectRenderComponent::render(shared_ptr<GraphicsContext> context, glm::mat4 &m4Transform, glm::mat4 &m4ViewMat, shared_ptr<SceneNode> node)
+void StaticObjectRenderComponent::render(shared_ptr<GraphicsContext> context, glm::mat4 &m4Transform, glm::mat4 &m4ViewMat)
 {
-	shared_ptr<MeshComponent> meshComponent = node->getMeshComponent();
+	shared_ptr<MeshComponent> meshComponent = m_sceneNode->getMeshComponent();
 	if (!meshComponent || !meshComponent->hasMesh())
 	{
 		return;
@@ -46,43 +46,47 @@ void StaticObjectRenderComponent::render(shared_ptr<GraphicsContext> context, gl
 	{
 		for (shared_ptr<Mesh> mesh : meshComponent->getModifiedMeshes())
 		{
-			_renderMesh(mesh, context, m4Transform, m4ViewMat, node);
+			_renderMesh(mesh, context, m4Transform, m4ViewMat);
 		}
 	}
 	else
 	{
-		_renderMesh(meshComponent->getPrimaryMesh(), context, m4Transform, m4ViewMat, node);
+		_renderMesh(meshComponent->getPrimaryMesh(), context, m4Transform, m4ViewMat);
 	}
 }
 
 void StaticObjectRenderComponent::_renderMesh(shared_ptr<Mesh> mesh, 
 											  shared_ptr<GraphicsContext> context,
 											  glm::mat4 &m4Transform, 
-											  glm::mat4 &m4ViewMat, 
-											  shared_ptr<SceneNode> node)
+											  glm::mat4 &m4ViewMat)
 {
-	shared_ptr<VertexBufferHandle> vbo = context->getVboCache()->getVertexBuffer(mesh);
-	if (vbo && vbo->isLoaded())
+	if (!m_renderHandle)
 	{
-		shared_ptr<RenderData> renderData(new RenderData(vbo));
+		shared_ptr<VertexBufferHandle> vbo = context->getVboCache()->getVertexBuffer(mesh);
+		if (vbo && vbo->isLoaded())
+		{
+			shared_ptr<RenderData> renderData(new RenderData(vbo));
+			renderData->setId(m_sceneNode->getId());
+			m_renderHandle = context->getGraphics()->stageRender(renderData);
+		}
+	}
+	else
+	{
+		shared_ptr<RenderData> renderData = m_renderHandle->getRenderData();
+		
 		renderData->setModelMatrix(m4Transform);
 		renderData->setLightingEnabled(m_lightingEnabled);
 		renderData->setShadowsEnabled(m_shadowsEnabled);
-		if (node)
+		if (m_sceneNode->hasMaterialComponent() && mesh->getDrawMode() == DrawMode::TRIANGLES)
 		{
-			renderData->setId(node->getId());
-			if (node->hasMaterialComponent() && mesh->getDrawMode() == DrawMode::TRIANGLES)
-			{
-				renderData->setMaterial(node->getMaterialComponent()->getMaterial(context->getTextureCache()));
-			}
-			if (node->isSelected())
-			{
-				renderData->disableCulling();
-			}
+			renderData->setMaterial(m_sceneNode->getMaterialComponent()->getMaterial(context->getTextureCache()));
+		}
+		if (m_sceneNode->isSelected())
+		{
+			renderData->disableCulling();
 		}
 		renderData->setDrawMode(mesh->getDrawMode());
 		renderData->setOcclusionPoints(mesh->getMetaData()->getCorners(), 8);
-		context->getGraphics()->stageRender(renderData);
 	}
 }
 
@@ -104,4 +108,9 @@ void StaticObjectRenderComponent::setShadowsEnabled(int shadowsEnabled)
 bool StaticObjectRenderComponent::getShadowsEnabled()
 {
 	return m_shadowsEnabled;
+}
+
+void StaticObjectRenderComponent::onSceneNodeDeleted(SceneNode *node)
+{
+	if (m_renderHandle) m_renderHandle->unstageRender();
 }

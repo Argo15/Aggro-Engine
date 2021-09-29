@@ -66,7 +66,7 @@ ShadowMapBuffer::ShadowMapBuffer(OpenGL43Graphics *graphics, int defaultSize)
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 
-void ShadowMapBuffer::drawToBuffer(RenderOptions renderOptions, std::deque<shared_ptr<RenderData>> &renderQueue, shared_ptr<BufferSyncContext> syncContext)
+void ShadowMapBuffer::drawToBuffer(RenderOptions renderOptions, shared_ptr<RenderChain> renderChain, shared_ptr<BufferSyncContext> syncContext)
 {
 	boost::lock_guard<OpenGL43Graphics> guard(*m_graphics);
 
@@ -119,9 +119,12 @@ void ShadowMapBuffer::drawToBuffer(RenderOptions renderOptions, std::deque<share
 		glBindAttribLocation(m_glslProgram->getHandle(), 0, "v_vertex");
 		glEnableVertexAttribArray(0);
 
-		for (auto it = renderQueue.begin(); it != renderQueue.end(); ++it)
+		shared_ptr<RenderNode> chainNode = renderChain->getFirst();
+
+		while (chainNode)
 		{
-			shared_ptr<RenderData> renderData = *it;
+			shared_ptr<RenderData> renderData = chainNode->getRenderData();
+			chainNode = chainNode->next();
 
 			shared_ptr<VertexBufferHandle> vboHandle = renderData->getVertexBufferHandle();
 			if (!syncContext->checkAndClearSync(vboHandle->getVertexHandle()))

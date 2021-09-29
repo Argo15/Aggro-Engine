@@ -16,32 +16,30 @@ void Renderer::init()
 	m_gridRenderData = shared_ptr<RenderData>(new RenderData(gridVBO, DrawMode::LINES));
 	m_gridRenderData->setLightingEnabled(false);
 	m_gridRenderData->setShadowsEnabled(false);
+	m_gridRenderData->setId(Scene::getNextId());
+	m_graphicsContext->getGraphics()->stageRender(m_gridRenderData);
 }
 
 void Renderer::renderScene(shared_ptr<Scene> scene, shared_ptr<RenderOptions> renderOptions)
 {
+	// set scene options
+	renderOptions->clear();
+	renderOptions->setCamera(scene->getCamera());
+	shared_ptr<PerspectiveFrustrum> overrideFrustrum = scene->getOverrideFrustrum();
+	if (overrideFrustrum)
 	{
-		auto tracker = PerfStats::instance().trackTime("Renderer.renderScene");
-		renderOptions->clear();
-		m_graphicsContext->getGraphics()->clearDepthAndColor(renderOptions->getDefaultFrameBufferId()); // clear
-		m_graphicsContext->getGraphics()->stageRender(m_gridRenderData); // Render grid
-		if (scene->getTransformHook())
-		{
-			scene->getTransformHook()->render(m_graphicsContext->getGraphics(), scene); // Render transformer
-		}
-		// Render scene
-		_renderSceneNodeRecursive(scene->getRoot(), glm::mat4(1.0), scene->getCamera()->getViewMatrix(), renderOptions);
-		// Render mesh preview
-		_renderSceneNodeRecursive(scene->getPreviewNode(), glm::mat4(1.0), scene->getCamera()->getViewMatrix(), renderOptions);
-
-		// set scene options
-		renderOptions->setCamera(scene->getCamera());
-		shared_ptr<PerspectiveFrustrum> overrideFrustrum = scene->getOverrideFrustrum();
-		if (overrideFrustrum)
-		{
-			renderOptions->setFrustrum(overrideFrustrum);
-		}
+		renderOptions->setFrustrum(overrideFrustrum);
 	}
+	m_graphicsContext->getGraphics()->clearDepthAndColor(renderOptions->getDefaultFrameBufferId()); // clear
+		
+
+	if (scene->getTransformHook())
+	{
+		scene->getTransformHook()->render(m_graphicsContext->getGraphics(), scene); // Render transformer
+	}
+	// Convert to render chain
+	_renderSceneNodeRecursive(scene->getRoot(), glm::mat4(1.0), scene->getCamera()->getViewMatrix(), renderOptions);
+
 
 	// execute
 	m_graphicsContext->getGraphics()->executeRender(*(renderOptions.get()));
@@ -56,7 +54,7 @@ void Renderer::_renderSceneNodeRecursive(shared_ptr<SceneNode> node, glm::mat4 &
 		curTransform = transform * node->getTransformComponent()->getTransform();
 		if (node->hasRenderComponent())
 		{
-			node->getRenderComponent()->render(m_graphicsContext, curTransform, viewMat, node);
+			node->getRenderComponent()->render(m_graphicsContext, curTransform, viewMat);
 		}
 		if (node->hasDirectLightComponent())
 		{

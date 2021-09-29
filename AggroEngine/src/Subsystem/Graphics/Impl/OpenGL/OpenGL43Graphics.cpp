@@ -8,6 +8,7 @@
 #include "RGBImage.hpp"
 #include "Screen.hpp"
 #include "GLDebug/DebugCallback.hpp"
+#include "RenderChain/OpenGLRenderHandle.hpp"
 #include <iostream>
 
 #define BUFFER_OFFSET(i) ((char *)NULL + (i))
@@ -44,6 +45,7 @@ void OpenGL43Graphics::init(shared_ptr<GraphicsInitOptions> options)
 	m_screenVBO = createVertexBuffer(shared_ptr<Mesh>(new Screen(-1, 0, 0, 1, 1)));
 	m_screenProgram = getShaderStore().getShader("Resources/Shaders/v_screen.glsl", "Resources/Shaders/f_screen.glsl");
 	m_pixelBuffers = shared_ptr<PixelBufferCache>(new PixelBufferCache(options));
+	m_renderChain = shared_ptr<RenderChain>(new RenderChain());
 }
 
 
@@ -134,22 +136,22 @@ void OpenGL43Graphics::deleteTexture(shared_ptr<TextureHandle> textureHandle)
 	glDeleteTextures(1,&nHandle);
 }
 
-void OpenGL43Graphics::stageRender(shared_ptr<RenderData> pRenderData)
+shared_ptr<RenderHandle> OpenGL43Graphics::stageRender(shared_ptr<RenderData> renderData)
 {
 	boost::lock_guard<OpenGL43Graphics> guard(*this);
-	m_renderQueue.push_back(pRenderData);
+	int nodeId = m_renderChain->appendRenderData(renderData);
+	return shared_ptr<RenderHandle>(new OpenGLRenderHandle(nodeId, renderData, m_renderChain));
 }
 
 void OpenGL43Graphics::executeRender(RenderOptions &renderOptions)
 {
 	auto tracker = PerfStats::instance().trackTime("GL executeRender");
 	m_pixelBuffers->resolveTextures(m_syncContext);
-	m_shadowBuffer->drawToBuffer(renderOptions, m_renderQueue, m_syncContext);
-	m_gBuffer->drawToBuffer(renderOptions, m_renderQueue, m_syncContext);
+	m_shadowBuffer->drawToBuffer(renderOptions, m_renderChain, m_syncContext);
+	m_gBuffer->drawToBuffer(renderOptions, m_renderChain, m_syncContext);
 	m_pixelBuffers->writeSelectionBuffer(m_gBuffer);
 	m_lightBuffer->drawToBuffer(renderOptions, m_gBuffer->getNormalTex(), m_gBuffer->getDepthTex(), m_gBuffer->getGlowTex(), m_shadowBuffer);
 	m_shadedBuffer->drawToBuffer(renderOptions, m_gBuffer->getAlbedoTex(), m_lightBuffer->getTexture(), m_lightBuffer->getGlowTex());
-	m_renderQueue = std::deque<shared_ptr<RenderData>>();
 }
 
 void OpenGL43Graphics::drawScreen(RenderOptions &renderOptions)

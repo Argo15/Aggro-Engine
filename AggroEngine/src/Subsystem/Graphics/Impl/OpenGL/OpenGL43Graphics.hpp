@@ -14,6 +14,7 @@ class OpenGL43Graphics;
 #include "MemoryUtil.hpp"
 #include "Sync/BufferSyncContext.hpp"
 #include "PixelBuffer/PixelBufferCache.hpp"
+#include "RenderChain/RenderChain.hpp"
 
 class PixelBufferCache;
 
@@ -27,7 +28,6 @@ class OpenGL43Graphics : public Graphics,
 	public boost::basic_lockable_adapter<recursive_mutex>
 {
 private:
-	std::deque<shared_ptr<RenderData>> m_renderQueue;
 	ShaderStore m_shaderStore;
 	shared_ptr<ShadowMapBuffer> m_shadowBuffer;
 	shared_ptr<GBuffer> m_gBuffer;
@@ -38,6 +38,7 @@ private:
 	shared_ptr<VertexBufferHandle> m_screenVBO;
 	shared_ptr<BufferSyncContext> m_syncContext;
 	shared_ptr<PixelBufferCache> m_pixelBuffers;
+	shared_ptr<RenderChain> m_renderChain;
 
 	void _drawScreen(RenderOptions &renderOptions, float nX1, float nY1, float nX2, float nY2);
 	shared_ptr<TextureHandle> _getRenderTargetTexture(RenderOptions::RenderTarget target);
@@ -57,7 +58,7 @@ public:
 	shared_ptr<TextureHandle> createTextureAsync(shared_ptr<TextureBuildOptions> texOptions);
 	void deleteTexture(shared_ptr<TextureHandle> textureHandle);
 
-	void stageRender(shared_ptr<RenderData> pRenderData);
+	shared_ptr<RenderHandle> stageRender(shared_ptr<RenderData> renderData);
 	void executeRender(RenderOptions &renderOptions);
 	void drawScreen(RenderOptions &renderOptions);
 

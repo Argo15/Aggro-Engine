@@ -11,7 +11,7 @@ private:
 	bool m_lightingEnabled;
 	bool m_shadowsEnabled;
 
-	void _renderMesh(shared_ptr<Mesh> mesh, shared_ptr<GraphicsContext> context, glm::mat4 &m4Transform, glm::mat4 &m4ViewMat, shared_ptr<SceneNode> node);
+	void _renderMesh(shared_ptr<Mesh> mesh, shared_ptr<GraphicsContext> context, glm::mat4 &m4Transform, glm::mat4 &m4ViewMat);
 
 	StaticObjectRenderComponent(Chunk * const byteChunk, shared_ptr<Resources> resources);
 
@@ -22,11 +22,13 @@ public:
 	virtual shared_ptr<Chunk> serialize(shared_ptr<Resources> resources);
 	static shared_ptr<RenderComponent> deserialize(Chunk * const byteChunk, shared_ptr<Resources> resources);
 
-	virtual void render(shared_ptr<GraphicsContext> context, glm::mat4 &m4Transform, glm::mat4 &m4ViewMat, shared_ptr<SceneNode> node);
+	virtual void render(shared_ptr<GraphicsContext> context, glm::mat4 &m4Transform, glm::mat4 &m4ViewMat);
 
 	void setLightingEnabled(int lightingEnabled);
 	bool getLightingEnabled();
 
 	void setShadowsEnabled(int shadowsEnabled);
 	bool getShadowsEnabled();
+
+	virtual void onSceneNodeDeleted(SceneNode *node);
 };

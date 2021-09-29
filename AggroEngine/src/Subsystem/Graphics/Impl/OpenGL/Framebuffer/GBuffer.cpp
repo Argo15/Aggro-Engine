@@ -73,7 +73,7 @@ GBuffer::GBuffer(OpenGL43Graphics *graphics, int width, int height)
 	m_whiteTexture = graphics->createTexture(shared_ptr<ImageUC>(new RGBImage(1, 1, glm::vec3(1.f, 1.f, 1.f))));
 }
 
-void GBuffer::drawToBuffer(RenderOptions renderOptions, std::deque<shared_ptr<RenderData>> &renderQueue, shared_ptr<BufferSyncContext> syncContext)
+void GBuffer::drawToBuffer(RenderOptions renderOptions, shared_ptr<RenderChain> renderChain, shared_ptr<BufferSyncContext> syncContext)
 {
 	boost::lock_guard<OpenGL43Graphics> guard(*m_graphics);
 
@@ -92,6 +92,8 @@ void GBuffer::drawToBuffer(RenderOptions renderOptions, std::deque<shared_ptr<Re
 	shared_ptr<RenderData> disabledDepthObject; // needs to be rendered at the end
 	const shared_ptr<Frustrum> frustrum = renderOptions.getFrustrum();
 	glm::mat4 viewProj = renderOptions.getProjectionMatrix() * renderOptions.getViewMatrix();
+	std::deque<shared_ptr<RenderData>> disabledDepthQueue = std::deque<shared_ptr<RenderData>>();
+	shared_ptr<RenderNode> chainNode = renderChain->getFirst();
 
 	glBindFragDataLocation(m_glslProgram->getHandle(), 0, "normalBuffer");
 	glBindFragDataLocation(m_glslProgram->getHandle(), 1, "albedoBuffer");
@@ -105,10 +107,16 @@ void GBuffer::drawToBuffer(RenderOptions renderOptions, std::deque<shared_ptr<Re
 	glEnableVertexAttribArray(0);
 	glEnableVertexAttribArray(1);
 	glEnableVertexAttribArray(2);
-	while (!renderQueue.empty())
+	while (chainNode || !disabledDepthQueue.empty())
 	{
-		shared_ptr<RenderData> renderData = renderQueue.front();
-		renderQueue.pop_front();
+		shared_ptr<RenderData> renderData;
+		if (chainNode) {
+			renderData = chainNode->getRenderData();
+			chainNode = chainNode->next();
+		} else {
+			renderData = disabledDepthQueue.front();
+			disabledDepthQueue.pop_front();
+		}
 
 		shared_ptr<VertexBufferHandle> vboHandle = renderData->getVertexBufferHandle();
 		if (vboHandle && !syncContext->checkAndClearSync(vboHandle->getVertexHandle()))
@@ -123,7 +131,7 @@ void GBuffer::drawToBuffer(RenderOptions renderOptions, std::deque<shared_ptr<Re
 		}
 		else if (!isDepthDisabled && !renderData->isDepthTestEnabled())
 		{
-			renderQueue.push_back(renderData);
+			disabledDepthQueue.push_back(renderData);
 			if (!disabledDepthObject)
 			{
 				disabledDepthObject = renderData;
@@ -196,7 +204,6 @@ void GBuffer::drawToBuffer(RenderOptions renderOptions, std::deque<shared_ptr<Re
 				m_glslProgram->sendUniform("material.hasNormals", false);
 			}
 			m_glslProgram->sendUniform("textureMatrix", glm::value_ptr(textureMatrix), false, 4);
-			glm::mat4 texRotateMatrix = glm::mat3(1.0);
 
 
 			unsigned int id = renderData->getId();

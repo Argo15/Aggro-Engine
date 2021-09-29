@@ -48,6 +48,7 @@ SceneNode::SceneNode(Chunk * const byteChunk, shared_ptr<EngineContext> context,
 		else if (*nextChunk->getType() == ChunkType::RENDER_COMPONENT)
 		{
 			m_renderComponent = RenderComponent::deserialize(nextChunk.get_ptr(), context->getResources());
+			m_renderComponent->setSceneNode(this);
 		}
 		else if (*nextChunk->getType() == ChunkType::DIRECT_LIGHT_COMPONENT)
 		{
@@ -392,6 +393,7 @@ bool SceneNode::hasRenderComponent()
 
 void SceneNode::setRenderComponent(shared_ptr<RenderComponent> renderComponent)
 {
+	renderComponent->setSceneNode(this);
 	m_renderComponent = renderComponent;
 	notifyChanged();
 }

@@ -7,13 +7,13 @@ const string DirectLightRenderComponent::s_alphaPath = "Resources/Textures/Engin
 
 DirectLightRenderComponent::DirectLightRenderComponent(Chunk * const byteChunk, shared_ptr<Resources> resources)
 	: SpriteRenderComponent(resources)
-	, m_lineRenderData()
+	, m_lineRenderHandle()
 {
 }
 
 DirectLightRenderComponent::DirectLightRenderComponent(shared_ptr<Resources> resources)
 	: SpriteRenderComponent(resources)
-	, m_lineRenderData()
+	, m_lineRenderHandle()
 {
 }
 
@@ -34,29 +34,36 @@ shared_ptr<RenderComponent> DirectLightRenderComponent::deserialize(Chunk * cons
 	return shared_ptr<DirectLightRenderComponent>(new DirectLightRenderComponent(byteChunk, resources));
 }
 
-void DirectLightRenderComponent::render(shared_ptr<GraphicsContext> context, glm::mat4 &m4Transform, glm::mat4 &m4ViewMat, shared_ptr<SceneNode> node)
+void DirectLightRenderComponent::render(shared_ptr<GraphicsContext> context, glm::mat4 &m4Transform, glm::mat4 &m4ViewMat)
 {
-	if (!m_lineRenderData)
+	if (!m_lineRenderHandle)
 	{
-		m_lineRenderData = shared_ptr<RenderData>(new RenderData());
-		m_lineRenderData->setVertexBufferHandle(context->getGraphics()
+		shared_ptr<RenderData> lineRenderData = shared_ptr<RenderData>(new RenderData());
+		lineRenderData->setId(Scene::getNextId());
+		lineRenderData->setVertexBufferHandle(context->getGraphics()
 			->createVertexBuffer(shared_ptr<Mesh>(new DirectLightMesh(-1))));
 
 		shared_ptr<Material> mat(new Material(glm::vec3(1.0)));
 		mat->setTexture(context->getGraphics()->createTexture(
 			shared_ptr<ImageUC>(new RGBImage(1, 1, glm::vec3(0.75, 0.75, 0.25)))));
-		m_lineRenderData->setMaterial(mat);
+		lineRenderData->setMaterial(mat);
 
-		m_lineRenderData->setDrawMode(DrawMode::LINES);
-		m_lineRenderData->setLineWidth(2);
-		m_lineRenderData->setLightingEnabled(false);
-		m_lineRenderData->setShadowsEnabled(false);
-		if (node)
-		{
-			m_lineRenderData->setId(node->getId());
-		}
+		lineRenderData->setDrawMode(DrawMode::LINES);
+		lineRenderData->setLineWidth(2);
+		lineRenderData->setLightingEnabled(false);
+		lineRenderData->setShadowsEnabled(false);
+		m_lineRenderHandle = context->getGraphics()->stageRender(lineRenderData);
 	}
-	m_lineRenderData->setModelMatrix(m4Transform);
-	context->getGraphics()->stageRender(m_lineRenderData);
-	SpriteRenderComponent::render(context, m4Transform, m4ViewMat, node);
+	else 
+	{
+		m_lineRenderHandle->getRenderData()->setModelMatrix(m4Transform);
+	}
+	SpriteRenderComponent::render(context, m4Transform, m4ViewMat);
+}
+
+void DirectLightRenderComponent::onSceneNodeDeleted(SceneNode *node)
+{
+	if (m_lineRenderHandle) m_lineRenderHandle->unstageRender();
+	if (m_renderHandle) m_renderHandle->unstageRender();
+	SpriteRenderComponent::onSceneNodeDeleted(node);
 }

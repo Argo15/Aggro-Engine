@@ -26,6 +26,7 @@ void TransformHook::_initialize(shared_ptr<Graphics> graphics, shared_ptr<Scene>
 		m_renderData[i]->setLineWidth(2);
 		m_renderData[i]->setDepthTestEnabled(false);
 		m_renderData[i]->setId(Scene::getNextId());
+		m_renderHandle[i] = graphics->stageRender(m_renderData[i]);
 	}
 	m_texture[3] = graphics->createTexture(shared_ptr<ImageUC>(new RGBImage(1, 1, glm::vec3(1.0f, 1.0f, 0))));
 }
@@ -47,11 +48,10 @@ void TransformHook::render(shared_ptr<Graphics> graphics, shared_ptr<Scene> scen
 		glm::vec3 lookDir = glm::normalize(transformMat.getTranslate() - camera->getEyePos());
 		transformMat.setTranslate(camera->getEyePos() + (12.f * lookDir));
 
-		// Draw
 		for (int i = 0; i < 3; i++)
 		{
 			m_renderData[i]->setModelMatrix(transformMat.getOrthogonalTransform());
-			graphics->stageRender(m_renderData[i]);
+			m_renderHandle[i]->restageRender();
 		}
 	}
 }
@@ -65,7 +65,6 @@ bool TransformHook::updateSelection(shared_ptr<MouseState> mouse, shared_ptr<Eng
 	}
 
 	shared_ptr<SceneNode> selectedNode = context->getScene()->getSelectedNode();
-	unsigned int id = selection->getSelectionAsId();
 	if (!mouse->getButtonPressed(Qt::MouseButton::LeftButton))
 	{
 		m_lastPos = shared_ptr<glm::vec3>();
@@ -94,6 +93,13 @@ bool TransformHook::updateSelection(shared_ptr<MouseState> mouse, shared_ptr<Eng
 		const Line lookLine(lookNearPos, lookDir);
 
 		updateTransform(selectedNode, lookLine, axis[m_selectedIdx]);
+	}
+	else if (!selectedNode)
+	{
+		for (int i = 0; i < 3; i++)
+		{
+			m_renderHandle[i]->unstageRender();
+		}
 	}
 	return m_selectedIdx >= 0;
 }

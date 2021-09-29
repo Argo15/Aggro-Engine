@@ -7,13 +7,13 @@ const string CameraRenderComponent::s_alphaPath = "Resources/Textures/Engine/cam
 
 CameraRenderComponent::CameraRenderComponent(Chunk * const byteChunk, shared_ptr<Resources> resources)
 	: SpriteRenderComponent(resources)
-	, m_lineRenderData()
+	, m_lineRenderHandle()
 {
 }
 
 CameraRenderComponent::CameraRenderComponent(shared_ptr<Resources> resources)
 	: SpriteRenderComponent(resources)
-	, m_lineRenderData()
+	, m_lineRenderHandle()
 {
 }
 
@@ -34,43 +34,50 @@ shared_ptr<RenderComponent> CameraRenderComponent::deserialize(Chunk * const byt
 	return shared_ptr<CameraRenderComponent>(new CameraRenderComponent(byteChunk, resources));
 }
 
-void CameraRenderComponent::render(shared_ptr<GraphicsContext> context, glm::mat4 &m4Transform, glm::mat4 &m4ViewMat, shared_ptr<SceneNode> node)
+void CameraRenderComponent::render(shared_ptr<GraphicsContext> context, glm::mat4 &m4Transform, glm::mat4 &m4ViewMat)
 {
-	if (!node->isSelected())
+	if (!m_sceneNode->isSelected())
 	{
-		SpriteRenderComponent::render(context, glm::scale(m4Transform, glm::vec3(0.3, 0.3, 1)), m4ViewMat, node);
+		SpriteRenderComponent::render(context, glm::scale(m4Transform, glm::vec3(0.3, 0.3, 1)), m4ViewMat);
+		if (m_lineRenderHandle) m_lineRenderHandle->unstageRender();
 		return;
 	}
-	if (node->getCameraComponent()->isActive())
+	if (m_sceneNode->getCameraComponent()->isActive())
 	{
+		if (m_lineRenderHandle) m_lineRenderHandle->unstageRender();
 		return;
 	}
-	if (!m_lineRenderData)
+	if (!m_lineRenderHandle)
 	{
-		m_lineRenderData = shared_ptr<RenderData>(new RenderData());
+		shared_ptr<RenderData> lineRenderData = shared_ptr<RenderData>(new RenderData());
+		lineRenderData->setId(Scene::getNextId());
 
 		shared_ptr<Material> mat(new Material(glm::vec3(1.0)));
 		mat->setTexture(context->getGraphics()->createTexture(
 			shared_ptr<ImageUC>(new RGBImage(1, 1, glm::vec3(0, 1, 1)))));
-		m_lineRenderData->setMaterial(mat);
+		lineRenderData->setMaterial(mat);
 
-		m_lineRenderData->setDrawMode(DrawMode::LINES);
-		m_lineRenderData->setLineWidth(2);
-		m_lineRenderData->setLightingEnabled(false);
-		m_lineRenderData->setShadowsEnabled(false);
-		if (node)
+		lineRenderData->setDrawMode(DrawMode::LINES);
+		lineRenderData->setLineWidth(2);
+		lineRenderData->setLightingEnabled(false);
+		lineRenderData->setShadowsEnabled(false);
+		shared_ptr<Frustrum> frustrum = m_sceneNode->getCamera()->getFrustrum();
+		if (frustrum && !frustrum->isSame(m_curFrustrum))
 		{
-			m_lineRenderData->setId(node->getId());
+			m_curFrustrum = frustrum;
+			lineRenderData->setVertexBufferHandle(context->getGraphics()
+				->createVertexBuffer(shared_ptr<Mesh>(new FrustrumMesh(-1, m_curFrustrum))));
 		}
+		m_lineRenderHandle = context->getGraphics()->stageRender(lineRenderData);
 	}
-	m_lineRenderData->setModelMatrix(m4Transform);
-	shared_ptr<Frustrum> frustrum = node->getCamera()->getFrustrum();
-	if (frustrum && !frustrum->isSame(m_curFrustrum))
-	{
-		m_curFrustrum = frustrum;
-		m_lineRenderData->setVertexBufferHandle(context->getGraphics()
-			->createVertexBuffer(shared_ptr<Mesh>(new FrustrumMesh(-1, m_curFrustrum))));
-	}
-	context->getGraphics()->stageRender(m_lineRenderData);
-	SpriteRenderComponent::render(context, glm::scale(m4Transform, glm::vec3(0.3, 0.3, 1)), m4ViewMat, node);
+	m_lineRenderHandle->getRenderData()->setModelMatrix(m4Transform);
+	m_lineRenderHandle->restageRender();
+	SpriteRenderComponent::render(context, glm::scale(m4Transform, glm::vec3(0.3, 0.3, 1)), m4ViewMat);
+}
+
+void CameraRenderComponent::onSceneNodeDeleted(SceneNode *node)
+{
+	if (m_lineRenderHandle) m_lineRenderHandle->unstageRender();
+	if (m_renderHandle) m_renderHandle->unstageRender();
+	SpriteRenderComponent::onSceneNodeDeleted(node);
 }

@@ -66,12 +66,12 @@ void GLMeshWidget::paintGL()
 		shared_ptr<VertexBufferHandle> vbo = m_graphicsContext->getGraphics()->createVertexBuffer(m_mesh);
 		m_renderData = shared_ptr<RenderData>(new RenderData(vbo, DrawMode::TRIANGLES));
 		m_renderData->setShadowsEnabled(false);
+		m_graphicsContext->getGraphics()->stageRender(m_renderData);
 	}
 
 	if (m_renderData)
 	{
 		m_graphicsContext->getGraphics()->clearDepthAndColor(defaultFramebufferObject());
-		m_graphicsContext->getGraphics()->stageRender(m_renderData);
 		m_graphicsContext->getGraphics()->executeRender(*renderOptions);
 		m_graphicsContext->getGraphics()->drawScreen(*renderOptions);
 	}

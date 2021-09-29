@@ -12,6 +12,7 @@
 #include "RenderOptions.hpp"
 #include "Viewport.hpp"
 #include "GraphicsInitOptions.hpp"
+#include "RenderHandle.hpp"
 using namespace std;
 
 /**
@@ -40,7 +41,7 @@ public:
 	virtual void deleteTexture(shared_ptr<TextureHandle> textureHandle) = 0;
 
 	// Rendering
-	virtual void stageRender(shared_ptr<RenderData> pRenderData) = 0;
+	virtual shared_ptr<RenderHandle> stageRender(shared_ptr<RenderData> renderData) = 0;
 	virtual void executeRender(RenderOptions &renderOptions) = 0;
 	virtual void drawScreen(RenderOptions &renderOptions) = 0;
 

@@ -2,6 +2,7 @@
 
 #include "Graphics.hpp"
 #include "RenderData.hpp"
+#include "RenderHandle.hpp"
 #include "Scene.hpp"
 #include "Selection.hpp"
 #include "MouseState.hpp"
@@ -22,6 +23,7 @@ class TransformHook
 {
 private:
 	shared_ptr<RenderData> m_renderData[3];
+	shared_ptr<RenderHandle> m_renderHandle[3];
 	shared_ptr<TextureHandle> m_texture[4];
 	int m_selectedIdx;
 

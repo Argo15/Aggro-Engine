@@ -6,6 +6,7 @@ class FrameBufferObject;
 #include "FrameBufferObject.hpp"
 #include "OpenGL43Graphics.hpp"
 #include "Sync/BufferSyncContext.hpp"
+#include "RenderChain.hpp"
 
 class GBuffer : public FrameBufferObject
 {
@@ -22,7 +23,7 @@ private:
 public:
 	GBuffer(OpenGL43Graphics *graphics, int width, int height);
 
-	void drawToBuffer(RenderOptions renderOptions, std::deque<shared_ptr<RenderData>> &renderQueue, shared_ptr<BufferSyncContext> syncContext);
+	void drawToBuffer(RenderOptions renderOptions, shared_ptr<RenderChain> renderChain, shared_ptr<BufferSyncContext> syncContext);
 
 	void bindDepthTex();
 	void bindNormalTex();
