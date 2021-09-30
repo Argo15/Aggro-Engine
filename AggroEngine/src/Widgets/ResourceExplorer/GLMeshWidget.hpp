@@ -15,7 +15,7 @@ private:
 	shared_ptr<GraphicsContext> m_graphicsContext;
 	shared_ptr<Mesh> m_mesh;
 	shared_ptr<SceneNode> m_camera;
-	shared_ptr<RenderData> m_renderData;
+	shared_ptr<RenderHandle> m_renderHandle;
 
 	bool m_initialized;
 

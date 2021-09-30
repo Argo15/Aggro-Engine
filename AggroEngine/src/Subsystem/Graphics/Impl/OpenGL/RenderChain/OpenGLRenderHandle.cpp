@@ -30,7 +30,7 @@ void OpenGLRenderHandle::unstageRender()
 void OpenGLRenderHandle::restageRender()
 {
 	if (m_unstaged) {
-		m_renderChain->appendRenderData(m_renderData);
+		m_nodeId = m_renderChain->appendRenderData(m_renderData);
 		m_unstaged = false;
 	}
 }

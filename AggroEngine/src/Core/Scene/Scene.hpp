@@ -43,6 +43,7 @@ private:
 public:
 	Scene();
 	Scene(shared_ptr<SceneNode> root);
+	~Scene();
 
 	// Serialization
 	shared_ptr<Chunk> serialize(shared_ptr<Resources> resources);

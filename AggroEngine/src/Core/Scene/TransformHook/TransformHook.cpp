@@ -34,7 +34,7 @@ void TransformHook::_initialize(shared_ptr<Graphics> graphics, shared_ptr<Scene>
 void TransformHook::render(shared_ptr<Graphics> graphics, shared_ptr<Scene> scene)
 {
 	// Load if needed
-	if (!m_renderData[0])
+	if (!m_renderHandle[0])
 	{
 		_initialize(graphics, scene);
 	}
@@ -52,6 +52,13 @@ void TransformHook::render(shared_ptr<Graphics> graphics, shared_ptr<Scene> scen
 		{
 			m_renderData[i]->setModelMatrix(transformMat.getOrthogonalTransform());
 			m_renderHandle[i]->restageRender();
+		}
+	}
+	else
+	{
+		for (int i = 0; i < 3; i++)
+		{
+			m_renderHandle[i]->unstageRender();
 		}
 	}
 }
@@ -153,6 +160,13 @@ unsigned int TransformHook::_getSelectedIndex(shared_ptr<Selection> selection)
 void TransformHook::deselect()
 {
 	m_selectedIdx = -1;
+	if (m_renderHandle[0])
+	{
+		for (int i = 0; i < 3; i++)
+		{
+			m_renderHandle[i]->unstageRender();
+		}
+	}
 }
 
 glm::mat4 TransformHook::_getAxisCenter(shared_ptr<SceneNode> selectedNode)

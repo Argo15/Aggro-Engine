@@ -61,15 +61,15 @@ void GLMeshWidget::paintGL()
 	shared_ptr<DirectLight> light(new DirectLight(glm::vec3(-0.5f, -1.f, -1.5f), glm::vec3(1), 50));
 	renderOptions->addDirectLight(light);
 
-	if (!m_renderData && m_mesh)
+	if (!m_renderHandle && m_mesh)
 	{
 		shared_ptr<VertexBufferHandle> vbo = m_graphicsContext->getGraphics()->createVertexBuffer(m_mesh);
-		m_renderData = shared_ptr<RenderData>(new RenderData(vbo, DrawMode::TRIANGLES));
-		m_renderData->setShadowsEnabled(false);
-		m_graphicsContext->getGraphics()->stageRender(m_renderData);
+		shared_ptr<RenderData> renderData = shared_ptr<RenderData>(new RenderData(vbo, DrawMode::TRIANGLES));
+		renderData->setShadowsEnabled(false);
+		m_renderHandle = m_graphicsContext->getGraphics()->stageRender(renderData);
 	}
 
-	if (m_renderData)
+	if (m_renderHandle)
 	{
 		m_graphicsContext->getGraphics()->clearDepthAndColor(defaultFramebufferObject());
 		m_graphicsContext->getGraphics()->executeRender(*renderOptions);

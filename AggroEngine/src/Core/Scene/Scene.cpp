@@ -15,6 +15,17 @@ Scene::Scene(shared_ptr<SceneNode> root)
 	getCameraNode();
 }
 
+Scene::~Scene()
+{
+	applyToAllNodes([](auto node) {
+		shared_ptr<RenderComponent> render = node->getRenderComponent();
+		if (render)
+		{
+			render->onSceneNodeDeleted(node);
+		}
+	});
+}
+
 Scene::Scene(Chunk * const byteChunk, shared_ptr<EngineContext> context)
 	: m_transformHook()
 	, m_previewNode(new SceneNode(getNextId()))
@@ -139,6 +150,9 @@ shared_ptr<Camera> Scene::getCamera()
 
 void Scene::setTransformHook(shared_ptr<TransformHook> transformHook)
 {
+	if (m_transformHook) {
+		m_transformHook->deselect();
+	}
 	m_transformHook = transformHook;
 }
 
@@ -189,6 +203,9 @@ void Scene::applyToAllNodes(std::function<void(SceneNode*)> func)
 
 void Scene::_applyToNodeRecursive(shared_ptr<SceneNode> node, std::function<void(SceneNode*)> func)
 {
+	if (!node) {
+		return;
+	}
 	func(node.get());
 	shared_ptr<vector<shared_ptr<SceneNode>>> children = node->getChildren();
 	if (children->size() > 0)

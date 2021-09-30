@@ -13,11 +13,11 @@ void Renderer::init()
 	shared_ptr<Mesh> grid = unique_ptr<Mesh>(new Grid(-1, 16));
 	shared_ptr<VertexBufferHandle> gridVBO = m_graphicsContext->getGraphics()->createVertexBuffer(grid);
 	shared_ptr<TextureHandle> defaultTexture = m_graphicsContext->getGraphics()->createTexture();
-	m_gridRenderData = shared_ptr<RenderData>(new RenderData(gridVBO, DrawMode::LINES));
-	m_gridRenderData->setLightingEnabled(false);
-	m_gridRenderData->setShadowsEnabled(false);
-	m_gridRenderData->setId(Scene::getNextId());
-	m_graphicsContext->getGraphics()->stageRender(m_gridRenderData);
+	shared_ptr<RenderData> gridRenderData = shared_ptr<RenderData>(new RenderData(gridVBO, DrawMode::LINES));
+	gridRenderData->setLightingEnabled(false);
+	gridRenderData->setShadowsEnabled(false);
+	gridRenderData->setId(Scene::getNextId());
+	m_gridRenderHandle = m_graphicsContext->getGraphics()->stageRender(gridRenderData);
 }
 
 void Renderer::renderScene(shared_ptr<Scene> scene, shared_ptr<RenderOptions> renderOptions)
@@ -39,7 +39,6 @@ void Renderer::renderScene(shared_ptr<Scene> scene, shared_ptr<RenderOptions> re
 	}
 	// Convert to render chain
 	_renderSceneNodeRecursive(scene->getRoot(), glm::mat4(1.0), scene->getCamera()->getViewMatrix(), renderOptions);
-
 
 	// execute
 	m_graphicsContext->getGraphics()->executeRender(*(renderOptions.get()));
