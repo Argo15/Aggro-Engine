@@ -10,6 +10,7 @@ class StaticObjectRenderComponent : public RenderComponent
 private:
 	bool m_lightingEnabled;
 	bool m_shadowsEnabled;
+	boost::unordered_map<shared_ptr<Mesh>, shared_ptr<RenderHandle>> m_meshToRenderHandle;
 
 	void _renderMesh(shared_ptr<Mesh> mesh, shared_ptr<GraphicsContext> context, glm::mat4 &m4Transform, glm::mat4 &m4ViewMat);
 

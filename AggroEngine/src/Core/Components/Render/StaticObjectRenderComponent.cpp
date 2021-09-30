@@ -42,11 +42,28 @@ void StaticObjectRenderComponent::render(shared_ptr<GraphicsContext> context, gl
 	}
 	boost::lock_guard<MeshComponent> guard(*meshComponent.get());
 
-	if (meshComponent->modsReady(context->getVboCache()))
+	boost::unordered_set<shared_ptr<Mesh>> modifiedMeshes = meshComponent->getModifiedMeshes();
+	if (!modifiedMeshes.empty())
 	{
-		for (shared_ptr<Mesh> mesh : meshComponent->getModifiedMeshes())
+		// Render meshes
+		for (shared_ptr<Mesh> mesh : modifiedMeshes)
 		{
 			_renderMesh(mesh, context, m4Transform, m4ViewMat);
+		}
+
+		// Remove old meshes to no longer rendered
+		for (auto it = m_meshToRenderHandle.begin(); it != m_meshToRenderHandle.end();)
+		{
+			shared_ptr<Mesh> mesh = it->first;
+			if (modifiedMeshes.find(mesh) == modifiedMeshes.end())
+			{
+				it->second->unstageRender();
+				it = m_meshToRenderHandle.erase(it);
+			}
+			else
+			{
+				it++;
+			}
 		}
 	}
 	else
@@ -60,19 +77,19 @@ void StaticObjectRenderComponent::_renderMesh(shared_ptr<Mesh> mesh,
 											  glm::mat4 &m4Transform, 
 											  glm::mat4 &m4ViewMat)
 {
-	if (!m_renderHandle)
+	if (m_meshToRenderHandle.find(mesh) == m_meshToRenderHandle.end())
 	{
 		shared_ptr<VertexBufferHandle> vbo = context->getVboCache()->getVertexBuffer(mesh);
 		if (vbo && vbo->isLoaded())
 		{
 			shared_ptr<RenderData> renderData(new RenderData(vbo));
 			renderData->setId(m_sceneNode->getId());
-			m_renderHandle = context->getGraphics()->stageRender(renderData);
+			m_meshToRenderHandle[mesh] = context->getGraphics()->stageRender(renderData);
 		}
 	}
 	else
 	{
-		shared_ptr<RenderData> renderData = m_renderHandle->getRenderData();
+		shared_ptr<RenderData> renderData = m_meshToRenderHandle[mesh]->getRenderData();
 		
 		renderData->setModelMatrix(m4Transform);
 		renderData->setLightingEnabled(m_lightingEnabled);
@@ -112,5 +129,8 @@ bool StaticObjectRenderComponent::getShadowsEnabled()
 
 void StaticObjectRenderComponent::onSceneNodeDeleted(SceneNode *node)
 {
-	if (m_renderHandle) m_renderHandle->unstageRender();
+	for (shared_ptr<RenderHandle> renderHandle : (m_meshToRenderHandle | boost::adaptors::map_values))
+	{
+		renderHandle->unstageRender();
+	}
 }

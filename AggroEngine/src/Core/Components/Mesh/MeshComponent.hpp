@@ -10,6 +10,7 @@
 #include "GenerateNormalLines.hpp"
 #include "VertexBufferCache.hpp"
 #include <vector>
+#include <boost/unordered_set.hpp>
 using namespace std;
 
 /**
@@ -44,7 +45,7 @@ private:
 	bool m_genBoundingBox;
 	shared_ptr<Mesh> m_boundingBox;
 
-	vector<shared_ptr<Mesh>> m_modifiedMeshes;
+	boost::unordered_set<shared_ptr<Mesh>> m_modifiedMeshes;
 
 	Listener<MeshComponent *> m_changeListeners;
 
@@ -80,10 +81,9 @@ public:
 	shared_ptr<Mesh> getPrimaryMesh();
 	void clearMeshes();
 
-	vector<shared_ptr<Mesh>> &getModifiedMeshes();
+	boost::unordered_set<shared_ptr<Mesh>> &getModifiedMeshes();
 
 	bool hasMesh();
-	bool modsReady(shared_ptr<VertexBufferCache> vbos);
 
 	glm::vec3 getMeshCenter();
 };

@@ -127,17 +127,17 @@ void MeshComponent::generateMeshes()
 void MeshComponent::refresh()
 {
 	boost::lock_guard<MeshComponent> guard(*this);
-	m_modifiedMeshes = vector<shared_ptr<Mesh>>();
+	m_modifiedMeshes = boost::unordered_set<shared_ptr<Mesh>>();
 	if (m_primaryMesh)
 	{
-		m_modifiedMeshes.push_back(m_modifiedPrimaryMesh);
+		m_modifiedMeshes.insert(m_modifiedPrimaryMesh);
 		if (m_genNormalLines)
 		{
-			m_modifiedMeshes.push_back(m_normalLines);
+			m_modifiedMeshes.insert(m_normalLines);
 		}
 		if (m_genBoundingBox)
 		{
-			m_modifiedMeshes.push_back(m_boundingBox);
+			m_modifiedMeshes.insert(m_boundingBox);
 		}
 	}
 }
@@ -224,7 +224,7 @@ void MeshComponent::clearMeshes()
 	m_changeListeners.notify(this);
 }
 
-vector<shared_ptr<Mesh>> &MeshComponent::getModifiedMeshes()
+boost::unordered_set<shared_ptr<Mesh>> &MeshComponent::getModifiedMeshes()
 {
 	return m_modifiedMeshes;
 }
@@ -232,16 +232,6 @@ vector<shared_ptr<Mesh>> &MeshComponent::getModifiedMeshes()
 bool MeshComponent::hasMesh()
 {
 	return m_primaryMesh != nullptr;
-}
-
-bool MeshComponent::modsReady(shared_ptr<VertexBufferCache> vbos)
-{
-	if (m_modifiedMeshes.empty())
-	{
-		return false;
-	}
-	shared_ptr<VertexBufferHandle> vbo = vbos->getVertexBuffer(m_modifiedMeshes[0]);
-	return vbo && vbo->isLoaded();
 }
 
 glm::vec3 MeshComponent::getMeshCenter()

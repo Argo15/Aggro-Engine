@@ -18,7 +18,6 @@ class RenderComponent : public Component
 {
 protected:
 	SceneNode *m_sceneNode; // Not a shared_ptr since m_sceneNode will "own" this component
-	shared_ptr<RenderHandle> m_renderHandle;
 
 public:
 	RenderComponent();

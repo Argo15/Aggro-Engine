@@ -78,6 +78,5 @@ void CameraRenderComponent::render(shared_ptr<GraphicsContext> context, glm::mat
 void CameraRenderComponent::onSceneNodeDeleted(SceneNode *node)
 {
 	if (m_lineRenderHandle) m_lineRenderHandle->unstageRender();
-	if (m_renderHandle) m_renderHandle->unstageRender();
 	SpriteRenderComponent::onSceneNodeDeleted(node);
 }

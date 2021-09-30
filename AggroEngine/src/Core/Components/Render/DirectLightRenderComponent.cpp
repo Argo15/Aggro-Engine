@@ -64,6 +64,5 @@ void DirectLightRenderComponent::render(shared_ptr<GraphicsContext> context, glm
 void DirectLightRenderComponent::onSceneNodeDeleted(SceneNode *node)
 {
 	if (m_lineRenderHandle) m_lineRenderHandle->unstageRender();
-	if (m_renderHandle) m_renderHandle->unstageRender();
 	SpriteRenderComponent::onSceneNodeDeleted(node);
 }
