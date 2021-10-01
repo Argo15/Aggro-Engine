@@ -35,7 +35,6 @@ MainWindow::MainWindow()
 	createMenus();
 
 	const Properties& props = Config::instance().getProperties();
-	m_maxFps = props.getIntProperty("graphics.max_fps");
 	startTimer(1, Qt::PreciseTimer);
 
 	QDockWidget *leftWidget = new SceneGraphTree(m_context, this);

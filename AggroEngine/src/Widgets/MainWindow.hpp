@@ -16,7 +16,6 @@ private:
 	shared_ptr<MainWidget> m_mainWidget;
 	shared_ptr<string> m_lastSaveFile;
 	Timer timer;
-	int m_maxFps;
 
 	// action functions
 	void newFile();

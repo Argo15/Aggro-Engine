@@ -134,7 +134,8 @@ void ShadowMapBuffer::drawToBuffer(RenderOptions renderOptions, shared_ptr<Rende
 
 			if (vboHandle && renderData->isDepthTestEnabled() && renderData->isShadowsEnabled())
 			{
-				if (renderData->isCullingEnabled() && renderData->getOcclusionPoints())
+				// TODO: Culling is actually slower then rendering for now
+				if (false && renderData->isCullingEnabled() && renderData->getOcclusionPoints())
 				{
 					FrustrumCulling culling = lightFrustrum.getCulling(
 						renderData->getOcclusionPoints(),

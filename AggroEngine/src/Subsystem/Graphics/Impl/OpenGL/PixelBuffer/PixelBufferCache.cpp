@@ -56,6 +56,7 @@ shared_ptr<ImageUC> PixelBufferCache::getSelectionImage(int x, int y, int width,
 	int length = 4 * (m_width * (height - 1) + width);
 	glBindBuffer(GL_PIXEL_PACK_BUFFER, m_selectionPBOs[m_curIndex]);
 	GLubyte* pixels = (GLubyte*)glMapBufferRange(GL_PIXEL_PACK_BUFFER, offset, length, GL_MAP_READ_BIT);
+	shared_ptr<ImageUC> selectionImage = shared_ptr<ImageUC>();
 	if (pixels)
 	{
 		int numBytes = 4 * height * width;
@@ -64,16 +65,15 @@ shared_ptr<ImageUC> PixelBufferCache::getSelectionImage(int x, int y, int width,
 		{
 			memcpy(selectionPixels + i * 4 * width, pixels + i * 4 * m_width, 4 * width);
 		}
-		shared_ptr<ImageUC> selectionImage = shared_ptr<ImageUC>(
+		selectionImage = shared_ptr<ImageUC>(
 			(new ImageUC(width, height, mem::shared_array(selectionPixels, numBytes, "GL_Graphics")))
 			->setImageFormat(ImageFormat::RGBA)
 			->setImageType(ImageType::UNSIGNED_BYTE)
 			);
-		glUnmapBuffer(GL_PIXEL_PACK_BUFFER);
-		return selectionImage;
 	}
+	glUnmapBuffer(GL_PIXEL_PACK_BUFFER);
 	glBindBuffer(GL_PIXEL_PACK_BUFFER, 0);
-	return shared_ptr<ImageUC>();
+	return selectionImage;
 }
 
 shared_ptr<TextureHandle> PixelBufferCache::uploadTexturePixels(shared_ptr<TextureBuildOptions> texOptions)
@@ -92,8 +92,8 @@ shared_ptr<TextureHandle> PixelBufferCache::uploadTexturePixels(shared_ptr<Textu
 	if (ptr)
 	{
 		memcpy(ptr, image->getData().get(), image->getSize());
-		glUnmapBuffer(GL_PIXEL_UNPACK_BUFFER);
 	}
+	glUnmapBuffer(GL_PIXEL_UNPACK_BUFFER);
 	glBindBuffer(GL_PIXEL_UNPACK_BUFFER, 0);
 
 	m_texOptions[texture] = texOptions;

@@ -27,7 +27,7 @@ GLWidget::GLWidget(shared_ptr<EngineContext> context, QWidget *parent)
 	setMouseTracking(true);
 	const Properties& props = Config::instance().getProperties();
 	m_maxFps = props.getIntProperty("graphics.max_fps");
-	m_millisPerFrame = 1000 / m_maxFps;
+	m_millisPerFrame = 1000 / m_maxFps - 1;
 	setAcceptDrops(true);
 }
 
