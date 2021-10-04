@@ -21,4 +21,6 @@ public:
 
 	shared_ptr<RenderNode> getFirst();
 	shared_ptr<RenderNode> getById(int nodeId);
+
+	int size();
 };

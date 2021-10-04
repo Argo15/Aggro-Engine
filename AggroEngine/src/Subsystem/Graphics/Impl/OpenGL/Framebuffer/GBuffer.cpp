@@ -2,12 +2,17 @@
 #include "Texture.hpp"
 #include "Locks.hpp"
 #include "RGBImage.hpp"
+#include "InitializeGBuffer.hpp"
+#include "FilterLayer.hpp"
+#include "DepthTest.hpp"
+#include "DrawElements.hpp"
 
 static glm::vec3 defaultColor(1.0);
 static glm::vec3 defaultEmission(0);
 
-GBuffer::GBuffer(OpenGL43Graphics *graphics, int width, int height)
+GBuffer::GBuffer(OpenGL43Graphics *graphics, int width, int height, shared_ptr<BufferSyncContext> syncContext)
 	: FrameBufferObject(width, height)
+	, m_syncContext(syncContext)
 {
 	m_graphics = graphics;
 
@@ -71,9 +76,21 @@ GBuffer::GBuffer(OpenGL43Graphics *graphics, int width, int height)
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
 	m_whiteTexture = graphics->createTexture(shared_ptr<ImageUC>(new RGBImage(1, 1, glm::vec3(1.f, 1.f, 1.f))));
+
+	m_commands = shared_ptr<CommandTree>(new CommandTree());
+	m_commands->addLayer(shared_ptr<Layer>(new InitializeGBuffer(this)));
+	m_commands->addLayer(shared_ptr<Layer>(new FilterLayer(m_syncContext)));
+	m_commands->addLayer(shared_ptr<Layer>(new DepthTest()));
+	m_commands->addLayer(shared_ptr<Layer>(new DrawElements(m_syncContext, m_glslProgram, m_whiteTexture)));
 }
 
-void GBuffer::drawToBuffer(RenderOptions renderOptions, shared_ptr<RenderChain> renderChain, shared_ptr<BufferSyncContext> syncContext)
+void GBuffer::drawToBuffer(RenderOptions &renderOptions, shared_ptr<RenderChain> renderChain)
+{
+	boost::lock_guard<OpenGL43Graphics> guard(*m_graphics);
+	m_commands->execute(renderOptions, renderChain);
+}
+
+void GBuffer::drawToBufferOld(RenderOptions &renderOptions, shared_ptr<RenderChain> renderChain)
 {
 	boost::lock_guard<OpenGL43Graphics> guard(*m_graphics);
 
@@ -119,9 +136,22 @@ void GBuffer::drawToBuffer(RenderOptions renderOptions, shared_ptr<RenderChain> 
 		}
 
 		shared_ptr<VertexBufferHandle> vboHandle = renderData->getVertexBufferHandle();
-		if (vboHandle && !syncContext->checkAndClearSync(vboHandle->getVertexHandle()))
+		if (vboHandle && !m_syncContext->checkAndClearSync(vboHandle->getVertexHandle()))
 		{
 			continue;
+		}
+
+
+		if (renderData->isCullingEnabled() && renderData->getOcclusionPoints())
+		{
+			FrustrumCulling culling = frustrum->getCulling(
+				renderData->getOcclusionPoints(),
+				renderData->getOcclusionSize(),
+				renderData->getModelMatrix());
+			if (culling == OUTSIDE)
+			{
+				continue;
+			}
 		}
 
 		if (renderData == disabledDepthObject)
@@ -139,18 +169,6 @@ void GBuffer::drawToBuffer(RenderOptions renderOptions, shared_ptr<RenderChain> 
 			continue;
 		}
 
-		if (renderData->isCullingEnabled() && renderData->getOcclusionPoints())
-		{
-			FrustrumCulling culling = frustrum->getCulling(
-				renderData->getOcclusionPoints(), 
-				renderData->getOcclusionSize(),
-				renderData->getModelMatrix());
-			if (culling == OUTSIDE)
-			{
-				continue;
-			}
-		}
-
 		if (vboHandle)
 		{
 			glm::mat4 mvpMatrix = viewProj * renderData->getModelMatrix();
@@ -163,7 +181,7 @@ void GBuffer::drawToBuffer(RenderOptions renderOptions, shared_ptr<RenderChain> 
 			glm::mat4 textureMatrix = glm::mat4(1.0);
 			shared_ptr<Material> material = renderData->getMaterial();
 			int texId = 0;
-			if (material && syncContext->checkAndClearSync(material->getTextureOpt().get_value_or(m_whiteTexture)->get()))
+			if (material && m_syncContext->checkAndClearSync(material->getTextureOpt().get_value_or(m_whiteTexture)->get()))
 			{
 				m_glslProgram->sendUniform("material.color", material->getColor());
 				m_glslProgram->sendUniform("material.tex", material->getTextureOpt().get_value_or(m_whiteTexture), texId++);

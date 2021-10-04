@@ -7,6 +7,7 @@ class FrameBufferObject;
 #include "OpenGL43Graphics.hpp"
 #include "Sync/BufferSyncContext.hpp"
 #include "RenderChain.hpp"
+#include "CommandTree/CommandTree.hpp"
 
 class GBuffer : public FrameBufferObject
 {
@@ -19,11 +20,15 @@ private:
 	shared_ptr<TextureHandle> m_whiteTexture;
 	shared_ptr<VertexBufferHandle> m_screenVBO;
 	OpenGL43Graphics *m_graphics;
+	shared_ptr<BufferSyncContext> m_syncContext;
+
+	shared_ptr<CommandTree> m_commands;
 
 public:
-	GBuffer(OpenGL43Graphics *graphics, int width, int height);
+	GBuffer(OpenGL43Graphics *graphics, int width, int height, shared_ptr<BufferSyncContext> syncContext);
 
-	void drawToBuffer(RenderOptions renderOptions, shared_ptr<RenderChain> renderChain, shared_ptr<BufferSyncContext> syncContext);
+	void drawToBuffer(RenderOptions &renderOptions, shared_ptr<RenderChain> renderChain);
+	void drawToBufferOld(RenderOptions &renderOptions, shared_ptr<RenderChain> renderChain);
 
 	void bindDepthTex();
 	void bindNormalTex();

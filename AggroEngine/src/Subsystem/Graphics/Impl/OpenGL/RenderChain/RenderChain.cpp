@@ -52,3 +52,8 @@ shared_ptr<RenderNode> RenderChain::getById(int nodeId)
 {
 	return m_idToNode[nodeId];
 }
+
+int RenderChain::size()
+{
+	return m_idToNode.size();
+}

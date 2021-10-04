@@ -38,7 +38,7 @@ void OpenGL43Graphics::init(shared_ptr<GraphicsInitOptions> options)
 	m_syncContext = shared_ptr<BufferSyncContext>(new BufferSyncContext());
 	this->unlock();
 	m_shadowBuffer = shared_ptr<ShadowMapBuffer>(new ShadowMapBuffer(this, options->getShadowSize()));
-	m_gBuffer = shared_ptr<GBuffer>(new GBuffer(this, options->getBufferWidth(), options->getBufferHeight()));
+	m_gBuffer = shared_ptr<GBuffer>(new GBuffer(this, options->getBufferWidth(), options->getBufferHeight(), m_syncContext));
 	m_lightBuffer = shared_ptr<LightBuffer>(new LightBuffer(this, options->getBufferWidth(), options->getBufferHeight()));
 	m_shadedBuffer = shared_ptr<ShadedBuffer>(new ShadedBuffer(this, options->getBufferWidth(), options->getBufferHeight()));
 	m_viewport = shared_ptr<Viewport>(new Viewport());
@@ -148,7 +148,7 @@ void OpenGL43Graphics::executeRender(RenderOptions &renderOptions)
 	auto tracker = PerfStats::instance().trackTime("GL executeRender");
 	m_pixelBuffers->resolveTextures(m_syncContext);
 	m_shadowBuffer->drawToBuffer(renderOptions, m_renderChain, m_syncContext);
-	m_gBuffer->drawToBuffer(renderOptions, m_renderChain, m_syncContext);
+	m_gBuffer->drawToBuffer(renderOptions, m_renderChain);
 	m_pixelBuffers->writeSelectionBuffer(m_gBuffer);
 	m_lightBuffer->drawToBuffer(renderOptions, m_gBuffer->getNormalTex(), m_gBuffer->getDepthTex(), m_gBuffer->getGlowTex(), m_shadowBuffer);
 	m_shadedBuffer->drawToBuffer(renderOptions, m_gBuffer->getAlbedoTex(), m_lightBuffer->getTexture(), m_lightBuffer->getGlowTex());
