@@ -35,6 +35,7 @@ MeshMetaData::MeshMetaData(Mesh *mesh)
 	pCorners[6] = glm::vec3(vMax.x, vMax.y, vMin.z);
 	pCorners[7] = glm::vec3(vMax.x, vMax.y, vMax.z);
 	m_corners = mem::shared_array(pCorners, 8, "Mesh");
+	m_radius = glm::distance(pCorners[0], pCorners[7]) / 2.0;
 }
 
 int MeshMetaData::getNumTriangles()
@@ -60,6 +61,11 @@ float MeshMetaData::getYLength()
 float MeshMetaData::getZLength()
 {
 	return m_zLength;
+}
+
+float MeshMetaData::getRadius()
+{
+	return m_radius;
 }
 
 shared_ptr<glm::vec3> MeshMetaData::getCorners()

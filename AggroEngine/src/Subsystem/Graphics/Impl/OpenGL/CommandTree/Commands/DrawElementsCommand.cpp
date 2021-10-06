@@ -1,6 +1,5 @@
 #include "DrawElementsCommand.hpp"
 #include "OpenGL43Graphics.hpp"
-#include "Texture.hpp"
 
 static glm::vec3 defaultColor(1.0);
 static glm::vec3 defaultEmission(0);
@@ -111,7 +110,6 @@ void DrawElementsCommand::end()
 		glDisableVertexAttribArray(4);
 	}
 
-	Texture::unbind();
 }
 
 bool DrawElementsCommand::equals(shared_ptr<Command> other)

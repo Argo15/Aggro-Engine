@@ -119,6 +119,10 @@ bool PerspectiveFrustrum::isSame(shared_ptr<Frustrum> other)
 
 FrustrumCulling PerspectiveFrustrum::getCulling(shared_ptr<glm::vec3> points, int size, glm::mat4 &modelMatrix)
 {
+	if (size == 8)
+	{
+		return _getCullingFromBox(points.get()[0], points.get()[7], modelMatrix);
+	}
 	glm::mat4 modelView = m_viewMatrix * modelMatrix;
 	shared_ptr<glm::vec3> mvPoints(new glm::vec3[size]);
 	for (int i = 0; i < size; i++)
@@ -131,9 +135,30 @@ FrustrumCulling PerspectiveFrustrum::getCulling(shared_ptr<glm::vec3> points, in
 		bool allOutside = true;
 		for (int i = 0; i < size; i++)
 		{
-			allOutside = allOutside && m_planes.get()[j].distance(mvPoints.get()[i]) > 0;
+			float distance = m_planes.get()[j].distance(mvPoints.get()[i]);
+			allOutside = allOutside && distance > 0;
 		}
 		if (allOutside)
+		{
+			return FrustrumCulling::OUTSIDE;
+		}
+	}
+	return FrustrumCulling::INSIDE;
+}
+
+FrustrumCulling PerspectiveFrustrum::_getCullingFromBox(glm::vec3 &vMin, glm::vec3 &vMax, glm::mat4 &modelMatrix)
+{
+	glm::mat4 modelView = m_viewMatrix * modelMatrix;
+	glm::vec3 mvMin = glm::vec3(modelView * glm::vec4(vMin, 1.0));
+	glm::vec3 mvMax = glm::vec3(modelView * glm::vec4(vMax, 1.0));
+	glm::vec3 center = (mvMin + mvMax) / 2.0f;
+	// Making it a little smaller for perf gains (might cause some popping? tweak if needed)
+	float radius = glm::distance(mvMax, mvMin) / 3.f; 
+
+	for (int j = 0; j < 6; j++)
+	{
+		float distance = m_planes.get()[j].distance(center);
+		if (distance > radius)
 		{
 			return FrustrumCulling::OUTSIDE;
 		}

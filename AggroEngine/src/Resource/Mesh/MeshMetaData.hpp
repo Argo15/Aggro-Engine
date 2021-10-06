@@ -16,6 +16,7 @@ private:
 	float m_yLength;
 	float m_zLength;
 	shared_ptr<glm::vec3> m_corners;
+	float m_radius;
 
 public:
 	MeshMetaData(Mesh *mesh);
@@ -25,6 +26,7 @@ public:
 	float getXLength();
 	float getYLength();
 	float getZLength();
+	float getRadius();
 
 	shared_ptr<glm::vec3> getCorners();
 };

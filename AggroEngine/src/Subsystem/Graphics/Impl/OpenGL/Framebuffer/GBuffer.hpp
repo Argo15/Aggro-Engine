@@ -28,7 +28,6 @@ public:
 	GBuffer(OpenGL43Graphics *graphics, int width, int height, shared_ptr<BufferSyncContext> syncContext);
 
 	void drawToBuffer(RenderOptions &renderOptions, shared_ptr<RenderChain> renderChain);
-	void drawToBufferOld(RenderOptions &renderOptions, shared_ptr<RenderChain> renderChain);
 
 	void bindDepthTex();
 	void bindNormalTex();

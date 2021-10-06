@@ -24,6 +24,8 @@ private:
 	shared_ptr<glm::vec3> m_corners;
 	shared_ptr<Plane> m_planes;
 
+	FrustrumCulling _getCullingFromBox(glm::vec3 &min, glm::vec3 &max, glm::mat4 &modelMatrix);
+
 public:
 	PerspectiveFrustrum(glm::vec3 eyePos, glm::vec3 lookDir, glm::vec3 upDir, glm::vec3 rightDir,
 		float fov, float aspectRatio, float zNear, float zFar, glm::mat4 &viewMatrix);

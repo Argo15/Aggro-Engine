@@ -1,4 +1,5 @@
 #include "InitializeGBufferCommand.hpp"
+#include "Texture.hpp"
 
 InitializeGBufferCommand::InitializeGBufferCommand(GLuint framebuffer, GLuint program, GLsizei width, GLsizei height)
 	: Command()
@@ -46,6 +47,7 @@ void InitializeGBufferCommand::end()
 	glUseProgram(0);
 	glPopAttrib();
 	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
+	Texture::unbind();
 }
 
 bool InitializeGBufferCommand::equals(shared_ptr<Command> other)
