@@ -571,6 +571,24 @@
     <ClCompile Include="src\Subsystem\Graphics\Impl\OpenGL\CommandTree\Commands\DrawElementsCommand.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\Subsystem\Graphics\Impl\OpenGL\CommandTree\Commands\HasTangentsCommand.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Subsystem\Graphics\Impl\OpenGL\CommandTree\Layer\HasTangents.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Subsystem\Graphics\Impl\OpenGL\CommandTree\Layer\MatrixLayer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Subsystem\Graphics\Impl\OpenGL\CommandTree\Commands\MatrixCommand.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Subsystem\Graphics\Impl\OpenGL\CommandTree\Layer\TextureBinding.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Subsystem\Graphics\Impl\OpenGL\CommandTree\Commands\TextureBindingCommand.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Resource\Image\CheckersImage.hpp">
@@ -1052,6 +1070,24 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\Subsystem\Graphics\Impl\OpenGL\CommandTree\Commands\DrawElementsCommand.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Subsystem\Graphics\Impl\OpenGL\CommandTree\Commands\HasTangentsCommand.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Subsystem\Graphics\Impl\OpenGL\CommandTree\Layer\HasTangents.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Subsystem\Graphics\Impl\OpenGL\CommandTree\Layer\MatrixLayer.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Subsystem\Graphics\Impl\OpenGL\CommandTree\Commands\MatrixCommand.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Subsystem\Graphics\Impl\OpenGL\CommandTree\Layer\TextureBinding.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Subsystem\Graphics\Impl\OpenGL\CommandTree\Commands\TextureBindingCommand.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

@@ -4,45 +4,30 @@
 static glm::vec3 defaultColor(1.0);
 static glm::vec3 defaultEmission(0);
 
-DrawElementsCommand::DrawElementsCommand(shared_ptr<RenderData> renderData, glm::mat4 viewProj,
-	shared_ptr<BufferSyncContext> syncContext, shared_ptr<GLSLProgram> glslProgram,
-	shared_ptr<TextureHandle> whiteTexture)
+DrawElementsCommand::DrawElementsCommand(shared_ptr<RenderData> renderData, shared_ptr<GLSLProgram> glslProgram)
 	: Command()
 	, m_renderData(renderData)
-	, m_viewProj(viewProj)
-	, m_syncContext(syncContext)
 	, m_glslProgram(glslProgram)
-	, m_whiteTexture(whiteTexture)
 {
 }
 
 void DrawElementsCommand::executeCommand()
 {
-	glm::mat4 mvpMatrix = m_viewProj * m_renderData->getModelMatrix();
-	m_glslProgram->sendUniform("modelViewProjectionMatrix", glm::value_ptr(mvpMatrix), false, 4);
-	glm::mat3 normalMatrix = glm::mat3(m_renderData->getModelMatrix());
-	m_glslProgram->sendUniform("normalMatrix", glm::value_ptr(normalMatrix), false, 3);
-
-	m_glslProgram->sendUniform("lightingEnabled", m_renderData->isLightingEnabled());
-
-	glm::mat4 textureMatrix = glm::mat4(1.0);
 	shared_ptr<Material> material = m_renderData->getMaterial();
 	int texId = 0;
-	if (material && m_syncContext->checkAndClearSync(material->getTextureOpt().get_value_or(m_whiteTexture)->get()))
+	if (material)
 	{
+		glm::mat4 textureMatrix = material->getTextureMatrix();
+		m_glslProgram->sendUniform("textureMatrix", glm::value_ptr(textureMatrix), false, 4);
+
 		m_glslProgram->sendUniform("material.color", material->getColor());
-		m_glslProgram->sendUniform("material.tex", material->getTextureOpt().get_value_or(m_whiteTexture), texId++);
-		m_glslProgram->sendUniform("material.alpha", material->getAlphaOpt().get_value_or(m_whiteTexture), texId++);
 		m_glslProgram->sendUniform("material.specIntensity", material->getSpecIntensity());
 		m_glslProgram->sendUniform("material.shininess", (float)material->getShininess());
-		m_glslProgram->sendUniform("material.specMap", material->getSpecularOpt().get_value_or(m_whiteTexture), texId++);
 		m_glslProgram->sendUniform("material.emission", material->getEmission());
-		m_glslProgram->sendUniform("material.emissionMap", material->getEmissionMapOpt().get_value_or(m_whiteTexture), texId++);
 		boost::optional<shared_ptr<TextureHandle>> normalMap = material->getNormalMapOpt();
 		if (normalMap)
 		{
 			m_glslProgram->sendUniform("material.hasNormals", true);
-			m_glslProgram->sendUniform("material.normalMap", normalMap.get(), texId++);
 			glm::mat3 texRotateMatrix = material->getTexRotateMatrix();
 			texRotateMatrix[0] = glm::vec3(texRotateMatrix[0][0], -texRotateMatrix[0][1], 0);
 			texRotateMatrix[1] = glm::vec3(-texRotateMatrix[1][0], texRotateMatrix[1][1], 0);
@@ -53,30 +38,24 @@ void DrawElementsCommand::executeCommand()
 		{
 			m_glslProgram->sendUniform("material.hasNormals", false);
 		}
-
-		textureMatrix = material->getTextureMatrix();
 	}
 	else
 	{
 		m_glslProgram->sendUniform("material.color", defaultColor);
-		m_glslProgram->sendUniform("material.tex", m_whiteTexture, texId++);
-		m_glslProgram->sendUniform("material.alpha", m_whiteTexture, texId++);
 		m_glslProgram->sendUniform("material.specIntensity", 0.f);
 		m_glslProgram->sendUniform("material.shininess", 0.f);
-		m_glslProgram->sendUniform("material.specMap", m_whiteTexture, texId++);
 		m_glslProgram->sendUniform("material.emission", defaultEmission);
-		m_glslProgram->sendUniform("material.emissionMap", m_whiteTexture, texId++);
 		m_glslProgram->sendUniform("material.hasNormals", false);
+		glm::mat4 textureMatrix = glm::mat4(1.0);
+		m_glslProgram->sendUniform("textureMatrix", glm::value_ptr(textureMatrix), false, 4);
 	}
-	m_glslProgram->sendUniform("textureMatrix", glm::value_ptr(textureMatrix), false, 4);
-
 
 	unsigned int id = m_renderData->getId();
 	float r = (id % 255) / 255.0f;
 	float g = ((id / 255) % 255) / 255.0f;
 	float b = ((id / 65025) % 255) / 255.0f;
 	m_glslProgram->sendUniform("objId", r, g, b);
-
+	m_glslProgram->sendUniform("lightingEnabled", m_renderData->isLightingEnabled());
 	glLineWidth(m_renderData->getLineWidth());
 
 	shared_ptr<VertexBufferHandle> vboHandle = m_renderData->getVertexBufferHandle();
@@ -109,7 +88,6 @@ void DrawElementsCommand::end()
 		glDisableVertexAttribArray(3);
 		glDisableVertexAttribArray(4);
 	}
-
 }
 
 bool DrawElementsCommand::equals(shared_ptr<Command> other)

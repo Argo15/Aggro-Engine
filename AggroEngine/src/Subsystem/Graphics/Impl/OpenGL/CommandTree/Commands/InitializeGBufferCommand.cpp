@@ -44,6 +44,8 @@ void InitializeGBufferCommand::end()
 	glDisableVertexAttribArray(0);
 	glDisableVertexAttribArray(1);
 	glDisableVertexAttribArray(2);
+	glDisableVertexAttribArray(3);
+	glDisableVertexAttribArray(4);
 	glUseProgram(0);
 	glPopAttrib();
 	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);

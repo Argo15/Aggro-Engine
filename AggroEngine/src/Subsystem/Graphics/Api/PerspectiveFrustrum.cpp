@@ -152,8 +152,7 @@ FrustrumCulling PerspectiveFrustrum::_getCullingFromBox(glm::vec3 &vMin, glm::ve
 	glm::vec3 mvMin = glm::vec3(modelView * glm::vec4(vMin, 1.0));
 	glm::vec3 mvMax = glm::vec3(modelView * glm::vec4(vMax, 1.0));
 	glm::vec3 center = (mvMin + mvMax) / 2.0f;
-	// Making it a little smaller for perf gains (might cause some popping? tweak if needed)
-	float radius = glm::distance(mvMax, mvMin) / 3.f; 
+	float radius = glm::distance(mvMax, mvMin) / 2.f; 
 
 	for (int j = 0; j < 6; j++)
 	{

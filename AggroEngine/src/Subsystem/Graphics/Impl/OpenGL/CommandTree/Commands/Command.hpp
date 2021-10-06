@@ -8,7 +8,10 @@ enum CommandType {
 	EMPTY = 0,
 	INIT_GBUFFER = 1,
 	DISABLE_DEPTH = 2,
-	DRAW_ELEMENTS = 3
+	DRAW_ELEMENTS = 3,
+	HAS_TANGENTS = 4,
+	MATRIX = 5,
+	TEXTURE = 6
 };
 
 class Command
