@@ -10,6 +10,10 @@ MaterialCommand::MaterialCommand(shared_ptr<GLSLProgram> glslProgram, glm::mat4 
 	, m_emission(emission)
 	, m_hasNormals(hasNormals)
 {
+	m_hash = CommandType::MATERIAL;
+	m_hash = m_hash * 31 + (int)m_specIntensity;
+	m_hash = m_hash * 31 + (int)m_shininess;
+	m_hash = m_hash * 31 + (int)m_hasNormals;
 }
 
 void MaterialCommand::executeCommand()

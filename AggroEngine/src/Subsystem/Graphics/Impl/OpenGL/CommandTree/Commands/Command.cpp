@@ -2,6 +2,7 @@
 
 Command::Command()
 	: m_renderNodes()
+	, m_hash(rand())
 {
 }
 

@@ -15,6 +15,12 @@ TextureBindingCommand::TextureBindingCommand(shared_ptr<GLSLProgram> glslProgram
 	, m_emission(emission)
 	, m_normal(normal)
 {
+	m_hash = 17;
+	m_hash = m_hash * 31 + (int)m_albedo->get();
+	m_hash = m_hash * 31 + (int)m_alpha->get();
+	m_hash = m_hash * 31 + (int)m_specular->get();
+	m_hash = m_hash * 31 + (int)m_emission->get();
+	m_hash = m_normal ? m_hash * 31 + (int)m_normal->get() : m_hash;
 }
 
 void TextureBindingCommand::executeCommand()

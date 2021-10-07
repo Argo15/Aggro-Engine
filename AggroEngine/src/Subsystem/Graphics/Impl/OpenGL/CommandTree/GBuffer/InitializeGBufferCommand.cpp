@@ -8,6 +8,7 @@ InitializeGBufferCommand::InitializeGBufferCommand(GLuint framebuffer, GLuint pr
 	, m_width(width)
 	, m_height(height)
 {
+	m_hash = CommandType::INIT_GBUFFER;
 }
 
 void InitializeGBufferCommand::executeCommand()

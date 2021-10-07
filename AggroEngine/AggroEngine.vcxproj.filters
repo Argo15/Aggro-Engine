@@ -541,58 +541,79 @@
     <ClCompile Include="src\Subsystem\Graphics\Impl\OpenGL\CommandTree\CommandTree.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\Subsystem\Graphics\Impl\OpenGL\CommandTree\Layer\InitializeGBuffer.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Subsystem\Graphics\Impl\OpenGL\CommandTree\Layer\DepthTest.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Subsystem\Graphics\Impl\OpenGL\CommandTree\Layer\DrawElements.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Subsystem\Graphics\Impl\OpenGL\CommandTree\Layer\FilterLayer.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="src\Subsystem\Graphics\Impl\OpenGL\CommandTree\CommandTreeItem.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\Subsystem\Graphics\Impl\OpenGL\CommandTree\Commands\Command.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\Subsystem\Graphics\Impl\OpenGL\CommandTree\Commands\InitializeGBufferCommand.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="src\Subsystem\Graphics\Impl\OpenGL\CommandTree\Commands\EmptyCommand.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\Subsystem\Graphics\Impl\OpenGL\CommandTree\Commands\DisableDepthCommand.cpp">
+    <ClCompile Include="src\Subsystem\Graphics\Impl\OpenGL\CommandTree\GBuffer\InitializeGBuffer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\Subsystem\Graphics\Impl\OpenGL\CommandTree\Commands\DrawElementsCommand.cpp">
+    <ClCompile Include="src\Subsystem\Graphics\Impl\OpenGL\CommandTree\GBuffer\InitializeGBufferCommand.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\Subsystem\Graphics\Impl\OpenGL\CommandTree\Commands\HasTangentsCommand.cpp">
+    <ClCompile Include="src\Subsystem\Graphics\Impl\OpenGL\CommandTree\GBuffer\DepthTest\DisableDepthCommand.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\Subsystem\Graphics\Impl\OpenGL\CommandTree\Layer\HasTangents.cpp">
+    <ClCompile Include="src\Subsystem\Graphics\Impl\OpenGL\CommandTree\GBuffer\DepthTest\DepthTest.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\Subsystem\Graphics\Impl\OpenGL\CommandTree\Layer\MatrixLayer.cpp">
+    <ClCompile Include="src\Subsystem\Graphics\Impl\OpenGL\CommandTree\GBuffer\HasTangents\HasTangents.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\Subsystem\Graphics\Impl\OpenGL\CommandTree\Commands\MatrixCommand.cpp">
+    <ClCompile Include="src\Subsystem\Graphics\Impl\OpenGL\CommandTree\GBuffer\HasTangents\HasTangentsCommand.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\Subsystem\Graphics\Impl\OpenGL\CommandTree\Layer\TextureBinding.cpp">
+    <ClCompile Include="src\Subsystem\Graphics\Impl\OpenGL\CommandTree\GBuffer\DrawElements\DrawElements.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\Subsystem\Graphics\Impl\OpenGL\CommandTree\Commands\TextureBindingCommand.cpp">
+    <ClCompile Include="src\Subsystem\Graphics\Impl\OpenGL\CommandTree\GBuffer\DrawElements\DrawElementsCommand.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\Subsystem\Graphics\Impl\OpenGL\CommandTree\Layer\MaterialLayer.cpp">
+    <ClCompile Include="src\Subsystem\Graphics\Impl\OpenGL\CommandTree\GBuffer\Material\MaterialCommand.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\Subsystem\Graphics\Impl\OpenGL\CommandTree\Commands\MaterialCommand.cpp">
+    <ClCompile Include="src\Subsystem\Graphics\Impl\OpenGL\CommandTree\GBuffer\Material\MaterialLayer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Subsystem\Graphics\Impl\OpenGL\CommandTree\GBuffer\Matrix\MatrixCommand.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Subsystem\Graphics\Impl\OpenGL\CommandTree\GBuffer\Matrix\MatrixLayer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Subsystem\Graphics\Impl\OpenGL\CommandTree\GBuffer\Texture\TextureBindingCommand.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Subsystem\Graphics\Impl\OpenGL\CommandTree\GBuffer\Texture\TextureBinding.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Subsystem\Graphics\Impl\OpenGL\CommandTree\GBuffer\Filter\FilterLayer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Subsystem\Graphics\Impl\OpenGL\CommandTree\ShadowMap\InitializeShadowMapCommand.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Subsystem\Graphics\Impl\OpenGL\CommandTree\ShadowMap\InitializeShadowMap.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Subsystem\Graphics\Impl\OpenGL\CommandTree\ShadowMap\DrawElements\DrawShadowElements.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Subsystem\Graphics\Impl\OpenGL\CommandTree\ShadowMap\DrawElements\DrawShadowElementsCommand.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Subsystem\Graphics\Impl\OpenGL\CommandTree\ShadowMap\Filter\FilterShadowLayer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Subsystem\Graphics\Impl\OpenGL\CommandTree\ShadowMap\MVPMatrix\MVPMatrixCommand.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Subsystem\Graphics\Impl\OpenGL\CommandTree\ShadowMap\MVPMatrix\MVPMatrix.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -1045,19 +1066,7 @@
     <ClInclude Include="src\Subsystem\Graphics\Impl\OpenGL\CommandTree\Layer\Layer.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\Subsystem\Graphics\Impl\OpenGL\CommandTree\Layer\InitializeGBuffer.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="src\Subsystem\Graphics\Impl\OpenGL\CommandTree\Layer\ShouldRender.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Subsystem\Graphics\Impl\OpenGL\CommandTree\Layer\DepthTest.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Subsystem\Graphics\Impl\OpenGL\CommandTree\Layer\DrawElements.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Subsystem\Graphics\Impl\OpenGL\CommandTree\Layer\FilterLayer.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\Subsystem\Graphics\Impl\OpenGL\CommandTree\CommandTreeItem.hpp">
@@ -1066,40 +1075,73 @@
     <ClInclude Include="src\Subsystem\Graphics\Impl\OpenGL\CommandTree\Commands\Command.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\Subsystem\Graphics\Impl\OpenGL\CommandTree\Commands\InitializeGBufferCommand.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="src\Subsystem\Graphics\Impl\OpenGL\CommandTree\Commands\EmptyCommand.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\Subsystem\Graphics\Impl\OpenGL\CommandTree\Commands\DisableDepthCommand.hpp">
+    <ClInclude Include="src\Subsystem\Graphics\Impl\OpenGL\CommandTree\GBuffer\InitializeGBuffer.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\Subsystem\Graphics\Impl\OpenGL\CommandTree\Commands\DrawElementsCommand.hpp">
+    <ClInclude Include="src\Subsystem\Graphics\Impl\OpenGL\CommandTree\GBuffer\InitializeGBufferCommand.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\Subsystem\Graphics\Impl\OpenGL\CommandTree\Commands\HasTangentsCommand.hpp">
+    <ClInclude Include="src\Subsystem\Graphics\Impl\OpenGL\CommandTree\GBuffer\DepthTest\DisableDepthCommand.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\Subsystem\Graphics\Impl\OpenGL\CommandTree\Layer\HasTangents.hpp">
+    <ClInclude Include="src\Subsystem\Graphics\Impl\OpenGL\CommandTree\GBuffer\DepthTest\DepthTest.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\Subsystem\Graphics\Impl\OpenGL\CommandTree\Layer\MatrixLayer.hpp">
+    <ClInclude Include="src\Subsystem\Graphics\Impl\OpenGL\CommandTree\GBuffer\HasTangents\HasTangents.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\Subsystem\Graphics\Impl\OpenGL\CommandTree\Commands\MatrixCommand.hpp">
+    <ClInclude Include="src\Subsystem\Graphics\Impl\OpenGL\CommandTree\GBuffer\HasTangents\HasTangentsCommand.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\Subsystem\Graphics\Impl\OpenGL\CommandTree\Layer\TextureBinding.hpp">
+    <ClInclude Include="src\Subsystem\Graphics\Impl\OpenGL\CommandTree\GBuffer\DrawElements\DrawElements.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\Subsystem\Graphics\Impl\OpenGL\CommandTree\Commands\TextureBindingCommand.hpp">
+    <ClInclude Include="src\Subsystem\Graphics\Impl\OpenGL\CommandTree\GBuffer\DrawElements\DrawElementsCommand.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\Subsystem\Graphics\Impl\OpenGL\CommandTree\Layer\MaterialLayer.hpp">
+    <ClInclude Include="src\Subsystem\Graphics\Impl\OpenGL\CommandTree\GBuffer\Material\MaterialCommand.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\Subsystem\Graphics\Impl\OpenGL\CommandTree\Commands\MaterialCommand.hpp">
+    <ClInclude Include="src\Subsystem\Graphics\Impl\OpenGL\CommandTree\GBuffer\Material\MaterialLayer.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Subsystem\Graphics\Impl\OpenGL\CommandTree\GBuffer\Matrix\MatrixCommand.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Subsystem\Graphics\Impl\OpenGL\CommandTree\GBuffer\Matrix\MatrixLayer.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Subsystem\Graphics\Impl\OpenGL\CommandTree\GBuffer\Texture\TextureBindingCommand.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Subsystem\Graphics\Impl\OpenGL\CommandTree\GBuffer\Texture\TextureBinding.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Subsystem\Graphics\Impl\OpenGL\CommandTree\GBuffer\Filter\FilterLayer.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Subsystem\Graphics\Impl\OpenGL\CommandTree\ShadowMap\InitializeShadowMapCommand.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Subsystem\Graphics\Impl\OpenGL\CommandTree\ShadowMap\InitializeShadowMap.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Subsystem\Graphics\Impl\OpenGL\CommandTree\ShadowMap\DrawElements\DrawShadowElements.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Subsystem\Graphics\Impl\OpenGL\CommandTree\ShadowMap\DrawElements\DrawShadowElementsCommand.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Subsystem\Graphics\Impl\OpenGL\CommandTree\ShadowMap\Filter\FilterShadowLayer.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Subsystem\Graphics\Impl\OpenGL\CommandTree\ShadowMap\MVPMatrix\MVPMatrix.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Subsystem\Graphics\Impl\OpenGL\CommandTree\ShadowMap\MVPMatrix\MVPMatrixCommand.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

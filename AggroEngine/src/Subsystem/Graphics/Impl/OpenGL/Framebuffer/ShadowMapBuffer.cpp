@@ -1,17 +1,16 @@
 #include "ShadowMapBuffer.hpp"
 #include "Config.hpp"
 #include "ShadowMapFrustrum.hpp"
+#include "CommandTree/ShadowMap/InitializeShadowMap.hpp"
+#include "CommandTree/ShadowMap/Filter/FilterShadowLayer.hpp"
+#include "CommandTree/ShadowMap/MVPMatrix/MVPMatrix.hpp"
+#include "CommandTree/ShadowMap/DrawElements/DrawShadowElements.hpp"
 
-// How frequently to update each shadowmap
-static const char s_frames[4][16] { 
-	{1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0},
-	{0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0},
-	{0,0,0,1,0,0,0,0,0,0,0,1,0,0,0,0},
-	{0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,1}
-};
+// Order to update each shadowmap
+static const char s_frames[8] = { 0,1,0,2,0,1,0,3 };
 static char s_currentFrame = -1;
 
-ShadowMapBuffer::ShadowMapBuffer(OpenGL43Graphics *graphics, int defaultSize)
+ShadowMapBuffer::ShadowMapBuffer(OpenGL43Graphics *graphics, int defaultSize, shared_ptr<BufferSyncContext> syncContext)
 	: FrameBufferObject(defaultSize, defaultSize)
 {
 	const Properties& props = Config::instance().getProperties();
@@ -64,112 +63,40 @@ ShadowMapBuffer::ShadowMapBuffer(OpenGL43Graphics *graphics, int defaultSize)
 
 	glBindTexture(GL_TEXTURE_2D, 0);
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+	m_commands = shared_ptr<CommandTree>(new CommandTree());
+	m_commands->addLayer(shared_ptr<Layer>(new InitializeShadowMap(this)));
+	m_commands->addLayer(shared_ptr<Layer>(new FilterShadowLayer(syncContext)));
+	m_commands->addLayer(shared_ptr<Layer>(new MVPMatrix(this)));
+	m_commands->addLayer(shared_ptr<Layer>(new DrawShadowElements(this)));
 }
 
-void ShadowMapBuffer::drawToBuffer(RenderOptions renderOptions, shared_ptr<RenderChain> renderChain, shared_ptr<BufferSyncContext> syncContext)
+void ShadowMapBuffer::drawToBuffer(RenderOptions &renderOptions, shared_ptr<RenderChain> renderChain)
 {
 	boost::lock_guard<OpenGL43Graphics> guard(*m_graphics);
-
-	shared_ptr<PerspectiveFrustrum> frustrum = renderOptions.getFrustrum();
-	float frustrumLength = frustrum->getZFar() - frustrum->getZNear();
-
-	for (int i = 0; i < 4; i++)
-	{
-		if (s_frames[i][s_currentFrame] == 0)
-		{
-			continue;
-		}
-
-		glBindFramebuffer(GL_DRAW_FRAMEBUFFER, m_shadowBuffer[i]);
-		m_glslProgram->use();
-		GLenum mrt[] = { GL_COLOR_ATTACHMENT0 };
-		glDrawBuffers(1, mrt);
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-		glPushAttrib(GL_VIEWPORT_BIT);
-		glViewport(0, 0, getWidth(), getHeight());
-		glLineWidth(1);
-		glEnable(GL_DEPTH_TEST);
-		glDisable(GL_BLEND);
-
-		shared_ptr<DirectLight> light = renderOptions.getDirectLight();
-		if (!light)
-		{
-			m_glslProgram->disable();
-			unbindFrameBufferWriteOnly();
-			glPopAttrib();
-			continue;
-		}
-
-		glm::vec3 lightDir = light->getDirection();
-		glm::vec3 lightUp = light->getDirection() == glm::vec3(0, -1.0f, 0) ? glm::vec3(1.0f) : glm::vec3(0, 1.0f, 0);
-
-		float slicePctStart = m_slices[i];
-		float slicePctEnd = m_slices[i + 1];
-		float centerPct = (slicePctStart + slicePctEnd) / 2.0f;
-
-		glm::vec3 center = frustrum->getEyePos() + frustrum->getLookDir() * (frustrum->getZNear() + frustrumLength * centerPct);
-		glm::mat4 lightViewMat = glm::lookAt(center + lightDir * -250.0f, center, lightUp);
-
-		_getProjectionMat(i, slicePctStart, slicePctEnd, lightViewMat, renderOptions);
-
-		ShadowMapFrustrum lightFrustrum(m_viewProj[i]);
-
-		glBindFragDataLocation(m_glslProgram->getHandle(), 0, "testBuffer");
-		glBindAttribLocation(m_glslProgram->getHandle(), 0, "v_vertex");
-		glEnableVertexAttribArray(0);
-
-		shared_ptr<RenderNode> chainNode = renderChain->getFirst();
-
-		while (chainNode)
-		{
-			shared_ptr<RenderData> renderData = chainNode->getRenderData();
-			chainNode = chainNode->next();
-
-			shared_ptr<VertexBufferHandle> vboHandle = renderData->getVertexBufferHandle();
-			if (!syncContext->checkAndClearSync(vboHandle->getVertexHandle()))
-			{
-				continue;
-			}
-
-			if (vboHandle && renderData->isDepthTestEnabled() && renderData->isShadowsEnabled())
-			{
-				// TODO: Culling is actually slower then rendering for now
-				if (false && renderData->isCullingEnabled() && renderData->getOcclusionPoints())
-				{
-					FrustrumCulling culling = lightFrustrum.getCulling(
-						renderData->getOcclusionPoints(),
-						renderData->getOcclusionSize(),
-						renderData->getModelMatrix());
-					if (culling == OUTSIDE)
-					{
-						continue;
-					}
-				}
-
-				glm::mat4 mvpMatrix = m_viewProj[i] * renderData->getModelMatrix();
-				m_glslProgram->sendUniform("modelViewProjectionMatrix", glm::value_ptr(mvpMatrix), false, 4);
-
-				glBindBuffer(GL_ARRAY_BUFFER, vboHandle->getVertexHandle());
-				glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, vboHandle->getIndexHandle());
-				glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, 0);
-				glDrawElements((GLenum)(renderData->getDrawMode()), vboHandle->getSizeOfIndicies(), GL_UNSIGNED_INT, 0);
-			}
-		}
-		glDisableVertexAttribArray(0);
-		glBindBuffer(GL_ARRAY_BUFFER, 0);
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-		unbindFrameBufferWriteOnly();
-		m_glslProgram->disable();
-		glPopAttrib();
-	}
-
-	s_currentFrame = (s_currentFrame + 1) % 16;
+	_updateProjectionMat(renderOptions);
+	m_commands->execute(renderOptions, renderChain);
+	s_currentFrame = (s_currentFrame + 1) % 8;
 }
 
-void ShadowMapBuffer::_getProjectionMat(int slice, float slicePctStart, float slicePctEnd, glm::mat4 &lightViewMat, RenderOptions &renderOptions)
+void ShadowMapBuffer::_updateProjectionMat(RenderOptions &renderOptions)
 {
+	shared_ptr<DirectLight> light = renderOptions.getDirectLight();
+	if (!light) return;
+	glm::vec3 lightDir = light->getDirection();
+	glm::vec3 lightUp = light->getDirection() == glm::vec3(0, -1.0f, 0) ? glm::vec3(1.0f) : glm::vec3(0, 1.0f, 0);
+	
 	shared_ptr<PerspectiveFrustrum> frustrum = renderOptions.getFrustrum();
 	float frustrumLength = frustrum->getZFar() - frustrum->getZNear();
+
+	int slice = s_frames[s_currentFrame];
+
+	float slicePctStart = m_slices[slice];
+	float slicePctEnd = m_slices[slice + 1];
+	float centerPct = (slicePctStart + slicePctEnd) / 2.0f;
+
+	glm::vec3 center = frustrum->getEyePos() + frustrum->getLookDir() * (frustrum->getZNear() + frustrumLength * centerPct);
+	glm::mat4 lightViewMat = glm::lookAt(center + lightDir * -250.0f, center, lightUp);
 
 	float nearDistance = frustrum->getZNear() + slicePctStart * frustrumLength;
 	float nearHeight = 2 * tan(frustrum->getFov() / 2) * nearDistance;
@@ -233,9 +160,9 @@ shared_ptr<TextureHandle> ShadowMapBuffer::getTestTex(int slice)
 	return m_testTex[slice];
 }
 
-glm::mat4 ShadowMapBuffer::getViewProjection(int slice)
+glm::mat4 *ShadowMapBuffer::getViewProjection(int slice)
 {
-	return m_viewProj[slice];
+	return &(m_viewProj[slice]);
 }
 
 float *ShadowMapBuffer::getAdjViewProjectionPointer(int slice)
@@ -251,4 +178,14 @@ int ShadowMapBuffer::getSize()
 float ShadowMapBuffer::getSizeF()
 {
 	return (float)m_size;
+}
+
+int ShadowMapBuffer::currentSlice()
+{
+	return s_frames[s_currentFrame];
+}
+
+GLuint ShadowMapBuffer::getCurrentShadowBuffer()
+{
+	return m_shadowBuffer[currentSlice()];
 }

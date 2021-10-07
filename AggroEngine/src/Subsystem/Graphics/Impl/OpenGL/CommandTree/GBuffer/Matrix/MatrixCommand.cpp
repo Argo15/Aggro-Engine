@@ -5,7 +5,7 @@ MatrixCommand::MatrixCommand(shared_ptr<GLSLProgram> glslProgram, shared_ptr<glm
 	, m_viewProj(viewProj)
 	, m_modelMatrix(modelMatrix)
 {
-
+	m_hash = CommandType::MATRIX;
 }
 
 void MatrixCommand::executeCommand()

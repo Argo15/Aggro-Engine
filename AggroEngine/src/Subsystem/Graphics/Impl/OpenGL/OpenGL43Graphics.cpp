@@ -37,7 +37,7 @@ void OpenGL43Graphics::init(shared_ptr<GraphicsInitOptions> options)
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	m_syncContext = shared_ptr<BufferSyncContext>(new BufferSyncContext());
 	this->unlock();
-	m_shadowBuffer = shared_ptr<ShadowMapBuffer>(new ShadowMapBuffer(this, options->getShadowSize()));
+	m_shadowBuffer = shared_ptr<ShadowMapBuffer>(new ShadowMapBuffer(this, options->getShadowSize(), m_syncContext));
 	m_gBuffer = shared_ptr<GBuffer>(new GBuffer(this, options->getBufferWidth(), options->getBufferHeight(), m_syncContext));
 	m_lightBuffer = shared_ptr<LightBuffer>(new LightBuffer(this, options->getBufferWidth(), options->getBufferHeight()));
 	m_shadedBuffer = shared_ptr<ShadedBuffer>(new ShadedBuffer(this, options->getBufferWidth(), options->getBufferHeight()));
@@ -147,7 +147,7 @@ void OpenGL43Graphics::executeRender(RenderOptions &renderOptions)
 {
 	auto tracker = PerfStats::instance().trackTime("GL executeRender");
 	m_pixelBuffers->resolveTextures(m_syncContext);
-	m_shadowBuffer->drawToBuffer(renderOptions, m_renderChain, m_syncContext);
+	m_shadowBuffer->drawToBuffer(renderOptions, m_renderChain);
 	{
 		auto tracker2 = PerfStats::instance().trackTime("gBuffer");
 		m_gBuffer->drawToBuffer(renderOptions, m_renderChain);

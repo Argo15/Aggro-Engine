@@ -2,17 +2,21 @@
 
 CommandTreeItem::CommandTreeItem()
 {
+	m_commands.reserve(100);
 }
 
-void CommandTreeItem::addCommand(shared_ptr<Command> command, shared_ptr<RenderNode> renderNode)
+void CommandTreeItem::addCommand(shared_ptr<Command> command, shared_ptr<RenderNode> renderNode, bool hasDuplicates)
 {
 	shared_ptr<Command> existing;
-	for (int i = 0; i < m_commands.size(); i++)
+	if (hasDuplicates)
 	{
-		if (command->equals(m_commands[i]))
+		for (int i = 0; i < m_commands.size(); i++)
 		{
-			existing = m_commands[i];
-			break;
+			if (command->equals(m_commands[i]))
+			{
+				existing = m_commands[i];
+				break;
+			}
 		}
 	}
 	if (!existing)

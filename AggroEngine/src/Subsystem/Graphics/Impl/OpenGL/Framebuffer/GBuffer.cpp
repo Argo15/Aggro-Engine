@@ -2,14 +2,14 @@
 #include "Texture.hpp"
 #include "Locks.hpp"
 #include "RGBImage.hpp"
-#include "InitializeGBuffer.hpp"
-#include "FilterLayer.hpp"
-#include "DepthTest.hpp"
-#include "DrawElements.hpp"
-#include "HasTangents.hpp"
-#include "MatrixLayer.hpp"
-#include "TextureBinding.hpp"
-#include "MaterialLayer.hpp"
+#include "CommandTree/GBuffer/InitializeGBuffer.hpp"
+#include "CommandTree/GBuffer/Filter/FilterLayer.hpp"
+#include "CommandTree/GBuffer/DepthTest/DepthTest.hpp"
+#include "CommandTree/GBuffer/DrawElements/DrawElements.hpp"
+#include "CommandTree/GBuffer/HasTangents/HasTangents.hpp"
+#include "CommandTree/GBuffer/Matrix/MatrixLayer.hpp"
+#include "CommandTree/GBuffer/Texture/TextureBinding.hpp"
+#include "CommandTree/GBuffer/Material/MaterialLayer.hpp"
 
 static glm::vec3 defaultColor(1.0);
 static glm::vec3 defaultEmission(0);

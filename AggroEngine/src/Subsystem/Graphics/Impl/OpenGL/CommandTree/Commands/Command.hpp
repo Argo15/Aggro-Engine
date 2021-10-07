@@ -1,6 +1,7 @@
 #pragma once
 
 #include <vector>
+#include <functional>
 #include "RenderNode.hpp"
 using namespace std;
 
@@ -12,13 +13,17 @@ enum CommandType {
 	HAS_TANGENTS = 4,
 	MATRIX = 5,
 	TEXTURE = 6,
-	MATERIAL = 7
+	MATERIAL = 7,
+	INIT_SHADOW = 8,
+	DRAW_SHADOW_ELEMENTS = 9,
+	MATRIX_SHADOW = 10
 };
 
 class Command
 {
 protected:
 	shared_ptr<RenderNode> m_renderNodes;
+	int m_hash;
 
 public:
 	Command();
@@ -29,4 +34,5 @@ public:
 	virtual void executeCommand();
 	virtual void end();
 	virtual bool equals(shared_ptr<Command> other) { return false; };
+	virtual int hash() { return m_hash; };
 };

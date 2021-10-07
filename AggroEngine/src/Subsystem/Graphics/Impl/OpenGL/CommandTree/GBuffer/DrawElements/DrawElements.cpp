@@ -14,7 +14,7 @@ shared_ptr<CommandTreeItem> DrawElements::getCommands(RenderOptions &renderOptio
 	while (renderNodes)
 	{
 		shared_ptr<Command> drawCommand(new DrawElementsCommand(renderNodes->getRenderData(), m_glslProgram));
-		item->addCommand(drawCommand, renderNodes);
+		item->addCommand(drawCommand, renderNodes, false);
 		renderNodes = renderNodes->next();
 	}
 	return item;

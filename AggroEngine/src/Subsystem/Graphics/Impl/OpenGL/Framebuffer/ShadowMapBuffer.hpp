@@ -7,6 +7,7 @@ class ShadowMapBuffer;
 #include "OpenGL43Graphics.hpp"
 #include "Sync/BufferSyncContext.hpp"
 #include "RenderChain.hpp"
+#include "CommandTree.hpp"
 
 /**
 * Renders the scene from the lights perspective, 
@@ -26,13 +27,15 @@ private:
 	glm::mat4 m_adjViewProj[4];
 	int m_size;
 	float *m_slices;
+	shared_ptr<CommandTree> m_commands;
 
+	void _updateProjectionMat(RenderOptions &renderOptions);
 	void _getProjectionMat(int slice, float slicePctStart, float slicePctEnd, glm::mat4 &lightViewMat, RenderOptions &renderOptions);
 
 public:
-	ShadowMapBuffer(OpenGL43Graphics *graphics, int defaultSize);
+	ShadowMapBuffer(OpenGL43Graphics *graphics, int defaultSize, shared_ptr<BufferSyncContext> syncContext);
 
-	void drawToBuffer(RenderOptions renderOptions, shared_ptr<RenderChain> renderChain, shared_ptr<BufferSyncContext> syncContext);
+	void drawToBuffer(RenderOptions &renderOptions, shared_ptr<RenderChain> renderChain);
 
 	void bindShadowTex(int slice);
 	shared_ptr<TextureHandle> getShadowTex(int slice);
@@ -40,9 +43,12 @@ public:
 	void bindTestTex(int slice);
 	shared_ptr<TextureHandle> getTestTex(int slice);
 
-	glm::mat4 getViewProjection(int slice);
+	glm::mat4 *getViewProjection(int slice);
 	float *getAdjViewProjectionPointer(int slice);
 
 	int getSize();
 	float getSizeF();
+
+	int currentSlice();
+	GLuint getCurrentShadowBuffer();
 };

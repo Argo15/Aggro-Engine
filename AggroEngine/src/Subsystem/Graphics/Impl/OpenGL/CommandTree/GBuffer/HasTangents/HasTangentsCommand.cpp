@@ -4,6 +4,7 @@ HasTangentsCommand::HasTangentsCommand(bool hasTangents)
 	: Command()
 	, m_hasTangents(hasTangents)
 {
+	m_hash = (CommandType::HAS_TANGENTS * 31 + m_hasTangents);
 }
 
 void HasTangentsCommand::executeCommand()

@@ -1,5 +1,5 @@
 #include "InitializeGBuffer.hpp"
-#include "Commands/InitializeGBufferCommand.hpp"
+#include "InitializeGBufferCommand.hpp"
 
 InitializeGBuffer::InitializeGBuffer(GBuffer *gBuffer)
 {

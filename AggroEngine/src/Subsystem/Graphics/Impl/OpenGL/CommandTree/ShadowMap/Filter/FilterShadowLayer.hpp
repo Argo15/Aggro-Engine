@@ -2,15 +2,14 @@
 
 #include "Layer.hpp"
 #include "BufferSyncContext.hpp"
-#include "Shaders/GLSLProgram.hpp"
 
-class DrawElements : public Layer
+class FilterShadowLayer : public Layer
 {
 private:
-	shared_ptr<GLSLProgram> m_glslProgram;
+	shared_ptr<BufferSyncContext> m_syncContext;
 
 public:
-	DrawElements(shared_ptr<GLSLProgram> glslProgram);
+	FilterShadowLayer(shared_ptr<BufferSyncContext> syncContext);
 
 	shared_ptr<CommandTreeItem> getCommands(RenderOptions &renderOptions, shared_ptr<RenderNode> renderNodes);
 };

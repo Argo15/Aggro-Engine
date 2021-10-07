@@ -21,3 +21,8 @@ bool DisableDepthCommand::equals(shared_ptr<Command> other)
 	DisableDepthCommand *cmd = static_cast<DisableDepthCommand *>(other.get());
 	return cmd->m_type == CommandType::DISABLE_DEPTH;
 }
+
+int DisableDepthCommand::hash()
+{
+	return CommandType::DISABLE_DEPTH;
+}
