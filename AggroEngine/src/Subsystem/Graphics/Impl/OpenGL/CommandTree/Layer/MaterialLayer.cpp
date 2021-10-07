@@ -11,13 +11,13 @@ MaterialLayer::MaterialLayer(shared_ptr<GLSLProgram> glslProgram)
 
 }
 
-shared_ptr<CommandTreeItem> MaterialLayer::getCommands(RenderOptions &renderOptions, vector<shared_ptr<RenderNode>> &renderNodes)
+shared_ptr<CommandTreeItem> MaterialLayer::getCommands(RenderOptions &renderOptions, shared_ptr<RenderNode> renderNodes)
 {
 	shared_ptr<CommandTreeItem> item(new CommandTreeItem());
 
-	for (int i = 0; i<renderNodes.size(); i++)
+	while (renderNodes)
 	{
-		shared_ptr<Material> material = renderNodes[i]->getRenderData()->getMaterial();
+		shared_ptr<Material> material = renderNodes->getRenderData()->getMaterial();
 
 		glm::mat4 *textureMatrix = material ? &material->getTextureMatrix() : &defaultTexMatrix;
 		glm::vec3 *color = material ? &material->getColor() : &defaultColor;
@@ -45,7 +45,8 @@ shared_ptr<CommandTreeItem> MaterialLayer::getCommands(RenderOptions &renderOpti
 			emission, 
 			hasNormals));
 
-		item->addCommand(matCommand, renderNodes[i]);
+		item->addCommand(matCommand, renderNodes);
+		renderNodes = renderNodes->next();
 	}
 	return item;
 }

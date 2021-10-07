@@ -7,24 +7,26 @@ FilterLayer::FilterLayer(shared_ptr<BufferSyncContext> syncContext)
 
 }
 
-shared_ptr<CommandTreeItem> FilterLayer::getCommands(RenderOptions &renderOptions, vector<shared_ptr<RenderNode>> &renderNodes)
+shared_ptr<CommandTreeItem> FilterLayer::getCommands(RenderOptions &renderOptions, shared_ptr<RenderNode> renderNodes)
 {
 	shared_ptr<CommandTreeItem> item(new CommandTreeItem());
 	shared_ptr<Command> emptyCommand(new EmptyCommand());
 
 	const shared_ptr<Frustrum> frustrum = renderOptions.getFrustrum();
 
-	for (int i = 0; i<renderNodes.size(); i++)
+	while (renderNodes)
 	{
-		shared_ptr<RenderData> renderData = renderNodes[i]->getRenderData();
+		shared_ptr<RenderData> renderData = renderNodes->getRenderData();
 		shared_ptr<VertexBufferHandle> vboHandle = renderData->getVertexBufferHandle();
 		if (!vboHandle)
 		{
+			renderNodes = renderNodes->next();
 			continue;
 		}
 
 		if (!m_syncContext->checkAndClearSync(vboHandle->getVertexHandle()))
 		{
+			renderNodes = renderNodes->next();
 			continue;
 		}
 
@@ -39,11 +41,13 @@ shared_ptr<CommandTreeItem> FilterLayer::getCommands(RenderOptions &renderOption
 				renderData->getModelMatrix());
 			if (culling == OUTSIDE)
 			{
+				renderNodes = renderNodes->next();
 				continue;
 			}
 		}
 
-		item->addCommand(emptyCommand, renderNodes[i]);
+		item->addCommand(emptyCommand, renderNodes);
+		renderNodes = renderNodes->next();
 	}
 	return item;
 }

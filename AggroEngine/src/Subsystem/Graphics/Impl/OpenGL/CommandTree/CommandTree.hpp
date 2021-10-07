@@ -33,7 +33,7 @@ class CommandTree
 private:
 	vector<shared_ptr<Layer>> m_layers;
 
-	void _executeLayer(RenderOptions &renderOptions, vector<shared_ptr<RenderNode>> &renderNodes, int layerIdx);
+	void _executeLayer(RenderOptions &renderOptions, shared_ptr<RenderNode> renderNodes, int layerIdx);
 
 public:
 	CommandTree();

@@ -145,11 +145,11 @@ shared_ptr<RenderHandle> OpenGL43Graphics::stageRender(shared_ptr<RenderData> re
 
 void OpenGL43Graphics::executeRender(RenderOptions &renderOptions)
 {
-	//auto tracker = PerfStats::instance().trackTime("GL executeRender");
+	auto tracker = PerfStats::instance().trackTime("GL executeRender");
 	m_pixelBuffers->resolveTextures(m_syncContext);
 	m_shadowBuffer->drawToBuffer(renderOptions, m_renderChain, m_syncContext);
 	{
-		//auto tracker2 = PerfStats::instance().trackTime("gBuffer");
+		auto tracker2 = PerfStats::instance().trackTime("gBuffer");
 		m_gBuffer->drawToBuffer(renderOptions, m_renderChain);
 	}
 	m_pixelBuffers->writeSelectionBuffer(m_gBuffer);

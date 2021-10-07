@@ -12,5 +12,5 @@ private:
 public:
 	InitializeGBuffer(GBuffer *gBuffer);
 
-	shared_ptr<CommandTreeItem> getCommands(RenderOptions &renderOptions, vector<shared_ptr<RenderNode>> &renderNodes);
+	shared_ptr<CommandTreeItem> getCommands(RenderOptions &renderOptions, shared_ptr<RenderNode> renderNodes);
 };

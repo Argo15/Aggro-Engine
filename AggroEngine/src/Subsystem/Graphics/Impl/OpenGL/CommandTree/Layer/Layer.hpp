@@ -8,5 +8,5 @@
 class Layer
 {
 public:
-	virtual shared_ptr<CommandTreeItem> getCommands(RenderOptions &renderOptions, vector<shared_ptr<RenderNode>> &renderNodes) = 0;
+	virtual shared_ptr<CommandTreeItem> getCommands(RenderOptions &renderOptions, shared_ptr<RenderNode> renderNodes) = 0;
 };

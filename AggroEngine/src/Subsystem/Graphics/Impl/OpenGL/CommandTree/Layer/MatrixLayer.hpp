@@ -11,5 +11,5 @@ private:
 public:
 	MatrixLayer(shared_ptr<GLSLProgram> glslProgram);
 
-	shared_ptr<CommandTreeItem> getCommands(RenderOptions &renderOptions, vector<shared_ptr<RenderNode>> &renderNodes);
+	shared_ptr<CommandTreeItem> getCommands(RenderOptions &renderOptions, shared_ptr<RenderNode> renderNodes);
 };

@@ -18,13 +18,13 @@ enum CommandType {
 class Command
 {
 protected:
-	vector<shared_ptr<RenderNode>> m_renderNodes;
+	shared_ptr<RenderNode> m_renderNodes;
 
 public:
 	Command();
 
 	void addRenderNode(shared_ptr<RenderNode> node);
-	vector<shared_ptr<RenderNode>> &getRenderNodes();
+	shared_ptr<RenderNode> getRenderNodes();
 
 	virtual void executeCommand();
 	virtual void end();

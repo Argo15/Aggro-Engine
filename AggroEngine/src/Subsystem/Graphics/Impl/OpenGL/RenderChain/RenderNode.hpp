@@ -18,11 +18,13 @@ private:
 	static int s_nextId;
 
 public:
-	RenderNode(shared_ptr<RenderData> renderData);
+	RenderNode(shared_ptr<RenderData> renderData, int id = RenderNode::getNextId());
 
 	int getId();
 	shared_ptr<RenderData> getRenderData();
 	shared_ptr<RenderNode> next();
+
+	void setNext(shared_ptr<RenderNode> next);
 
 	static unsigned int getNextId();
 };

@@ -7,10 +7,15 @@ Command::Command()
 
 void Command::addRenderNode(shared_ptr<RenderNode> node)
 {
-	m_renderNodes.push_back(node);
+	shared_ptr<RenderNode> newNode(new RenderNode(node->getRenderData(), node->getId()));
+	if (m_renderNodes)
+	{
+		newNode->setNext(m_renderNodes);
+	}
+	m_renderNodes = newNode;
 }
 
-vector<shared_ptr<RenderNode>> &Command::getRenderNodes()
+shared_ptr<RenderNode> Command::getRenderNodes()
 {
 	return m_renderNodes;
 }

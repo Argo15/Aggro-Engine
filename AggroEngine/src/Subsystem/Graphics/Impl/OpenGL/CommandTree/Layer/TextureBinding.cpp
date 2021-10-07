@@ -9,13 +9,12 @@ TextureBinding::TextureBinding(shared_ptr<GLSLProgram> glslProgram, shared_ptr<B
 
 }
 
-shared_ptr<CommandTreeItem> TextureBinding::getCommands(RenderOptions &renderOptions, vector<shared_ptr<RenderNode>> &renderNodes)
+shared_ptr<CommandTreeItem> TextureBinding::getCommands(RenderOptions &renderOptions, shared_ptr<RenderNode> renderNodes)
 {
 	shared_ptr<CommandTreeItem> item(new CommandTreeItem());
-
-	for (int i = 0; i<renderNodes.size(); i++)
+	while (renderNodes)
 	{
-		shared_ptr<Material> material = renderNodes[i]->getRenderData()->getMaterial();
+		shared_ptr<Material> material = renderNodes->getRenderData()->getMaterial();
 
 		shared_ptr<TextureHandle> albedo = material ? material->getTextureOpt().get_value_or(m_whiteTexture) : m_whiteTexture;
 		shared_ptr<TextureHandle> alpha = material ? material->getAlphaOpt().get_value_or(m_whiteTexture) : m_whiteTexture;
@@ -37,7 +36,8 @@ shared_ptr<CommandTreeItem> TextureBinding::getCommands(RenderOptions &renderOpt
 			emission,
 			normal));
 
-		item->addCommand(texCommand, renderNodes[i]);
+		item->addCommand(texCommand, renderNodes);
+		renderNodes = renderNodes->next();
 	}
 	return item;
 }
