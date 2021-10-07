@@ -1,10 +1,9 @@
 #include "DrawShadowElementsCommand.hpp"
 #include "OpenGL43Graphics.hpp"
 
-DrawShadowElementsCommand::DrawShadowElementsCommand(shared_ptr<RenderData> renderData, shared_ptr<GLSLProgram> glslProgram)
+DrawShadowElementsCommand::DrawShadowElementsCommand(shared_ptr<RenderData> renderData)
 	: Command()
 	, m_renderData(renderData)
-	, m_glslProgram(glslProgram)
 {
 }
 

@@ -1,17 +1,15 @@
 #pragma once
 
 #include "Command.hpp"
-#include "Shaders/GLSLProgram.hpp"
 
 class DrawShadowElementsCommand : public Command
 {
 private:
 	CommandType m_type = CommandType::DRAW_SHADOW_ELEMENTS;
 	shared_ptr<RenderData> m_renderData;
-	shared_ptr<GLSLProgram> m_glslProgram;
 
 public:
-	DrawShadowElementsCommand(shared_ptr<RenderData> renderData, shared_ptr<GLSLProgram> glslProgram);
+	DrawShadowElementsCommand(shared_ptr<RenderData> renderData);
 
 	virtual void executeCommand();
 	virtual void end();

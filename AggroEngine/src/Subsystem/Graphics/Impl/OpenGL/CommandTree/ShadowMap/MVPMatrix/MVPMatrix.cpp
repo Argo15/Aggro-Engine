@@ -14,11 +14,11 @@ shared_ptr<CommandTreeItem> MVPMatrix::getCommands(RenderOptions &renderOptions,
 
 	while (renderNodes)
 	{
-		shared_ptr<glm::mat4> mvp(new glm::mat4(*viewProj * renderNodes->getRenderData()->getModelMatrix()));
-
+		glm::mat4 modelMat = renderNodes->getRenderData()->getModelMatrix();
 		shared_ptr<Command> drawCommand(new MVPMatrixCommand(
 			m_shadowMapBuf->getProgram(), 
-			mvp));
+			viewProj,
+			modelMat));
 
 		item->addCommand(drawCommand, renderNodes);
 		renderNodes = renderNodes->next();

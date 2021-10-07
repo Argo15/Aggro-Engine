@@ -13,9 +13,7 @@ shared_ptr<CommandTreeItem> DrawShadowElements::getCommands(RenderOptions &rende
 
 	while (renderNodes)
 	{
-		shared_ptr<Command> drawCommand(new DrawShadowElementsCommand(
-			renderNodes->getRenderData(), 
-			m_shadowMapBuf->getProgram()));
+		shared_ptr<Command> drawCommand(new DrawShadowElementsCommand(renderNodes->getRenderData()));
 
 		item->addCommand(drawCommand, renderNodes, false);
 		renderNodes = renderNodes->next();
