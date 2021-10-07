@@ -9,6 +9,7 @@
 #include "HasTangents.hpp"
 #include "MatrixLayer.hpp"
 #include "TextureBinding.hpp"
+#include "MaterialLayer.hpp"
 
 static glm::vec3 defaultColor(1.0);
 static glm::vec3 defaultEmission(0);
@@ -86,6 +87,7 @@ GBuffer::GBuffer(OpenGL43Graphics *graphics, int width, int height, shared_ptr<B
 	m_commands->addLayer(shared_ptr<Layer>(new DepthTest()));
 	m_commands->addLayer(shared_ptr<Layer>(new HasTangents()));
 	m_commands->addLayer(shared_ptr<Layer>(new MatrixLayer(m_glslProgram)));
+	m_commands->addLayer(shared_ptr<Layer>(new MaterialLayer(m_glslProgram)));
 	m_commands->addLayer(shared_ptr<Layer>(new TextureBinding(m_glslProgram, m_syncContext, m_whiteTexture)));
 	m_commands->addLayer(shared_ptr<Layer>(new DrawElements(m_glslProgram)));
 }

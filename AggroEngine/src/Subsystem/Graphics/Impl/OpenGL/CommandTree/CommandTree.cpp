@@ -29,11 +29,20 @@ void CommandTree::_executeLayer(RenderOptions &renderOptions, vector<shared_ptr<
 		return;
 	}
 	shared_ptr<Layer> layer = m_layers[layerIdx];
-	shared_ptr<CommandTreeItem> commandItem = layer->getCommands(renderOptions, renderNodes);
-	vector<shared_ptr<Command>> commands = commandItem->getCommands();
+
+	vector<shared_ptr<Command>> commands;
+	{
+		auto tracker = PerfStats::instance().trackTime("getCommands");
+		shared_ptr<CommandTreeItem> commandItem = layer->getCommands(renderOptions, renderNodes);
+		commands = commandItem->getCommands();
+	}
 	for (int i = 0; i < commands.size(); i++)
 	{
-		commands[i]->executeCommand();
+
+		{
+			auto tracker = PerfStats::instance().trackTime("executeCommand");
+			commands[i]->executeCommand();
+		}
 		_executeLayer(renderOptions, commands[i]->getRenderNodes(), layerIdx + 1);
 		commands[i]->end();
 	}

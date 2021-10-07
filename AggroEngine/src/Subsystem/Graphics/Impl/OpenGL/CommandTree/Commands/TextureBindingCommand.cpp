@@ -37,11 +37,16 @@ void TextureBindingCommand::end()
 bool TextureBindingCommand::equals(shared_ptr<Command> other)
 {
 	TextureBindingCommand *cmd = static_cast<TextureBindingCommand *>(other.get());
+
+	if (cmd->m_type != CommandType::TEXTURE)
+	{
+		return false;
+	}
+
 	if (m_normal && !cmd->m_normal) return false;
 	if (!m_normal && cmd->m_normal) return false;
 
-	return cmd->m_type == CommandType::TEXTURE &&
-		m_albedo->get() == cmd->m_albedo->get() &&
+	return m_albedo->get() == cmd->m_albedo->get() &&
 		m_alpha->get() == cmd->m_alpha->get() &&
 		m_specular->get() == cmd->m_specular->get() &&
 		m_emission->get() == cmd->m_emission->get() &&

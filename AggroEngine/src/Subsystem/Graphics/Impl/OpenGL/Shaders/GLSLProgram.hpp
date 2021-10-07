@@ -36,8 +36,8 @@ public:
 	void sendUniform(const std::string &name, float x, float y);
 	void sendUniform(const std::string &name, float x, float y, float z);
 	void sendUniform(const std::string &name, float x, float y, float z, float w);
-	void sendUniform(const std::string &name, glm::vec3 vec);
-	void sendUniform(const std::string &name, glm::vec4 vec);
+	void sendUniform(const std::string &name, glm::vec3 &vec);
+	void sendUniform(const std::string &name, glm::vec4 &vec);
 	void sendUniform(const std::string &name, shared_ptr<TextureHandle> tex, int x);
 	void sendUniform(const std::string &name, int x);
 	void sendUniform(const std::string &name, int x, int y);

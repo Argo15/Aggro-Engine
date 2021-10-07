@@ -90,7 +90,6 @@ void ShadowMapBuffer::drawToBuffer(RenderOptions renderOptions, shared_ptr<Rende
 		glLineWidth(1);
 		glEnable(GL_DEPTH_TEST);
 		glDisable(GL_BLEND);
-		int currentLineWidth = 1;
 
 		shared_ptr<DirectLight> light = renderOptions.getDirectLight();
 		if (!light)

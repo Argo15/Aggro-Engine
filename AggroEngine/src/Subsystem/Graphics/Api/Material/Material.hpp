@@ -45,9 +45,9 @@ public:
 	boost::optional<shared_ptr<TextureHandle>> getSpecularOpt();
 
 	void setTextureMatrix(glm::mat4 textureMatrix);
-	glm::mat4 getTextureMatrix();
+	glm::mat4 &getTextureMatrix();
 	void setTexRotateMatrix(glm::mat4 texRotateMatrix);
-	glm::mat4 getTexRotateMatrix();
+	glm::mat4 &getTexRotateMatrix();
 
 	void setEmission(glm::vec3 emission);
 	glm::vec3 &getEmission();

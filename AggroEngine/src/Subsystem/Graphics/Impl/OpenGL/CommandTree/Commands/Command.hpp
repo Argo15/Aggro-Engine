@@ -11,7 +11,8 @@ enum CommandType {
 	DRAW_ELEMENTS = 3,
 	HAS_TANGENTS = 4,
 	MATRIX = 5,
-	TEXTURE = 6
+	TEXTURE = 6,
+	MATERIAL = 7
 };
 
 class Command

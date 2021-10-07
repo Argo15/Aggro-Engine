@@ -97,7 +97,7 @@ void Material::setTextureMatrix(glm::mat4 textureMatrix)
 	m_textureMatrix = textureMatrix;
 }
 
-glm::mat4 Material::getTextureMatrix()
+glm::mat4 &Material::getTextureMatrix()
 {
 	return m_textureMatrix;
 }
@@ -107,7 +107,7 @@ void Material::setTexRotateMatrix(glm::mat4 texRotateMatrix)
 	m_texRotateMatrix = texRotateMatrix;
 }
 
-glm::mat4 Material::getTexRotateMatrix()
+glm::mat4 &Material::getTexRotateMatrix()
 {
 	return m_texRotateMatrix;
 }

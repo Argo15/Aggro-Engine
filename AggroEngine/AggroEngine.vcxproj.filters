@@ -589,6 +589,12 @@
     <ClCompile Include="src\Subsystem\Graphics\Impl\OpenGL\CommandTree\Commands\TextureBindingCommand.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\Subsystem\Graphics\Impl\OpenGL\CommandTree\Layer\MaterialLayer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Subsystem\Graphics\Impl\OpenGL\CommandTree\Commands\MaterialCommand.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Resource\Image\CheckersImage.hpp">
@@ -1088,6 +1094,12 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\Subsystem\Graphics\Impl\OpenGL\CommandTree\Commands\TextureBindingCommand.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Subsystem\Graphics\Impl\OpenGL\CommandTree\Layer\MaterialLayer.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Subsystem\Graphics\Impl\OpenGL\CommandTree\Commands\MaterialCommand.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

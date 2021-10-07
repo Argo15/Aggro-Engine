@@ -1,9 +1,6 @@
 #include "DrawElementsCommand.hpp"
 #include "OpenGL43Graphics.hpp"
 
-static glm::vec3 defaultColor(1.0);
-static glm::vec3 defaultEmission(0);
-
 DrawElementsCommand::DrawElementsCommand(shared_ptr<RenderData> renderData, shared_ptr<GLSLProgram> glslProgram)
 	: Command()
 	, m_renderData(renderData)
@@ -13,43 +10,6 @@ DrawElementsCommand::DrawElementsCommand(shared_ptr<RenderData> renderData, shar
 
 void DrawElementsCommand::executeCommand()
 {
-	shared_ptr<Material> material = m_renderData->getMaterial();
-	int texId = 0;
-	if (material)
-	{
-		glm::mat4 textureMatrix = material->getTextureMatrix();
-		m_glslProgram->sendUniform("textureMatrix", glm::value_ptr(textureMatrix), false, 4);
-
-		m_glslProgram->sendUniform("material.color", material->getColor());
-		m_glslProgram->sendUniform("material.specIntensity", material->getSpecIntensity());
-		m_glslProgram->sendUniform("material.shininess", (float)material->getShininess());
-		m_glslProgram->sendUniform("material.emission", material->getEmission());
-		boost::optional<shared_ptr<TextureHandle>> normalMap = material->getNormalMapOpt();
-		if (normalMap)
-		{
-			m_glslProgram->sendUniform("material.hasNormals", true);
-			glm::mat3 texRotateMatrix = material->getTexRotateMatrix();
-			texRotateMatrix[0] = glm::vec3(texRotateMatrix[0][0], -texRotateMatrix[0][1], 0);
-			texRotateMatrix[1] = glm::vec3(-texRotateMatrix[1][0], texRotateMatrix[1][1], 0);
-			texRotateMatrix[2] = glm::vec3(0, 0, 1.0);
-			m_glslProgram->sendUniform("texRotateMatrix", glm::value_ptr(texRotateMatrix), false, 3);
-		}
-		else
-		{
-			m_glslProgram->sendUniform("material.hasNormals", false);
-		}
-	}
-	else
-	{
-		m_glslProgram->sendUniform("material.color", defaultColor);
-		m_glslProgram->sendUniform("material.specIntensity", 0.f);
-		m_glslProgram->sendUniform("material.shininess", 0.f);
-		m_glslProgram->sendUniform("material.emission", defaultEmission);
-		m_glslProgram->sendUniform("material.hasNormals", false);
-		glm::mat4 textureMatrix = glm::mat4(1.0);
-		m_glslProgram->sendUniform("textureMatrix", glm::value_ptr(textureMatrix), false, 4);
-	}
-
 	unsigned int id = m_renderData->getId();
 	float r = (id % 255) / 255.0f;
 	float g = ((id / 255) % 255) / 255.0f;

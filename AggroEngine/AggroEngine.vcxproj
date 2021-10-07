@@ -183,6 +183,7 @@
     <ClCompile Include="src\Subsystem\Graphics\Impl\OpenGL\CommandTree\Commands\EmptyCommand.cpp" />
     <ClCompile Include="src\Subsystem\Graphics\Impl\OpenGL\CommandTree\Commands\HasTangentsCommand.cpp" />
     <ClCompile Include="src\Subsystem\Graphics\Impl\OpenGL\CommandTree\Commands\InitializeGBufferCommand.cpp" />
+    <ClCompile Include="src\Subsystem\Graphics\Impl\OpenGL\CommandTree\Commands\MaterialCommand.cpp" />
     <ClCompile Include="src\Subsystem\Graphics\Impl\OpenGL\CommandTree\Commands\MatrixCommand.cpp" />
     <ClCompile Include="src\Subsystem\Graphics\Impl\OpenGL\CommandTree\Commands\TextureBindingCommand.cpp" />
     <ClCompile Include="src\Subsystem\Graphics\Impl\OpenGL\CommandTree\CommandTree.cpp" />
@@ -192,6 +193,7 @@
     <ClCompile Include="src\Subsystem\Graphics\Impl\OpenGL\CommandTree\Layer\FilterLayer.cpp" />
     <ClCompile Include="src\Subsystem\Graphics\Impl\OpenGL\CommandTree\Layer\HasTangents.cpp" />
     <ClCompile Include="src\Subsystem\Graphics\Impl\OpenGL\CommandTree\Layer\InitializeGBuffer.cpp" />
+    <ClCompile Include="src\Subsystem\Graphics\Impl\OpenGL\CommandTree\Layer\MaterialLayer.cpp" />
     <ClCompile Include="src\Subsystem\Graphics\Impl\OpenGL\CommandTree\Layer\MatrixLayer.cpp" />
     <ClCompile Include="src\Subsystem\Graphics\Impl\OpenGL\CommandTree\Layer\TextureBinding.cpp" />
     <ClCompile Include="src\Subsystem\Graphics\Impl\OpenGL\Framebuffer\ShadedBuffer.cpp" />
@@ -336,6 +338,7 @@
     <ClInclude Include="src\Subsystem\Graphics\Impl\OpenGL\CommandTree\Commands\EmptyCommand.hpp" />
     <ClInclude Include="src\Subsystem\Graphics\Impl\OpenGL\CommandTree\Commands\HasTangentsCommand.hpp" />
     <ClInclude Include="src\Subsystem\Graphics\Impl\OpenGL\CommandTree\Commands\InitializeGBufferCommand.hpp" />
+    <ClInclude Include="src\Subsystem\Graphics\Impl\OpenGL\CommandTree\Commands\MaterialCommand.hpp" />
     <ClInclude Include="src\Subsystem\Graphics\Impl\OpenGL\CommandTree\Commands\MatrixCommand.hpp" />
     <ClInclude Include="src\Subsystem\Graphics\Impl\OpenGL\CommandTree\Commands\TextureBindingCommand.hpp" />
     <ClInclude Include="src\Subsystem\Graphics\Impl\OpenGL\CommandTree\CommandTreeItem.hpp" />
@@ -345,6 +348,7 @@
     <ClInclude Include="src\Subsystem\Graphics\Impl\OpenGL\CommandTree\Layer\HasTangents.hpp" />
     <ClInclude Include="src\Subsystem\Graphics\Impl\OpenGL\CommandTree\Layer\InitializeGBuffer.hpp" />
     <ClInclude Include="src\Subsystem\Graphics\Impl\OpenGL\CommandTree\Layer\Layer.hpp" />
+    <ClInclude Include="src\Subsystem\Graphics\Impl\OpenGL\CommandTree\Layer\MaterialLayer.hpp" />
     <ClInclude Include="src\Subsystem\Graphics\Impl\OpenGL\CommandTree\Layer\MatrixLayer.hpp" />
     <ClInclude Include="src\Subsystem\Graphics\Impl\OpenGL\CommandTree\Layer\ShouldRender.hpp" />
     <ClInclude Include="src\Subsystem\Graphics\Impl\OpenGL\CommandTree\Layer\TextureBinding.hpp" />

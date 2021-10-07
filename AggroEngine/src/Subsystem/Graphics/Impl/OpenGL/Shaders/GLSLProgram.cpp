@@ -145,12 +145,12 @@ void GLSLProgram::sendUniform(const std::string &name, float x, float y, float z
 	glUniform4f(getLoc(name), x, y, z, w);
 }
 
-void GLSLProgram::sendUniform(const std::string &name, glm::vec3 vec)
+void GLSLProgram::sendUniform(const std::string &name, glm::vec3 &vec)
 {
 	sendUniform(getLoc(name), vec.x, vec.y, vec.z);
 }
 
-void GLSLProgram::sendUniform(const std::string &name, glm::vec4 vec)
+void GLSLProgram::sendUniform(const std::string &name, glm::vec4 &vec)
 {
 	sendUniform(getLoc(name), vec.x, vec.y, vec.z, vec.w);
 }
